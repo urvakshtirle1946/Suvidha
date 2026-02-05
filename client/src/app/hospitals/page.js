@@ -82,16 +82,7 @@ function HospitalsContent() {
              )}
 
              {/* Search Input Field */}
-             <div style={{ 
-                 display: 'flex', 
-                 alignItems: 'center', 
-                 border: '1px solid #e5e7eb', 
-                 borderRadius: '8px', 
-                 padding: '0.8rem 1rem',
-                 background: '#fff',
-                 boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-                 gap: '1rem'
-             }}>
+             <div className="search-bar-container">
                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderRight: '1px solid #e5e7eb', paddingRight: '1rem', color: '#374151' }}>
                     <MapPin size={18} color="#db2777" /> {city || 'Local'}
                  </div>
@@ -107,7 +98,7 @@ function HospitalsContent() {
         </div>
 
         {/* Title & Filters */}
-        <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>
+        <div className="filters-container">
              <div>
                  <div style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.5rem' }}>
                     Home &gt; {specialtyFilter || 'All Services'}
@@ -117,7 +108,7 @@ function HospitalsContent() {
                  </h1>
              </div>
 
-             <div style={{ display: 'flex', gap: '0.8rem' }}>
+             <div className="filters-actions">
                  <button className="btn" style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '20px', padding: '6px 16px', fontSize: '0.85rem', color: '#374151' }}>
                      Sort By <ArrowUpDown size={12} style={{ marginLeft: '6px' }} />
                  </button>

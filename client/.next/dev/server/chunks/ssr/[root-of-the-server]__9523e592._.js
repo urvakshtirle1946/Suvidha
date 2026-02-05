@@ -597,7 +597,7 @@ function BookingModal({ isOpen, onClose, service }) {
                 price: displayPrice,
                 hospitalId: selectedLab.id
             };
-            const res = await fetch('http://localhost:5000/api/bookings', {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/bookings`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1373,21 +1373,26 @@ function HospitalsContent() {
     const [showLogin, setShowLogin] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     // Fetch Services from API
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        fetch('http://localhost:5000/api/services').then((res)=>res.json()).then((data)=>{
-            // Map API data to component format if necessary or use directly
-            // API returns: { id, name, category, price, hospital_name, ... }
-            // We Map 'category' to 'specialty' for filtering to work
-            const mappedData = data.map((item)=>({
-                    ...item,
-                    specialty: item.category,
-                    reportTime: '24-48 hrs' // Default as not in DB
-                }));
-            setHospitals(mappedData);
-            setLoading(false);
-        }).catch((err)=>{
-            console.error(err);
-            setLoading(false);
-        });
+        const fetchHospitals = async ()=>{
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/hospitals`);
+                const data = await res.json();
+                // Map API data to component format if necessary or use directly
+                // API returns: { id, name, category, price, hospital_name, ... }
+                // We Map 'category' to 'specialty' for filtering to work
+                const mappedData = data.map((item)=>({
+                        ...item,
+                        specialty: item.category,
+                        reportTime: '24-48 hrs' // Default as not in DB
+                    }));
+                setHospitals(mappedData);
+                setLoading(false);
+            } catch (err) {
+                console.error(err);
+                setLoading(false);
+            }
+        };
+        fetchHospitals();
     }, []);
     const filteredHospitals = hospitals.filter((h)=>{
         const matchesSearch = h.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -1404,7 +1409,7 @@ function HospitalsContent() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$Navbar$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/src/app/hospitals/page.js",
-                lineNumber: 54,
+                lineNumber: 57,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1450,13 +1455,13 @@ function HospitalsContent() {
                                                 onClick: ()=>setSelectedHospital(null)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/hospitals/page.js",
-                                                lineNumber: 67,
+                                                lineNumber: 70,
                                                 columnNumber: 50
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 66,
+                                        lineNumber: 69,
                                         columnNumber: 22
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1479,7 +1484,7 @@ function HospitalsContent() {
                                                         children: "1 item added"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/hospitals/page.js",
-                                                        lineNumber: 71,
+                                                        lineNumber: 74,
                                                         columnNumber: 30
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1492,13 +1497,13 @@ function HospitalsContent() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/hospitals/page.js",
-                                                        lineNumber: 72,
+                                                        lineNumber: 75,
                                                         columnNumber: 30
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/hospitals/page.js",
-                                                lineNumber: 70,
+                                                lineNumber: 73,
                                                 columnNumber: 26
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1511,19 +1516,19 @@ function HospitalsContent() {
                                                 children: "Go to cart"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/hospitals/page.js",
-                                                lineNumber: 74,
+                                                lineNumber: 77,
                                                 columnNumber: 26
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 69,
+                                        lineNumber: 72,
                                         columnNumber: 22
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/hospitals/page.js",
-                                lineNumber: 62,
+                                lineNumber: 65,
                                 columnNumber: 18
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1553,7 +1558,7 @@ function HospitalsContent() {
                                                 color: "#db2777"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/hospitals/page.js",
-                                                lineNumber: 93,
+                                                lineNumber: 96,
                                                 columnNumber: 21
                                             }, this),
                                             " ",
@@ -1561,7 +1566,7 @@ function HospitalsContent() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 92,
+                                        lineNumber: 95,
                                         columnNumber: 18
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$search$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Search$3e$__["Search"], {
@@ -1569,7 +1574,7 @@ function HospitalsContent() {
                                         color: "#9ca3af"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 95,
+                                        lineNumber: 98,
                                         columnNumber: 18
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1586,19 +1591,19 @@ function HospitalsContent() {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 96,
+                                        lineNumber: 99,
                                         columnNumber: 18
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/hospitals/page.js",
-                                lineNumber: 82,
+                                lineNumber: 85,
                                 columnNumber: 14
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/hospitals/page.js",
-                        lineNumber: 59,
+                        lineNumber: 62,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1625,7 +1630,7 @@ function HospitalsContent() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 109,
+                                        lineNumber: 112,
                                         columnNumber: 18
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
@@ -1641,13 +1646,13 @@ function HospitalsContent() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 112,
+                                        lineNumber: 115,
                                         columnNumber: 18
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/hospitals/page.js",
-                                lineNumber: 108,
+                                lineNumber: 111,
                                 columnNumber: 14
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1675,13 +1680,13 @@ function HospitalsContent() {
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/hospitals/page.js",
-                                                lineNumber: 119,
+                                                lineNumber: 122,
                                                 columnNumber: 30
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 118,
+                                        lineNumber: 121,
                                         columnNumber: 18
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1703,13 +1708,13 @@ function HospitalsContent() {
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/hospitals/page.js",
-                                                lineNumber: 122,
+                                                lineNumber: 125,
                                                 columnNumber: 34
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 121,
+                                        lineNumber: 124,
                                         columnNumber: 18
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1725,19 +1730,19 @@ function HospitalsContent() {
                                         children: "Same day report"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 124,
+                                        lineNumber: 127,
                                         columnNumber: 18
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/hospitals/page.js",
-                                lineNumber: 117,
+                                lineNumber: 120,
                                 columnNumber: 14
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/hospitals/page.js",
-                        lineNumber: 107,
+                        lineNumber: 110,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1776,12 +1781,12 @@ function HospitalsContent() {
                                             color: "#ff6f61"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/hospitals/page.js",
-                                            lineNumber: 154,
+                                            lineNumber: 157,
                                             columnNumber: 21
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 147,
+                                        lineNumber: 150,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1795,7 +1800,7 @@ function HospitalsContent() {
                                         children: hospital.name
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 158,
+                                        lineNumber: 161,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1807,7 +1812,7 @@ function HospitalsContent() {
                                         children: "Report within 12-48 hours"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 163,
+                                        lineNumber: 166,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1823,7 +1828,7 @@ function HospitalsContent() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 168,
+                                        lineNumber: 171,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1843,7 +1848,7 @@ function HospitalsContent() {
                                             children: "Added"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/hospitals/page.js",
-                                            lineNumber: 175,
+                                            lineNumber: 178,
                                             columnNumber: 26
                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                             onClick: ()=>setSelectedHospital(hospital),
@@ -1869,23 +1874,23 @@ function HospitalsContent() {
                                             children: "BOOK"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/hospitals/page.js",
-                                            lineNumber: 187,
+                                            lineNumber: 190,
                                             columnNumber: 26
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 173,
+                                        lineNumber: 176,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, hospital.id, true, {
                                 fileName: "[project]/src/app/hospitals/page.js",
-                                lineNumber: 133,
+                                lineNumber: 136,
                                 columnNumber: 14
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/src/app/hospitals/page.js",
-                        lineNumber: 131,
+                        lineNumber: 134,
                         columnNumber: 9
                     }, this),
                     filteredHospitals.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1898,18 +1903,18 @@ function HospitalsContent() {
                             children: "No services found matching your criteria."
                         }, void 0, false, {
                             fileName: "[project]/src/app/hospitals/page.js",
-                            lineNumber: 213,
+                            lineNumber: 216,
                             columnNumber: 17
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/hospitals/page.js",
-                        lineNumber: 212,
+                        lineNumber: 215,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/hospitals/page.js",
-                lineNumber: 56,
+                lineNumber: 59,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$BookingModal$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1918,13 +1923,13 @@ function HospitalsContent() {
                 service: selectedHospital
             }, void 0, false, {
                 fileName: "[project]/src/app/hospitals/page.js",
-                lineNumber: 219,
+                lineNumber: 222,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/hospitals/page.js",
-        lineNumber: 53,
+        lineNumber: 56,
         columnNumber: 5
     }, this);
 }
@@ -1938,17 +1943,17 @@ function Hospitals() {
             children: "Loading..."
         }, void 0, false, {
             fileName: "[project]/src/app/hospitals/page.js",
-            lineNumber: 230,
+            lineNumber: 233,
             columnNumber: 25
         }, void 0),
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(HospitalsContent, {}, void 0, false, {
             fileName: "[project]/src/app/hospitals/page.js",
-            lineNumber: 231,
+            lineNumber: 234,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/hospitals/page.js",
-        lineNumber: 230,
+        lineNumber: 233,
         columnNumber: 5
     }, this);
 }

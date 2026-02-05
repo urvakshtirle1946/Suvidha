@@ -16,6 +16,9 @@ export default function Home() {
   const [selectedHospitalForProfile, setSelectedHospitalForProfile] = useState(null);
 
   // State for fetched data
+  // State for fetched data
+  const [hospitals, setHospitals] = useState([]);
+  const [popularServices, setPopularServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -19,6 +19,7 @@ app.use(helmet()); // Security Headers
 app.use(morgan('dev')); // HTTP Request Logger
 app.use(cors());
 app.use(express.json()); // Built-in middleware replaces body-parser
+app.use('/uploads', express.static('uploads'));
 
 // Routes
 app.use('/api/auth', authRoutes);

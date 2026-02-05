@@ -112,3 +112,20 @@ exports.phoneLogin = async (req, res) => {
     res.status(500).json({ success: false, message: 'Login flow failed' });
   }
 };
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const query = `
+      SELECT u.*, COUNT(b.id) as booking_count 
+      FROM users u
+      LEFT JOIN bookings b ON u.phone = b.user_phone
+      GROUP BY u.id
+      ORDER BY u.created_at DESC
+    `;
+    const result = await db.query(query);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Database Error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch users' });
+  }
+};

@@ -50,20 +50,45 @@ exports.createBooking = async (req, res) => {
 exports.getBookings = async (req, res) => {
   const { phone } = req.query;
   try {
-    let query = 'SELECT * FROM bookings';
+    let query = `
+      SELECT b.*, h.name as hospital_name
+      FROM bookings b
+      LEFT JOIN hospitals h ON b.hospital_id = h.id
+    `;
     let values = [];
     
     if (phone) {
-      query += ' WHERE user_phone = $1';
+      query += ' WHERE b.user_phone = $1';
       values.push(phone);
     }
     
-    query += ' ORDER BY created_at DESC';
+    query += ' ORDER BY b.created_at DESC';
     
     const result = await db.query(query, values);
     res.json(result.rows);
   } catch (error) {
     console.error('Database Error:', error);
     res.status(500).json({ success: false, message: 'Failed to fetch bookings' });
+  }
+};
+
+exports.updateBookingStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  
+  try {
+    const result = await db.query(
+      'UPDATE bookings SET status = $1 WHERE id = $2 RETURNING *',
+      [status, id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+    
+    res.json({ success: true, booking: result.rows[0] });
+  } catch (error) {
+    console.error('Database Error:', error);
+    res.status(500).json({ success: false, message: 'Failed to update booking status' });
   }
 };

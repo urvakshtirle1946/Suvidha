@@ -18,5 +18,6 @@ router.post('/verify-otp', authController.verifyOtp);
 
 
 router.post('/phone-login', authController.phoneLogin);
+router.get('/users', authController.getAllUsers);
 
 module.exports = router;

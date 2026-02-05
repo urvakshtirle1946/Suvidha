@@ -48,10 +48,6 @@ h1, h2, h3, h4, h5, h6 {
   color: #111827;
 }
 
-.admin-root h1, .admin-root h2, .admin-root h3, .admin-root h4, .admin-root h5, .admin-root h6 {
-  color: #f8fafc !important;
-}
-
 .container, .nav-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -130,12 +126,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .admin-root {
-  --bg-dark: #0f172a;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --primary: #00d2d3;
+  --bg-dark: #050505;
+  --text-main: #fff;
+  --text-muted: #a1a1aa;
+  --primary: #cf0;
   color: #fff;
-  background-color: #0f172a;
+  background-color: #050505;
 }
 
 .admin-root .border-slate-800 {

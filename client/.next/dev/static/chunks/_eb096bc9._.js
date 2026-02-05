@@ -64,20 +64,20 @@ function AdminProfile() {
         });
     // In a real app, this would hit an API endpoint
     };
-    // Premium Dark Styles
+    // Light & Clean Styles via standard CSS-in-JS logic matching Dashboard
     const cardStyle = {
-        background: 'rgba(30, 41, 59, 0.4)',
-        backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(255,255,255,0.05)',
-        borderRadius: '16px',
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+        background: '#fff',
+        border: '1px solid #f0f0f0',
+        borderRadius: '20px',
+        boxShadow: '0 5px 20px rgba(0, 0, 0, 0.05)',
+        padding: '2rem'
     };
     const inputStyle = {
         width: '100%',
         padding: '0.9rem 0.9rem 0.9rem 3rem',
-        background: 'rgba(15, 23, 42, 0.6)',
-        border: '1px solid rgba(255,255,255,0.1)',
-        color: '#fff',
+        background: '#F9FAFB',
+        border: '1px solid #E5E7EB',
+        color: '#374151',
         borderRadius: '12px',
         outline: 'none',
         transition: 'border-color 0.2s',
@@ -94,45 +94,40 @@ function AdminProfile() {
                         style: {
                             fontSize: '2rem',
                             fontWeight: '800',
-                            background: 'linear-gradient(to right, #fff, #94a3b8)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent'
+                            color: '#1C1C24'
                         },
-                        children: "Admin Profile & Settings"
+                        children: "Profile Configuration"
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                        lineNumber: 62,
+                        lineNumber: 65,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         style: {
-                            color: '#94a3b8',
+                            color: '#9CA3AF',
                             marginTop: '0.5rem'
                         },
-                        children: "Manage your account details and security preferences."
+                        children: "Manage account settings and security preferences."
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                        lineNumber: 63,
+                        lineNumber: 66,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                lineNumber: 61,
+                lineNumber: 64,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 style: {
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
                     gap: '2rem'
                 },
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        style: {
-                            ...cardStyle,
-                            padding: '2.5rem'
-                        },
+                        style: cardStyle,
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
@@ -147,19 +142,20 @@ function AdminProfile() {
                                             width: '80px',
                                             height: '80px',
                                             borderRadius: '50%',
-                                            background: 'linear-gradient(135deg, #00d2d3 0%, #2e86de 100%)',
+                                            background: 'linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%)',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             fontSize: '2rem',
                                             fontWeight: 'bold',
                                             color: '#fff',
-                                            boxShadow: '0 4px 20px rgba(0, 210, 211, 0.4)'
+                                            boxShadow: '0 10px 25px rgba(255, 154, 158, 0.4)',
+                                            border: '4px solid #fff'
                                         },
                                         children: profile.name.charAt(0)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                        lineNumber: 71,
+                                        lineNumber: 74,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -167,36 +163,42 @@ function AdminProfile() {
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                                 style: {
                                                     fontSize: '1.5rem',
+                                                    fontWeight: '700',
+                                                    color: '#1F2937',
                                                     marginBottom: '4px'
                                                 },
                                                 children: profile.name
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                lineNumber: 81,
+                                                lineNumber: 85,
                                                 columnNumber: 23
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 style: {
-                                                    color: '#00d2d3',
-                                                    fontSize: '0.95rem',
-                                                    fontWeight: '500'
+                                                    display: 'inline-block',
+                                                    padding: '4px 12px',
+                                                    background: '#EFF6FF',
+                                                    color: '#3B82F6',
+                                                    borderRadius: '20px',
+                                                    fontSize: '0.85rem',
+                                                    fontWeight: '600'
                                                 },
                                                 children: profile.role
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                lineNumber: 82,
+                                                lineNumber: 86,
                                                 columnNumber: 23
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                        lineNumber: 80,
+                                        lineNumber: 84,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                lineNumber: 70,
+                                lineNumber: 73,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -212,14 +214,15 @@ function AdminProfile() {
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                                 style: {
                                                     display: 'block',
-                                                    marginBottom: '0.8rem',
-                                                    color: '#94a3b8',
-                                                    fontSize: '0.9rem'
+                                                    marginBottom: '0.6rem',
+                                                    color: '#4B5563',
+                                                    fontSize: '0.9rem',
+                                                    fontWeight: '500'
                                                 },
                                                 children: "Full Name"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                lineNumber: 88,
+                                                lineNumber: 102,
                                                 columnNumber: 23
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -233,11 +236,11 @@ function AdminProfile() {
                                                             position: 'absolute',
                                                             left: '16px',
                                                             top: '16px',
-                                                            color: '#64748b'
+                                                            color: '#9CA3AF'
                                                         }
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                        lineNumber: 90,
+                                                        lineNumber: 104,
                                                         columnNumber: 27
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -250,19 +253,19 @@ function AdminProfile() {
                                                         style: inputStyle
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                        lineNumber: 91,
+                                                        lineNumber: 105,
                                                         columnNumber: 27
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                lineNumber: 89,
+                                                lineNumber: 103,
                                                 columnNumber: 23
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                        lineNumber: 87,
+                                        lineNumber: 101,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -270,14 +273,15 @@ function AdminProfile() {
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                                 style: {
                                                     display: 'block',
-                                                    marginBottom: '0.8rem',
-                                                    color: '#94a3b8',
-                                                    fontSize: '0.9rem'
+                                                    marginBottom: '0.6rem',
+                                                    color: '#4B5563',
+                                                    fontSize: '0.9rem',
+                                                    fontWeight: '500'
                                                 },
                                                 children: "Email Address"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                lineNumber: 100,
+                                                lineNumber: 114,
                                                 columnNumber: 23
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -291,11 +295,11 @@ function AdminProfile() {
                                                             position: 'absolute',
                                                             left: '16px',
                                                             top: '16px',
-                                                            color: '#64748b'
+                                                            color: '#9CA3AF'
                                                         }
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                        lineNumber: 102,
+                                                        lineNumber: 116,
                                                         columnNumber: 27
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -308,63 +312,67 @@ function AdminProfile() {
                                                         style: inputStyle
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                        lineNumber: 103,
+                                                        lineNumber: 117,
                                                         columnNumber: 27
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                lineNumber: 101,
+                                                lineNumber: 115,
                                                 columnNumber: 23
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                        lineNumber: 99,
+                                        lineNumber: 113,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         className: "btn",
                                         style: {
-                                            marginTop: '1rem',
+                                            marginTop: '1.5rem',
                                             padding: '1rem',
-                                            background: 'linear-gradient(135deg, #00d2d3 0%, #2e86de 100%)',
+                                            background: '#1C1C24',
                                             color: '#fff',
                                             border: 'none',
                                             fontSize: '1rem',
                                             fontWeight: '600',
-                                            boxShadow: '0 4px 15px rgba(0, 210, 211, 0.3)',
-                                            borderRadius: '12px',
+                                            boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+                                            borderRadius: '14px',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            gap: '8px'
+                                            gap: '8px',
+                                            cursor: 'pointer',
+                                            transition: 'transform 0.2s'
                                         },
+                                        onMouseEnter: (e)=>e.currentTarget.style.transform = 'translateY(-2px)',
+                                        onMouseLeave: (e)=>e.currentTarget.style.transform = 'translateY(0)',
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$save$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Save$3e$__["Save"], {
                                                 size: 20
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                lineNumber: 118,
+                                                lineNumber: 133,
                                                 columnNumber: 23
                                             }, this),
                                             " Save Changes"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                        lineNumber: 111,
+                                        lineNumber: 125,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                lineNumber: 86,
+                                lineNumber: 100,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                        lineNumber: 69,
+                        lineNumber: 72,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -375,10 +383,7 @@ function AdminProfile() {
                         },
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                style: {
-                                    ...cardStyle,
-                                    padding: '2rem'
-                                },
+                                style: cardStyle,
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                         style: {
@@ -386,22 +391,35 @@ function AdminProfile() {
                                             display: 'flex',
                                             alignItems: 'center',
                                             gap: '10px',
-                                            fontSize: '1.2rem'
+                                            fontSize: '1.1rem',
+                                            fontWeight: '700',
+                                            color: '#1F2937'
                                         },
                                         children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$lock$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Lock$3e$__["Lock"], {
-                                                size: 20,
-                                                color: "#00d2d3"
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                style: {
+                                                    padding: '8px',
+                                                    background: '#ecfdf5',
+                                                    borderRadius: '8px'
+                                                },
+                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$lock$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Lock$3e$__["Lock"], {
+                                                    size: 20,
+                                                    color: "#10b981"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/app/[adminPath]/profile/page.js",
+                                                    lineNumber: 144,
+                                                    columnNumber: 99
+                                                }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                lineNumber: 129,
+                                                lineNumber: 144,
                                                 columnNumber: 23
                                             }, this),
-                                            " Security Settings"
+                                            "Security Settings"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                        lineNumber: 128,
+                                        lineNumber: 143,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -422,11 +440,11 @@ function AdminProfile() {
                                                     }),
                                                 style: {
                                                     ...inputStyle,
-                                                    padding: '0.9rem'
+                                                    padding: '0.9rem 1rem'
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                lineNumber: 133,
+                                                lineNumber: 149,
                                                 columnNumber: 23
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -439,11 +457,11 @@ function AdminProfile() {
                                                     }),
                                                 style: {
                                                     ...inputStyle,
-                                                    padding: '0.9rem'
+                                                    padding: '0.9rem 1rem'
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                lineNumber: 138,
+                                                lineNumber: 154,
                                                 columnNumber: 23
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -456,11 +474,11 @@ function AdminProfile() {
                                                     }),
                                                 style: {
                                                     ...inputStyle,
-                                                    padding: '0.9rem'
+                                                    padding: '0.9rem 1rem'
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                lineNumber: 143,
+                                                lineNumber: 159,
                                                 columnNumber: 23
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -468,36 +486,42 @@ function AdminProfile() {
                                                 style: {
                                                     marginTop: '0.5rem',
                                                     padding: '0.9rem',
-                                                    background: 'rgba(255,255,255,0.05)',
-                                                    border: '1px solid rgba(255,255,255,0.1)',
-                                                    color: '#fff',
+                                                    background: '#fff',
+                                                    border: '1px solid #E5E7EB',
+                                                    color: '#374151',
                                                     borderRadius: '12px',
                                                     cursor: 'pointer',
-                                                    fontWeight: '500'
+                                                    fontWeight: '600',
+                                                    transition: 'all 0.2s'
+                                                },
+                                                onMouseEnter: (e)=>{
+                                                    e.currentTarget.style.background = '#F9FAFB';
+                                                    e.currentTarget.style.borderColor = '#D1D5DB';
+                                                },
+                                                onMouseLeave: (e)=>{
+                                                    e.currentTarget.style.background = '#fff';
+                                                    e.currentTarget.style.borderColor = '#E5E7EB';
                                                 },
                                                 children: "Update Password"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                lineNumber: 148,
+                                                lineNumber: 164,
                                                 columnNumber: 23
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                        lineNumber: 132,
+                                        lineNumber: 148,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                lineNumber: 127,
+                                lineNumber: 142,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                style: {
-                                    ...cardStyle,
-                                    padding: '2rem'
-                                },
+                                style: cardStyle,
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                         style: {
@@ -505,22 +529,35 @@ function AdminProfile() {
                                             display: 'flex',
                                             alignItems: 'center',
                                             gap: '10px',
-                                            fontSize: '1.2rem'
+                                            fontSize: '1.1rem',
+                                            fontWeight: '700',
+                                            color: '#1F2937'
                                         },
                                         children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$shield$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Shield$3e$__["Shield"], {
-                                                size: 20,
-                                                color: "#00d2d3"
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                style: {
+                                                    padding: '8px',
+                                                    background: '#eff6ff',
+                                                    borderRadius: '8px'
+                                                },
+                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$shield$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Shield$3e$__["Shield"], {
+                                                    size: 20,
+                                                    color: "#3b82f6"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/app/[adminPath]/profile/page.js",
+                                                    lineNumber: 179,
+                                                    columnNumber: 99
+                                                }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                lineNumber: 161,
+                                                lineNumber: 179,
                                                 columnNumber: 23
                                             }, this),
-                                            " Manage Access"
+                                            "Manage Access"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                        lineNumber: 160,
+                                        lineNumber: 178,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -536,7 +573,7 @@ function AdminProfile() {
                                                         justifyContent: 'space-between',
                                                         alignItems: 'center',
                                                         paddingBottom: '1rem',
-                                                        borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                                        borderBottom: '1px solid #F3F4F6'
                                                     },
                                                     children: [
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -548,124 +585,128 @@ function AdminProfile() {
                                                             children: [
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                     style: {
-                                                                        width: '32px',
-                                                                        height: '32px',
+                                                                        width: '36px',
+                                                                        height: '36px',
                                                                         borderRadius: '50%',
-                                                                        background: 'rgba(255,255,255,0.1)',
+                                                                        background: '#F3F4F6',
                                                                         display: 'flex',
                                                                         alignItems: 'center',
                                                                         justifyContent: 'center',
-                                                                        fontSize: '0.9rem'
+                                                                        fontSize: '0.9rem',
+                                                                        color: '#4B5563',
+                                                                        fontWeight: '600'
                                                                     },
                                                                     children: member.name.charAt(0)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                                    lineNumber: 168,
+                                                                    lineNumber: 187,
                                                                     columnNumber: 35
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                     children: [
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                             style: {
-                                                                                fontWeight: '500',
-                                                                                fontSize: '0.95rem'
+                                                                                fontWeight: '600',
+                                                                                fontSize: '0.9rem',
+                                                                                color: '#374151'
                                                                             },
                                                                             children: member.name
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                                            lineNumber: 172,
+                                                                            lineNumber: 191,
                                                                             columnNumber: 39
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                             style: {
-                                                                                fontSize: '0.8rem',
-                                                                                color: '#94a3b8'
+                                                                                fontSize: '0.75rem',
+                                                                                color: '#9CA3AF'
                                                                             },
                                                                             children: member.role
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                                            lineNumber: 173,
+                                                                            lineNumber: 192,
                                                                             columnNumber: 39
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                                    lineNumber: 171,
+                                                                    lineNumber: 190,
                                                                     columnNumber: 35
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                            lineNumber: 167,
+                                                            lineNumber: 186,
                                                             columnNumber: 31
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                             style: {
                                                                 fontSize: '0.75rem',
-                                                                background: 'rgba(46, 204, 113, 0.15)',
-                                                                color: '#2ecc71',
+                                                                background: '#ECFDF5',
+                                                                color: '#10B981',
                                                                 padding: '4px 10px',
                                                                 borderRadius: '20px',
-                                                                border: '1px solid rgba(46, 204, 113, 0.2)'
+                                                                border: '1px solid #D1FAE5',
+                                                                fontWeight: '600'
                                                             },
                                                             children: member.status
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                            lineNumber: 176,
+                                                            lineNumber: 195,
                                                             columnNumber: 31
                                                         }, this)
                                                     ]
                                                 }, member.id, true, {
                                                     fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                    lineNumber: 166,
+                                                    lineNumber: 185,
                                                     columnNumber: 27
                                                 }, this)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                 className: "btn-link",
                                                 style: {
-                                                    color: '#00d2d3',
+                                                    color: '#5e81f4',
                                                     alignSelf: 'flex-start',
                                                     fontSize: '0.9rem',
                                                     marginTop: '0.5rem',
                                                     background: 'transparent',
                                                     border: 'none',
                                                     cursor: 'pointer',
-                                                    fontWeight: '500'
+                                                    fontWeight: '600'
                                                 },
                                                 children: "+ Add New Admin"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                                lineNumber: 181,
+                                                lineNumber: 200,
                                                 columnNumber: 23
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                        lineNumber: 164,
+                                        lineNumber: 183,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                                lineNumber: 159,
+                                lineNumber: 177,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                        lineNumber: 124,
+                        lineNumber: 139,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/[adminPath]/profile/page.js",
-                lineNumber: 66,
+                lineNumber: 69,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/[adminPath]/profile/page.js",
-        lineNumber: 60,
+        lineNumber: 63,
         columnNumber: 5
     }, this);
 }

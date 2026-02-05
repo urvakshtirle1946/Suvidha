@@ -63,14 +63,7 @@ body:not(:has(.admin-root)) h6 {
 }
 
 /* Force Light Text for Admin Headers */
-.admin-root h1,
-.admin-root h2,
-.admin-root h3,
-.admin-root h4,
-.admin-root h5,
-.admin-root h6 {
-  color: #f8fafc !important;
-}
+
 
 .container,
 .nav-container {
@@ -152,12 +145,12 @@ body:not(:has(.admin-root)) h6 {
 
 /* Admin specific overrides */
 .admin-root {
-  --bg-dark: #0f172a;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --primary: #00d2d3;
+  --bg-dark: #050505;
+  --text-main: #ffffff;
+  --text-muted: #a1a1aa;
+  --primary: #ccff00;
 
-  background-color: #0f172a;
+  background-color: #050505;
   color: #fff;
 }
 

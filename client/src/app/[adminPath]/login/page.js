@@ -57,8 +57,8 @@ export default function AdminLogin() {
             borderRadius: '24px',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)'
         }}>
-          <div style={{ display: 'inline-flex', padding: '1.2rem', background: 'rgba(0, 210, 211, 0.1)', borderRadius: '50%', marginBottom: '2rem', boxShadow: '0 0 20px rgba(0, 210, 211, 0.2)' }}>
-            <ShieldCheck size={48} color="#00d2d3" />
+          <div style={{ display: 'inline-flex', padding: '1.2rem', background: 'rgba(204, 255, 0, 0.1)', borderRadius: '50%', marginBottom: '2rem', boxShadow: '0 0 20px rgba(204, 255, 0, 0.2)' }}>
+            <ShieldCheck size={48} color="#ccff00" />
           </div>
           <h1 style={{ marginBottom: '0.5rem', color: '#fff', fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.5px' }}>Admin Portal</h1>
           <p style={{ color: '#94a3b8', marginBottom: '2.5rem', fontSize: '1rem' }}>Secure Access Required</p>
@@ -81,7 +81,7 @@ export default function AdminLogin() {
                     fontSize: '1rem',
                     transition: 'border-color 0.2s'
                   }} 
-                  onFocus={(e) => e.target.style.borderColor = '#00d2d3'}
+                  onFocus={(e) => e.target.style.borderColor = '#ccff00'}
                   onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
                 />
                 <input 
@@ -100,7 +100,7 @@ export default function AdminLogin() {
                     fontSize: '1rem',
                     transition: 'border-color 0.2s'
                   }} 
-                  onFocus={(e) => e.target.style.borderColor = '#00d2d3'}
+                  onFocus={(e) => e.target.style.borderColor = '#ccff00'}
                   onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
                 />
             </div>
@@ -108,10 +108,10 @@ export default function AdminLogin() {
             {error && <p style={{ color: '#f87171', marginBottom: '1.5rem', fontSize: '0.9rem', background: 'rgba(239, 68, 68, 0.1)', padding: '0.5rem', borderRadius: '8px' }}>{error}</p>}
             
             <button className="btn" style={{ 
-                width: '100%', padding: '1.2rem', fontSize: '1.1rem', fontWeight: '600',
-                background: 'linear-gradient(135deg, #00d2d3 0%, #2e86de 100%)', 
-                color: '#fff', border: 'none', borderRadius: '12px', 
-                boxShadow: '0 4px 15px rgba(0, 210, 211, 0.3)', cursor: 'pointer',
+                width: '100%', padding: '1.2rem', fontSize: '1.1rem', fontWeight: '700',
+                background: '#ccff00', 
+                color: '#000', border: 'none', borderRadius: '12px', 
+                boxShadow: '0 4px 15px rgba(204, 255, 0, 0.3)', cursor: 'pointer',
                 transition: 'transform 0.2s'
             }}>
                 Login to Dashboard

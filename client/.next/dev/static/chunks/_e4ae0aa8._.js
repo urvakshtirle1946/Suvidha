@@ -324,37 +324,13 @@ function AdminDashboard() {
                                         columnNumber: 21
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                        href: `${basePath}/hospitals`,
-                                        className: "btn",
-                                        style: btnOutlineStyle,
-                                        children: "View Hospitals"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/app/[adminPath]/page.js",
-                                        lineNumber: 123,
-                                        columnNumber: 21
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                         href: `${basePath}/bookings`,
                                         className: "btn",
                                         style: btnOutlineStyle,
                                         children: "View Bookings"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/page.js",
-                                        lineNumber: 124,
-                                        columnNumber: 21
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                        href: `${basePath}/users`,
-                                        className: "btn",
-                                        style: {
-                                            ...btnOutlineStyle,
-                                            color: '#00d2d3',
-                                            borderColor: 'rgba(0, 210, 211, 0.3)'
-                                        },
-                                        children: "User Management"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/app/[adminPath]/page.js",
-                                        lineNumber: 125,
+                                        lineNumber: 123,
                                         columnNumber: 21
                                     }, this)
                                 ]
@@ -384,7 +360,7 @@ function AdminDashboard() {
                                 children: "Top Hospitals (Revenue)"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/[adminPath]/page.js",
-                                lineNumber: 131,
+                                lineNumber: 129,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -398,7 +374,7 @@ function AdminDashboard() {
                                         amount: h.amount.toLocaleString()
                                     }, i, false, {
                                         fileName: "[project]/src/app/[adminPath]/page.js",
-                                        lineNumber: 134,
+                                        lineNumber: 132,
                                         columnNumber: 25
                                     }, this)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     style: {
@@ -408,18 +384,18 @@ function AdminDashboard() {
                                     children: "No data available"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/[adminPath]/page.js",
-                                    lineNumber: 136,
+                                    lineNumber: 134,
                                     columnNumber: 25
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/[adminPath]/page.js",
-                                lineNumber: 132,
+                                lineNumber: 130,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/[adminPath]/page.js",
-                        lineNumber: 130,
+                        lineNumber: 128,
                         columnNumber: 13
                     }, this)
                 ]
@@ -436,7 +412,7 @@ function AdminDashboard() {
                 children: "Recent Bookings"
             }, void 0, false, {
                 fileName: "[project]/src/app/[adminPath]/page.js",
-                lineNumber: 142,
+                lineNumber: 140,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -474,7 +450,7 @@ function AdminDashboard() {
                                                 children: "ID"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/page.js",
-                                                lineNumber: 149,
+                                                lineNumber: 147,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -487,7 +463,7 @@ function AdminDashboard() {
                                                 children: "Patient"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/page.js",
-                                                lineNumber: 150,
+                                                lineNumber: 148,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -500,7 +476,7 @@ function AdminDashboard() {
                                                 children: "Service"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/page.js",
-                                                lineNumber: 151,
+                                                lineNumber: 149,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -513,7 +489,7 @@ function AdminDashboard() {
                                                 children: "Date"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/page.js",
-                                                lineNumber: 152,
+                                                lineNumber: 150,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -526,7 +502,7 @@ function AdminDashboard() {
                                                 children: "Price"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/page.js",
-                                                lineNumber: 153,
+                                                lineNumber: 151,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -539,7 +515,7 @@ function AdminDashboard() {
                                                 children: "Status"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/page.js",
-                                                lineNumber: 154,
+                                                lineNumber: 152,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -552,18 +528,18 @@ function AdminDashboard() {
                                                 children: "Action"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/page.js",
-                                                lineNumber: 155,
+                                                lineNumber: 153,
                                                 columnNumber: 29
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/page.js",
-                                        lineNumber: 148,
+                                        lineNumber: 146,
                                         columnNumber: 25
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/[adminPath]/page.js",
-                                    lineNumber: 147,
+                                    lineNumber: 145,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -585,7 +561,7 @@ function AdminDashboard() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/[adminPath]/page.js",
-                                                    lineNumber: 161,
+                                                    lineNumber: 159,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -596,7 +572,7 @@ function AdminDashboard() {
                                                     children: booking.patient_name
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/page.js",
-                                                    lineNumber: 162,
+                                                    lineNumber: 160,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -606,7 +582,7 @@ function AdminDashboard() {
                                                     children: booking.service_name
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/page.js",
-                                                    lineNumber: 163,
+                                                    lineNumber: 161,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -617,7 +593,7 @@ function AdminDashboard() {
                                                     children: new Date(booking.booking_date).toLocaleDateString()
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/page.js",
-                                                    lineNumber: 164,
+                                                    lineNumber: 162,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -632,7 +608,7 @@ function AdminDashboard() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/[adminPath]/page.js",
-                                                    lineNumber: 165,
+                                                    lineNumber: 163,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -651,12 +627,12 @@ function AdminDashboard() {
                                                         children: booking.status
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/[adminPath]/page.js",
-                                                        lineNumber: 167,
+                                                        lineNumber: 165,
                                                         columnNumber: 37
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/page.js",
-                                                    lineNumber: 166,
+                                                    lineNumber: 164,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -674,29 +650,29 @@ function AdminDashboard() {
                                                         children: "View Details"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/[adminPath]/page.js",
-                                                        lineNumber: 182,
+                                                        lineNumber: 180,
                                                         columnNumber: 37
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/page.js",
-                                                    lineNumber: 181,
+                                                    lineNumber: 179,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, booking.id, true, {
                                             fileName: "[project]/src/app/[adminPath]/page.js",
-                                            lineNumber: 160,
+                                            lineNumber: 158,
                                             columnNumber: 29
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/[adminPath]/page.js",
-                                    lineNumber: 158,
+                                    lineNumber: 156,
                                     columnNumber: 21
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/[adminPath]/page.js",
-                            lineNumber: 146,
+                            lineNumber: 144,
                             columnNumber: 17
                         }, this),
                         bookings.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -715,30 +691,30 @@ function AdminDashboard() {
                                         size: 48
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/page.js",
-                                        lineNumber: 190,
+                                        lineNumber: 188,
                                         columnNumber: 77
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/[adminPath]/page.js",
-                                    lineNumber: 190,
+                                    lineNumber: 188,
                                     columnNumber: 25
                                 }, this),
                                 "No bookings found."
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/[adminPath]/page.js",
-                            lineNumber: 189,
+                            lineNumber: 187,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/[adminPath]/page.js",
-                    lineNumber: 145,
+                    lineNumber: 143,
                     columnNumber: 13
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/[adminPath]/page.js",
-                lineNumber: 144,
+                lineNumber: 142,
                 columnNumber: 9
             }, this)
         ]
@@ -777,7 +753,7 @@ function StatCard({ title, value, icon, cardStyle }) {
                 children: icon
             }, void 0, false, {
                 fileName: "[project]/src/app/[adminPath]/page.js",
-                lineNumber: 203,
+                lineNumber: 201,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -791,7 +767,7 @@ function StatCard({ title, value, icon, cardStyle }) {
                         children: title
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/page.js",
-                        lineNumber: 207,
+                        lineNumber: 205,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -803,19 +779,19 @@ function StatCard({ title, value, icon, cardStyle }) {
                         children: value
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/page.js",
-                        lineNumber: 208,
+                        lineNumber: 206,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/[adminPath]/page.js",
-                lineNumber: 206,
+                lineNumber: 204,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/[adminPath]/page.js",
-        lineNumber: 202,
+        lineNumber: 200,
         columnNumber: 9
     }, this);
 }
@@ -847,7 +823,7 @@ function HospitalRow({ name, amount }) {
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/page.js",
-                        lineNumber: 218,
+                        lineNumber: 216,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -857,13 +833,13 @@ function HospitalRow({ name, amount }) {
                         children: name
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/page.js",
-                        lineNumber: 219,
+                        lineNumber: 217,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/[adminPath]/page.js",
-                lineNumber: 217,
+                lineNumber: 215,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -877,13 +853,13 @@ function HospitalRow({ name, amount }) {
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/[adminPath]/page.js",
-                lineNumber: 221,
+                lineNumber: 219,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/[adminPath]/page.js",
-        lineNumber: 216,
+        lineNumber: 214,
         columnNumber: 9
     }, this);
 }

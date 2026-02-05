@@ -13,56 +13,57 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$shield$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Shield$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/shield.js [app-ssr] (ecmascript) <export default as Shield>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$shield$2d$off$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ShieldOff$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/shield-off.js [app-ssr] (ecmascript) <export default as ShieldOff>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Eye$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/eye.js [app-ssr] (ecmascript) <export default as Eye>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$context$2f$ToastContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/context/ToastContext.js [app-ssr] (ecmascript)");
 'use client';
 ;
 ;
 ;
+;
 function UserManagement() {
-    const [users, setUsers] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([
-        {
-            id: 1,
-            name: 'Rahul Sharma',
-            phone: '9876543210',
-            location: 'Andheri West, Mumbai',
-            bookings: 5,
-            status: 'Active',
-            joined: '2023-01-15'
-        },
-        {
-            id: 2,
-            name: 'Priya Patel',
-            phone: '9988776655',
-            location: 'Bandra, Mumbai',
-            bookings: 12,
-            status: 'Active',
-            joined: '2023-02-20'
-        },
-        {
-            id: 3,
-            name: 'Amit Kumar',
-            phone: '9123456789',
-            location: 'Dadar, Mumbai',
-            bookings: 2,
-            status: 'Blocked',
-            joined: '2023-03-10'
-        }
-    ]);
-    // Note: Actual user fetching would require a new API endpoint like /api/users
+    const [users, setUsers] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
     const [searchTerm, setSearchTerm] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
+    const { addToast } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$context$2f$ToastContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useToast"])();
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        fetchUsers();
+    }, []);
+    const fetchUsers = async ()=>{
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/users`);
+            if (res.ok) {
+                const data = await res.json();
+                const mappedUsers = data.map((u)=>({
+                        id: u.id,
+                        name: u.name || 'User',
+                        phone: u.phone,
+                        location: u.location || 'Unknown',
+                        bookings: u.booking_count || 0,
+                        status: 'Active',
+                        joined: u.created_at
+                    }));
+                setUsers(mappedUsers);
+            }
+        } catch (err) {
+            console.error(err);
+            addToast('Error fetching users', 'error');
+        } finally{
+            setLoading(false);
+        }
+    };
     const toggleBlock = (id)=>{
         setUsers((prev)=>prev.map((u)=>u.id === id ? {
                     ...u,
                     status: u.status === 'Active' ? 'Blocked' : 'Active'
                 } : u));
+        addToast('User status updated', 'success');
     };
     const filteredUsers = users.filter((u)=>u.name.toLowerCase().includes(searchTerm.toLowerCase()) || u.phone.includes(searchTerm));
-    // Premium Dark Styles
+    // Light & Clean Styles
     const cardStyle = {
-        background: 'rgba(30, 41, 59, 0.4)',
-        backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(255,255,255,0.05)',
-        borderRadius: '16px',
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
+        borderRadius: '20px',
+        boxShadow: '0 5px 20px rgba(0, 0, 0, 0.05)'
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         children: [
@@ -75,31 +76,29 @@ function UserManagement() {
                         style: {
                             fontSize: '2rem',
                             fontWeight: '800',
-                            background: 'linear-gradient(to right, #fff, #94a3b8)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent'
+                            color: 'var(--text-primary)'
                         },
                         children: "User Management"
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/users/page.js",
-                        lineNumber: 36,
+                        lineNumber: 62,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         style: {
-                            color: '#94a3b8',
+                            color: 'var(--text-secondary)',
                             marginTop: '0.5rem'
                         },
                         children: "Overview of registered patient accounts."
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/users/page.js",
-                        lineNumber: 37,
+                        lineNumber: 63,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/[adminPath]/users/page.js",
-                lineNumber: 35,
+                lineNumber: 61,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -115,11 +114,11 @@ function UserManagement() {
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$search$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Search$3e$__["Search"], {
                         size: 20,
                         style: {
-                            color: '#64748b'
+                            color: 'var(--text-secondary)'
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/users/page.js",
-                        lineNumber: 42,
+                        lineNumber: 68,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -130,20 +129,20 @@ function UserManagement() {
                         style: {
                             background: 'transparent',
                             border: 'none',
-                            color: '#fff',
+                            color: 'var(--text-primary)',
                             flex: 1,
                             outline: 'none',
                             fontSize: '1rem'
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/users/page.js",
-                        lineNumber: 43,
+                        lineNumber: 69,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/[adminPath]/users/page.js",
-                lineNumber: 41,
+                lineNumber: 67,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -167,120 +166,127 @@ function UserManagement() {
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("thead", {
                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
                                         style: {
-                                            borderBottom: '1px solid rgba(255,255,255,0.05)',
-                                            background: 'rgba(255,255,255,0.02)'
+                                            borderBottom: '1px solid var(--border)',
+                                            background: 'var(--bg-primary)'
                                         },
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                                 style: {
                                                     padding: '1.2rem 1.5rem',
-                                                    color: '#94a3b8',
-                                                    fontWeight: '500',
-                                                    fontSize: '0.9rem'
+                                                    color: 'var(--text-secondary)',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.8rem',
+                                                    textTransform: 'uppercase'
                                                 },
                                                 children: "User"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                lineNumber: 58,
+                                                lineNumber: 84,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                                 style: {
                                                     padding: '1.2rem 1.5rem',
-                                                    color: '#94a3b8',
-                                                    fontWeight: '500',
-                                                    fontSize: '0.9rem'
+                                                    color: 'var(--text-secondary)',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.8rem',
+                                                    textTransform: 'uppercase'
                                                 },
                                                 children: "Phone"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                lineNumber: 59,
+                                                lineNumber: 85,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                                 style: {
                                                     padding: '1.2rem 1.5rem',
-                                                    color: '#94a3b8',
-                                                    fontWeight: '500',
-                                                    fontSize: '0.9rem'
+                                                    color: 'var(--text-secondary)',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.8rem',
+                                                    textTransform: 'uppercase'
                                                 },
                                                 children: "Location"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                lineNumber: 60,
+                                                lineNumber: 86,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                                 style: {
                                                     padding: '1.2rem 1.5rem',
-                                                    color: '#94a3b8',
-                                                    fontWeight: '500',
-                                                    fontSize: '0.9rem',
+                                                    color: 'var(--text-secondary)',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.8rem',
+                                                    textTransform: 'uppercase',
                                                     textAlign: 'center'
                                                 },
                                                 children: "Total Bookings"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                lineNumber: 61,
+                                                lineNumber: 87,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                                 style: {
                                                     padding: '1.2rem 1.5rem',
-                                                    color: '#94a3b8',
-                                                    fontWeight: '500',
-                                                    fontSize: '0.9rem'
+                                                    color: 'var(--text-secondary)',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.8rem',
+                                                    textTransform: 'uppercase'
                                                 },
                                                 children: "Joined"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                lineNumber: 62,
+                                                lineNumber: 88,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                                 style: {
                                                     padding: '1.2rem 1.5rem',
-                                                    color: '#94a3b8',
-                                                    fontWeight: '500',
-                                                    fontSize: '0.9rem'
+                                                    color: 'var(--text-secondary)',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.8rem',
+                                                    textTransform: 'uppercase'
                                                 },
                                                 children: "Status"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                lineNumber: 63,
+                                                lineNumber: 89,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                                 style: {
                                                     padding: '1.2rem 1.5rem',
-                                                    color: '#94a3b8',
-                                                    fontWeight: '500',
-                                                    fontSize: '0.9rem'
+                                                    color: 'var(--text-secondary)',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.8rem',
+                                                    textTransform: 'uppercase'
                                                 },
                                                 children: "Actions"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                lineNumber: 64,
+                                                lineNumber: 90,
                                                 columnNumber: 29
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                        lineNumber: 57,
+                                        lineNumber: 83,
                                         columnNumber: 25
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                    lineNumber: 56,
+                                    lineNumber: 82,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
                                     children: filteredUsers.map((user)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
                                             style: {
-                                                borderBottom: '1px solid rgba(255,255,255,0.05)',
+                                                borderBottom: '1px solid var(--border)',
                                                 transition: 'background 0.2s'
                                             },
-                                            className: "hover:bg-white/5",
+                                            className: "hover:bg-gray-50 dark:hover:bg-gray-900",
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                                     style: {
@@ -302,63 +308,63 @@ function UserManagement() {
                                                                     display: 'flex',
                                                                     alignItems: 'center',
                                                                     justifyContent: 'center',
-                                                                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                                                                    boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
                                                                 },
                                                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$user$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__User$3e$__["User"], {
                                                                     size: 18,
                                                                     color: "#fff"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                                    lineNumber: 78,
+                                                                    lineNumber: 104,
                                                                     columnNumber: 45
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                                lineNumber: 72,
+                                                                lineNumber: 98,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 style: {
                                                                     fontWeight: '600',
-                                                                    color: '#f8fafc'
+                                                                    color: 'var(--text-primary)'
                                                                 },
                                                                 children: user.name
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                                lineNumber: 80,
+                                                                lineNumber: 106,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                        lineNumber: 71,
+                                                        lineNumber: 97,
                                                         columnNumber: 37
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                    lineNumber: 70,
+                                                    lineNumber: 96,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                                     style: {
                                                         padding: '1.2rem 1.5rem',
-                                                        color: '#cbd5e1'
+                                                        color: 'var(--text-secondary)'
                                                     },
                                                     children: user.phone
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                    lineNumber: 83,
+                                                    lineNumber: 109,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                                     style: {
                                                         padding: '1.2rem 1.5rem',
-                                                        color: '#94a3b8'
+                                                        color: 'var(--text-secondary)'
                                                     },
                                                     children: user.location
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                    lineNumber: 84,
+                                                    lineNumber: 110,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -366,24 +372,24 @@ function UserManagement() {
                                                         padding: '1.2rem 1.5rem',
                                                         textAlign: 'center',
                                                         fontWeight: 'bold',
-                                                        color: '#fff'
+                                                        color: 'var(--text-primary)'
                                                     },
                                                     children: user.bookings
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                    lineNumber: 85,
+                                                    lineNumber: 111,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                                     style: {
                                                         padding: '1.2rem 1.5rem',
                                                         fontSize: '0.9rem',
-                                                        color: '#94a3b8'
+                                                        color: 'var(--text-secondary)'
                                                     },
                                                     children: new Date(user.joined).toLocaleDateString()
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                    lineNumber: 86,
+                                                    lineNumber: 112,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -397,17 +403,18 @@ function UserManagement() {
                                                             fontSize: '0.8rem',
                                                             background: user.status === 'Active' ? 'rgba(46, 204, 113, 0.15)' : 'rgba(231, 76, 60, 0.15)',
                                                             color: user.status === 'Active' ? '#2ecc71' : '#f87171',
-                                                            border: user.status === 'Active' ? '1px solid rgba(46, 204, 113, 0.2)' : '1px solid rgba(231, 76, 60, 0.2)'
+                                                            border: user.status === 'Active' ? '1px solid rgba(46, 204, 113, 0.2)' : '1px solid rgba(231, 76, 60, 0.2)',
+                                                            fontWeight: '500'
                                                         },
                                                         children: user.status
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                        lineNumber: 88,
+                                                        lineNumber: 114,
                                                         columnNumber: 37
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                    lineNumber: 87,
+                                                    lineNumber: 113,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -423,10 +430,10 @@ function UserManagement() {
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                                 title: "View History",
                                                                 style: {
-                                                                    background: 'rgba(255,255,255,0.05)',
-                                                                    border: '1px solid rgba(255,255,255,0.1)',
+                                                                    background: 'var(--bg-primary)',
+                                                                    border: '1px solid var(--border)',
                                                                     cursor: 'pointer',
-                                                                    color: '#cbd5e1',
+                                                                    color: 'var(--text-secondary)',
                                                                     padding: '8px',
                                                                     borderRadius: '8px'
                                                                 },
@@ -434,12 +441,12 @@ function UserManagement() {
                                                                     size: 18
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                                    lineNumber: 101,
-                                                                    columnNumber: 236
+                                                                    lineNumber: 128,
+                                                                    columnNumber: 237
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                                lineNumber: 101,
+                                                                lineNumber: 128,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -457,53 +464,53 @@ function UserManagement() {
                                                                     size: 18
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                                    lineNumber: 114,
+                                                                    lineNumber: 141,
                                                                     columnNumber: 73
                                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$shield$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Shield$3e$__["Shield"], {
                                                                     size: 18
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                                    lineNumber: 114,
+                                                                    lineNumber: 141,
                                                                     columnNumber: 99
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                                lineNumber: 102,
+                                                                lineNumber: 129,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                        lineNumber: 100,
+                                                        lineNumber: 127,
                                                         columnNumber: 37
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                                    lineNumber: 99,
+                                                    lineNumber: 126,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, user.id, true, {
                                             fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                            lineNumber: 69,
+                                            lineNumber: 95,
                                             columnNumber: 29
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                    lineNumber: 67,
+                                    lineNumber: 93,
                                     columnNumber: 21
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/[adminPath]/users/page.js",
-                            lineNumber: 55,
+                            lineNumber: 81,
                             columnNumber: 17
                         }, this),
                         filteredUsers.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             style: {
                                 padding: '4rem',
                                 textAlign: 'center',
-                                color: '#64748b'
+                                color: 'var(--text-secondary)'
                             },
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -515,36 +522,36 @@ function UserManagement() {
                                         size: 40
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                        lineNumber: 124,
+                                        lineNumber: 151,
                                         columnNumber: 78
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/[adminPath]/users/page.js",
-                                    lineNumber: 124,
+                                    lineNumber: 151,
                                     columnNumber: 26
                                 }, this),
                                 "No users found matching your search."
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/[adminPath]/users/page.js",
-                            lineNumber: 123,
+                            lineNumber: 150,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/[adminPath]/users/page.js",
-                    lineNumber: 54,
+                    lineNumber: 80,
                     columnNumber: 13
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/[adminPath]/users/page.js",
-                lineNumber: 53,
+                lineNumber: 79,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/[adminPath]/users/page.js",
-        lineNumber: 34,
+        lineNumber: 60,
         columnNumber: 5
     }, this);
 }

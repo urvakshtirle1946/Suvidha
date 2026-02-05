@@ -1,11 +1,5 @@
 {
   "/[adminPath]/bookings/page": "app/[adminPath]/bookings/page.js",
   "/[adminPath]/hospitals/page": "app/[adminPath]/hospitals/page.js",
-  "/[adminPath]/login/page": "app/[adminPath]/login/page.js",
-  "/[adminPath]/offers/page": "app/[adminPath]/offers/page.js",
-  "/[adminPath]/page": "app/[adminPath]/page.js",
-  "/[adminPath]/services/page": "app/[adminPath]/services/page.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/hospitals/page": "app/hospitals/page.js",
-  "/page": "app/page.js"
+  "/[adminPath]/page": "app/[adminPath]/page.js"
 }

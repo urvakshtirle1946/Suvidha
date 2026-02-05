@@ -13,7 +13,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$star$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Star$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/star.js [app-ssr] (ecmascript) <export default as Star>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$plus$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Plus$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/plus.js [app-ssr] (ecmascript) <export default as Plus>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$x$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__XCircle$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/circle-x.js [app-ssr] (ecmascript) <export default as XCircle>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$context$2f$ToastContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/context/ToastContext.js [app-ssr] (ecmascript)");
 'use client';
+;
 ;
 ;
 ;
@@ -30,10 +32,11 @@ function HospitalManagement() {
         rating: '4.5',
         discount_percentage: '',
         discount_description: '',
-        image_url: 'linear-gradient(45deg, #1e293b, #0f172a)',
+        image_url: '',
         phone_number: '',
         map_url: ''
     };
+    const DEFAULT_HOSPITAL_IMAGE = 'https://images.unsplash.com/photo-1587351021759-3e566b9af955?auto=format&fit=crop&q=80&w=800';
     const [formData, setFormData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(initialForm);
     const [services, setServices] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([
         {
@@ -61,6 +64,71 @@ function HospitalManagement() {
         newServices.splice(index, 1);
         setServices(newServices);
     };
+    // Standard Services List
+    const STANDARD_SERVICES = [
+        {
+            name: 'MRI Scan',
+            category: 'Radiology',
+            price: '4500'
+        },
+        {
+            name: 'CT Scan',
+            category: 'Radiology',
+            price: '3500'
+        },
+        {
+            name: 'X-Ray',
+            category: 'Radiology',
+            price: '500'
+        },
+        {
+            name: 'Ultrasound',
+            category: 'Radiology',
+            price: '1200'
+        },
+        {
+            name: 'CBC Test',
+            category: 'Pathology',
+            price: '350'
+        },
+        {
+            name: 'Lipid Profile',
+            category: 'Pathology',
+            price: '800'
+        },
+        {
+            name: 'Liver Function Test',
+            category: 'Pathology',
+            price: '900'
+        },
+        {
+            name: 'Thyroid Profile',
+            category: 'Pathology',
+            price: '600'
+        },
+        {
+            name: 'Consultation',
+            category: 'Consultation',
+            price: '500'
+        }
+    ];
+    const autofillServices = ()=>{
+        // Append standard services to existing ones (removing empty placeholder if exists)
+        let currentServices = [
+            ...services
+        ];
+        if (currentServices.length === 1 && currentServices[0].name === '') {
+            currentServices = [];
+        }
+        const newServices = [
+            ...currentServices,
+            ...STANDARD_SERVICES.map((s)=>({
+                    ...s,
+                    discount_price: '' // Discount left empty for user to fill if needed
+                }))
+        ];
+        setServices(newServices);
+    };
     const updateService = (index, field, value)=>{
         const newServices = [
             ...services
@@ -73,7 +141,7 @@ function HospitalManagement() {
     }, []);
     const fetchHospitals = async ()=>{
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/hospitals`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`);
             if (res.ok) {
                 const data = await res.json();
                 setHospitals(data);
@@ -101,7 +169,12 @@ function HospitalManagement() {
         setEditMode(false);
         setEditId(null);
     };
-    const handleEdit = (hospital)=>{
+    const handleEdit = async (hospital)=>{
+        // Visual feedback immediately
+        setShowForm(true);
+        setEditMode(true);
+        setEditId(hospital.id);
+        // Pre-fill basic data
         setFormData({
             name: hospital.name,
             location: hospital.location,
@@ -112,14 +185,32 @@ function HospitalManagement() {
             phone_number: hospital.phone_number || '',
             map_url: hospital.map_url || ''
         });
-        setEditId(hospital.id);
-        setEditMode(true);
-        setShowForm(true);
+        // Fetch Services
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${hospital.id}`);
+            if (res.ok) {
+                const fullData = await res.json();
+                if (fullData.services && fullData.services.length > 0) {
+                    setServices(fullData.services);
+                } else {
+                    setServices([
+                        {
+                            name: '',
+                            category: '',
+                            price: '',
+                            discount_price: ''
+                        }
+                    ]);
+                }
+            }
+        } catch (e) {
+            console.error("Failed to fetch hospital details", e);
+        }
     };
     const handleDelete = async (id)=>{
         if (!confirm('Are you sure you want to delete this hospital?')) return;
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/hospitals/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${id}`, {
                 method: 'DELETE'
             });
             if (res.ok) {
@@ -131,10 +222,11 @@ function HospitalManagement() {
             console.error(err);
         }
     };
+    const { addToast } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$context$2f$ToastContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useToast"])();
     const handleSubmit = async (e)=>{
         e.preventDefault();
         try {
-            const url = editMode ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/hospitals/${editId}` : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/hospitals`;
+            const url = editMode ? `${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${editId}` : `${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`;
             const method = editMode ? 'PUT' : 'POST';
             const data = new FormData();
             data.append('name', formData.name);
@@ -144,44 +236,43 @@ function HospitalManagement() {
             data.append('discount_description', formData.discount_description);
             data.append('phone_number', formData.phone_number);
             data.append('map_url', formData.map_url);
+            // Append Services as JSON string
+            data.append('services', JSON.stringify(services));
             if (formData.image_file) {
                 data.append('image', formData.image_file);
             } else if (formData.image_url) {
                 data.append('image_url', formData.image_url); // Keep existing URL if no new file
             }
-            // Append Services as JSON string
-            data.append('services', JSON.stringify(services));
             const res = await fetch(url, {
                 method: method,
                 // headers: { 'Content-Type': 'multipart/form-data' }, // Do NOT set manually
                 body: data
             });
             if (res.ok) {
-                alert(editMode ? 'Hospital Updated Successfully!' : 'Hospital Added Successfully!');
+                addToast(editMode ? 'Hospital Updated Successfully!' : 'Hospital Added Successfully!', 'success');
                 setShowForm(false);
                 resetForm();
                 fetchHospitals(); // Refresh list
             } else {
-                alert('Failed to save hospital');
+                addToast('Failed to save hospital', 'error');
             }
         } catch (err) {
             console.error(err);
         }
     };
-    // Premium Dark Styles
+    // Light & Clean Styles matching Dashboard
     const cardStyle = {
-        background: 'rgba(30, 41, 59, 0.4)',
-        backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(255,255,255,0.05)',
-        borderRadius: '16px',
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
+        borderRadius: '20px',
+        boxShadow: '0 5px 20px rgba(0, 0, 0, 0.05)'
     };
     const inputStyle = {
         width: '100%',
         padding: '1rem',
-        background: 'rgba(15, 23, 42, 0.6)',
-        border: '1px solid rgba(255,255,255,0.1)',
-        color: '#fff',
+        background: 'var(--bg-primary)',
+        border: '1px solid var(--border)',
+        color: 'var(--text-primary)',
         borderRadius: '12px',
         outline: 'none',
         transition: 'border-color 0.2s'
@@ -201,14 +292,13 @@ function HospitalManagement() {
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                             style: {
                                 fontSize: '2rem',
-                                background: 'linear-gradient(to right, #fff, #94a3b8)',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent'
+                                fontWeight: '800',
+                                color: 'var(--text-primary)'
                             },
                             children: editMode ? 'Edit Hospital' : 'Add New Hospital'
                         }, void 0, false, {
                             fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                            lineNumber: 167,
+                            lineNumber: 218,
                             columnNumber: 19
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -219,19 +309,19 @@ function HospitalManagement() {
                             },
                             style: {
                                 background: 'transparent',
-                                border: '1px solid rgba(255,255,255,0.1)',
-                                color: '#cbd5e1'
+                                border: '1px solid var(--border)',
+                                color: 'var(--text-secondary)'
                             },
                             children: "Cancel"
                         }, void 0, false, {
                             fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                            lineNumber: 170,
+                            lineNumber: 221,
                             columnNumber: 19
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                    lineNumber: 166,
+                    lineNumber: 217,
                     columnNumber: 15
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -255,13 +345,14 @@ function HospitalManagement() {
                                         style: {
                                             display: 'block',
                                             marginBottom: '0.8rem',
-                                            color: '#94a3b8',
-                                            fontSize: '0.9rem'
+                                            color: 'var(--text-secondary)',
+                                            fontSize: '0.9rem',
+                                            fontWeight: '500'
                                         },
                                         children: "Hospital Name"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 177,
+                                        lineNumber: 228,
                                         columnNumber: 27
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -276,13 +367,13 @@ function HospitalManagement() {
                                         placeholder: "e.g. Apollo International"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 178,
+                                        lineNumber: 229,
                                         columnNumber: 27
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                lineNumber: 176,
+                                lineNumber: 227,
                                 columnNumber: 23
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -291,13 +382,14 @@ function HospitalManagement() {
                                         style: {
                                             display: 'block',
                                             marginBottom: '0.8rem',
-                                            color: '#94a3b8',
-                                            fontSize: '0.9rem'
+                                            color: 'var(--text-secondary)',
+                                            fontSize: '0.9rem',
+                                            fontWeight: '500'
                                         },
                                         children: "Location (City, Area)"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 187,
+                                        lineNumber: 238,
                                         columnNumber: 27
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -311,11 +403,11 @@ function HospitalManagement() {
                                                     position: 'absolute',
                                                     left: '16px',
                                                     top: '16px',
-                                                    color: '#64748b'
+                                                    color: 'var(--text-secondary)'
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                lineNumber: 189,
+                                                lineNumber: 240,
                                                 columnNumber: 30
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -333,19 +425,19 @@ function HospitalManagement() {
                                                 placeholder: "e.g. Bandra West, Mumbai"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                lineNumber: 190,
+                                                lineNumber: 241,
                                                 columnNumber: 30
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 188,
+                                        lineNumber: 239,
                                         columnNumber: 27
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                lineNumber: 186,
+                                lineNumber: 237,
                                 columnNumber: 23
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -354,13 +446,14 @@ function HospitalManagement() {
                                         style: {
                                             display: 'block',
                                             marginBottom: '0.8rem',
-                                            color: '#94a3b8',
-                                            fontSize: '0.9rem'
+                                            color: 'var(--text-secondary)',
+                                            fontSize: '0.9rem',
+                                            fontWeight: '500'
                                         },
                                         children: "Google Maps Link"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 200,
+                                        lineNumber: 251,
                                         columnNumber: 27
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -374,13 +467,13 @@ function HospitalManagement() {
                                         placeholder: "Paste Google Maps URL here"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 201,
+                                        lineNumber: 252,
                                         columnNumber: 27
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                lineNumber: 199,
+                                lineNumber: 250,
                                 columnNumber: 23
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -389,13 +482,14 @@ function HospitalManagement() {
                                         style: {
                                             display: 'block',
                                             marginBottom: '0.8rem',
-                                            color: '#94a3b8',
-                                            fontSize: '0.9rem'
+                                            color: 'var(--text-secondary)',
+                                            fontSize: '0.9rem',
+                                            fontWeight: '500'
                                         },
                                         children: "Hospital Image (Upload)"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 210,
+                                        lineNumber: 261,
                                         columnNumber: 27
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -408,19 +502,19 @@ function HospitalManagement() {
                                         style: inputStyle
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 211,
+                                        lineNumber: 262,
                                         columnNumber: 27
                                     }, this),
                                     formData.image_url && !formData.image_file && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         style: {
                                             marginTop: '5px',
                                             fontSize: '0.8rem',
-                                            color: '#00d2d3'
+                                            color: 'var(--accent)'
                                         },
                                         children: [
                                             "Current Image: ",
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
-                                                href: formData.image_url.startsWith('/') ? (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000') + formData.image_url : formData.image_url,
+                                                href: formData.image_url.startsWith('/') ? (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + formData.image_url : formData.image_url,
                                                 target: "_blank",
                                                 rel: "noreferrer",
                                                 style: {
@@ -429,19 +523,19 @@ function HospitalManagement() {
                                                 children: "View"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                lineNumber: 219,
+                                                lineNumber: 270,
                                                 columnNumber: 50
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 218,
+                                        lineNumber: 269,
                                         columnNumber: 31
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                lineNumber: 209,
+                                lineNumber: 260,
                                 columnNumber: 23
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -454,13 +548,13 @@ function HospitalManagement() {
                                             style: {
                                                 display: 'block',
                                                 marginBottom: '0.8rem',
-                                                color: '#94a3b8',
+                                                color: 'var(--text-secondary)',
                                                 fontSize: '0.9rem'
                                             },
                                             children: "Rating"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                            lineNumber: 226,
+                                            lineNumber: 277,
                                             columnNumber: 31
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -478,7 +572,7 @@ function HospitalManagement() {
                                                     }
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                    lineNumber: 228,
+                                                    lineNumber: 279,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -496,24 +590,24 @@ function HospitalManagement() {
                                                     }
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                    lineNumber: 229,
+                                                    lineNumber: 280,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                            lineNumber: 227,
+                                            lineNumber: 278,
                                             columnNumber: 31
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                    lineNumber: 225,
+                                    lineNumber: 276,
                                     columnNumber: 27
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                lineNumber: 224,
+                                lineNumber: 275,
                                 columnNumber: 23
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -522,13 +616,14 @@ function HospitalManagement() {
                                         style: {
                                             display: 'block',
                                             marginBottom: '0.8rem',
-                                            color: '#94a3b8',
-                                            fontSize: '0.9rem'
+                                            color: 'var(--text-secondary)',
+                                            fontSize: '0.9rem',
+                                            fontWeight: '500'
                                         },
                                         children: "Offer Headline"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 239,
+                                        lineNumber: 290,
                                         columnNumber: 27
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -542,13 +637,13 @@ function HospitalManagement() {
                                         style: inputStyle
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 240,
+                                        lineNumber: 291,
                                         columnNumber: 27
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                lineNumber: 238,
+                                lineNumber: 289,
                                 columnNumber: 23
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -557,13 +652,14 @@ function HospitalManagement() {
                                         style: {
                                             display: 'block',
                                             marginBottom: '0.8rem',
-                                            color: '#94a3b8',
-                                            fontSize: '0.9rem'
+                                            color: 'var(--text-secondary)',
+                                            fontSize: '0.9rem',
+                                            fontWeight: '500'
                                         },
                                         children: "WhatsApp Number (for Notifications)"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 248,
+                                        lineNumber: 299,
                                         columnNumber: 27
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -577,20 +673,20 @@ function HospitalManagement() {
                                         style: inputStyle
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 249,
+                                        lineNumber: 300,
                                         columnNumber: 27
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                lineNumber: 247,
+                                lineNumber: 298,
                                 columnNumber: 23
                             }, this),
-                            !editMode && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
                                     marginTop: '1.5rem',
                                     paddingTop: '1.5rem',
-                                    borderTop: '1px solid rgba(255,255,255,0.1)'
+                                    borderTop: '1px solid var(--border)'
                                 },
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -604,36 +700,69 @@ function HospitalManagement() {
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                                 style: {
                                                     fontSize: '1.1rem',
-                                                    color: '#fff'
+                                                    color: 'var(--text-primary)',
+                                                    fontWeight: 'bold'
                                                 },
                                                 children: "Add Services"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                lineNumber: 260,
+                                                lineNumber: 310,
                                                 columnNumber: 31
                                             }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                type: "button",
-                                                onClick: addServiceRow,
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 style: {
-                                                    background: 'rgba(0, 210, 211, 0.1)',
-                                                    color: '#00d2d3',
-                                                    border: 'none',
-                                                    padding: '6px 12px',
-                                                    borderRadius: '6px',
-                                                    fontSize: '0.85rem',
-                                                    cursor: 'pointer'
+                                                    display: 'flex',
+                                                    gap: '10px'
                                                 },
-                                                children: "+ Add Row"
-                                            }, void 0, false, {
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                        type: "button",
+                                                        onClick: autofillServices,
+                                                        style: {
+                                                            background: 'rgba(56, 189, 248, 0.15)',
+                                                            color: '#0284c7',
+                                                            border: 'none',
+                                                            padding: '6px 12px',
+                                                            borderRadius: '6px',
+                                                            fontSize: '0.85rem',
+                                                            cursor: 'pointer',
+                                                            fontWeight: '500'
+                                                        },
+                                                        children: "Autofill Standard"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
+                                                        lineNumber: 312,
+                                                        columnNumber: 33
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                        type: "button",
+                                                        onClick: addServiceRow,
+                                                        style: {
+                                                            background: 'rgba(16, 185, 129, 0.15)',
+                                                            color: '#059669',
+                                                            border: 'none',
+                                                            padding: '6px 12px',
+                                                            borderRadius: '6px',
+                                                            fontSize: '0.85rem',
+                                                            cursor: 'pointer',
+                                                            fontWeight: '500'
+                                                        },
+                                                        children: "+ Add Row"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
+                                                        lineNumber: 313,
+                                                        columnNumber: 33
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
                                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                lineNumber: 261,
+                                                lineNumber: 311,
                                                 columnNumber: 31
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 259,
+                                        lineNumber: 309,
                                         columnNumber: 27
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -648,7 +777,8 @@ function HospitalManagement() {
                                                     gridTemplateColumns: '2fr 1fr 1fr 1fr 30px',
                                                     gap: '10px',
                                                     alignItems: 'center',
-                                                    background: 'rgba(255,255,255,0.02)',
+                                                    background: 'var(--bg-primary)',
+                                                    border: '1px solid var(--border)',
                                                     padding: '10px',
                                                     borderRadius: '8px'
                                                 },
@@ -666,7 +796,7 @@ function HospitalManagement() {
                                                         required: true
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                        lineNumber: 267,
+                                                        lineNumber: 320,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -682,7 +812,7 @@ function HospitalManagement() {
                                                         list: "categories"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                        lineNumber: 274,
+                                                        lineNumber: 327,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -698,7 +828,7 @@ function HospitalManagement() {
                                                         required: true
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                        lineNumber: 281,
+                                                        lineNumber: 334,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -713,7 +843,7 @@ function HospitalManagement() {
                                                         }
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                        lineNumber: 288,
+                                                        lineNumber: 341,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$x$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__XCircle$3e$__["XCircle"], {
@@ -725,18 +855,18 @@ function HospitalManagement() {
                                                         onClick: ()=>removeServiceRow(index)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                        lineNumber: 294,
+                                                        lineNumber: 347,
                                                         columnNumber: 37
                                                     }, this)
                                                 ]
                                             }, index, true, {
                                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                lineNumber: 266,
+                                                lineNumber: 319,
                                                 columnNumber: 33
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 264,
+                                        lineNumber: 317,
                                         columnNumber: 27
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("datalist", {
@@ -746,40 +876,40 @@ function HospitalManagement() {
                                                 value: "Radiology"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                lineNumber: 299,
+                                                lineNumber: 352,
                                                 columnNumber: 31
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                 value: "Pathology"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                lineNumber: 300,
+                                                lineNumber: 353,
                                                 columnNumber: 31
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                 value: "Cardiology"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                lineNumber: 301,
+                                                lineNumber: 354,
                                                 columnNumber: 31
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                 value: "Consultation"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                lineNumber: 302,
+                                                lineNumber: 355,
                                                 columnNumber: 31
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 298,
+                                        lineNumber: 351,
                                         columnNumber: 27
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                lineNumber: 258,
+                                lineNumber: 308,
                                 columnNumber: 23
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -787,33 +917,34 @@ function HospitalManagement() {
                                 style: {
                                     marginTop: '1rem',
                                     padding: '1rem',
-                                    background: 'linear-gradient(135deg, #00d2d3 0%, #2e86de 100%)',
-                                    color: '#fff',
+                                    background: 'var(--accent)',
+                                    color: 'var(--accent-text)',
                                     border: 'none',
                                     fontSize: '1rem',
-                                    boxShadow: '0 4px 15px rgba(0, 210, 211, 0.3)'
+                                    boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+                                    fontWeight: 'bold'
                                 },
                                 children: editMode ? 'Update Hospital' : 'Add Hospital & Services'
                             }, void 0, false, {
                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                lineNumber: 307,
+                                lineNumber: 359,
                                 columnNumber: 23
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                        lineNumber: 174,
+                        lineNumber: 225,
                         columnNumber: 19
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                    lineNumber: 173,
+                    lineNumber: 224,
                     columnNumber: 15
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-            lineNumber: 165,
+            lineNumber: 216,
             columnNumber: 11
         }, this);
     }
@@ -833,31 +964,29 @@ function HospitalManagement() {
                                 style: {
                                     fontSize: '2rem',
                                     fontWeight: '800',
-                                    background: 'linear-gradient(to right, #fff, #94a3b8)',
-                                    WebkitBackgroundClip: 'text',
-                                    WebkitTextFillColor: 'transparent'
+                                    color: 'var(--text-primary)'
                                 },
                                 children: "Hospital Partners"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                lineNumber: 326,
+                                lineNumber: 378,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 style: {
-                                    color: '#94a3b8',
+                                    color: 'var(--text-secondary)',
                                     marginTop: '0.5rem'
                                 },
                                 children: "Manage your network of healthcare providers."
                             }, void 0, false, {
                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                lineNumber: 327,
+                                lineNumber: 379,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                        lineNumber: 325,
+                        lineNumber: 377,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -867,11 +996,12 @@ function HospitalManagement() {
                             setShowForm(true);
                         },
                         style: {
-                            background: 'linear-gradient(135deg, #00d2d3 0%, #2e86de 100%)',
-                            color: '#fff',
+                            background: 'var(--accent)',
+                            color: 'var(--accent-text)',
                             border: 'none',
-                            boxShadow: '0 4px 12px rgba(0, 210, 211, 0.3)',
-                            padding: '0.8rem 1.5rem'
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                            padding: '0.8rem 1.5rem',
+                            fontWeight: 'bold'
                         },
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$plus$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Plus$3e$__["Plus"], {
@@ -881,20 +1011,20 @@ function HospitalManagement() {
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                lineNumber: 334,
+                                lineNumber: 386,
                                 columnNumber: 17
                             }, this),
                             " Add Hospital"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                        lineNumber: 329,
+                        lineNumber: 381,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                lineNumber: 324,
+                lineNumber: 376,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -903,7 +1033,13 @@ function HospitalManagement() {
                     gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
                     gap: '2rem'
                 },
-                children: hospitals.map((hospital)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                children: hospitals.map((hospital)=>{
+                    // Determine Background Image
+                    let bgImage = DEFAULT_HOSPITAL_IMAGE;
+                    if (hospital.image_url && !hospital.image_url.includes('linear-gradient')) {
+                        bgImage = hospital.image_url.startsWith('/') ? (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + hospital.image_url : hospital.image_url;
+                    }
+                    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         style: {
                             ...cardStyle,
                             overflow: 'hidden',
@@ -914,7 +1050,7 @@ function HospitalManagement() {
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
                                     height: '160px',
-                                    background: hospital.image_url ? `url('${hospital.image_url.startsWith('/') ? (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000') + hospital.image_url : hospital.image_url}') center/cover no-repeat` : 'linear-gradient(45deg, #1e293b, #0f172a)',
+                                    background: `url('${bgImage}') center/cover no-repeat`,
                                     position: 'relative'
                                 },
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -922,7 +1058,7 @@ function HospitalManagement() {
                                         position: 'absolute',
                                         top: '12px',
                                         right: '12px',
-                                        background: 'rgba(0,0,0,0.4)',
+                                        background: 'rgba(0,0,0,0.6)',
                                         backdropFilter: 'blur(4px)',
                                         color: '#fbbf24',
                                         padding: '6px 10px',
@@ -940,7 +1076,7 @@ function HospitalManagement() {
                                             stroke: "none"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                            lineNumber: 349,
+                                            lineNumber: 408,
                                             columnNumber: 29
                                         }, this),
                                         " ",
@@ -948,12 +1084,12 @@ function HospitalManagement() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                    lineNumber: 348,
+                                    lineNumber: 407,
                                     columnNumber: 25
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                lineNumber: 341,
+                                lineNumber: 402,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -965,17 +1101,18 @@ function HospitalManagement() {
                                         style: {
                                             fontSize: '1.3rem',
                                             marginBottom: '0.5rem',
-                                            color: '#f8fafc'
+                                            color: 'var(--text-primary)',
+                                            fontWeight: '700'
                                         },
                                         children: hospital.name
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 353,
+                                        lineNumber: 412,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         style: {
-                                            color: '#94a3b8',
+                                            color: 'var(--text-secondary)',
                                             fontSize: '0.95rem',
                                             marginBottom: '1.5rem',
                                             display: 'flex',
@@ -985,10 +1122,10 @@ function HospitalManagement() {
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$map$2d$pin$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__MapPin$3e$__["MapPin"], {
                                                 size: 16,
-                                                color: "#64748b"
+                                                color: "var(--text-secondary)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                lineNumber: 355,
+                                                lineNumber: 414,
                                                 columnNumber: 28
                                             }, this),
                                             hospital.map_url ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -996,26 +1133,26 @@ function HospitalManagement() {
                                                 target: "_blank",
                                                 rel: "noopener noreferrer",
                                                 style: {
-                                                    color: '#00d2d3',
+                                                    color: 'var(--accent)',
                                                     textDecoration: 'none'
                                                 },
                                                 className: "hover:underline",
                                                 children: hospital.location
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                lineNumber: 357,
+                                                lineNumber: 416,
                                                 columnNumber: 32
                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 children: hospital.location
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                lineNumber: 361,
+                                                lineNumber: 420,
                                                 columnNumber: 32
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 354,
+                                        lineNumber: 413,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1027,7 +1164,7 @@ function HospitalManagement() {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 365,
+                                        lineNumber: 424,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1041,14 +1178,14 @@ function HospitalManagement() {
                                                 onClick: ()=>handleEdit(hospital),
                                                 className: "btn",
                                                 style: {
-                                                    background: 'rgba(255,255,255,0.05)',
-                                                    border: '1px solid rgba(255,255,255,0.1)',
-                                                    color: '#cbd5e1'
+                                                    background: 'var(--bg-primary)',
+                                                    border: '1px solid var(--border)',
+                                                    color: 'var(--text-secondary)'
                                                 },
                                                 children: "Edit"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                lineNumber: 370,
+                                                lineNumber: 429,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1062,75 +1199,198 @@ function HospitalManagement() {
                                                 children: "Remove"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                                lineNumber: 371,
+                                                lineNumber: 430,
                                                 columnNumber: 29
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                        lineNumber: 369,
+                                        lineNumber: 428,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                                lineNumber: 352,
+                                lineNumber: 411,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, hospital.id, true, {
                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                        lineNumber: 340,
+                        lineNumber: 401,
                         columnNumber: 17
+                    }, this);
+                })
+            }, void 0, false, {
+                fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
+                lineNumber: 390,
+                columnNumber: 9
+            }, this),
+            loading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "grid-cards",
+                style: {
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                    gap: '2rem'
+                },
+                children: [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                ].map((n)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            ...cardStyle,
+                            height: '350px',
+                            background: 'var(--bg-card)',
+                            position: 'relative',
+                            overflow: 'hidden'
+                        },
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
+                                    height: '160px',
+                                    background: 'var(--border)',
+                                    opacity: 0.1
+                                }
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
+                                lineNumber: 441,
+                                columnNumber: 26
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
+                                    padding: '1.5rem'
+                                },
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        style: {
+                                            height: '24px',
+                                            width: '60%',
+                                            background: 'var(--border)',
+                                            marginBottom: '1rem',
+                                            borderRadius: '4px',
+                                            opacity: 0.1
+                                        }
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
+                                        lineNumber: 443,
+                                        columnNumber: 30
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        style: {
+                                            height: '16px',
+                                            width: '40%',
+                                            background: 'var(--border)',
+                                            marginBottom: '1.5rem',
+                                            borderRadius: '4px',
+                                            opacity: 0.1
+                                        }
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
+                                        lineNumber: 444,
+                                        columnNumber: 30
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        style: {
+                                            display: 'grid',
+                                            gridTemplateColumns: '1fr 1fr',
+                                            gap: '1rem'
+                                        },
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                style: {
+                                                    height: '40px',
+                                                    background: 'var(--border)',
+                                                    borderRadius: '8px',
+                                                    opacity: 0.1
+                                                }
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
+                                                lineNumber: 446,
+                                                columnNumber: 34
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                style: {
+                                                    height: '40px',
+                                                    background: 'var(--border)',
+                                                    borderRadius: '8px',
+                                                    opacity: 0.1
+                                                }
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
+                                                lineNumber: 447,
+                                                columnNumber: 34
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
+                                        lineNumber: 445,
+                                        columnNumber: 30
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
+                                lineNumber: 442,
+                                columnNumber: 26
+                            }, this)
+                        ]
+                    }, n, true, {
+                        fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
+                        lineNumber: 440,
+                        columnNumber: 22
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                lineNumber: 338,
-                columnNumber: 9
+                lineNumber: 438,
+                columnNumber: 14
             }, this),
             hospitals.length === 0 && !loading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 style: {
                     padding: '6rem',
                     textAlign: 'center',
-                    color: '#64748b'
+                    color: 'var(--text-secondary)'
                 },
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         style: {
-                            background: 'rgba(255,255,255,0.03)',
+                            background: 'var(--bg-card)',
                             width: '80px',
                             height: '80px',
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            margin: '0 auto 1.5rem'
+                            margin: '0 auto 1.5rem',
+                            border: '1px solid var(--border)'
                         },
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$building$2d$2$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Building2$3e$__["Building2"], {
                             size: 40,
                             style: {
-                                opacity: 0.5
+                                opacity: 0.5,
+                                color: 'var(--text-primary)'
                             }
                         }, void 0, false, {
                             fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                            lineNumber: 381,
+                            lineNumber: 458,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                        lineNumber: 380,
+                        lineNumber: 457,
                         columnNumber: 18
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                         style: {
                             fontSize: '1.5rem',
                             marginBottom: '0.5rem',
-                            color: '#fff'
+                            color: 'var(--text-primary)'
                         },
                         children: "No hospitals added yet."
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                        lineNumber: 383,
+                        lineNumber: 460,
                         columnNumber: 18
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1140,19 +1400,19 @@ function HospitalManagement() {
                         children: 'Click "Add Hospital" to onboard your first partner.'
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                        lineNumber: 384,
+                        lineNumber: 461,
                         columnNumber: 18
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-                lineNumber: 379,
+                lineNumber: 456,
                 columnNumber: 14
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/[adminPath]/hospitals/page.js",
-        lineNumber: 323,
+        lineNumber: 375,
         columnNumber: 5
     }, this);
 }

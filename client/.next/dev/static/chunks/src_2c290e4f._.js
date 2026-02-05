@@ -1934,6 +1934,7 @@ __turbopack_context__.s([
     ()=>Home
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/styled-jsx/style.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/app-dir/link.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
@@ -1942,6 +1943,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$Booking
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$HospitalProfileModal$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/HospitalProfileModal.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$activity$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Activity$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/activity.js [app-client] (ecmascript) <export default as Activity>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$stethoscope$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Stethoscope$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/stethoscope.js [app-client] (ecmascript) <export default as Stethoscope>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$test$2d$tube$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__TestTube$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/test-tube.js [app-client] (ecmascript) <export default as TestTube>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$heart$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Heart$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/heart.js [app-client] (ecmascript) <export default as Heart>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$baby$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Baby$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/baby.js [app-client] (ecmascript) <export default as Baby>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$brain$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Brain$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/brain.js [app-client] (ecmascript) <export default as Brain>");
@@ -1960,35 +1962,56 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
+;
 function Home() {
     _s();
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     const [selectedProduct, setSelectedProduct] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [selectedHospitalForProfile, setSelectedHospitalForProfile] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     // State for fetched data
+    // State for fetched data
     const [hospitals, setHospitals] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const [popularServices, setPopularServices] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Home.useEffect": ()=>{
-            // Fetch Hospitals
-            fetch('http://localhost:5000/api/hospitals').then({
-                "Home.useEffect": (res)=>res.json()
-            }["Home.useEffect"]).then({
-                "Home.useEffect": (data)=>setHospitals(data)
-            }["Home.useEffect"]).catch({
-                "Home.useEffect": (err)=>console.error('Failed to fetch hospitals', err)
-            }["Home.useEffect"]);
-            // Fetch Services (for Popular Tests)
-            fetch('http://localhost:5000/api/services').then({
-                "Home.useEffect": (res)=>res.json()
-            }["Home.useEffect"]).then({
-                "Home.useEffect": (data)=>setPopularServices(data.slice(0, 8))
-            }["Home.useEffect"]) // Take top 8
-            .catch({
-                "Home.useEffect": (err)=>console.error('Failed to fetch services', err)
-            }["Home.useEffect"]);
+            const fetchData = {
+                "Home.useEffect.fetchData": async ()=>{
+                    try {
+                        const [hospitalsRes, servicesRes] = await Promise.all([
+                            fetch('http://localhost:5000/api/hospitals'),
+                            fetch('http://localhost:5000/api/services?limit=8')
+                        ]);
+                        const hospitalsData = await hospitalsRes.json();
+                        const servicesData = await servicesRes.json();
+                        setHospitals(hospitalsData);
+                        setPopularServices(servicesData);
+                    } catch (err) {
+                        console.error('Failed to fetch data', err);
+                    } finally{
+                        setLoading(false);
+                    }
+                }
+            }["Home.useEffect.fetchData"];
+            fetchData();
         }
     }["Home.useEffect"], []);
+    const handleHospitalClick = async (hospital)=>{
+        try {
+            // Visual feedback
+            document.body.style.cursor = 'wait';
+            const res = await fetch(`http://localhost:5000/api/hospitals/${hospital.id}`);
+            if (!res.ok) throw new Error('Failed to fetch details');
+            const fullData = await res.json();
+            setSelectedHospitalForProfile(fullData);
+        } catch (err) {
+            console.error("Error fetching hospital details:", err);
+            // Fallback to basic data if fetch fails, though services will be missing
+            setSelectedHospitalForProfile(hospital);
+        } finally{
+            document.body.style.cursor = 'default';
+        }
+    };
     // Categories with assigned colors to match the "Promo Card" aesthetic but smaller
     const CATEGORIES = [
         {
@@ -1999,11 +2022,39 @@ function Home() {
                 color: "rgba(255,255,255,0.3)"
             }, void 0, false, {
                 fileName: "[project]/src/app/page.js",
-                lineNumber: 38,
+                lineNumber: 66,
                 columnNumber: 55
             }, this),
             color: '#ff6b6b',
             href: '/hospitals?specialty=Cardiac'
+        },
+        {
+            name: 'Radiology',
+            desc: 'Scans & X-Rays',
+            icon: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$activity$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Activity$3e$__["Activity"], {
+                size: 50,
+                color: "rgba(255,255,255,0.3)"
+            }, void 0, false, {
+                fileName: "[project]/src/app/page.js",
+                lineNumber: 67,
+                columnNumber: 58
+            }, this),
+            color: '#a55eea',
+            href: '/hospitals?specialty=Radiology'
+        },
+        {
+            name: 'Pathology',
+            desc: 'Lab Tests',
+            icon: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$test$2d$tube$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__TestTube$3e$__["TestTube"], {
+                size: 50,
+                color: "rgba(255,255,255,0.3)"
+            }, void 0, false, {
+                fileName: "[project]/src/app/page.js",
+                lineNumber: 68,
+                columnNumber: 53
+            }, this),
+            color: '#fd9644',
+            href: '/hospitals?specialty=Pathology'
         },
         {
             name: 'Orthopedic',
@@ -2013,7 +2064,7 @@ function Home() {
                 color: "rgba(255,255,255,0.3)"
             }, void 0, false, {
                 fileName: "[project]/src/app/page.js",
-                lineNumber: 39,
+                lineNumber: 69,
                 columnNumber: 56
             }, this),
             color: '#5f27cd',
@@ -2027,7 +2078,7 @@ function Home() {
                 color: "rgba(255,255,255,0.3)"
             }, void 0, false, {
                 fileName: "[project]/src/app/page.js",
-                lineNumber: 40,
+                lineNumber: 70,
                 columnNumber: 54
             }, this),
             color: '#ff9ff3',
@@ -2042,7 +2093,7 @@ function Home() {
                 color: "rgba(255,255,255,0.3)"
             }, void 0, false, {
                 fileName: "[project]/src/app/page.js",
-                lineNumber: 41,
+                lineNumber: 71,
                 columnNumber: 54
             }, this),
             color: '#54a0ff',
@@ -2056,7 +2107,7 @@ function Home() {
                 color: "rgba(255,255,255,0.3)"
             }, void 0, false, {
                 fileName: "[project]/src/app/page.js",
-                lineNumber: 42,
+                lineNumber: 72,
                 columnNumber: 49
             }, this),
             color: '#1dd1a1',
@@ -2070,7 +2121,7 @@ function Home() {
                 color: "rgba(255,255,255,0.3)"
             }, void 0, false, {
                 fileName: "[project]/src/app/page.js",
-                lineNumber: 43,
+                lineNumber: 73,
                 columnNumber: 52
             }, this),
             color: '#f368e0',
@@ -2084,7 +2135,7 @@ function Home() {
                 color: "rgba(255,255,255,0.3)"
             }, void 0, false, {
                 fileName: "[project]/src/app/page.js",
-                lineNumber: 44,
+                lineNumber: 74,
                 columnNumber: 55
             }, this),
             color: '#ee5253',
@@ -2098,7 +2149,7 @@ function Home() {
                 color: "rgba(255,255,255,0.3)"
             }, void 0, false, {
                 fileName: "[project]/src/app/page.js",
-                lineNumber: 45,
+                lineNumber: 75,
                 columnNumber: 55
             }, this),
             color: '#00d2d3',
@@ -2112,7 +2163,7 @@ function Home() {
                 color: "rgba(255,255,255,0.3)"
             }, void 0, false, {
                 fileName: "[project]/src/app/page.js",
-                lineNumber: 46,
+                lineNumber: 76,
                 columnNumber: 50
             }, this),
             color: '#10ac84',
@@ -2126,7 +2177,7 @@ function Home() {
                 color: "rgba(255,255,255,0.3)"
             }, void 0, false, {
                 fileName: "[project]/src/app/page.js",
-                lineNumber: 47,
+                lineNumber: 77,
                 columnNumber: 56
             }, this),
             color: '#ff9f43',
@@ -2183,10 +2234,54 @@ function Home() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$Navbar$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/src/app/page.js",
-                lineNumber: 88,
+                lineNumber: 118,
                 columnNumber: 7
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                style: {
+                    height: '80vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    color: '#6b7280'
+                },
+                className: "jsx-90b4866ced2f645d",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            width: '40px',
+                            height: '40px',
+                            border: '4px solid #f3f3f3',
+                            borderTop: '4px solid #3498db',
+                            borderRadius: '50%',
+                            animation: 'spin 1s linear infinite'
+                        },
+                        className: "jsx-90b4866ced2f645d"
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/page.js",
+                        lineNumber: 130,
+                        columnNumber: 13
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        className: "jsx-90b4866ced2f645d",
+                        children: "Loading Suvidha..."
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/page.js",
+                        lineNumber: 138,
+                        columnNumber: 13
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                        id: "90b4866ced2f645d",
+                        children: "@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}"
+                    }, void 0, false, void 0, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/app/page.js",
+                lineNumber: 121,
+                columnNumber: 9
+            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "container",
                 style: {
                     paddingTop: 'calc(var(--header-height) + 2rem)'
@@ -2231,7 +2326,7 @@ function Home() {
                                             children: offer.title
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.js",
-                                            lineNumber: 115,
+                                            lineNumber: 172,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2243,7 +2338,7 @@ function Home() {
                                             children: offer.subtitle
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.js",
-                                            lineNumber: 118,
+                                            lineNumber: 175,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2258,7 +2353,7 @@ function Home() {
                                             children: offer.btnText
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.js",
-                                            lineNumber: 121,
+                                            lineNumber: 178,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2273,7 +2368,7 @@ function Home() {
                                             }
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.js",
-                                            lineNumber: 125,
+                                            lineNumber: 182,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2288,13 +2383,13 @@ function Home() {
                                             }
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.js",
-                                            lineNumber: 126,
+                                            lineNumber: 183,
                                             columnNumber: 21
                                         }, this)
                                     ]
                                 }, offer.id, true, {
                                     fileName: "[project]/src/app/page.js",
-                                    lineNumber: 102,
+                                    lineNumber: 159,
                                     columnNumber: 17
                                 }, this)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2319,18 +2414,18 @@ function Home() {
                                         }
                                     }, index, false, {
                                         fileName: "[project]/src/app/page.js",
-                                        lineNumber: 141,
+                                        lineNumber: 198,
                                         columnNumber: 21
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.js",
-                                lineNumber: 131,
+                                lineNumber: 188,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/page.js",
-                        lineNumber: 93,
+                        lineNumber: 150,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -2341,7 +2436,7 @@ function Home() {
                         children: "Shop by Category"
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.js",
-                        lineNumber: 158,
+                        lineNumber: 215,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2397,7 +2492,7 @@ function Home() {
                                                     children: cat.name
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/page.js",
-                                                    lineNumber: 188,
+                                                    lineNumber: 245,
                                                     columnNumber: 29
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2409,7 +2504,7 @@ function Home() {
                                                     children: cat.desc
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/page.js",
-                                                    lineNumber: 189,
+                                                    lineNumber: 246,
                                                     columnNumber: 29
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2425,13 +2520,13 @@ function Home() {
                                                     children: "View More"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/page.js",
-                                                    lineNumber: 191,
+                                                    lineNumber: 248,
                                                     columnNumber: 29
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/page.js",
-                                            lineNumber: 187,
+                                            lineNumber: 244,
                                             columnNumber: 25
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2444,23 +2539,23 @@ function Home() {
                                             children: cat.icon
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.js",
-                                            lineNumber: 205,
+                                            lineNumber: 262,
                                             columnNumber: 25
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/page.js",
-                                    lineNumber: 162,
+                                    lineNumber: 219,
                                     columnNumber: 21
                                 }, this)
                             }, index, false, {
                                 fileName: "[project]/src/app/page.js",
-                                lineNumber: 161,
+                                lineNumber: 218,
                                 columnNumber: 18
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.js",
-                        lineNumber: 159,
+                        lineNumber: 216,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -2471,7 +2566,7 @@ function Home() {
                         children: "Popular Lab Tests"
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.js",
-                        lineNumber: 214,
+                        lineNumber: 271,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2491,12 +2586,12 @@ function Home() {
                                 onAdd: ()=>setSelectedProduct(service)
                             }, service.id, false, {
                                 fileName: "[project]/src/app/page.js",
-                                lineNumber: 217,
+                                lineNumber: 274,
                                 columnNumber: 17
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.js",
-                        lineNumber: 215,
+                        lineNumber: 272,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$BookingModal$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -2505,7 +2600,7 @@ function Home() {
                         service: selectedProduct
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.js",
-                        lineNumber: 229,
+                        lineNumber: 286,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -2517,7 +2612,7 @@ function Home() {
                         children: "Featured Hospitals"
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.js",
-                        lineNumber: 236,
+                        lineNumber: 293,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2528,7 +2623,7 @@ function Home() {
                             marginBottom: '4rem'
                         },
                         children: hospitals.map((hospital)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                onClick: ()=>setSelectedHospitalForProfile(hospital),
+                                onClick: ()=>handleHospitalClick(hospital),
                                 style: {
                                     background: '#fff',
                                     borderRadius: '16px',
@@ -2563,12 +2658,12 @@ function Home() {
                                             onError: (e)=>e.target.src = "https://images.unsplash.com/photo-1586773860418-d3b97898c75c?auto=format&fit=crop&w=800&q=80"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/page.js",
-                                            lineNumber: 254,
+                                            lineNumber: 311,
                                             columnNumber: 21
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/page.js",
-                                        lineNumber: 253,
+                                        lineNumber: 310,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2594,7 +2689,7 @@ function Home() {
                                                         children: hospital.name
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/page.js",
-                                                        lineNumber: 263,
+                                                        lineNumber: 320,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2615,7 +2710,7 @@ function Home() {
                                                                 fill: "#166534"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/page.js",
-                                                                lineNumber: 265,
+                                                                lineNumber: 322,
                                                                 columnNumber: 27
                                                             }, this),
                                                             " ",
@@ -2623,13 +2718,13 @@ function Home() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/page.js",
-                                                        lineNumber: 264,
+                                                        lineNumber: 321,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/page.js",
-                                                lineNumber: 262,
+                                                lineNumber: 319,
                                                 columnNumber: 20
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2645,7 +2740,7 @@ function Home() {
                                                         size: 14
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/page.js",
-                                                        lineNumber: 269,
+                                                        lineNumber: 326,
                                                         columnNumber: 23
                                                     }, this),
                                                     " ",
@@ -2653,7 +2748,7 @@ function Home() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/page.js",
-                                                lineNumber: 268,
+                                                lineNumber: 325,
                                                 columnNumber: 20
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2679,7 +2774,7 @@ function Home() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/page.js",
-                                                        lineNumber: 272,
+                                                        lineNumber: 329,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2691,30 +2786,30 @@ function Home() {
                                                         children: "View Services >"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/page.js",
-                                                        lineNumber: 273,
+                                                        lineNumber: 330,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/page.js",
-                                                lineNumber: 271,
+                                                lineNumber: 328,
                                                 columnNumber: 20
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/page.js",
-                                        lineNumber: 261,
+                                        lineNumber: 318,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, hospital.id, true, {
                                 fileName: "[project]/src/app/page.js",
-                                lineNumber: 239,
+                                lineNumber: 296,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.js",
-                        lineNumber: 237,
+                        lineNumber: 294,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$HospitalProfileModal$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -2730,23 +2825,23 @@ function Home() {
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.js",
-                        lineNumber: 280,
+                        lineNumber: 337,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/page.js",
-                lineNumber: 90,
+                lineNumber: 147,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/page.js",
-        lineNumber: 87,
+        lineNumber: 117,
         columnNumber: 5
     }, this);
 }
-_s(Home, "QdXIxxyLnO/VkdpQlg3fAr0XNGs=", false, function() {
+_s(Home, "7UDIlTwKZxlv6mZ5/bfvCDsNoNM=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
     ];
@@ -2777,12 +2872,12 @@ function ProductCard({ title, time, price, oldPrice, discount, onAdd }) {
                     color: "#ccc"
                 }, void 0, false, {
                     fileName: "[project]/src/app/page.js",
-                    lineNumber: 307,
+                    lineNumber: 365,
                     columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/page.js",
-                lineNumber: 306,
+                lineNumber: 364,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2803,7 +2898,7 @@ function ProductCard({ title, time, price, oldPrice, discount, onAdd }) {
                         children: time
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.js",
-                        lineNumber: 310,
+                        lineNumber: 368,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -2815,7 +2910,7 @@ function ProductCard({ title, time, price, oldPrice, discount, onAdd }) {
                         children: title
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.js",
-                        lineNumber: 313,
+                        lineNumber: 371,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2837,7 +2932,7 @@ function ProductCard({ title, time, price, oldPrice, discount, onAdd }) {
                                         children: price
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/page.js",
-                                        lineNumber: 316,
+                                        lineNumber: 374,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2849,13 +2944,13 @@ function ProductCard({ title, time, price, oldPrice, discount, onAdd }) {
                                         children: oldPrice
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/page.js",
-                                        lineNumber: 317,
+                                        lineNumber: 375,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/page.js",
-                                lineNumber: 315,
+                                lineNumber: 373,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2872,25 +2967,25 @@ function ProductCard({ title, time, price, oldPrice, discount, onAdd }) {
                                 children: "ADD"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.js",
-                                lineNumber: 319,
+                                lineNumber: 377,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/page.js",
-                        lineNumber: 314,
+                        lineNumber: 372,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/page.js",
-                lineNumber: 309,
+                lineNumber: 367,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/page.js",
-        lineNumber: 297,
+        lineNumber: 355,
         columnNumber: 9
     }, this);
 }

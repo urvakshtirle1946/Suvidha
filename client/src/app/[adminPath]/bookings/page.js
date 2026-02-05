@@ -1,12 +1,15 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Calendar, Search, Filter, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { useToast } from '@/context/ToastContext';
 
 export default function BookingsManagement() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+
+  const { addToast } = useToast();
 
   useEffect(() => {
     fetchBookings();
@@ -39,13 +42,13 @@ export default function BookingsManagement() {
           if (res.ok) {
                // Optimistic update or refetch
                setBookings(prev => prev.map(b => b.id === id ? { ...b, status: newStatus } : b));
-               alert(`Booking #${id} updated to ${newStatus}`);
+               addToast(`Booking #${id} updated to ${newStatus}`, 'success');
           } else {
-              alert('Failed to update status');
+              addToast('Failed to update status', 'error');
           }
       } catch (err) {
           console.error(err);
-          alert('Error updating status');
+          addToast('Error updating status', 'error');
       }
   };
 
@@ -57,31 +60,30 @@ export default function BookingsManagement() {
       return matchesSearch && matchesStatus;
   });
 
-  // Premium Dark Styles
+  // Light & Clean Styles matching Dashboard
   const cardStyle = {
-    background: 'rgba(30, 41, 59, 0.4)',
-    backdropFilter: 'blur(12px)',
-    border: '1px solid rgba(255,255,255,0.05)',
-    borderRadius: '16px',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border)',
+    borderRadius: '20px',
+    boxShadow: '0 5px 20px rgba(0, 0, 0, 0.05)'
   };
 
   const searchInputStyle = {
-    background: 'transparent', border: 'none', color: '#fff', 
+    background: 'transparent', border: 'none', color: 'var(--text-primary)', 
     flex: 1, outline: 'none', fontSize: '0.95rem'
   };
 
   return (
     <div>
         <div style={{ marginBottom: '2.5rem' }}>
-            <h1 style={{ fontSize: '2rem', fontWeight: '800', background: 'linear-gradient(to right, #fff, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Bookings Management</h1>
-            <p style={{ color: '#94a3b8', marginTop: '0.5rem' }}>Track and manage patient appointments.</p>
+            <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--text-primary)' }}>Bookings Management</h1>
+            <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Track and manage patient appointments.</p>
         </div>
 
         {/* Filters */}
         <div style={{ ...cardStyle, padding: '1rem', display: 'flex', gap: '1rem', marginBottom: '2rem', alignItems: 'center', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: '240px', background: 'rgba(255,255,255,0.03)', padding: '0.8rem 1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <Search size={20} style={{ color: '#64748b' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: '240px', background: 'var(--bg-primary)', padding: '0.8rem 1rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                <Search size={20} style={{ color: 'var(--text-secondary)' }} />
                 <input 
                     type="text" 
                     placeholder="Search by ID, Patient, or Service..." 
@@ -91,7 +93,7 @@ export default function BookingsManagement() {
                 />
             </div>
             
-            <div style={{ width: '1px', height: '30px', background: 'rgba(255,255,255,0.1)', margin: '0 10px' }}></div>
+            <div style={{ width: '1px', height: '30px', background: 'var(--border)', margin: '0 10px' }}></div>
             
             <div style={{ display: 'flex', gap: '0.8rem' }}>
                 {['All', 'Confirmed', 'Completed', 'Cancelled'].map(status => (
@@ -101,13 +103,14 @@ export default function BookingsManagement() {
                         style={{
                             padding: '0.6rem 1.2rem',
                             borderRadius: '12px',
-                            border: statusFilter === status ? '1px solid rgba(0, 210, 211, 0.5)' : '1px solid transparent',
-                            background: statusFilter === status ? 'rgba(0, 210, 211, 0.1)' : 'rgba(255,255,255,0.03)',
-                            color: statusFilter === status ? '#00d2d3' : '#94a3b8',
+                            border: statusFilter === status ? '1px solid transparent' : '1px solid var(--border)',
+                            background: statusFilter === status ? 'var(--accent)' : 'transparent',
+                            color: statusFilter === status ? 'var(--accent-text)' : 'var(--text-secondary)',
                             cursor: 'pointer',
                             fontSize: '0.9rem',
-                            fontWeight: statusFilter === status ? '600' : '400',
-                            transition: 'all 0.2s'
+                            fontWeight: statusFilter === status ? '600' : '500',
+                            transition: 'all 0.2s',
+                            boxShadow: statusFilter === status ? '0 4px 10px rgba(0, 210, 211, 0.2)' : 'none'
                         }}
                     >
                         {status}
@@ -121,50 +124,59 @@ export default function BookingsManagement() {
             <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                     <thead>
-                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)' }}>
-                            <th style={{ padding: '1.2rem 1.5rem', color: '#94a3b8', fontWeight: '500', fontSize: '0.9rem' }}>ID</th>
-                            <th style={{ padding: '1.2rem 1.5rem', color: '#94a3b8', fontWeight: '500', fontSize: '0.9rem' }}>Patient Details</th>
-                            <th style={{ padding: '1.2rem 1.5rem', color: '#94a3b8', fontWeight: '500', fontSize: '0.9rem' }}>Service Info</th>
-                            <th style={{ padding: '1.2rem 1.5rem', color: '#94a3b8', fontWeight: '500', fontSize: '0.9rem' }}>Schedule</th>
-                            <th style={{ padding: '1.2rem 1.5rem', color: '#94a3b8', fontWeight: '500', fontSize: '0.9rem' }}>Amount</th>
-                            <th style={{ padding: '1.2rem 1.5rem', color: '#94a3b8', fontWeight: '500', fontSize: '0.9rem' }}>Status</th>
-                            <th style={{ padding: '1.2rem 1.5rem', color: '#94a3b8', fontWeight: '500', fontSize: '0.9rem' }}>Actions</th>
+                        <tr style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
+                            <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>ID</th>
+                            <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Patient Details</th>
+                            <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Service Info</th>
+                            <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Schedule</th>
+                            <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Amount</th>
+                            <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Status</th>
+                            <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredBookings.map((booking) => (
-                            <tr key={booking.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.2s' }} className="hover:bg-white/5">
-                                <td style={{ padding: '1.2rem 1.5rem', color: '#64748b', fontSize: '0.9rem' }}>#{booking.id}</td>
+                            <tr key={booking.id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }} className="hover:bg-gray-50 dark:hover:bg-gray-900">
+                                <td style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>#{booking.id}</td>
                                 <td style={{ padding: '1.2rem 1.5rem' }}>
-                                    <div style={{ fontWeight: '600', color: '#f8fafc', marginBottom: '4px' }}>{booking.patient_name}</div>
-                                    <div style={{ fontSize: '0.85rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <div style={{ fontWeight: '600', color: 'var(--text-primary)', marginBottom: '4px' }}>{booking.patient_name}</div>
+                                    <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                                         {booking.user_phone}
                                     </div>
                                 </td>
-                                <td style={{ padding: '1.2rem 1.5rem', color: '#e2e8f0' }}>{booking.service_name}</td>
+                                <td style={{ padding: '1.2rem 1.5rem', color: 'var(--text-primary)', fontWeight: '500' }}>{booking.service_name}</td>
                                 <td style={{ padding: '1.2rem 1.5rem' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px', color: '#e2e8f0' }}>
-                                        <Calendar size={14} className="text-muted" /> {new Date(booking.booking_date).toLocaleDateString()}
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                                        <Calendar size={14} className="text-gray-400" /> {new Date(booking.booking_date).toLocaleDateString()}
                                     </div>
-                                    <div style={{ fontSize: '0.85rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                                         <Clock size={14} /> {booking.booking_time}
                                     </div>
                                 </td>
-                                <td style={{ padding: '1.2rem 1.5rem', fontWeight: 'bold', color: '#fff' }}>₹{booking.price}</td>
+                                <td style={{ padding: '1.2rem 1.5rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>₹{booking.price}</td>
                                 <td style={{ padding: '1.2rem 1.5rem' }}>
-                                    <span style={{ 
-                                        padding: '6px 14px', 
-                                        borderRadius: '20px', 
-                                        fontSize: '0.8rem',
-                                        background: booking.status === 'Completed' ? 'rgba(46, 204, 113, 0.15)' : 
-                                                    booking.status === 'Cancelled' ? 'rgba(231, 76, 60, 0.15)' : 'rgba(0, 210, 211, 0.15)',
-                                        color: booking.status === 'Completed' ? '#2ecc71' : 
-                                               booking.status === 'Cancelled' ? '#f87171' : '#00d2d3',
-                                        border: booking.status === 'Completed' ? '1px solid rgba(46, 204, 113, 0.2)' : 
-                                                booking.status === 'Cancelled' ? '1px solid rgba(231, 76, 60, 0.2)' : '1px solid rgba(0, 210, 211, 0.2)'
-                                    }}>
-                                        {booking.status}
-                                    </span>
+                                    <select 
+                                        value={booking.status}
+                                        onChange={(e) => updateStatus(booking.id, e.target.value)}
+                                        style={{ 
+                                            padding: '6px 14px', 
+                                            borderRadius: '20px', 
+                                            fontSize: '0.8rem',
+                                            cursor: 'pointer',
+                                            outline: 'none',
+                                            background: booking.status === 'Completed' ? 'rgba(46, 204, 113, 0.15)' : 
+                                                        booking.status === 'Cancelled' ? 'rgba(231, 76, 60, 0.15)' : 'rgba(0, 210, 211, 0.15)',
+                                            color: booking.status === 'Completed' ? '#2ecc71' : 
+                                                   booking.status === 'Cancelled' ? '#f87171' : '#00d2d3',
+                                            border: booking.status === 'Completed' ? '1px solid rgba(46, 204, 113, 0.2)' : 
+                                                    booking.status === 'Cancelled' ? '1px solid rgba(231, 76, 60, 0.2)' : '1px solid rgba(0, 210, 211, 0.2)'
+                                        }}
+                                    >
+                                        <option value="Confirmed">Confirmed</option>
+                                        <option value="Completed">Completed</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                        <option value="Pending">Pending</option>
+                                    </select>
                                 </td>
                                 <td style={{ padding: '1.2rem 1.5rem' }}>
                                     <div style={{ display: 'flex', gap: '0.8rem' }}>
@@ -177,7 +189,7 @@ export default function BookingsManagement() {
                     </tbody>
                 </table>
                 {filteredBookings.length === 0 && !loading && (
-                    <div style={{ padding: '4rem', textAlign: 'center', color: '#64748b' }}>
+                    <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
                         <div style={{ marginBottom: '1rem', opacity: 0.5 }}><Calendar size={48} /></div>
                         No bookings found matching filters.
                     </div>

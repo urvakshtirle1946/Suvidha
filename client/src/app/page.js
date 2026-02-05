@@ -64,6 +64,8 @@ export default function Home() {
   // Categories with assigned colors to match the "Promo Card" aesthetic but smaller
   const CATEGORIES = [
       { name: 'Cardiology', desc: 'Heart Care', icon: <Heart size={50} color="rgba(255,255,255,0.3)" />, color: '#ff6b6b', href: '/hospitals?specialty=Cardiac' },
+      { name: 'Radiology', desc: 'Scans & X-Rays', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#a55eea', href: '/hospitals?specialty=Radiology' },
+      { name: 'Pathology', desc: 'Lab Tests', icon: <TestTube size={50} color="rgba(255,255,255,0.3)" />, color: '#fd9644', href: '/hospitals?specialty=Pathology' },
       { name: 'Orthopedic', desc: 'Bone Health', icon: <Bone size={50} color="rgba(255,255,255,0.3)" />, color: '#5f27cd', href: '/hospitals?specialty=Orthopedic' },
       { name: 'Pediatric', desc: 'Child Care', icon: <Baby size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9ff3', textColor: '#1f2937', href: '/hospitals?specialty=Pediatric' },
       { name: 'Neurology', desc: 'Brain Care', icon: <Brain size={50} color="rgba(255,255,255,0.3)" />, color: '#54a0ff', href: '/hospitals?specialty=Neurology' },

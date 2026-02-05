@@ -38,56 +38,70 @@ export default function AdminProfile() {
       // In a real app, this would hit an API endpoint
   };
 
-  // Premium Dark Styles
+  // Light & Clean Styles via standard CSS-in-JS logic matching Dashboard
   const cardStyle = {
-    background: 'rgba(30, 41, 59, 0.4)',
-    backdropFilter: 'blur(12px)',
-    border: '1px solid rgba(255,255,255,0.05)',
-    borderRadius: '16px',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border)',
+    borderRadius: '20px',
+    boxShadow: '0 5px 20px rgba(0, 0, 0, 0.05)',
+    padding: '2rem'
   };
 
   const inputStyle = {
-    width: '100%', padding: '0.9rem 0.9rem 0.9rem 3rem', 
-    background: 'rgba(15, 23, 42, 0.6)', 
-    border: '1px solid rgba(255,255,255,0.1)', 
-    color: '#fff', borderRadius: '12px',
-    outline: 'none', transition: 'border-color 0.2s',
+    width: '100%', 
+    padding: '0.9rem 0.9rem 0.9rem 3rem', 
+    background: 'var(--bg-primary)', 
+    border: '1px solid var(--border)',
+    color: 'var(--text-primary)', 
+    borderRadius: '12px',
+    outline: 'none', 
+    transition: 'border-color 0.2s',
     fontSize: '0.95rem'
   };
 
   return (
     <div>
       <div style={{ marginBottom: '2.5rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: '800', background: 'linear-gradient(to right, #fff, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Admin Profile & Settings</h1>
-        <p style={{ color: '#94a3b8', marginTop: '0.5rem' }}>Manage your account details and security preferences.</p>
+        <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--text-primary)' }}>Profile Configuration</h1>
+        <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Manage account settings and security preferences.</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem' }}>
           
           {/* Profile Details */}
-          <div style={{ ...cardStyle, padding: '2.5rem' }}>
+          <div style={cardStyle}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2.5rem' }}>
                   <div style={{ 
                       width: '80px', height: '80px', borderRadius: '50%', 
-                      background: 'linear-gradient(135deg, #00d2d3 0%, #2e86de 100%)', 
+                      background: 'linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%)', 
                       display: 'flex', alignItems: 'center', justifyContent: 'center', 
                       fontSize: '2rem', fontWeight: 'bold', color: '#fff',
-                      boxShadow: '0 4px 20px rgba(0, 210, 211, 0.4)'
+                      boxShadow: '0 10px 25px rgba(255, 154, 158, 0.4)',
+                      border: '4px solid #fff'
                   }}>
                       {profile.name.charAt(0)}
                   </div>
                   <div>
-                      <h2 style={{ fontSize: '1.5rem', marginBottom: '4px' }}>{profile.name}</h2>
-                      <div style={{ color: '#00d2d3', fontSize: '0.95rem', fontWeight: '500' }}>{profile.role}</div>
+                      <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '4px' }}>{profile.name}</h2>
+                      <div style={{ 
+                          display: 'inline-block',
+                          padding: '4px 12px', 
+                          background: 'rgba(59, 130, 246, 0.1)', 
+                          color: '#3B82F6', 
+                          borderRadius: '20px', 
+                          fontSize: '0.85rem', 
+                          fontWeight: '600' 
+                      }}>
+                          {profile.role}
+                      </div>
                   </div>
               </div>
 
               <form onSubmit={handleSaveProfile} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   <div>
-                      <label style={{ display: 'block', marginBottom: '0.8rem', color: '#94a3b8', fontSize: '0.9rem' }}>Full Name</label>
+                      <label style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Full Name</label>
                       <div style={{ position: 'relative' }}>
-                          <User size={18} style={{ position: 'absolute', left: '16px', top: '16px', color: '#64748b' }} />
+                          <User size={18} style={{ position: 'absolute', left: '16px', top: '16px', color: 'var(--text-secondary)' }} />
                           <input 
                             type="text" 
                             value={profile.name} onChange={e => setProfile({...profile, name: e.target.value})}
@@ -97,9 +111,9 @@ export default function AdminProfile() {
                   </div>
 
                   <div>
-                      <label style={{ display: 'block', marginBottom: '0.8rem', color: '#94a3b8', fontSize: '0.9rem' }}>Email Address</label>
+                      <label style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Email Address</label>
                       <div style={{ position: 'relative' }}>
-                          <Mail size={18} style={{ position: 'absolute', left: '16px', top: '16px', color: '#64748b' }} />
+                          <Mail size={18} style={{ position: 'absolute', left: '16px', top: '16px', color: 'var(--text-secondary)' }} />
                           <input 
                             type="email" 
                             value={profile.email} onChange={e => setProfile({...profile, email: e.target.value})}
@@ -109,12 +123,13 @@ export default function AdminProfile() {
                   </div>
 
                   <button className="btn" style={{ 
-                      marginTop: '1rem', padding: '1rem', 
-                      background: 'linear-gradient(135deg, #00d2d3 0%, #2e86de 100%)', 
-                      color: '#fff', border: 'none', fontSize: '1rem', fontWeight: '600',
-                      boxShadow: '0 4px 15px rgba(0, 210, 211, 0.3)', borderRadius: '12px',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
-                  }}>
+                      marginTop: '1.5rem', padding: '1rem', 
+                      background: 'var(--accent)', 
+                      color: 'var(--accent-text)', border: 'none', fontSize: '1rem', fontWeight: '600',
+                      boxShadow: '0 4px 15px rgba(0,0,0,0.1)', borderRadius: '14px',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                      cursor: 'pointer', transition: 'transform 0.2s'
+                  }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
                       <Save size={20} /> Save Changes
                   </button>
               </form>
@@ -124,61 +139,65 @@ export default function AdminProfile() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
               
               {/* Change Password */}
-              <div style={{ ...cardStyle, padding: '2rem' }}>
-                  <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.2rem' }}>
-                      <Lock size={20} color="#00d2d3" /> Security Settings
+              <div style={cardStyle}>
+                  <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-primary)' }}>
+                      <div style={{ padding: '8px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '8px' }}><Lock size={20} color="#10b981" /></div>
+                      Security Settings
                   </h3>
                   
                   <form onSubmit={handleUpdatePassword} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                       <input 
                         type="password" placeholder="Current Password"
                         value={passwords.current} onChange={e => setPasswords({...passwords, current: e.target.value})}
-                        style={{ ...inputStyle, padding: '0.9rem' }}
+                        style={{ ...inputStyle, padding: '0.9rem 1rem' }}
                       />
                       <input 
                         type="password" placeholder="New Password"
                         value={passwords.new} onChange={e => setPasswords({...passwords, new: e.target.value})}
-                        style={{ ...inputStyle, padding: '0.9rem' }}
+                        style={{ ...inputStyle, padding: '0.9rem 1rem' }}
                       />
                       <input 
                         type="password" placeholder="Confirm New Password"
                         value={passwords.confirm} onChange={e => setPasswords({...passwords, confirm: e.target.value})}
-                        style={{ ...inputStyle, padding: '0.9rem' }}
+                        style={{ ...inputStyle, padding: '0.9rem 1rem' }}
                       />
                       <button className="btn" style={{ 
                           marginTop: '0.5rem', padding: '0.9rem',
-                          background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-                          color: '#fff', borderRadius: '12px', cursor: 'pointer', fontWeight: '500'
-                      }}>
+                          background: 'transparent', border: '1px solid var(--border)',
+                          color: 'var(--text-primary)', borderRadius: '12px', cursor: 'pointer', fontWeight: '600',
+                          transition: 'all 0.2s'
+                      }} onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-primary)'; }} 
+                         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}>
                         Update Password
                       </button>
                   </form>
               </div>
 
               {/* Team Access */}
-              <div style={{ ...cardStyle, padding: '2rem' }}>
-                  <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.2rem' }}>
-                      <Shield size={20} color="#00d2d3" /> Manage Access
+              <div style={cardStyle}>
+                  <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-primary)' }}>
+                      <div style={{ padding: '8px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '8px' }}><Shield size={20} color="#3b82f6" /></div>
+                      Manage Access
                   </h3>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                       {team.map(member => (
-                          <div key={member.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                          <div key={member.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '1rem', borderBottom: '1px solid var(--border)' }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}>
+                                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '600' }}>
                                       {member.name.charAt(0)}
                                   </div>
                                   <div>
-                                      <div style={{ fontWeight: '500', fontSize: '0.95rem' }}>{member.name}</div>
-                                      <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{member.role}</div>
+                                      <div style={{ fontWeight: '600', fontSize: '0.9rem', color: 'var(--text-primary)' }}>{member.name}</div>
+                                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{member.role}</div>
                                   </div>
                               </div>
-                              <span style={{ fontSize: '0.75rem', background: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71', padding: '4px 10px', borderRadius: '20px', border: '1px solid rgba(46, 204, 113, 0.2)' }}>
+                              <span style={{ fontSize: '0.75rem', background: 'rgba(16, 185, 129, 0.1)', color: '#10B981', padding: '4px 10px', borderRadius: '20px', border: '1px solid rgba(16, 185, 129, 0.2)', fontWeight: '600' }}>
                                   {member.status}
                               </span>
                           </div>
                       ))}
-                      <button className="btn-link" style={{ color: '#00d2d3', alignSelf: 'flex-start', fontSize: '0.9rem', marginTop: '0.5rem', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: '500' }}>+ Add New Admin</button>
+                      <button className="btn-link" style={{ color: 'var(--accent)', alignSelf: 'flex-start', fontSize: '0.9rem', marginTop: '0.5rem', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: '600' }}>+ Add New Admin</button>
                   </div>
               </div>
 

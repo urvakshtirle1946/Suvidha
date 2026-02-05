@@ -3,18 +3,38 @@ const db = require('../db');
 exports.getAllHospitals = async (req, res) => {
   try {
     const query = `
-      SELECT h.*, 
-             COALESCE(json_agg(s.*) FILTER (WHERE s.id IS NOT NULL), '[]') as services
-      FROM hospitals h
-      LEFT JOIN services s ON h.id = s.hospital_id
-      GROUP BY h.id
-      ORDER BY h.created_at DESC
+      SELECT * FROM hospitals 
+      ORDER BY created_at DESC
     `;
     const result = await db.query(query);
     res.json(result.rows);
   } catch (error) {
     console.error('Database Error:', error);
     res.status(500).json({ success: false, message: 'Failed to fetch hospitals' });
+  }
+};
+
+exports.getHospitalById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const query = `
+      SELECT h.*, 
+             COALESCE(json_agg(s.*) FILTER (WHERE s.id IS NOT NULL), '[]') as services
+      FROM hospitals h
+      LEFT JOIN services s ON h.id = s.hospital_id
+      WHERE h.id = $1
+      GROUP BY h.id
+    `;
+    const result = await db.query(query, [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Hospital not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Database Error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch hospital details' });
   }
 };
 

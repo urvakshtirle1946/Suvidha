@@ -17,6 +17,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.get('/', hospitalController.getAllHospitals);
+router.get('/:id', hospitalController.getHospitalById);
 router.post('/', upload.single('image'), hospitalController.createHospital);
 router.put('/:id', upload.single('image'), hospitalController.updateHospital);
 router.delete('/:id', hospitalController.deleteHospital);

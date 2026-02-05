@@ -16,22 +16,47 @@ export default function Home() {
   const [selectedHospitalForProfile, setSelectedHospitalForProfile] = useState(null);
 
   // State for fetched data
-  const [hospitals, setHospitals] = useState([]);
-  const [popularServices, setPopularServices] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch Hospitals
-    fetch('http://localhost:5000/api/hospitals')
-      .then(res => res.json())
-      .then(data => setHospitals(data))
-      .catch(err => console.error('Failed to fetch hospitals', err));
+    const fetchData = async () => {
+      try {
+        const [hospitalsRes, servicesRes] = await Promise.all([
+          fetch('http://localhost:5000/api/hospitals'),
+          fetch('http://localhost:5000/api/services?limit=8')
+        ]);
 
-    // Fetch Services (for Popular Tests)
-    fetch('http://localhost:5000/api/services')
-      .then(res => res.json())
-      .then(data => setPopularServices(data.slice(0, 8))) // Take top 8
-      .catch(err => console.error('Failed to fetch services', err));
+        const hospitalsData = await hospitalsRes.json();
+        const servicesData = await servicesRes.json();
+
+        setHospitals(hospitalsData);
+        setPopularServices(servicesData);
+      } catch (err) {
+        console.error('Failed to fetch data', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
+
+  const handleHospitalClick = async (hospital) => {
+      try {
+          // Visual feedback
+          document.body.style.cursor = 'wait';
+          const res = await fetch(`http://localhost:5000/api/hospitals/${hospital.id}`);
+          if (!res.ok) throw new Error('Failed to fetch details');
+          const fullData = await res.json();
+          setSelectedHospitalForProfile(fullData);
+      } catch (err) {
+          console.error("Error fetching hospital details:", err);
+          // Fallback to basic data if fetch fails, though services will be missing
+          setSelectedHospitalForProfile(hospital);
+      } finally {
+          document.body.style.cursor = 'default';
+      }
+  };
 
   // Categories with assigned colors to match the "Promo Card" aesthetic but smaller
   const CATEGORIES = [
@@ -86,7 +111,34 @@ export default function Home() {
   return (
     <main style={{ paddingBottom: '100px', background: '#f4f6fb', minHeight: '100vh' }}>
       <Navbar />
-
+      
+      {loading ? (
+        <div style={{ 
+            height: '80vh', 
+            display: 'flex', 
+            flexDirection: 'column',
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            gap: '1rem',
+            color: '#6b7280'
+        }}>
+            <div style={{
+                width: '40px',
+                height: '40px',
+                border: '4px solid #f3f3f3',
+                borderTop: '4px solid #3498db',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+            }}></div>
+            <p>Loading Suvidha...</p>
+            <style jsx>{`
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `}</style>
+        </div>
+      ) : (
       <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 2rem)' }}>
 
         {/* Offers Slider */}
@@ -238,7 +290,7 @@ export default function Home() {
             {hospitals.map((hospital) => (
               <div 
                 key={hospital.id} 
-                onClick={() => setSelectedHospitalForProfile(hospital)}
+                onClick={() => handleHospitalClick(hospital)}
                 style={{ 
                   background: '#fff', 
                   borderRadius: '16px', 
@@ -288,6 +340,7 @@ export default function Home() {
         />
 
       </div>
+      )}
     </main>
   );
 }

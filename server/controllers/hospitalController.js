@@ -15,7 +15,7 @@ exports.createHospital = async (req, res) => {
   let { services } = req.body;
   
   // Handle file upload
-  const image_url = req.file ? `http://localhost:5000/uploads/${req.file.filename}` : req.body.image_url;
+  const image_url = req.file ? `/uploads/${req.file.filename}` : req.body.image_url;
 
   // Parse services if sent as JSON string (Multipart form data limitation)
   if (typeof services === 'string') {
@@ -77,7 +77,7 @@ exports.updateHospital = async (req, res) => {
   const { name, location, rating, discount_percentage, discount_description, phone_number, map_url } = req.body;
   
   // Handle file upload
-  const image_url = req.file ? `http://localhost:5000/uploads/${req.file.filename}` : req.body.image_url;
+  const image_url = req.file ? `/uploads/${req.file.filename}` : req.body.image_url;
   
   try {
     const query = `

@@ -18,17 +18,29 @@ export default function ServiceManagement() {
     description: ''
   });
 
-  useEffect(() => {
-    fetchServices();
-    fetchHospitals();
-  }, []);
+  // Pagination State
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const LIMIT = 10;
 
-  const fetchServices = async () => {
+  useEffect(() => {
+    fetchServices(page);
+    fetchHospitals();
+  }, [page]); // Re-fetch on page change
+
+  const fetchServices = async (currentPage = 1) => {
+    setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/services');
+      const res = await fetch(`http://localhost:5000/api/services?page=${currentPage}&limit=${LIMIT}`);
       if (res.ok) {
-        const data = await res.json();
-        setServices(data);
+        const result = await res.json();
+        // Handle both new paginated response and old array response (fallback)
+        if (result.data) {
+            setServices(result.data);
+            setTotalPages(result.meta.totalPages);
+        } else {
+            setServices(result); // Fallback
+        }
       }
     } catch (err) {
       console.error(err);
@@ -267,6 +279,39 @@ export default function ServiceManagement() {
                         </div>
                         <h3>No services found.</h3>
                         <p>Add one to get started.</p>
+                    </div>
+                )}
+                
+                {/* Pagination Controls */}
+                {services.length > 0 && totalPages > 1 && (
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', padding: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                        <button 
+                            disabled={page === 1}
+                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                            className="btn"
+                            style={{ 
+                                background: 'rgba(255,255,255,0.05)', 
+                                border: '1px solid rgba(255,255,255,0.1)', 
+                                color: page === 1 ? '#64748b' : '#fff',
+                                cursor: page === 1 ? 'not-allowed' : 'pointer'
+                            }}
+                        >
+                            Previous
+                        </button>
+                        <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Page {page} of {totalPages}</span>
+                        <button 
+                            disabled={page === totalPages}
+                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                            className="btn"
+                            style={{ 
+                                background: 'rgba(255,255,255,0.05)', 
+                                border: '1px solid rgba(255,255,255,0.1)', 
+                                color: page === totalPages ? '#64748b' : '#fff',
+                                cursor: page === totalPages ? 'not-allowed' : 'pointer'
+                            }}
+                        >
+                            Next
+                        </button>
                     </div>
                 )}
             </div>

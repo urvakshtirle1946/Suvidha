@@ -2,7 +2,15 @@ const db = require('../db');
 
 exports.getAllHospitals = async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM hospitals ORDER BY created_at DESC');
+    const query = `
+      SELECT h.*, 
+             COALESCE(json_agg(s.*) FILTER (WHERE s.id IS NOT NULL), '[]') as services
+      FROM hospitals h
+      LEFT JOIN services s ON h.id = s.hospital_id
+      GROUP BY h.id
+      ORDER BY h.created_at DESC
+    `;
+    const result = await db.query(query);
     res.json(result.rows);
   } catch (error) {
     console.error('Database Error:', error);

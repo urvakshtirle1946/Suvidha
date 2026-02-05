@@ -196,3 +196,5 @@ It can also happen if the client has a browser extension installed which messes 
 
 [02:33:02.010] Server  LOG     ✓ Compiled in 738ms
 [02:34:02.897] Server  LOG     ✓ Finished filesystem cache database compaction in 18.9s
+[02:53:11.265] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:53:11.535] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview

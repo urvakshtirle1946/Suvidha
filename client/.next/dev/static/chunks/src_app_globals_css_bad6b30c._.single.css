@@ -1,0 +1,177 @@
+/* [project]/src/app/globals.css [app-client] (css) */
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+:root {
+  --primary: #ff6f61;
+  --brand: #0c831f;
+  --brand-yellow: #fec007;
+  --bg-dark: #f4f6fb;
+  --bg-card: #fff;
+  --bg-card-hover: #fff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+  --glass-border: 1px solid #f3f4f6;
+  --glass-shadow: 0 1px 3px #0000001a;
+  --radius: 12px;
+  --header-height: 80px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: Inter, sans-serif;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -.02em;
+  font-weight: 700;
+}
+
+:is(body:not(:has(.admin-root)) h1, body:not(:has(.admin-root)) h2, body:not(:has(.admin-root)) h3, body:not(:has(.admin-root)) h4, body:not(:has(.admin-root)) h5, body:not(:has(.admin-root)) h6) {
+  color: #111827;
+}
+
+.admin-root h1, .admin-root h2, .admin-root h3, .admin-root h4, .admin-root h5, .admin-root h6 {
+  color: #f8fafc !important;
+}
+
+.container, .nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.glass {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px #0000000d;
+}
+
+.text-gradient {
+  color: var(--brand);
+}
+
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  justify-content: center;
+  align-items: center;
+  padding: .6rem 1.2rem;
+  font-size: .95rem;
+  font-weight: 600;
+  transition: all .2s;
+  display: inline-flex;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 2px 4px #ff6f614d;
+}
+
+.btn-primary:hover {
+  background: #e65b50;
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  background: none;
+}
+
+.btn-outline:hover {
+  background: #ff6f610d;
+}
+
+.section {
+  padding: 2rem 0;
+}
+
+.grid-cards {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  display: grid;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: .4s ease-out forwards fadeIn;
+}
+
+.admin-root {
+  --bg-dark: #0f172a;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --primary: #00d2d3;
+  color: #fff;
+  background-color: #0f172a;
+}
+
+.admin-root .border-slate-800 {
+  border-color: #ffffff1a !important;
+}
+
+.reveal-h1 {
+  letter-spacing: -.02em;
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.reveal-h1 span {
+  opacity: 0;
+  animation: 4s ease-in-out infinite reveal-loop;
+  display: inline-block;
+}
+
+@keyframes reveal-loop {
+  0%, 10% {
+    opacity: 0;
+    transform: translateY(110%);
+  }
+
+  20%, 80% {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+
+  90%, 100% {
+    opacity: 0;
+    transform: translateY(-110%);
+  }
+}
+
+/*# sourceMappingURL=src_app_globals_css_bad6b30c._.single.css.map*/

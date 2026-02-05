@@ -1,0 +1,153 @@
+[00:00:03.239] Server  LOG     ✓ Ready in 2.4s
+[00:00:42.474] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:45.885] Browser LOG     Exiting admin area: Auto-logout triggered.
+[00:00:45.886] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:10:49.236] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:10:49.841] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:12:17.450] Server  LOG     ✓ Compiled in 565ms
+[00:13:40.967] Server  LOG     ✓ Compiled in 332ms
+[00:13:41.886] Browser ERROR   uncaughtError: ReferenceError: HOSPITALS is not defined
+[00:13:42.590] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:13:42.594] Server  LOG     ✓ Compiled in 26ms
+[00:13:44.765] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:13:47.917] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:16:22.667] Server  LOG     ✓ Compiled in 277ms
+[00:17:31.027] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:17:31.841] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:17:31.953] Browser LOG     Unauthorized content access, redirecting to login...
+[00:19:37.451] Server  LOG     ✓ Compiled in 1300ms
+[00:21:31.134] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:21:31.343] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:26:23.023] Server  LOG     ✓ Compiled in 707ms
+[00:26:38.663] Server  LOG     ✓ Compiled in 450ms
+[00:26:40.649] Server  LOG     ✓ Compiled in 85ms
+[00:26:42.323] Server  LOG     ✓ Compiled in 31ms
+[00:28:00.617] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:28:01.526] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:28:41.805] Server  LOG     ✓ Compiled in 607ms
+[00:28:44.331] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:28:46.902] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:30:30.942] Server  LOG     ✓ Compiled in 1419ms
+[00:30:38.648] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:30:40.505] Server  LOG     ✓ Compiled in 123ms
+[00:30:40.906] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:30:40.906] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/admin" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.js">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html
+                          lang="en"
+-                         suppresshydrationwarning="true"
+-                         data-qb-installed="true"
+                        >
+                  ...
+
+[00:32:09.157] Server  LOG     ✓ Compiled in 150ms
+[00:35:07.918] Server  LOG     ✓ Compiled in 207ms
+[00:35:14.863] Server  LOG     ✓ Compiled in 57ms
+[00:35:18.366] Server  LOG     ✓ Compiled in 83ms
+[00:35:20.500] Server  LOG     ✓ Compiled in 111ms
+[00:53:08.157] Server  LOG     ✓ Compiled in 484ms
+[00:53:08.929] Browser ERROR   A component is changing a controlled input to be uncontrolled. This is likely caused by the value changing from a defined to undefined, which should not happen. Decide between using a controlled or uncontrolled input element for the lifetime of the component. More info: https://react.dev/link/controlled-components
+[00:53:09.599] Server  LOG     ✓ Compiled in 81ms
+[00:53:19.680] Server  LOG     ✓ Compiled in 56ms
+[00:53:21.922] Server  LOG     ✓ Compiled in 42ms
+[00:54:24.834] Server  LOG     ✓ Compiled in 533ms
+[00:54:30.894] Server  LOG     ✓ Compiled in 274ms
+[00:54:35.981] Server  LOG     ✓ Compiled in 3.5s
+[00:55:02.067] Browser ERROR   A component is changing an uncontrolled input to be controlled. This is likely caused by the value changing from undefined to a defined value, which should not happen. Decide between using a controlled or uncontrolled input element for the lifetime of the component. More info: https://react.dev/link/controlled-components
+[00:56:58.079] Server  LOG     ✓ Compiled in 148ms
+[01:02:56.468] Server  LOG     ✓ Compiled in 1004ms
+[01:02:57.939] Server  LOG     ✓ Compiled in 536ms
+[01:02:59.530] Server  LOG     ✓ Compiled in 88ms
+[01:03:02.912] Server  LOG     ✓ Compiled in 258ms
+[01:03:15.954] Server  LOG     ✓ Compiled in 89ms
+[01:03:18.223] Server  LOG     ✓ Compiled in 104ms
+[01:03:56.919] Browser ERROR   ./src/app/hospitals/page.js:40:8
+Parsing ecmascript source code failed
+  38 |          setHospitals(mappedData);
+  39 |          setLoading(false);
+> 40 |       })
+     |        ^
+  41 |       .catch(err => {
+  42 |          console.error(err);
+  43 |          setLoading(false);
+
+Expected a semicolon
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hospitals/page.js [Client Component Browser]
+    ./src/app/hospitals/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/hospitals/page.js [Client Component SSR]
+    ./src/app/hospitals/page.js [Server Component]
+[01:04:06.897] Browser ERROR   ./src/app/hospitals/page.js:40:8
+Parsing ecmascript source code failed
+  38 |          setHospitals(mappedData);
+  39 |          setLoading(false);
+> 40 |       })
+     |        ^
+  41 |       .catch(err => {
+  42 |          console.error(err);
+  43 |          setLoading(false);
+
+Expected a semicolon
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hospitals/page.js [Client Component Browser]
+    ./src/app/hospitals/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/hospitals/page.js [Client Component SSR]
+    ./src/app/hospitals/page.js [Server Component]
+[01:04:09.896] Browser ERROR   ./src/app/hospitals/page.js:40:8
+Parsing ecmascript source code failed
+  38 |          setHospitals(mappedData);
+  39 |          setLoading(false);
+> 40 |       })
+     |        ^
+  41 |       .catch(err => {
+  42 |          console.error(err);
+  43 |          setLoading(false);
+
+Expected a semicolon
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hospitals/page.js [Client Component Browser]
+    ./src/app/hospitals/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/hospitals/page.js [Client Component SSR]
+    ./src/app/hospitals/page.js [Server Component]
+[01:04:33.688] Server  LOG     ✓ Compiled in 100ms

@@ -3,17 +3,15 @@ services:
   - type: web
     name: suvidha-server
     env: node
-    rootDirectory: server
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: "cd server && npm install"
+    startCommand: "cd server && npm start"
     envVars:
       - key: PORT
-        value: 5000
+        value: "5000"
       - key: NODE_ENV
-        value: production
+        value: "production"
       - key: NODE_TLS_REJECT_UNAUTHORIZED
-        value: "0" # Fix for self-signed certs in some DBs
-      # Add other secrets (DATABASE_URL, CLERK keys, etc.) in the Render Dashboard
+        value: "0"
     disk:
       name: suvidha-uploads
       mountPath: /opt/render/project/src/server/uploads
@@ -23,12 +21,11 @@ services:
   - type: web
     name: suvidha-client
     env: node
-    rootDirectory: client
-    buildCommand: npm install && npm run build
-    startCommand: npm start
+    buildCommand: "cd client && npm install && npm run build"
+    startCommand: "cd client && npm start"
     envVars:
       - key: NODE_ENV
-        value: production
+        value: "production"
       - key: NEXT_PUBLIC_API_URL
         fromService:
           type: web

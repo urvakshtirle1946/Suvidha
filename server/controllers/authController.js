@@ -51,24 +51,47 @@ exports.phoneLogin = async (req, res) => {
 
     // 3. Find or Create User in CLERK
     let clerkUser;
+    const placeholderEmail = `${phoneNumber.replace('+', '')}@phone.suvidha.app`;
     
-    // First, try to find user by phone number
+    // Strategy: Try Phone first. If unsupported, use Email placeholder.
     try {
-        const userList = await clerkClient.users.getUserList({
-            phoneNumber: [phoneNumber],
-            limit: 1
-        });
-        
-        if (userList.data.length > 0) {
-            clerkUser = userList.data[0];
+        // A. Try finding by Phone
+        const userListPhone = await clerkClient.users.getUserList({ phoneNumber: [phoneNumber], limit: 1 });
+        if (userListPhone.data.length > 0) {
+            clerkUser = userListPhone.data[0];
         } else {
-            // Create user
-            clerkUser = await clerkClient.users.createUser({
-                phoneNumber: [phoneNumber],
-                firstName: 'User', // Default
-                skipPasswordRequirement: true,
-                skipPasswordChecks: true
-            });
+             // B. Try finding by Placeholder Email (in case we already fell back previously)
+             const userListEmail = await clerkClient.users.getUserList({ emailAddress: [placeholderEmail], limit: 1 });
+             if (userListEmail.data.length > 0) {
+                 clerkUser = userListEmail.data[0];
+             } else {
+                 // C. Try Creating with Phone
+                 try {
+                    clerkUser = await clerkClient.users.createUser({
+                        phoneNumber: [phoneNumber],
+                        firstName: 'User',
+                        skipPasswordRequirement: true,
+                        skipPasswordChecks: true
+                    });
+                 } catch (createErr) {
+                     // Check if strictly unsupported country
+                     const isUnsupported = createErr.errors?.some(e => e.code === 'unsupported_country_code');
+                     
+                     if (isUnsupported) {
+                         console.log(`[Clerk] Phone +91 blocked. Falling back to Email: ${placeholderEmail}`);
+                         // D. Create with Placeholder Email
+                         clerkUser = await clerkClient.users.createUser({
+                             emailAddress: [placeholderEmail],
+                             firstName: 'User',
+                             skipPasswordRequirement: true,
+                             skipPasswordChecks: true,
+                             publicMetadata: { phone: phoneNumber } // Store real phone in metadata
+                         });
+                     } else {
+                         throw createErr; // Re-throw other errors
+                     }
+                 }
+             }
         }
     } catch (clerkErr) {
         console.error('Clerk User Lookup/Creation Error:', JSON.stringify(clerkErr, null, 2));

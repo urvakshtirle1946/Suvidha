@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 18, "column": 0}, "map": {"version":3,"sources":["file:///D:/Urvaksh%20Tirle/SYSTEM/PROJECTS/Suvidha/client/src/app/sso-callback/page.js"],"sourcesContent":["import { AuthenticateWithRedirectCallback } from \"@clerk/nextjs\";\r\n\r\nexport default function SSOCallback() {\r\n  return <AuthenticateWithRedirectCallback />;\r\n}\r\n"],"names":[],"mappings":";;;;;AAAA;;;AAEe,SAAS;IACtB,qBAAO,8OAAC,+NAAgC;;;;;AAC1C"}}]
+}

@@ -6,7 +6,28 @@
     "[project]/src/app/[adminPath]/hospitals/page": [
       "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2"
     ],
+    "[project]/src/app/[adminPath]/login/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2"
+    ],
     "[project]/src/app/[adminPath]/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2"
+    ],
+    "[project]/src/app/[adminPath]/users/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2"
+    ],
+    "[project]/src/app/_not-found/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2"
+    ],
+    "[project]/src/app/bookings/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2"
+    ],
+    "[project]/src/app/login/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2"
+    ],
+    "[project]/src/app/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2"
+    ],
+    "[project]/src/app/sso-callback/page": [
       "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2"
     ]
   },

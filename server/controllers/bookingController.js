@@ -19,19 +19,53 @@ exports.createBooking = async (req, res) => {
     // 2. Notify Hospital via WhatsApp
     if (hospitalId) {
         try {
-            const hospitalRes = await db.query('SELECT name, phone_number FROM hospitals WHERE id = $1', [hospitalId]);
+            const hospitalRes = await db.query('SELECT name, phone_number, location FROM hospitals WHERE id = $1', [hospitalId]);
+            
             if (hospitalRes.rows.length > 0) {
                 const hospital = hospitalRes.rows[0];
-                if (hospital.phone_number) {
-                    // HARDCODED FOR DEMO/TESTING: Send notification to the developer's WhatsApp
-                    const adminPhone = '+919329017929'; 
-                    const message = `New Booking Alert!\n\nPatient: ${name}\nService: ${serviceName}\nDate: ${date}\nTime: ${time}\nHospital: ${hospital.name}\n\nPlease confirm availability.`;
-                    await smsService.sendWhatsapp(adminPhone, message);
+                
+                // HARDCODED FOR DEMO: Send notification to the developer's WhatsApp
+                const adminPhone = '+919329017929'; 
+                
+                const message = `New Booking Alert!
+
+Patient: ${name}
+Service: ${serviceName}
+Date: ${date}
+Time: ${time}
+Hospital: ${hospital.name}
+
+Please confirm availability.`;
+
+                await smsService.sendWhatsapp(adminPhone, message);
+
+                // 3. Notify Patient (User) via WhatsApp
+                if (userPhone) {
+                    let formattedUserPhone = userPhone;
+                    if (/^\d{10}$/.test(formattedUserPhone)) {
+                        formattedUserPhone = '+91' + formattedUserPhone;
+                    }
+
+                    const userMessage = `Booking Confirmed! ✅
+
+Hello ${name},
+Your appointment is scheduled.
+
+🏥 Hospital: ${hospital.name}
+🩺 Service: ${serviceName}
+📅 Date: ${date}
+⏰ Time: ${time}
+
+Location: ${hospital.location || address}
+
+Thank you for choosing Suvidha!`;
+
+                    console.log(`[Booking] Sending Patient Notification to: ${formattedUserPhone}`);
+                    await smsService.sendWhatsapp(formattedUserPhone, userMessage);
                 }
             }
         } catch (notifyError) {
             console.error('Failed to notify hospital:', notifyError);
-            // Don't fail the request if notification fails
         }
     }
     

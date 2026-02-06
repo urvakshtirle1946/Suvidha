@@ -20,6 +20,10 @@ export default function LoginPage() {
     document.body.style.overflow = 'auto';
     document.body.style.pointerEvents = 'auto';
 
+    if (!PE_CLIENT_ID) {
+        console.warn("⚠️ Phone.Email Client ID is missing. Check your .env setup.");
+    }
+
     // 1. Load Phone.Email Script
     const script = document.createElement('script');
     script.src = "https://www.phone.email/sign_in_button_v1.js";
@@ -32,8 +36,8 @@ export default function LoginPage() {
         setVerifying(true);
 
         try {
-            // Verify with Backend
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/phone-login`, {
+            // Verify with Backend (Hardcoded to localhost for validation)
+            const res = await fetch(`http://localhost:5000/api/auth/phone-login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_json_url }),
@@ -127,31 +131,49 @@ export default function LoginPage() {
             {loadingGoogle ? 'Redirecting...' : 'Continue with Google'}
           </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-              <div style={{ height: '1px', flex: 1, background: '#e5e7eb' }}></div>
-              <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>OR LOGIN WITH PHONE</span>
-              <div style={{ height: '1px', flex: 1, background: '#e5e7eb' }}></div>
-          </div>
+          {/* Divider Removed */}
+          <div style={{ marginBottom: '1rem' }}></div>
 
           {/* Phone.Email Widget Container */}
           <div style={{ 
-              padding: '1rem', background: '#f9fafb', borderRadius: '12px', border: '1px dashed #d1d5db',
-              display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60px'
+              display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50px',
+              position: 'relative' 
           }}>
-              {verifying ? (
-                  <span style={{ fontSize: '0.9rem', color: '#4b5563' }}>Verifying...</span>
-              ) : (
-                <div 
-                    className="pe_signin_button" 
-                    data-client-id={PE_CLIENT_ID} 
-                />
-              )}
+              {verifying && <span style={{ fontSize: '0.9rem', color: '#4b5563' }}>Verifying...</span>}
+              <div 
+                  className="pe_signin_button" 
+                  data-client-id={PE_CLIENT_ID}
+                  style={{ display: verifying ? 'none' : 'block' }} 
+              />
           </div>
 
           <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '2rem' }}>
               By continuing, you agree to our Terms of Service and Privacy Policy.
           </p>
       </div>
+      <div id="clerk-captcha"></div>
+      
+      {/* CSS Override to force Widget Inline */}
+      <style>{`
+        .pe_signin_button {
+            width: 100%;
+            display: flex !important;
+            justify-content: center !important;
+            position: relative !important;
+        }
+        /* Target common elements injected by the widget and force them inline */
+        .pe_signin_button img, 
+        .pe_signin_button button, 
+        .pe_signin_button iframe,
+        .pe_signin_button svg {
+            position: static !important;
+            bottom: auto !important;
+            left: auto !important;
+            right: auto !important;
+            margin: 0 auto !important;
+            transform: none !important;
+        }
+      `}</style>
     </div>
   );
 }

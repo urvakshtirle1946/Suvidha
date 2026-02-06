@@ -141,7 +141,7 @@ function HospitalManagement() {
     }, []);
     const fetchHospitals = async ()=>{
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`);
+            const res = await fetch(`${("TURBOPACK compile-time value", "https://suvidha-server-4u66.onrender.com") || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`);
             if (res.ok) {
                 const data = await res.json();
                 setHospitals(data);
@@ -187,7 +187,7 @@ function HospitalManagement() {
         });
         // Fetch Services
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${hospital.id}`);
+            const res = await fetch(`${("TURBOPACK compile-time value", "https://suvidha-server-4u66.onrender.com") || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${hospital.id}`);
             if (res.ok) {
                 const fullData = await res.json();
                 if (fullData.services && fullData.services.length > 0) {
@@ -210,7 +210,7 @@ function HospitalManagement() {
     const handleDelete = async (id)=>{
         if (!confirm('Are you sure you want to delete this hospital?')) return;
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${id}`, {
+            const res = await fetch(`${("TURBOPACK compile-time value", "https://suvidha-server-4u66.onrender.com") || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${id}`, {
                 method: 'DELETE'
             });
             if (res.ok) {
@@ -226,7 +226,7 @@ function HospitalManagement() {
     const handleSubmit = async (e)=>{
         e.preventDefault();
         try {
-            const url = editMode ? `${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${editId}` : `${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`;
+            const url = editMode ? `${("TURBOPACK compile-time value", "https://suvidha-server-4u66.onrender.com") || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${editId}` : `${("TURBOPACK compile-time value", "https://suvidha-server-4u66.onrender.com") || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`;
             const method = editMode ? 'PUT' : 'POST';
             const data = new FormData();
             data.append('name', formData.name);
@@ -514,7 +514,7 @@ function HospitalManagement() {
                                         children: [
                                             "Current Image: ",
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
-                                                href: formData.image_url.startsWith('/') ? (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + formData.image_url : formData.image_url,
+                                                href: formData.image_url.startsWith('/') ? (("TURBOPACK compile-time value", "https://suvidha-server-4u66.onrender.com") || 'https://suvidha-server-4u66.onrender.com') + formData.image_url : formData.image_url,
                                                 target: "_blank",
                                                 rel: "noreferrer",
                                                 style: {
@@ -1037,7 +1037,7 @@ function HospitalManagement() {
                     // Determine Background Image
                     let bgImage = DEFAULT_HOSPITAL_IMAGE;
                     if (hospital.image_url && !hospital.image_url.includes('linear-gradient')) {
-                        bgImage = hospital.image_url.startsWith('/') ? (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + hospital.image_url : hospital.image_url;
+                        bgImage = hospital.image_url.startsWith('/') ? (("TURBOPACK compile-time value", "https://suvidha-server-4u66.onrender.com") || 'https://suvidha-server-4u66.onrender.com') + hospital.image_url : hospital.image_url;
                     }
                     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         style: {

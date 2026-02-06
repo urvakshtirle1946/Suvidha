@@ -1,60 +1,1471 @@
-[00:00:03.168] Server  LOG     ✓ Ready in 2.5s
-[00:00:06.655] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:08.559] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
-[00:00:10.568] Browser ERROR   {}
-[00:00:10.568] Browser ERROR   {}
-[00:02:45.351] Server  LOG     ✓ Compiled in 755ms
-[00:02:49.128] Server  LOG     ✓ Compiled in 40ms
-[00:02:52.939] Server  LOG     ✓ Compiled in 278ms
-[00:02:53.556] Browser ERROR   ./src/app/[adminPath]/hospitals/page.js:141:15
-Parsing ecmascript source code failed
-  139 |
-  140 | // In handleSubmit
-> 141 |         const url = editMode 
-      |               ^^^
-  142 |             ? `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000'}/api/hospitals/${editId}` 
-  143 |             : `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000'}/api/hospitals`;
-  144 |
+[00:00:03.795] Server  LOG     ✓ Ready in 3s
+[00:00:24.822] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:25.447] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:26.284] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:00:26.661] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:00:26.661] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
 
-Unexpected token `ident`. Expected ... , *,  (, [, :, , ?, = or an identifier
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.js">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html
+                          lang="en"
+-                         suppresshydrationwarning="true"
+-                         data-qb-installed="true"
+                        >
+                  ...
+
+[00:00:26.661] Browser LOG     Exiting admin area: Auto-logout triggered.
+[00:02:20.308] Server  LOG     ✓ Compiled in 4.3s
+[00:02:27.544] Browser LOG     Exiting admin area: Auto-logout triggered.
+[00:13:51.078] Browser LOG     Exiting admin area: Auto-logout triggered.
+[00:14:26.198] Browser LOG     Exiting admin area: Auto-logout triggered.
+[00:19:58.641] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:19:59.461] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:26:26.870] Server  LOG     ○ Compiling /sso-callback ...
+[00:26:35.436] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:26:39.132] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:26:39.132] Browser ERROR   Cannot initialize Smart CAPTCHA widget because the `clerk-captcha` DOM element was not found; falling back to Invisible CAPTCHA widget. If you are using a custom flow, visit https://clerk.com/docs/guides/development/custom-flows/bot-sign-up-protection for instructions
+[00:26:39.132] Browser WARN    [Cloudflare Turnstile] Turnstile already has been loaded. Was Turnstile imported multiple times?
+[00:26:39.132] Browser ERROR   Cannot initialize Smart CAPTCHA widget because the `clerk-captcha` DOM element was not found; falling back to Invisible CAPTCHA widget. If you are using a custom flow, visit https://clerk.com/docs/guides/development/custom-flows/bot-sign-up-protection for instructions
+[00:26:39.132] Browser WARN    [Cloudflare Turnstile] Turnstile has already been rendered in this container. Did you mean to render it multiple times?
+[00:26:49.155] Browser LOG     Exiting admin area: Auto-logout triggered.
+[00:27:31.265] Browser LOG     Turnstile Widget seem to have hung:  r8p5u
+[00:27:31.265] Browser WARN    [Cloudflare Turnstile] Error: 300030.
+[00:33:56.092] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:33:56.395] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:33:56.740] Browser LOG     Exiting admin area: Auto-logout triggered.
+[00:38:21.729] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:38:21.956] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:40:52.061] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:40:52.783] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:42:58.145] Browser ERROR   Error: {}
+[00:44:56.982] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:44:57.924] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:45:02.452] Browser ERROR   Error: {}
+[00:45:26.739] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:45:26.918] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:46:58.058] Server  LOG     ✓ Compiled in 756ms
+[00:47:31.669] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:47:32.094] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:54:21.942] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:54:22.734] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:55:20.097] Server  LOG     ✓ Compiled in 569ms
+[01:14:41.648] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:14:42.531] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[01:18:22.326] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:18:22.974] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[01:23:51.075] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:23:51.836] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[01:25:25.787] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:25:26.435] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[01:26:53.095] Server  LOG     ✓ Compiled in 546ms
+[01:27:09.215] Server  LOG     ✓ Compiled in 1219ms
+[01:28:19.722] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:28:21.088] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[01:28:26.114] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:28:26.255] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[01:31:00.124] Server  LOG     ✓ Compiled in 596ms
+[01:33:30.219] Server  LOG     ✓ Compiled in 97ms
+[01:52:18.861] Server  LOG     ✓ Compiled in 3.7s
+[02:07:05.129] Browser ERROR   ./src/app/page.js:11:1
+Parsing ecmascript source code failed
+   9 |   Activity, Stethoscope, Building2, Pill, TestTube, Truck, 
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+> 11 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^
+  12 |
+  13 | // ... (keep existing imports)
+  14 |
+
+Expected ',', got 'import'
 
 Import traces:
   Client Component Browser:
-    ./src/app/[adminPath]/hospitals/page.js [Client Component Browser]
-    ./src/app/[adminPath]/hospitals/page.js [Server Component]
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
 
   Client Component SSR:
-    ./src/app/[adminPath]/hospitals/page.js [Client Component SSR]
-    ./src/app/[adminPath]/hospitals/page.js [Server Component]
-[00:03:51.503] Server  LOG     ✓ Compiled in 552ms
-[00:04:58.781] Server  LOG     ✓ Compiled in 796ms
-[00:05:03.269] Server  LOG     ✓ Compiled in 188ms
-[00:05:04.527] Server  LOG     ✓ Compiled in 118ms
-[00:05:05.556] Browser ERROR   ./src/app/[adminPath]/hospitals/page.js:142:15
-Parsing ecmascript source code failed
-  140 |
-  141 | // In handleSubmit
-> 142 |         const url = editMode 
-      |               ^^^
-  143 |             ? `${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${editId}` 
-  144 |             : `${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`;
-  145 |
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+[02:07:33.942] Server  LOG     ✓ Compiled in 3.3s
+[02:08:21.981] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:08:22.986] Browser LOG     Exiting admin area: Auto-logout triggered.
+[02:08:23.358] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[02:09:53.647] Server  LOG     ✓ Compiled in 407ms
+[02:10:11.404] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:10:12.735] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[02:10:19.510] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
 
-Unexpected token `ident`. Expected ... , *,  (, [, :, , ?, = or an identifier
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
 
 Import traces:
   Client Component Browser:
-    ./src/app/[adminPath]/hospitals/page.js [Client Component Browser]
-    ./src/app/[adminPath]/hospitals/page.js [Server Component]
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
 
   Client Component SSR:
-    ./src/app/[adminPath]/hospitals/page.js [Client Component SSR]
-    ./src/app/[adminPath]/hospitals/page.js [Server Component]
-[00:05:57.829] Server  LOG     ✓ Compiled in 185ms
-[00:06:25.050] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:06:25.289] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
-[00:08:04.241] Server  LOG     ✓ Compiled in 868ms
-[00:08:05.760] Server  LOG     ✓ Compiled in 228ms
-[00:08:41.157] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:08:41.493] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
-[00:09:44.568] Server  LOG     ✓ Compiled in 718ms
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.526] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.536] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.544] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.576] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.580] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.587] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.593] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.604] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.611] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.617] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.622] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.627] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.630] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.634] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.639] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.643] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.646] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.650] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.654] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.658] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.661] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.664] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.668] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.671] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.674] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.677] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.679] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.686] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.689] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.691] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.694] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.700] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.706] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.712] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.723] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.728] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.731] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.737] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.744] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.748] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.751] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.756] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.760] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.765] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.783] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.789] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.794] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.799] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.805] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.810] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.815] Server  ERROR   ⨯ ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[02:10:19.822] Server  LOG     ✓ Compiled in 575ms
+[02:10:20.164] Browser ERROR   ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+[02:10:20.274] Browser ERROR   ./src/app/page.js:12:1
+Module not found: Can't resolve '@/components/ui/event-countdown-card'
+  10 |   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  11 | } from 'lucide-react';
+> 12 | import { EventCountdownCard } from "@/components/ui/event-countdown-card";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |
+  14 | export default function Home() {
+  15 |   const router = useRouter();
+
+Import map: aliased to relative './src/components/ui/event-countdown-card' inside of [project]/
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.js [Client Component Browser]
+    ./src/app/page.js [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.js [Client Component SSR]
+    ./src/app/page.js [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+[02:10:20.999] Server  LOG     ✓ Compiled in 664ms
+[02:10:25.766] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:10:26.172] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview

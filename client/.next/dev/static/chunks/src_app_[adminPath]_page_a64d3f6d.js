@@ -40,8 +40,8 @@ function AdminDashboard() {
         // setLoading(true); // Don't set loading on poll to avoid flicker
         try {
             const [resBookings, resHospitals] = await Promise.all([
-                fetch(`${__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/bookings`),
-                fetch(`${__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/hospitals`)
+                fetch(`${("TURBOPACK compile-time value", "https://suvidha-server-4u66.onrender.com") || 'http://localhost:5000'}/api/bookings`),
+                fetch(`${("TURBOPACK compile-time value", "https://suvidha-server-4u66.onrender.com") || 'http://localhost:5000'}/api/hospitals`)
             ]);
             if (resBookings.ok) {
                 const data = await resBookings.json();

@@ -20,18 +20,18 @@ import SmoothScroll from "@/components/SmoothScroll";
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
     <ClerkProvider>
-      <body className={outfit.className}>
-        <AuthProvider>
-          <LocationProvider>
-            <SmoothScroll />
-            <AdminSessionManager />
-            {children}
-          </LocationProvider>
-        </AuthProvider>
-      </body>
+      <html lang="en" suppressHydrationWarning>
+        <body className={outfit.className}>
+          <AuthProvider>
+            <LocationProvider>
+              <SmoothScroll />
+              <AdminSessionManager />
+              {children}
+            </LocationProvider>
+          </AuthProvider>
+        </body>
+      </html>
     </ClerkProvider>
-    </html>
   );
 }

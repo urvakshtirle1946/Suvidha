@@ -31,6 +31,8 @@ function LoginPage() {
         // RESET any potential overflow locks from previous modals or scripts
         document.body.style.overflow = 'auto';
         document.body.style.pointerEvents = 'auto';
+        if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
+        ;
         // 1. Load Phone.Email Script
         const script = document.createElement('script');
         script.src = "https://www.phone.email/sign_in_button_v1.js";
@@ -41,8 +43,8 @@ function LoginPage() {
             const { user_json_url } = userObj;
             setVerifying(true);
             try {
-                // Verify with Backend
-                const res = await fetch(`${API_URL}/api/auth/phone-login`, {
+                // Verify with Backend (Hardcoded to localhost for validation)
+                const res = await fetch(`http://localhost:5000/api/auth/phone-login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -114,213 +116,213 @@ function LoginPage() {
             justifyContent: 'center',
             background: '#f3f4f6'
         },
-        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            style: {
-                position: 'relative',
-                zIndex: 10,
-                background: '#fff',
-                padding: '2.5rem',
-                borderRadius: '20px',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                width: '100%',
-                maxWidth: '420px',
-                textAlign: 'center'
-            },
-            children: [
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    style: {
-                        display: 'flex',
-                        justifyContent: 'center',
-                        marginBottom: '1.5rem'
-                    },
-                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                style: {
+                    position: 'relative',
+                    zIndex: 10,
+                    background: '#fff',
+                    padding: '2.5rem',
+                    borderRadius: '20px',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    width: '100%',
+                    maxWidth: '420px',
+                    textAlign: 'center'
+                },
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         style: {
-                            background: '#eff6ff',
-                            padding: '12px',
-                            borderRadius: '50%'
+                            display: 'flex',
+                            justifyContent: 'center',
+                            marginBottom: '1.5rem'
                         },
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$shield$2d$check$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ShieldCheck$3e$__["ShieldCheck"], {
-                            size: 32,
-                            color: "#2563eb"
-                        }, void 0, false, {
-                            fileName: "[project]/src/app/login/page.js",
-                            lineNumber: 104,
-                            columnNumber: 19
-                        }, this)
-                    }, void 0, false, {
-                        fileName: "[project]/src/app/login/page.js",
-                        lineNumber: 103,
-                        columnNumber: 15
-                    }, this)
-                }, void 0, false, {
-                    fileName: "[project]/src/app/login/page.js",
-                    lineNumber: 102,
-                    columnNumber: 11
-                }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                    style: {
-                        fontSize: '1.75rem',
-                        fontWeight: 'bold',
-                        color: '#111827',
-                        marginBottom: '0.5rem'
-                    },
-                    children: "Welcome to Suvidha"
-                }, void 0, false, {
-                    fileName: "[project]/src/app/login/page.js",
-                    lineNumber: 108,
-                    columnNumber: 11
-                }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                    style: {
-                        color: '#6b7280',
-                        marginBottom: '2rem'
-                    },
-                    children: "Sign in to manage bookings & more"
-                }, void 0, false, {
-                    fileName: "[project]/src/app/login/page.js",
-                    lineNumber: 111,
-                    columnNumber: 11
-                }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                    onClick: handleGoogleLogin,
-                    disabled: loadingGoogle,
-                    style: {
-                        width: '100%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '10px',
-                        padding: '0.75rem',
-                        borderRadius: '10px',
-                        border: '1px solid #d1d5db',
-                        background: '#fff',
-                        fontSize: '1rem',
-                        fontWeight: '500',
-                        color: '#374151',
-                        cursor: 'pointer',
-                        marginBottom: '1.5rem',
-                        transition: 'background 0.2s'
-                    },
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
-                            src: "https://www.svgrepo.com/show/475656/google-color.svg",
-                            alt: "Google",
-                            width: "20",
-                            height: "20"
-                        }, void 0, false, {
-                            fileName: "[project]/src/app/login/page.js",
-                            lineNumber: 126,
-                            columnNumber: 13
-                        }, this),
-                        loadingGoogle ? 'Redirecting...' : 'Continue with Google'
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/src/app/login/page.js",
-                    lineNumber: 116,
-                    columnNumber: 11
-                }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    style: {
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '1rem',
-                        marginBottom: '1.5rem'
-                    },
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             style: {
-                                height: '1px',
-                                flex: 1,
-                                background: '#e5e7eb'
-                            }
-                        }, void 0, false, {
-                            fileName: "[project]/src/app/login/page.js",
-                            lineNumber: 131,
-                            columnNumber: 15
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                            style: {
-                                fontSize: '0.85rem',
-                                color: '#9ca3af'
+                                background: '#eff6ff',
+                                padding: '12px',
+                                borderRadius: '50%'
                             },
-                            children: "OR LOGIN WITH PHONE"
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$shield$2d$check$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ShieldCheck$3e$__["ShieldCheck"], {
+                                size: 32,
+                                color: "#2563eb"
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/login/page.js",
+                                lineNumber: 108,
+                                columnNumber: 19
+                            }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/login/page.js",
-                            lineNumber: 132,
-                            columnNumber: 15
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            style: {
-                                height: '1px',
-                                flex: 1,
-                                background: '#e5e7eb'
-                            }
-                        }, void 0, false, {
-                            fileName: "[project]/src/app/login/page.js",
-                            lineNumber: 133,
+                            lineNumber: 107,
                             columnNumber: 15
                         }, this)
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/src/app/login/page.js",
-                    lineNumber: 130,
-                    columnNumber: 11
-                }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    style: {
-                        padding: '1rem',
-                        background: '#f9fafb',
-                        borderRadius: '12px',
-                        border: '1px dashed #d1d5db',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        minHeight: '60px'
-                    },
-                    children: verifying ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/login/page.js",
+                        lineNumber: 106,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                         style: {
-                            fontSize: '0.9rem',
-                            color: '#4b5563'
+                            fontSize: '1.75rem',
+                            fontWeight: 'bold',
+                            color: '#111827',
+                            marginBottom: '0.5rem'
                         },
-                        children: "Verifying..."
+                        children: "Welcome to Suvidha"
                     }, void 0, false, {
                         fileName: "[project]/src/app/login/page.js",
-                        lineNumber: 142,
-                        columnNumber: 19
-                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "pe_signin_button",
-                        "data-client-id": PE_CLIENT_ID
+                        lineNumber: 112,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        style: {
+                            color: '#6b7280',
+                            marginBottom: '2rem'
+                        },
+                        children: "Sign in to manage bookings & more"
                     }, void 0, false, {
                         fileName: "[project]/src/app/login/page.js",
-                        lineNumber: 144,
-                        columnNumber: 17
+                        lineNumber: 115,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                        onClick: handleGoogleLogin,
+                        disabled: loadingGoogle,
+                        style: {
+                            width: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '10px',
+                            padding: '0.75rem',
+                            borderRadius: '10px',
+                            border: '1px solid #d1d5db',
+                            background: '#fff',
+                            fontSize: '1rem',
+                            fontWeight: '500',
+                            color: '#374151',
+                            cursor: 'pointer',
+                            marginBottom: '1.5rem',
+                            transition: 'background 0.2s'
+                        },
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
+                                src: "https://www.svgrepo.com/show/475656/google-color.svg",
+                                alt: "Google",
+                                width: "20",
+                                height: "20"
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/login/page.js",
+                                lineNumber: 130,
+                                columnNumber: 13
+                            }, this),
+                            loadingGoogle ? 'Redirecting...' : 'Continue with Google'
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/app/login/page.js",
+                        lineNumber: 120,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            marginBottom: '1rem'
+                        }
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/login/page.js",
+                        lineNumber: 135,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            minHeight: '50px',
+                            position: 'relative'
+                        },
+                        children: [
+                            verifying && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                style: {
+                                    fontSize: '0.9rem',
+                                    color: '#4b5563'
+                                },
+                                children: "Verifying..."
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/login/page.js",
+                                lineNumber: 142,
+                                columnNumber: 29
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "pe_signin_button",
+                                "data-client-id": PE_CLIENT_ID,
+                                style: {
+                                    display: verifying ? 'none' : 'block'
+                                }
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/login/page.js",
+                                lineNumber: 143,
+                                columnNumber: 15
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/app/login/page.js",
+                        lineNumber: 138,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        style: {
+                            fontSize: '0.75rem',
+                            color: '#9ca3af',
+                            marginTop: '2rem'
+                        },
+                        children: "By continuing, you agree to our Terms of Service and Privacy Policy."
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/login/page.js",
+                        lineNumber: 150,
+                        columnNumber: 11
                     }, this)
-                }, void 0, false, {
-                    fileName: "[project]/src/app/login/page.js",
-                    lineNumber: 137,
-                    columnNumber: 11
-                }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                    style: {
-                        fontSize: '0.75rem',
-                        color: '#9ca3af',
-                        marginTop: '2rem'
-                    },
-                    children: "By continuing, you agree to our Terms of Service and Privacy Policy."
-                }, void 0, false, {
-                    fileName: "[project]/src/app/login/page.js",
-                    lineNumber: 151,
-                    columnNumber: 11
-                }, this)
-            ]
-        }, void 0, true, {
-            fileName: "[project]/src/app/login/page.js",
-            lineNumber: 95,
-            columnNumber: 7
-        }, this)
-    }, void 0, false, {
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/app/login/page.js",
+                lineNumber: 99,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                id: "clerk-captcha"
+            }, void 0, false, {
+                fileName: "[project]/src/app/login/page.js",
+                lineNumber: 154,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("style", {
+                children: `
+        .pe_signin_button {
+            width: 100%;
+            display: flex !important;
+            justify-content: center !important;
+            position: relative !important;
+        }
+        /* Target common elements injected by the widget and force them inline */
+        .pe_signin_button img, 
+        .pe_signin_button button, 
+        .pe_signin_button iframe,
+        .pe_signin_button svg {
+            position: static !important;
+            bottom: auto !important;
+            left: auto !important;
+            right: auto !important;
+            margin: 0 auto !important;
+            transform: none !important;
+        }
+      `
+            }, void 0, false, {
+                fileName: "[project]/src/app/login/page.js",
+                lineNumber: 157,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
         fileName: "[project]/src/app/login/page.js",
-        lineNumber: 94,
+        lineNumber: 98,
         columnNumber: 5
     }, this);
 }

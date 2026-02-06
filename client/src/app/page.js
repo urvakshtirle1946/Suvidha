@@ -5,21 +5,32 @@ import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import BookingModal from '@/components/BookingModal';
 import HospitalProfileModal from '@/components/HospitalProfileModal';
+import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 import { 
   Activity, Stethoscope, Building2, Pill, TestTube, Truck, 
   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
 } from 'lucide-react';
 
 export default function Home() {
+  const { addToCart } = useCart();
+  const { user, isLoaded } = useAuth();
   const router = useRouter();
+
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedHospitalForProfile, setSelectedHospitalForProfile] = useState(null);
 
   // State for fetched data
-  // State for fetched data
   const [hospitals, setHospitals] = useState([]);
   const [popularServices, setPopularServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    if (isLoaded && !user) {
+      router.push('/login');
+    }
+  }, [isLoaded, user, router]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,6 +53,40 @@ export default function Home() {
     };
 
     fetchData();
+  }, []);
+
+  const OFFERS = [
+      {
+          id: 1,
+          title: "Healthcare at your fingertips.",
+          subtitle: "Lab Tests • Medicines • Nursing • Doctor Visits",
+          bg: "linear-gradient(to right, #0c831f, #33b249)", // Green
+          btnText: "Book Now",
+          btnColor: "#0c831f"
+      },
+      {
+          id: 2,
+          title: "50% OFF on Full Body Checkups",
+          subtitle: "Includes 80+ Tests. Home Collection Available.",
+          bg: "linear-gradient(to right, #2563eb, #60a5fa)", // Blue
+          btnText: "View Package",
+          btnColor: "#2563eb"
+      },
+      {
+          id: 3,
+          title: "Pharmacy: Flat 20% OFF",
+          subtitle: "On all prescription medicines. fast delivery.",
+          bg: "linear-gradient(to right, #db2777, #f472b6)", // Pink
+          btnText: "Order Now",
+          btnColor: "#db2777"
+      }
+  ];
+
+  useEffect(() => {
+      const timer = setInterval(() => {
+          setCurrentSlide((prev) => (prev + 1) % OFFERS.length);
+      }, 5000);
+      return () => clearInterval(timer);
   }, []);
 
   const handleHospitalClick = async (hospital) => {
@@ -77,41 +122,19 @@ export default function Home() {
       { name: 'Physiotherapy', desc: 'Recovery', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9f43', href: '/hospitals?specialty=Physiotherapy' },
   ];
 
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const OFFERS = [
-      {
-          id: 1,
-          title: "Healthcare at your fingertips.",
-          subtitle: "Lab Tests • Medicines • Nursing • Doctor Visits",
-          bg: "linear-gradient(to right, #0c831f, #33b249)", // Green
-          btnText: "Book Now",
-          btnColor: "#0c831f"
-      },
-      {
-          id: 2,
-          title: "50% OFF on Full Body Checkups",
-          subtitle: "Includes 80+ Tests. Home Collection Available.",
-          bg: "linear-gradient(to right, #2563eb, #60a5fa)", // Blue
-          btnText: "View Package",
-          btnColor: "#2563eb"
-      },
-      {
-          id: 3,
-          title: "Pharmacy: Flat 20% OFF",
-          subtitle: "On all prescription medicines. fast delivery.",
-          bg: "linear-gradient(to right, #db2777, #f472b6)", // Pink
-          btnText: "Order Now",
-          btnColor: "#db2777"
-      }
-  ];
-
-  useEffect(() => {
-      const timer = setInterval(() => {
-          setCurrentSlide((prev) => (prev + 1) % OFFERS.length);
-      }, 5000);
-      return () => clearInterval(timer);
-  }, []);
+  // If not loaded or not logged in, show loading or nothing (prevents flash)
+  if (!isLoaded || !user) {
+      return (
+        <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f4f6fb' }}>
+            <div style={{
+                width: '40px', height: '40px',
+                border: '4px solid #f3f3f3', borderTop: '4px solid #3498db',
+                borderRadius: '50%', animation: 'spin 1s linear infinite'
+            }}></div>
+            <style jsx>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+        </div>
+      );
+  }
 
   return (
     <main style={{ paddingBottom: '100px', background: '#f4f6fb', minHeight: '100vh' }}>
@@ -278,7 +301,7 @@ export default function Home() {
                     price={`₹${service.price}`}
                     oldPrice={service.discount_price ? `₹${service.discount_price}` : `₹${Math.round(service.price * 1.5)}`}
                     discount="Limited Offer"
-                    onAdd={() => setSelectedProduct(service)}
+                    onAdd={() => addToCart({ ...service, quantity: 1, hospital_name: 'Popular Service' })}
                 />
             ))}
         </div>
@@ -307,14 +330,18 @@ export default function Home() {
                 onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.05)' }}
                 onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
               >
-                <div style={{ height: '180px', background: '#f3f4f6', overflow: 'hidden' }}>
-                    <img 
-                        src={hospital.image_url || "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80"} 
-                        alt={hospital.name} 
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                        onError={(e) => e.target.src = "https://images.unsplash.com/photo-1586773860418-d3b97898c75c?auto=format&fit=crop&w=800&q=80"}
-                    />
-                </div>
+                  <div style={{ height: '180px', background: '#f3f4f6', overflow: 'hidden' }}>
+                      <img 
+                          src={hospital.image_url 
+                              ? (hospital.image_url.startsWith('data:') || hospital.image_url.startsWith('http') 
+                                  ? hospital.image_url 
+                                  : (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + hospital.image_url)
+                              : "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80"} 
+                          alt={hospital.name} 
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                          onError={(e) => e.target.src = "https://images.unsplash.com/photo-1586773860418-d3b97898c75c?auto=format&fit=crop&w=800&q=80"}
+                      />
+                  </div>
                 <div style={{ padding: '1.5rem' }}>
                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
                       <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#111827', margin: 0 }}>{hospital.name}</h3>

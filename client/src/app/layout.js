@@ -3,7 +3,6 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { LocationProvider } from "@/context/LocationContext";
 import { CartProvider } from "@/context/CartContext";
-import { ClerkProvider } from "@clerk/nextjs";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -17,18 +16,16 @@ export const metadata = {
 };
 
 import AdminSessionManager from "@/components/AdminSessionManager";
-import SmoothScroll from "@/components/SmoothScroll";
 import CartDrawer from "@/components/CartDrawer";
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider>
+    <>
       <html lang="en" suppressHydrationWarning>
         <body className={outfit.className}>
           <AuthProvider>
             <LocationProvider>
               <CartProvider>
-                <SmoothScroll />
                 <AdminSessionManager />
                 <CartDrawer />
                 {children}
@@ -37,6 +34,6 @@ export default function RootLayout({ children }) {
           </AuthProvider>
         </body>
       </html>
-    </ClerkProvider>
+    </>
   );
 }

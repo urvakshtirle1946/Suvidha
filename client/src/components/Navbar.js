@@ -7,10 +7,10 @@ import { useCart } from '@/context/CartContext';
 import { ChevronDown, ShoppingCart, Menu, X, MapPin } from 'lucide-react';
 import { TextReveal } from './ui/text-reveal-animation';
 import { ZelpLogo } from './ui/zelp-text-reveal';
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import LocationModal from './LocationModal';
 
 export default function Navbar() {
+  const { user, logout } = useAuth();
   const { location, setLocation, detectLocation } = useLocation();
   const { setIsCartOpen, cartCount } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -79,9 +79,11 @@ export default function Navbar() {
           </div>
           
           {/* Right Actions */}
+
+          {/* Right Actions */}
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
               <div className="hide-on-mobile" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-                  <SignedOut>
+                  {!user ? (
                       <Link href="/login" style={{ textDecoration: 'none' }}>
                         <button 
                             style={{ background: 'transparent', border: 'none', fontWeight: '500', fontSize: '1.1rem', cursor: 'pointer', color: '#374151' }}
@@ -89,17 +91,22 @@ export default function Navbar() {
                             Login
                         </button>
                       </Link>
-                  </SignedOut>
-
-                  <SignedIn>
-                     <Link href="/bookings" style={{ textDecoration: 'none', color: '#374151', fontSize: '1rem', fontWeight: '500' }}>
-                        My Bookings
-                     </Link>
-                     <UserButton />
-                  </SignedIn>
+                  ) : (
+                     <>
+                         <Link href="/bookings" style={{ textDecoration: 'none', color: '#374151', fontSize: '1rem', fontWeight: '500' }}>
+                            My Bookings
+                         </Link>
+                         <div style={{ fontWeight: '500', color: '#0c831f' }}>Hi, {user.name.split(' ')[0]}</div>
+                         <button 
+                             onClick={logout}
+                             style={{ background: 'transparent', border: 'none', fontSize: '0.9rem', color: '#dc2626', cursor: 'pointer', fontWeight: '500' }}
+                         >
+                             Logout
+                         </button>
+                     </>
+                  )}
               </div>
               
-              {/* Cart is always visible but smaller on mobile */}
               {/* Cart is always visible but smaller on mobile */}
               <button 
                   className="btn btn-primary" 
@@ -119,11 +126,13 @@ export default function Navbar() {
                   )}
               </button>
               
-              {/* Mobile User Button if signed in */}
+              {/* Mobile User Section */}
                <div className="show-on-mobile">
-                  <SignedIn>
-                       <UserButton />
-                  </SignedIn>
+                  {user && (
+                      <div style={{ fontSize: '0.9rem', color: '#0c831f', fontWeight: '500' }}>
+                          {user.name.charAt(0)}
+                      </div>
+                  )}
                </div>
           </div>
         </div>
@@ -172,17 +181,15 @@ export default function Navbar() {
                 Services
              </Link>
              
-             <SignedOut>
+             {!user ? (
                  <Link href="/login" onClick={() => setMobileMenuOpen(false)} style={{ padding: '0.8rem', fontWeight: '600', color: '#ff6f61' }}>
                     Login / Sign Up
                  </Link>
-             </SignedOut>
-             
-             <SignedIn>
+             ) : (
                  <Link href="/bookings" onClick={() => setMobileMenuOpen(false)} style={{ padding: '0.8rem', fontWeight: '500', color: '#1f2937' }}>
                     My Bookings
                  </Link>
-             </SignedIn>
+             )}
         </div>
       )}
     </>

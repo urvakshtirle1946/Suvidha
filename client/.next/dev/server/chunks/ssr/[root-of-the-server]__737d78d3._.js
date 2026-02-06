@@ -1330,8 +1330,12 @@ function BookingModal({ isOpen, onClose, service }) {
     const [labs, setLabs] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     // Load Labs/Hospitals on mount
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        fetch('https://suvidha-server-4u66.onrender.com/api/hospitals').then((res)=>res.json()).then((data)=>setLabs(data)).catch((err)=>console.error(err));
-    }, []);
+        if (isOpen) {
+            fetch('https://suvidha-server-4u66.onrender.com/api/hospitals').then((res)=>res.json()).then((data)=>setLabs(data)).catch(()=>{}); // Suppress error for cleaner console
+        }
+    }, [
+        isOpen
+    ]);
     if (!isOpen || !service) return null;
     const displayPrice = selectedLab ? Math.round(service.price * (1 - (selectedLab.discount_percentage || 0) / 100)) : service.price;
     const displayMrp = service.price * 1.5; // Mock MRP calculation
@@ -1453,7 +1457,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                     children: "<"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 105,
+                                    lineNumber: 107,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1469,13 +1473,13 @@ function BookingModal({ isOpen, onClose, service }) {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 109,
+                                    lineNumber: 111,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/BookingModal.js",
-                            lineNumber: 103,
+                            lineNumber: 105,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1490,18 +1494,18 @@ function BookingModal({ isOpen, onClose, service }) {
                                 size: 24
                             }, void 0, false, {
                                 fileName: "[project]/src/components/BookingModal.js",
-                                lineNumber: 117,
+                                lineNumber: 119,
                                 columnNumber: 17
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/BookingModal.js",
-                            lineNumber: 116,
+                            lineNumber: 118,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/BookingModal.js",
-                    lineNumber: 102,
+                    lineNumber: 104,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1535,7 +1539,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                             children: lab.name
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 129,
+                                            lineNumber: 131,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1547,7 +1551,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                             children: lab.location
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 130,
+                                            lineNumber: 132,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1568,7 +1572,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 132,
+                                                    lineNumber: 134,
                                                     columnNumber: 33
                                                 }, this),
                                                 lab.discount_percentage > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1582,24 +1586,24 @@ function BookingModal({ isOpen, onClose, service }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 136,
+                                                    lineNumber: 138,
                                                     columnNumber: 37
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 131,
+                                            lineNumber: 133,
                                             columnNumber: 29
                                         }, this)
                                     ]
                                 }, lab.id, true, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 128,
+                                    lineNumber: 130,
                                     columnNumber: 25
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/src/components/BookingModal.js",
-                            lineNumber: 126,
+                            lineNumber: 128,
                             columnNumber: 17
                         }, this),
                         step === 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1615,7 +1619,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 147,
+                                    lineNumber: 149,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1641,18 +1645,18 @@ function BookingModal({ isOpen, onClose, service }) {
                                             children: slot
                                         }, slot, false, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 150,
+                                            lineNumber: 152,
                                             columnNumber: 29
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 148,
+                                    lineNumber: 150,
                                     columnNumber: 21
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/BookingModal.js",
-                            lineNumber: 146,
+                            lineNumber: 148,
                             columnNumber: 17
                         }, this),
                         step === 2 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -1674,7 +1678,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                             children: "Booking for:"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 170,
+                                            lineNumber: 172,
                                             columnNumber: 25
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1686,7 +1690,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                             children: service.name
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 171,
+                                            lineNumber: 173,
                                             columnNumber: 25
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1700,7 +1704,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 172,
+                                            lineNumber: 174,
                                             columnNumber: 25
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1723,14 +1727,14 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             size: 14
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 174,
+                                                            lineNumber: 176,
                                                             columnNumber: 96
                                                         }, this),
                                                         " Tomorrow"
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 174,
+                                                    lineNumber: 176,
                                                     columnNumber: 29
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1744,7 +1748,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             size: 14
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 175,
+                                                            lineNumber: 177,
                                                             columnNumber: 96
                                                         }, this),
                                                         " ",
@@ -1752,19 +1756,19 @@ function BookingModal({ isOpen, onClose, service }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 175,
+                                                    lineNumber: 177,
                                                     columnNumber: 29
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 173,
+                                            lineNumber: 175,
                                             columnNumber: 25
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 169,
+                                    lineNumber: 171,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1783,7 +1787,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                             children: "Bill Summary"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 180,
+                                            lineNumber: 182,
                                             columnNumber: 25
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1815,7 +1819,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                                 children: "Total"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/BookingModal.js",
-                                                                lineNumber: 189,
+                                                                lineNumber: 191,
                                                                 columnNumber: 41
                                                             }, void 0),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1829,18 +1833,18 @@ function BookingModal({ isOpen, onClose, service }) {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/BookingModal.js",
-                                                                lineNumber: 190,
+                                                                lineNumber: 192,
                                                                 columnNumber: 41
                                                             }, void 0)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/BookingModal.js",
-                                                        lineNumber: 188,
+                                                        lineNumber: 190,
                                                         columnNumber: 37
                                                     }, void 0)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 183,
+                                                    lineNumber: 185,
                                                     columnNumber: 29
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1873,14 +1877,14 @@ function BookingModal({ isOpen, onClose, service }) {
                                                                             }
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                                            lineNumber: 198,
+                                                                            lineNumber: 200,
                                                                             columnNumber: 45
                                                                         }, this),
                                                                         item.label
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                                    lineNumber: 197,
+                                                                    lineNumber: 199,
                                                                     columnNumber: 41
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1893,24 +1897,24 @@ function BookingModal({ isOpen, onClose, service }) {
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                                    lineNumber: 201,
+                                                                    lineNumber: 203,
                                                                     columnNumber: 41
                                                                 }, this)
                                                             ]
                                                         }, item.label, true, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 196,
+                                                            lineNumber: 198,
                                                             columnNumber: 37
                                                         }, this))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 194,
+                                                    lineNumber: 196,
                                                     columnNumber: 29
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 182,
+                                            lineNumber: 184,
                                             columnNumber: 25
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1930,7 +1934,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             children: "Item Total (MRP)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 209,
+                                                            lineNumber: 211,
                                                             columnNumber: 33
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1944,13 +1948,13 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 210,
+                                                            lineNumber: 212,
                                                             columnNumber: 33
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 208,
+                                                    lineNumber: 210,
                                                     columnNumber: 29
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1967,7 +1971,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             children: "Discount"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 213,
+                                                            lineNumber: 215,
                                                             columnNumber: 33
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1977,13 +1981,13 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 214,
+                                                            lineNumber: 216,
                                                             columnNumber: 33
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 212,
+                                                    lineNumber: 214,
                                                     columnNumber: 29
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2001,7 +2005,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             children: "To be paid"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 217,
+                                                            lineNumber: 219,
                                                             columnNumber: 33
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2011,25 +2015,25 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 218,
+                                                            lineNumber: 220,
                                                             columnNumber: 33
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 216,
+                                                    lineNumber: 218,
                                                     columnNumber: 29
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 207,
+                                            lineNumber: 209,
                                             columnNumber: 25
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 179,
+                                    lineNumber: 181,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2048,7 +2052,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                     children: user ? `Pay ₹${displayPrice}` : 'Login to Pay'
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 223,
+                                    lineNumber: 225,
                                     columnNumber: 21
                                 }, this)
                             ]
@@ -2067,7 +2071,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                     }
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 235,
+                                    lineNumber: 237,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -2078,7 +2082,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                     children: "Booking Confirmed!"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 236,
+                                    lineNumber: 238,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2092,30 +2096,30 @@ function BookingModal({ isOpen, onClose, service }) {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 237,
+                                    lineNumber: 239,
                                     columnNumber: 21
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/BookingModal.js",
-                            lineNumber: 234,
+                            lineNumber: 236,
                             columnNumber: 17
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/BookingModal.js",
-                    lineNumber: 122,
+                    lineNumber: 124,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/BookingModal.js",
-            lineNumber: 95,
+            lineNumber: 97,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/components/BookingModal.js",
-        lineNumber: 90,
+        lineNumber: 92,
         columnNumber: 5
     }, this);
 }

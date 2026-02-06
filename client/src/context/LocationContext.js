@@ -16,23 +16,32 @@ export function LocationProvider({ children }) {
           const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
           const data = await res.json();
           const detectedCity = data.address.city || data.address.town || data.address.state_district || 'Mumbai';
+          
+          // Strict check for Indore
+          if (!detectedCity.toLowerCase().includes('indore')) {
+            alert(`We currently serve only in Indore. We are coming soon to ${detectedCity}!`);
+            setCity('Indore'); 
+            setLocation('Indore, India');
+            return;
+          }
+
           const detectedArea = data.address.suburb || data.address.neighbourhood || data.address.road || '';
           
           setCity(detectedCity);
           setLocation(`${detectedArea ? detectedArea + ', ' : ''}${detectedCity}`);
         } catch (error) {
           console.error("Location fetch failed", error);
-          setLocation('Mumbai, India');
-          setCity('Mumbai');
+          setCity('Indore');
+          setLocation('Indore, India');
         }
       }, (err) => {
         console.warn("Location permission denied", err);
-        setLocation('Mumbai, India');
-        setCity('Mumbai');
+        setLocation('Indore, India');
+        setCity('Indore');
       });
     } else {
-      setLocation('Mumbai, India');
-      setCity('Mumbai');
+      setLocation('Indore, India');
+      setCity('Indore');
     }
   };
 

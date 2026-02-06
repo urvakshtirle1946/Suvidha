@@ -78,7 +78,7 @@ export default function HospitalManagement() {
 
   const fetchHospitals = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setHospitals(data);
@@ -267,7 +267,7 @@ export default function HospitalManagement() {
                           />
                           {formData.image_url && !formData.image_file && (
                               <div style={{ marginTop: '5px', fontSize: '0.8rem', color: 'var(--accent)' }}>
-                                  Current Image: <a href={formData.image_url.startsWith('/') ? (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + formData.image_url : formData.image_url} target="_blank" rel="noreferrer" style={{ color: 'inherit' }}>View</a>
+                                  Current Image: <a href={(formData.image_url.startsWith('data:') || formData.image_url.startsWith('http')) ? formData.image_url : (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + formData.image_url} target="_blank" rel="noreferrer" style={{ color: 'inherit' }}>View</a>
                               </div>
                           )}
                       </div>
@@ -391,10 +391,10 @@ export default function HospitalManagement() {
             {hospitals.map((hospital) => {
                 // Determine Background Image
                 let bgImage = DEFAULT_HOSPITAL_IMAGE;
-                if (hospital.image_url && !hospital.image_url.includes('linear-gradient')) {
-                    bgImage = hospital.image_url.startsWith('/') 
-                        ? (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + hospital.image_url 
-                        : hospital.image_url;
+                if (hospital.image_url) {
+                    bgImage = (hospital.image_url.startsWith('data:') || hospital.image_url.startsWith('http'))
+                        ? hospital.image_url
+                        : (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + hospital.image_url;
                 }
 
                 return (

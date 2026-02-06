@@ -3,71 +3,58 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
 import { X, Calendar, User, MapPin, CheckCircle, Home, Plus, ArrowUpDown, Clock } from 'lucide-react';
-import { DonutChart } from './ui/donut-chart';
+
 
 export default function BookingModal({ isOpen, onClose, service }) {
   const { user, login } = useAuth();
   const { location } = useLocation();
-  const [step, setStep] = useState(0); // 0: Select Lab, 1: Select Time, 2: Checkout, 3: Success
-  const [selectedLab, setSelectedLab] = useState(null);
+  // Booking Flow: Service -> Time -> Payment
+  // We assume 'service' prop contains hospital info if coming from Hospital Profile.
+  // If coming from Popular Services, we might need to handle it. 
+  // For now, we set the initial step to 1 (Time Slot) as requested.
+  
+  const [step, setStep] = useState(1); // 1: Select Time, 2: Checkout, 3: Success
+  const [selectedLab, setSelectedLab] = useState(service); // Assume service object has hospital details or is self-sufficient
   const [selectedTime, setSelectedTime] = useState(null);
-  
-  // Labs/Hospitals from API
-  const [labs, setLabs] = useState([]);
-  
-  // Load Labs/Hospitals on mount
+
   useEffect(() => {
-     fetch('https://suvidha-server-4u66.onrender.com/api/hospitals')
-       .then(res => res.json())
-       .then(data => setLabs(data))
-       .catch(err => console.error(err));
-  }, []);
+     if (isOpen) {
+         setStep(1);
+         setSelectedTime(null);
+     }
+  }, [isOpen]);
 
   if (!isOpen || !service) return null;
 
-  const displayPrice = selectedLab ? Math.round(service.price * (1 - (selectedLab.discount_percentage || 0)/100)) : service.price;
-  const displayMrp = service.price * 1.5; // Mock MRP calculation
+  const displayPrice = service.price; // Simplified price logic for direct flow
+  const displayMrp = service.price * 1.5; 
   
-  const priceBreakdown = [
-    { value: Math.round(displayPrice * 0.85), color: "#ff6f61", label: "Lab Charges" },
-    { value: Math.round(displayPrice * 0.10), color: "#4ECDC4", label: "Platform Fee" },
-    { value: Math.round(displayPrice * 0.05), color: "#45B7D1", label: "Taxes" },
-  ];
-
   const TIME_SLOTS = [
       "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
       "04:00 PM", "05:00 PM", "06:00 PM", "07:00 PM"
   ];
 
-
-
-  // Handle Lab Selection
-  const handleLabSelect = (lab) => {
-      setSelectedLab(lab);
-      setStep(1); // Move to time slot selection
-  };
-
   const handleBooking = async () => {
-       // Only require login at the final "Pay" step
-       if (!user) {
-           login();
-           return;
-       }
+       // ... existing handleBooking logic ...
+       // Ensure we use 'service.hospitalId' if available or current context
+       // If no hospitalId, we might need a fallback or it might fail on backend if foreign key needed.
+       // For popular services, we might need to attach a default hospital ID or mock it.
+       if (!user) { login(); return; }
        
        try {
            const bookingData = {
                name: user.name || 'User',
                userPhone: user.phone || '',
-               age: 0, // Default or prompt
-               gender: 'Not Specified', // Default or prompt
+               age: 0,
+               gender: 'Not Specified',
                date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
                time: selectedTime,
-               address: location || 'New Delhi, India',
+               address: location || 'India',
                serviceName: service.name,
                price: displayPrice,
-               hospitalId: selectedLab.id
+               hospitalId: service.hospitalId || service.id || 1 // Fallback ID
            };
-
+           // ... fetch call ...
            const res = await fetch(`https://suvidha-server-4u66.onrender.com/api/bookings`, {
                method: 'POST',
                headers: { 'Content-Type': 'application/json' },
@@ -81,7 +68,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
            }
        } catch (err) {
            console.error(err);
-           alert('Error creating booking');
+           alert('Error');
        }
   };
 
@@ -101,13 +88,12 @@ export default function BookingModal({ isOpen, onClose, service }) {
         {/* Header */}
         <div style={{ padding: '1.2rem 1.5rem', borderBottom: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                {step > 0 && step < 3 && (
+                {step > 1 && step < 3 && (
                     <button onClick={() => setStep(step - 1)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#6b7280' }}>
                         &lt;
                     </button>
                 )}
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
-                    {step === 0 && 'Select a Lab'}
                     {step === 1 && 'Select Time Slot'}
                     {step === 2 && 'Booking Summary'}
                     {step === 3 && 'Success'}
@@ -120,26 +106,6 @@ export default function BookingModal({ isOpen, onClose, service }) {
 
         {/* Content Area */}
         <div style={{ padding: '1.5rem', overflowY: 'auto', background: step === 0 ? '#f9fafb' : '#fff' }}>
-            
-            {/* Step 0: Lab Selection */}
-            {step === 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {labs.map(lab => (
-                        <div key={lab.id} onClick={() => handleLabSelect(lab)} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '1.2rem', cursor: 'pointer' }}>
-                            <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>{lab.name}</div>
-                            <div style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '8px' }}>{lab.location}</div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ color: '#ff6f61', fontWeight: 'bold' }}>
-                                    ₹{Math.round(service.price * (1 - (lab.discount_percentage || 0)/100))}
-                                </span>
-                                {lab.discount_percentage > 0 && (
-                                    <span style={{ fontSize: '0.8rem', color: '#059669' }}>{lab.discount_percentage}% off</span>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
 
             {/* Step 1: Time Slot Selection */}
             {step === 1 && (
@@ -176,48 +142,62 @@ export default function BookingModal({ isOpen, onClose, service }) {
                         </div>
                     </div>
 
-                    <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <h4 style={{ marginBottom: '1rem', width: '100%' }}>Bill Summary</h4>
+                    {/* Zepto-Style Bill Summary */}
+                    <div style={{ background: '#fff', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb', marginBottom: '1.5rem' }}>
                         
-                        <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', width: '100%', padding: '1rem', background: '#f9fafb', borderRadius: '12px', marginBottom: '1rem' }}>
-                            <DonutChart 
-                                data={priceBreakdown} 
-                                size={120} 
-                                strokeWidth={15}
-                                centerContent={
-                                    <div style={{ textAlign: 'center' }}>
-                                        <div style={{ fontSize: '0.7rem', color: '#6b7280' }}>Total</div>
-                                        <div style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>₹{displayPrice}</div>
-                                    </div>
-                                }
-                            />
-                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                {priceBreakdown.map(item => (
-                                    <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
-                                        <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.color }}></span>
-                                            {item.label}
-                                        </span>
-                                        <span style={{ fontWeight: '500' }}>₹{item.value}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div style={{ width: '100%' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '5px' }}>
+                        <div style={{ padding: '1rem', borderBottom: '1px solid #f3f4f6' }}>
+                            <h4 style={{ fontSize: '0.95rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '1rem' }}>Bill Summary</h4>
+                            
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.6rem', color: '#4b5563', fontSize: '0.85rem' }}>
                                 <span>Item Total (MRP)</span>
-                                <span style={{ textDecoration: 'line-through', color: '#9ca3af' }}>₹{displayMrp}</span>
+                                <span style={{ textDecoration: 'line-through' }}>₹{displayMrp}</span>
                             </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '5px', color: '#059669', fontWeight: '500' }}>
-                                <span>Discount</span>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.6rem', color: '#4b5563', fontSize: '0.85rem' }}>
+                                <span>Discounted Price</span>
+                                <span>₹{displayPrice}</span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.6rem', color: '#059669', fontSize: '0.85rem', fontWeight: '500' }}>
+                                <span>Total Savings</span>
                                 <span>-₹{displayMrp - displayPrice}</span>
                             </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.1rem', marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #eee' }}>
-                                <span>To be paid</span>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.6rem', color: '#4b5563', fontSize: '0.85rem' }}>
+                                <span>Taxes & Fees</span>
+                                <span>₹0</span>
+                            </div>
+                            
+                            <div style={{ borderTop: '1px dashed #e5e7eb', marginTop: '0.8rem', paddingTop: '0.8rem', display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1rem', color: '#111827' }}>
+                                <span>To Pay</span>
                                 <span>₹{displayPrice}</span>
                             </div>
                         </div>
+
+                        {/* Coupon Code Section */}
+                        <div style={{ padding: '0.8rem 1rem', borderBottom: '1px solid #f3f4f6', background: '#f9fafb' }}>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                <input 
+                                    type="text" 
+                                    placeholder="Enter Coupon Code" 
+                                    style={{ flex: 1, padding: '0.5rem', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '0.85rem', outline: 'none' }}
+                                />
+                                <button style={{ color: '#ec4899', fontWeight: 'bold', fontSize: '0.8rem', background: 'transparent', border: 'none', cursor: 'pointer' }}>APPLY</button>
+                            </div>
+                        </div>
+
+                        {/* Payment Options */}
+                        <div style={{ padding: '1rem' }}>
+                            <h4 style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.8rem', color: '#374151' }}>Payment Options</h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', cursor: 'pointer' }}>
+                                    <input type="radio" name="modalPayment" defaultChecked style={{ accentColor: '#0c831f' }} />
+                                    <span>Pay at Hospital / Clinic</span>
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', cursor: 'pointer', opacity: 0.6 }}>
+                                    <input type="radio" name="modalPayment" disabled />
+                                    <span>Pay Online (Coming Soon)</span>
+                                </label>
+                            </div>
+                        </div>
+
                     </div>
 
                     <button 

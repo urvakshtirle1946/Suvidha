@@ -1,12 +1,5 @@
 {
-  "/[adminPath]/bookings/page": "app/[adminPath]/bookings/page.js",
-  "/[adminPath]/hospitals/page": "app/[adminPath]/hospitals/page.js",
-  "/[adminPath]/login/page": "app/[adminPath]/login/page.js",
-  "/[adminPath]/page": "app/[adminPath]/page.js",
-  "/[adminPath]/users/page": "app/[adminPath]/users/page.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/bookings/page": "app/bookings/page.js",
+  "/early-access/page": "app/early-access/page.js",
   "/login/page": "app/login/page.js",
-  "/page": "app/page.js",
-  "/sso-callback/page": "app/sso-callback/page.js"
+  "/page": "app/page.js"
 }

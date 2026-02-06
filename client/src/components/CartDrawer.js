@@ -82,7 +82,7 @@ export default function CartDrawer() {
                      <p style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.5rem' }}>{item.hospital_name || 'Service'}</p>
                      
                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                       <div style={{ fontWeight: 'bold', color: '#1f2937' }}>₹{item.price * (item.quantity?.length || 1)}</div> {/* Should be multiplied by quantity */}
+                       <div style={{ fontWeight: 'bold', color: '#1f2937' }}>₹{item.price * (item.quantity || 1)}</div> {/* Should be multiplied by quantity */}
                        
                        {/* Quantity Controls */}
                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#0c831f', color: '#fff', borderRadius: '6px', padding: '2px 4px' }}>

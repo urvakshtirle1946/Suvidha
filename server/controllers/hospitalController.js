@@ -42,8 +42,13 @@ exports.createHospital = async (req, res) => {
   const { name, location, rating, discount_percentage, discount_description, phone_number, map_url } = req.body;
   let { services } = req.body;
   
-  // Handle file upload
-  const image_url = req.file ? `/uploads/${req.file.filename}` : req.body.image_url;
+  // Handle file upload (Base64 conversion)
+  let image_url = req.body.image_url;
+  if (req.file) {
+      const b64 = Buffer.from(req.file.buffer).toString('base64');
+      const mimeType = req.file.mimetype;
+      image_url = `data:${mimeType};base64,${b64}`;
+  }
 
   // Parse services if sent as JSON string (Multipart form data limitation)
   if (typeof services === 'string') {
@@ -104,8 +109,13 @@ exports.updateHospital = async (req, res) => {
   const { id } = req.params;
   const { name, location, rating, discount_percentage, discount_description, phone_number, map_url } = req.body;
   
-  // Handle file upload
-  const image_url = req.file ? `/uploads/${req.file.filename}` : req.body.image_url;
+  // Handle file upload (Base64 conversion)
+  let image_url = req.body.image_url;
+  if (req.file) {
+      const b64 = Buffer.from(req.file.buffer).toString('base64');
+      const mimeType = req.file.mimetype;
+      image_url = `data:${mimeType};base64,${b64}`;
+  }
 
   // Parse services
   let services = req.body.services;

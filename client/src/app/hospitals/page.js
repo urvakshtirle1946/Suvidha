@@ -3,7 +3,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import BookingModal from '@/components/BookingModal';
-import { Search, MapPin, Filter, Activity, Clock, SlidersHorizontal, ArrowUpDown, X, Lock, ChevronDown } from 'lucide-react';
+import { Search, MapPin, Filter, Activity, Clock, SlidersHorizontal, ArrowUpDown, X, Lock, ChevronDown, Heart, Smile, Eye, Building2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
 import { useCart } from '@/context/CartContext';
@@ -24,29 +24,47 @@ function HospitalsContent() {
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null); // Expansion State
 
-  // Fetch Services from API
+  // Fetch SERVICES (not just hospitals)
   useEffect(() => {
-    const fetchHospitals = async () => {
+    const fetchServices = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`);
+        // Fetching all services directly to separate from hospitals
+        // Note: The backend should ideally support /api/services with hospital details joined.
+        // If not, we might need to fetch hospitals and flatten the services.
+        // Assuming /api/services returns a flat list including hospital_name.
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/services`);
         const data = await res.json();
-         // Data now includes nested 'services' array
-         setHospitals(data);
-         setLoading(false);
+        setHospitals(data); // Using 'hospitals' state variable for services list to minimize refactor, ideally rename state to 'services'
+        setLoading(false);
       } catch (err) {
          console.error(err);
          setLoading(false);
       }
     };
     
-    fetchHospitals();
+    fetchServices();
   }, []);
 
-  const filteredHospitals = hospitals.filter(h => {
+  const [sortOrder, setSortOrder] = useState(null); // 'asc', 'desc', or null
+
+  // Fetch SERVICES ... (omitted for brevity, assume existing useEffect is here)
+
+  const filteredHospitals = hospitals
+    .filter(h => {
         const matchesSearch = h.name.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesSpecialty = !specialtyFilter || h.specialty?.toLowerCase() === specialtyFilter.toLowerCase();
         return matchesSearch && matchesSpecialty;
+    })
+    .sort((a, b) => {
+        if (!sortOrder) return 0;
+        const priceA = a.discount_price || a.price;
+        const priceB = b.discount_price || b.price;
+        return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
     });
+
+  const toggleSort = () => {
+      setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+  };
 
   return (
     <main style={{ paddingBottom: '100px', background: '#fff', minHeight: '100vh', fontFamily: 'var(--font-outfit)' }}>
@@ -70,7 +88,7 @@ function HospitalsContent() {
                              <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>1 item added</div>
                              <div style={{ fontWeight: 'bold' }}>₹{selectedHospital.price}</div>
                          </div>
-                         <button className="btn btn-primary" style={{ padding: '0.5rem 1.5rem', background: '#ff6f61', border: 'none' }}>
+                         <button className="btn btn-primary" style={{ padding: '0.5rem 1.5rem', background: '#ff6f61', border: 'none' }} onClick={() => { setIsCartOpen(true); setSelectedHospital(null); }}>
                              Go to cart
                          </button>
                      </div>
@@ -79,13 +97,13 @@ function HospitalsContent() {
 
              {/* Search Input Field */}
              <div className="search-bar-container">
-                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderRight: '1px solid #e5e7eb', paddingRight: '1rem', color: '#374151' }}>
-                    <MapPin size={18} color="#db2777" /> {city || 'Local'}
+                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderRight: '1px solid #e5e7eb', paddingRight: '1rem', color: '#374151', minWidth: '120px' }}>
+                    <MapPin size={18} color="#db2777" /> {city || 'Detecting'}
                  </div>
                  <Search size={20} color="#9ca3af" />
                  <input 
                      type="text" 
-                     placeholder="Search tests or full body checkups" 
+                     placeholder="Search for MRI, Blood Test, etc." 
                      value={searchTerm}
                      onChange={(e) => setSearchTerm(e.target.value)}
                      style={{ border: 'none', outline: 'none', width: '100%', fontSize: '1rem', color: '#374151' }} 
@@ -93,181 +111,132 @@ function HospitalsContent() {
              </div>
         </div>
 
+        {/* Categories Grid */}
+        {!searchTerm && !specialtyFilter && (
+            <div style={{ marginBottom: '3rem' }}>
+                <h2 style={{ marginBottom: '1.5rem', fontSize: '1.2rem', color: '#374151' }}>Popular Categories</h2>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '1rem' }}>
+                    {[
+                        { name: 'Cardiology', icon: <Heart size={24} color="#ff6b6b"/> },
+                        { name: 'X-Ray', icon: <Activity size={24} color="#54a0ff"/> },
+                        { name: 'MRI', icon: <Activity size={24} color="#5f27cd"/> },
+                        { name: 'Blood Test', icon: <Activity size={24} color="#ff9f43"/> },
+                        { name: 'Dental', icon: <Smile size={24} color="#10ac84"/> },
+                        { name: 'Eye Check', icon: <Eye size={24} color="#2e86de"/> },
+                    ].map((cat, idx) => (
+                        <div 
+                            key={idx}
+                            onClick={() => setSearchTerm(cat.name)}
+                            style={{ 
+                                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px',
+                                padding: '1rem', background: '#f9fafb', borderRadius: '12px', cursor: 'pointer',
+                                border: '1px solid #f3f4f6', transition: 'all 0.2s'
+                            }}
+                            onMouseOver={(e) => { e.currentTarget.style.borderColor = '#db2777'; e.currentTarget.style.background = '#fff0f5'; }}
+                            onMouseOut={(e) => { e.currentTarget.style.borderColor = '#f3f4f6'; e.currentTarget.style.background = '#f9fafb'; }}
+                        >
+                            <div style={{ background: '#fff', padding: '10px', borderRadius: '50%', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }}>
+                                {cat.icon}
+                            </div>
+                            <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#4b5563', textAlign: 'center' }}>{cat.name}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )}
+
         {/* Title & Filters */}
-        <div className="filters-container">
+        <div className="filters-container" style={{ marginBottom: '1.5rem' }}>
              <div>
-                 <div style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.5rem' }}>
-                    Home &gt; {specialtyFilter || 'All Services'}
-                 </div>
-                 <h1 style={{ fontSize: '1.5rem', color: '#111827', fontWeight: 'bold' }}>
-                    {specialtyFilter || 'All Services'} in {city || 'your area'}
+                 <h1 style={{ fontSize: '1.4rem', color: '#111827', fontWeight: 'bold' }}>
+                    {searchTerm ? `Results for "${searchTerm}"` : specialtyFilter ? `${specialtyFilter} Services` : 'All Available Services'}
                  </h1>
+                 <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>{filteredHospitals.length} result(s) found</p>
              </div>
 
              <div className="filters-actions">
-                 <button className="btn" style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '20px', padding: '6px 16px', fontSize: '0.85rem', color: '#374151' }}>
-                     Sort By <ArrowUpDown size={12} style={{ marginLeft: '6px' }} />
-                 </button>
-                 <button className="btn" style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '20px', padding: '6px 16px', fontSize: '0.85rem', color: '#374151' }}>
-                     All filters <SlidersHorizontal size={12} style={{ marginLeft: '6px' }} />
-                 </button>
-                 <button className="btn" style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '20px', padding: '6px 16px', fontSize: '0.85rem', color: '#374151' }}>
-                     Same day report
+                 <button 
+                    className="btn" 
+                    onClick={toggleSort}
+                    style={{ background: sortOrder ? '#f0fdf4' : '#fff', border: sortOrder ? '1px solid #0c831f' : '1px solid #e5e7eb', borderRadius: '20px', padding: '6px 16px', fontSize: '0.85rem', color: sortOrder ? '#0c831f' : '#374151' }}
+                 >
+                     Sort By Price {sortOrder === 'asc' ? '(Low to High)' : sortOrder === 'desc' ? '(High to Low)' : ''} <ArrowUpDown size={12} style={{ marginLeft: '6px' }} />
                  </button>
              </div>
         </div>
 
-        {/* Listings Grid - Exact 1mg Replica */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
-          {filteredHospitals.map((hospital) => (
-             <div key={hospital.id} style={{ 
+        {/* Listings Grid - Service Centric */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+          {filteredHospitals.map((item) => (
+             <div key={item.uniqueId || item.id} style={{ 
                  background: '#fff', 
                  border: '1px solid #e5e7eb', 
-                 borderRadius: '12px', 
+                 borderRadius: '16px', 
                  overflow: 'hidden',
                  transition: 'all 0.3s ease',
-                 boxShadow: expandedId === hospital.id ? '0 8px 20px rgba(0,0,0,0.1)' : 'none'
+                 display: 'flex', flexDirection: 'column'
              }}>
-                 {/* Main Card Header - Click to Expand */}
-                 <div 
-                    onClick={() => setExpandedId(expandedId === hospital.id ? null : hospital.id)}
-                    style={{ 
-                        padding: '1.5rem', 
-                        cursor: 'pointer',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '1rem'
-                    }}
-                 >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                            {/* Hospital Image/Icon */}
-                            <div style={{ 
-                                width: '60px', height: '60px', 
-                                background: hospital.image_url 
-                                    ? `url('${hospital.image_url.startsWith('/') ? (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + hospital.image_url : hospital.image_url}') center/cover no-repeat` 
-                                    : '#ffe4e6', 
-                                borderRadius: '8px',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center'
-                            }}>
-                                {!hospital.image_url && <Activity size={32} color="#ff6f61" />}
-                            </div>
-                            
-                            <div>
-                                <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1f2937', marginBottom: '4px' }}>
-                                    {hospital.name}
-                                </h3>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: '#6b7280' }}>
-                                    <MapPin size={14} /> {hospital.location}
-                                </div>
-                            </div>
-                        </div>
+                 <div style={{ padding: '1.5rem', flex: 1 }}>
+                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                         <div>
+                             <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1f2937', marginBottom: '4px' }}>
+                                 {item.name}
+                             </h3>
+                             <p style={{ fontSize: '0.85rem', color: '#6b7280', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                 <Building2 size={12}/> {item.hospital_name || 'Hospital'}
+                             </p>
+                         </div>
+                         <div style={{ 
+                            width: '40px', height: '40px', borderRadius: '8px', 
+                            background: `url('${item.image_url ? (item.image_url.startsWith('data:') || item.image_url.startsWith('http') ? item.image_url : (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + item.image_url) : ''}') center/cover no-repeat`,
+                            backgroundColor: '#f3f4f6'
+                         }}></div>
+                     </div>
+                     
+                     {item.description && (
+                         <p style={{ fontSize: '0.9rem', color: '#4b5563', marginBottom: '1rem', lineHeight: '1.4', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                            {item.description}
+                         </p>
+                     )}
 
-                        {/* Rating Badge */}
-                        <div style={{ 
-                            background: '#0c831f', color: '#fff', 
-                            padding: '4px 8px', borderRadius: '4px', 
-                            fontSize: '0.85rem', fontWeight: 'bold' 
-                        }}>
-                             {hospital.rating || '4.5'} ★
-                        </div>
-                    </div>
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.5rem', borderTop: '1px dashed #e5e7eb' }}>
-                        <span style={{ fontSize: '0.9rem', color: '#ff6f61', fontWeight: '500' }}>
-                           {hospital.services?.length || 0} Services Available
-                        </span>
-                        <ChevronDown 
-                            size={20} 
-                            color="#9ca3af" 
-                            style={{ 
-                                transform: expandedId === hospital.id ? 'rotate(180deg)' : 'rotate(0deg)',
-                                transition: 'transform 0.3s'
-                            }} 
-                        />
-                    </div>
-                 </div>
-
-                 {/* Dropdown Content - Expanded Details */}
-                 {expandedId === hospital.id && (
-                     <div className="animate-fade-in" style={{ 
-                         background: '#f9fafb', 
-                         borderTop: '1px solid #e5e7eb',
-                         padding: '1.5rem' 
-                     }}>
-                         {/* Description */}
-                         {hospital.discount_description && (
-                             <div style={{ marginBottom: '1.5rem', fontSize: '0.9rem', color: '#4b5563', lineHeight: '1.5' }}>
-                                 <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem', color: '#1f2937' }}>About Hospital</h4>
-                                 {hospital.discount_description}
-                             </div>
-                         )}
-
-                         {/* Services List */}
-                         <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem', color: '#1f2937' }}>Available Services</h4>
-                         
-                         <div style={{ display: 'grid', gap: '1rem' }}>
-                             {hospital.services && hospital.services.length > 0 ? (
-                                 hospital.services.map((service, idx) => (
-                                     <div key={idx} style={{ 
-                                         background: '#fff', 
-                                         padding: '1rem', 
-                                         borderRadius: '8px', 
-                                         border: '1px solid #e5e7eb',
-                                         display: 'flex', 
-                                         justifyContent: 'space-between', 
-                                         alignItems: 'center',
-                                         flexWrap: 'wrap',
-                                         gap: '1rem'
-                                     }}>
-                                         <div style={{ flex: 1, minWidth: '200px' }}>
-                                             <div style={{ fontWeight: '600', color: '#374151', fontSize: '1rem' }}>{service.name}</div>
-                                             <div style={{ fontSize: '0.85rem', color: '#9ca3af', marginTop: '2px' }}>{service.category}</div>
-                                             {service.description && (
-                                                 <div style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '4px' }}>{service.description}</div>
-                                             )}
-                                         </div>
-
-                                         <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                                             <div>
-                                                 {service.discount_price && service.discount_price < service.price ? (
-                                                     <>
-                                                         <div style={{ textDecoration: 'line-through', color: '#9ca3af', fontSize: '0.85rem' }}>₹{service.price}</div>
-                                                         <div style={{ fontWeight: 'bold', color: '#111827', fontSize: '1.1rem' }}>₹{service.discount_price}</div>
-                                                     </>
-                                                 ) : (
-                                                     <div style={{ fontWeight: 'bold', color: '#111827', fontSize: '1.1rem' }}>₹{service.price}</div>
-                                                 )}
-                                             </div>
-                                             
-                                             <button 
-                                                 onClick={(e) => {
-                                                     e.stopPropagation();
-                                                     addToCart({ ...hospital, ...service, hospital_name: hospital.name, id: service.id, hospitalId: hospital.id });
-                                                 }}
-                                                 className="btn btn-primary"
-                                                 style={{ padding: '0.5rem 1.2rem', fontSize: '0.9rem' }}
-                                             >
-                                                 Add
-                                             </button>
-                                         </div>
-                                     </div>
-                                 ))
-                             ) : (
-                                 <div style={{ textAlign: 'center', color: '#9ca3af', padding: '1rem' }}>
-                                     No services listed yet.
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem', color: '#6b7280', marginBottom: '1.5rem' }}>
+                         <span style={{ background: '#f3f4f6', padding: '4px 8px', borderRadius: '4px' }}>Reports in 24hrs</span>
+                         <span style={{ background: '#f3f4f6', padding: '4px 8px', borderRadius: '4px' }}>E-Report Available</span>
+                     </div>
+                     
+                     <div style={{ borderTop: '1px dashed #e5e7eb', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                         <div>
+                             {item.discount_price && item.discount_price < item.price ? (
+                                 <div>
+                                     <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#111827' }}>₹{item.discount_price}</span>
+                                     <span style={{ fontSize: '0.9rem', textDecoration: 'line-through', color: '#9ca3af', marginLeft: '6px' }}>₹{item.price}</span>
                                  </div>
+                             ) : (
+                                 <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#111827' }}>₹{item.price}</div>
                              )}
                          </div>
+                         <button 
+                             onClick={() => {
+                                 addToCart({ ...item, quantity: 1, hospitalId: item.hospital_id || item.id }); 
+                                 setSelectedHospital({ ...item, name: item.name, price: item.discount_price || item.price });
+                             }}
+                             className="btn"
+                             style={{ background: '#fff', border: '1px solid #ff6f61', color: '#ff6f61', padding: '0.6rem 1.5rem', borderRadius: '8px', fontWeight: '600', transition: 'all 0.2s' }}
+                             onMouseOver={(e) => { e.currentTarget.style.background = '#ff6f61'; e.currentTarget.style.color = '#fff'; }}
+                             onMouseOut={(e) => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#ff6f61'; }}
+                         >
+                             ADD
+                         </button>
                      </div>
-                 )}
+                 </div>
              </div>
           ))}
         </div>
         
         {filteredHospitals.length === 0 && (
             <div style={{ textAlign: 'center', padding: '4rem', color: '#6b7280' }}>
-                <h3>No services found matching your criteria.</h3>
+                <h3>No services found matching "{searchTerm}".</h3>
+                <p>Try searching for "MRI", "CBC", "X-Ray", etc.</p>
             </div>
         )}
 

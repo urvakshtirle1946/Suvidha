@@ -59,6 +59,26 @@ function AdminLayoutContent({ children }) {
      return () => clearTimeout(timer);
   }, [router, basePath, pathname, adminPathParam, securePath]);
 
+  // Fetch Notifications State
+  const [notifications, setNotifications] = useState([]);
+
+  // Fetch Notifications (Recent Bookings)
+  useEffect(() => {
+     if (!isAuthorized) return;
+     const fetchNotifications = async () => {
+         try {
+             const res = await fetch('http://localhost:5000/api/bookings');
+             const data = await res.json();
+             if(Array.isArray(data)) {
+                 setNotifications(data.slice(0, 5)); // Top 5 recent
+             }
+         } catch (e) {
+             console.error("Failed to fetch notifications", e);
+         }
+     };
+     fetchNotifications();
+  }, [isAuthorized]);
+
   const handleLogout = () => {
       setIsAuthorized(false);
       localStorage.removeItem('admin_auth');
@@ -268,7 +288,7 @@ function AdminLayoutContent({ children }) {
                      transition: 'all 0.2s',
                      zIndex: 100
                  }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
-                    <div style={{ width: '8px', height: '8px', background: '#ff6b6b', borderRadius: '50%', position: 'absolute', top: '8px', right: '8px', border: '1px solid #fff' }}></div>
+                    {notifications.length > 0 && <div style={{ width: '8px', height: '8px', background: '#ff6b6b', borderRadius: '50%', position: 'absolute', top: '8px', right: '8px', border: '1px solid #fff' }}></div>}
                     <Bell size={20} color="var(--text-primary)" />
                  </button>
 
@@ -291,12 +311,21 @@ function AdminLayoutContent({ children }) {
                         <span style={{ fontSize: '0.75rem', color: 'var(--accent)', cursor: 'pointer' }}>Mark all read</span>
                      </div>
                      
-                     <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-secondary)', marginBottom: '0.8rem', fontWeight: 'bold' }}>Patients Today</h4>
+                     <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-secondary)', marginBottom: '0.8rem', fontWeight: 'bold' }}>Most Recent</h4>
                      <div className="custom-scrollbar" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', maxHeight: '300px', overflowY: 'auto' }}>
-                        <MiniPatientRow name="Zaina Riddle" issue="Headache" time="Checked In" status="active" />
-                        <MiniPatientRow name="Jakub Tucker" issue="Runny nose" time="10:30" />
-                        <MiniPatientRow name="Aleksander Craig" issue="Cold" time="11:30" />
-                        <MiniPatientRow name="Brianna Sears" issue="Flu" time="12:00" />
+                        {notifications.length > 0 ? (
+                            notifications.map(booking => (
+                                <MiniPatientRow 
+                                    key={booking.id}
+                                    name={booking.patient_name} 
+                                    issue={booking.service_name} 
+                                    time={booking.booking_time} 
+                                    status={booking.status === 'confirmed' ? 'active' : ''} 
+                                />
+                            ))
+                        ) : (
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textAlign: 'center', padding: '1rem' }}>No new notifications</div>
+                        )}
                      </div>
                    </div>
                  )}

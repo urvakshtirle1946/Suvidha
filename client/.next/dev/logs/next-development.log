@@ -1469,3 +1469,11 @@ https://nextjs.org/docs/messages/module-not-found
 [02:10:20.999] Server  LOG     ✓ Compiled in 664ms
 [02:10:25.766] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
 [02:10:26.172] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[02:16:35.503] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:16:37.127] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[02:18:04.758] Server  LOG     ✓ Compiled in 810ms
+[02:18:05.138] Browser ERROR   uncaughtError: ReferenceError: notifications is not defined
+[02:20:02.224] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[02:20:02.572] Server  LOG     ✓ Compiled in 1120ms
+[02:20:08.013] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:20:10.169] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview

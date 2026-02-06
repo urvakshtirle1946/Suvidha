@@ -362,6 +362,26 @@ function AdminLayoutContent({ children }) {
         adminPathParam,
         securePath
     ]);
+    // Fetch Notifications State
+    const [notifications, setNotifications] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
+    // Fetch Notifications (Recent Bookings)
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        if (!isAuthorized) return;
+        const fetchNotifications = async ()=>{
+            try {
+                const res = await fetch('http://localhost:5000/api/bookings');
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    setNotifications(data.slice(0, 5)); // Top 5 recent
+                }
+            } catch (e) {
+                console.error("Failed to fetch notifications", e);
+            }
+        };
+        fetchNotifications();
+    }, [
+        isAuthorized
+    ]);
     const handleLogout = ()=>{
         setIsAuthorized(false);
         localStorage.removeItem('admin_auth');
@@ -468,12 +488,12 @@ function AdminLayoutContent({ children }) {
                                     color: darkMode ? '#000' : '#fff'
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/[adminPath]/layout.js",
-                                    lineNumber: 160,
+                                    lineNumber: 180,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                lineNumber: 155,
+                                lineNumber: 175,
                                 columnNumber: 14
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -487,7 +507,7 @@ function AdminLayoutContent({ children }) {
                                         children: "Suvidha"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 163,
+                                        lineNumber: 183,
                                         columnNumber: 18
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -499,19 +519,19 @@ function AdminLayoutContent({ children }) {
                                         children: "ADMIN"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 164,
+                                        lineNumber: 184,
                                         columnNumber: 18
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                lineNumber: 162,
+                                lineNumber: 182,
                                 columnNumber: 14
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                        lineNumber: 154,
+                        lineNumber: 174,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
@@ -526,7 +546,7 @@ function AdminLayoutContent({ children }) {
                                     size: 20
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/[adminPath]/layout.js",
-                                    lineNumber: 170,
+                                    lineNumber: 190,
                                     columnNumber: 29
                                 }, void 0),
                                 label: "Dashboard",
@@ -535,7 +555,7 @@ function AdminLayoutContent({ children }) {
                                 darkMode: darkMode
                             }, void 0, false, {
                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                lineNumber: 170,
+                                lineNumber: 190,
                                 columnNumber: 14
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(NavItem, {
@@ -543,7 +563,7 @@ function AdminLayoutContent({ children }) {
                                     size: 20
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/[adminPath]/layout.js",
-                                    lineNumber: 171,
+                                    lineNumber: 191,
                                     columnNumber: 29
                                 }, void 0),
                                 label: "Hospitals",
@@ -552,7 +572,7 @@ function AdminLayoutContent({ children }) {
                                 darkMode: darkMode
                             }, void 0, false, {
                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                lineNumber: 171,
+                                lineNumber: 191,
                                 columnNumber: 14
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(NavItem, {
@@ -560,7 +580,7 @@ function AdminLayoutContent({ children }) {
                                     size: 20
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/[adminPath]/layout.js",
-                                    lineNumber: 172,
+                                    lineNumber: 192,
                                     columnNumber: 29
                                 }, void 0),
                                 label: "Bookings",
@@ -569,7 +589,7 @@ function AdminLayoutContent({ children }) {
                                 darkMode: darkMode
                             }, void 0, false, {
                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                lineNumber: 172,
+                                lineNumber: 192,
                                 columnNumber: 14
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(NavItem, {
@@ -577,7 +597,7 @@ function AdminLayoutContent({ children }) {
                                     size: 20
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/[adminPath]/layout.js",
-                                    lineNumber: 173,
+                                    lineNumber: 193,
                                     columnNumber: 29
                                 }, void 0),
                                 label: "Users",
@@ -586,13 +606,13 @@ function AdminLayoutContent({ children }) {
                                 darkMode: darkMode
                             }, void 0, false, {
                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                lineNumber: 173,
+                                lineNumber: 193,
                                 columnNumber: 14
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                        lineNumber: 169,
+                        lineNumber: 189,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -622,7 +642,7 @@ function AdminLayoutContent({ children }) {
                                         })
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 179,
+                                        lineNumber: 199,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -645,12 +665,12 @@ function AdminLayoutContent({ children }) {
                                                     color: "var(--text-secondary)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                    lineNumber: 183,
+                                                    lineNumber: 203,
                                                     columnNumber: 175
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                lineNumber: 183,
+                                                lineNumber: 203,
                                                 columnNumber: 23
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -667,24 +687,24 @@ function AdminLayoutContent({ children }) {
                                                     color: "var(--text-secondary)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                    lineNumber: 184,
+                                                    lineNumber: 204,
                                                     columnNumber: 174
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                lineNumber: 184,
+                                                lineNumber: 204,
                                                 columnNumber: 23
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 182,
+                                        lineNumber: 202,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                lineNumber: 178,
+                                lineNumber: 198,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -702,55 +722,55 @@ function AdminLayoutContent({ children }) {
                                         children: "M"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 189,
+                                        lineNumber: 209,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         children: "T"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 189,
+                                        lineNumber: 209,
                                         columnNumber: 33
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         children: "W"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 189,
+                                        lineNumber: 209,
                                         columnNumber: 47
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         children: "T"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 189,
+                                        lineNumber: 209,
                                         columnNumber: 61
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         children: "F"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 189,
+                                        lineNumber: 209,
                                         columnNumber: 75
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         children: "S"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 189,
+                                        lineNumber: 209,
                                         columnNumber: 89
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         children: "S"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 189,
+                                        lineNumber: 209,
                                         columnNumber: 103
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                lineNumber: 188,
+                                lineNumber: 208,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -787,28 +807,28 @@ function AdminLayoutContent({ children }) {
                                             children: day
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/[adminPath]/layout.js",
-                                            lineNumber: 200,
+                                            lineNumber: 220,
                                             columnNumber: 36
                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {}, void 0, false, {
                                             fileName: "[project]/src/app/[adminPath]/layout.js",
-                                            lineNumber: 210,
+                                            lineNumber: 230,
                                             columnNumber: 36
                                         }, this)
                                     }, index, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 198,
+                                        lineNumber: 218,
                                         columnNumber: 28
                                     }, this);
                                 })
                             }, void 0, false, {
                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                lineNumber: 191,
+                                lineNumber: 211,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                        lineNumber: 177,
+                        lineNumber: 197,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -829,20 +849,20 @@ function AdminLayoutContent({ children }) {
                                 size: 18
                             }, void 0, false, {
                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                lineNumber: 219,
+                                lineNumber: 239,
                                 columnNumber: 15
                             }, this),
                             " Logout"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                        lineNumber: 218,
+                        lineNumber: 238,
                         columnNumber: 12
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                lineNumber: 137,
+                lineNumber: 157,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -880,7 +900,7 @@ function AdminLayoutContent({ children }) {
                                         children: "Hello, Admin!"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 245,
+                                        lineNumber: 265,
                                         columnNumber: 18
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -891,13 +911,13 @@ function AdminLayoutContent({ children }) {
                                         children: "Here's what's happening in Suvidha today."
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 246,
+                                        lineNumber: 266,
                                         columnNumber: 18
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                lineNumber: 244,
+                                lineNumber: 264,
                                 columnNumber: 14
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -930,18 +950,18 @@ function AdminLayoutContent({ children }) {
                                             size: 20
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/[adminPath]/layout.js",
-                                            lineNumber: 259,
+                                            lineNumber: 279,
                                             columnNumber: 33
                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$moon$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Moon$3e$__["Moon"], {
                                             size: 20
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/[adminPath]/layout.js",
-                                            lineNumber: 259,
+                                            lineNumber: 279,
                                             columnNumber: 53
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 251,
+                                        lineNumber: 271,
                                         columnNumber: 18
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -964,7 +984,7 @@ function AdminLayoutContent({ children }) {
                                         onMouseEnter: (e)=>e.currentTarget.style.transform = 'scale(1.05)',
                                         onMouseLeave: (e)=>e.currentTarget.style.transform = 'scale(1)',
                                         children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            notifications.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 style: {
                                                     width: '8px',
                                                     height: '8px',
@@ -977,21 +997,21 @@ function AdminLayoutContent({ children }) {
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                lineNumber: 271,
-                                                columnNumber: 21
+                                                lineNumber: 291,
+                                                columnNumber: 50
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$bell$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Bell$3e$__["Bell"], {
                                                 size: 20,
                                                 color: "var(--text-primary)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                lineNumber: 272,
+                                                lineNumber: 292,
                                                 columnNumber: 21
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 263,
+                                        lineNumber: 283,
                                         columnNumber: 18
                                     }, this),
                                     showNotifications && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1025,7 +1045,7 @@ function AdminLayoutContent({ children }) {
                                                         children: "Notifications"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                        lineNumber: 290,
+                                                        lineNumber: 310,
                                                         columnNumber: 25
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1037,13 +1057,13 @@ function AdminLayoutContent({ children }) {
                                                         children: "Mark all read"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                        lineNumber: 291,
+                                                        lineNumber: 311,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                lineNumber: 289,
+                                                lineNumber: 309,
                                                 columnNumber: 22
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
@@ -1055,10 +1075,10 @@ function AdminLayoutContent({ children }) {
                                                     marginBottom: '0.8rem',
                                                     fontWeight: 'bold'
                                                 },
-                                                children: "Patients Today"
+                                                children: "Most Recent"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                lineNumber: 294,
+                                                lineNumber: 314,
                                                 columnNumber: 22
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1070,54 +1090,37 @@ function AdminLayoutContent({ children }) {
                                                     maxHeight: '300px',
                                                     overflowY: 'auto'
                                                 },
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(MiniPatientRow, {
-                                                        name: "Zaina Riddle",
-                                                        issue: "Headache",
-                                                        time: "Checked In",
-                                                        status: "active"
-                                                    }, void 0, false, {
+                                                children: notifications.length > 0 ? notifications.map((booking)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(MiniPatientRow, {
+                                                        name: booking.patient_name,
+                                                        issue: booking.service_name,
+                                                        time: booking.booking_time,
+                                                        status: booking.status === 'confirmed' ? 'active' : ''
+                                                    }, booking.id, false, {
                                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                        lineNumber: 296,
-                                                        columnNumber: 25
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(MiniPatientRow, {
-                                                        name: "Jakub Tucker",
-                                                        issue: "Runny nose",
-                                                        time: "10:30"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                        lineNumber: 297,
-                                                        columnNumber: 25
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(MiniPatientRow, {
-                                                        name: "Aleksander Craig",
-                                                        issue: "Cold",
-                                                        time: "11:30"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                        lineNumber: 298,
-                                                        columnNumber: 25
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(MiniPatientRow, {
-                                                        name: "Brianna Sears",
-                                                        issue: "Flu",
-                                                        time: "12:00"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                        lineNumber: 299,
-                                                        columnNumber: 25
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
+                                                        lineNumber: 318,
+                                                        columnNumber: 33
+                                                    }, this)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    style: {
+                                                        fontSize: '0.8rem',
+                                                        color: 'var(--text-secondary)',
+                                                        textAlign: 'center',
+                                                        padding: '1rem'
+                                                    },
+                                                    children: "No new notifications"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/app/[adminPath]/layout.js",
+                                                    lineNumber: 327,
+                                                    columnNumber: 29
+                                                }, this)
+                                            }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                lineNumber: 295,
+                                                lineNumber: 315,
                                                 columnNumber: 22
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 277,
+                                        lineNumber: 297,
                                         columnNumber: 20
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1146,29 +1149,29 @@ function AdminLayoutContent({ children }) {
                                                 color: "#fff"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                                lineNumber: 314,
+                                                lineNumber: 343,
                                                 columnNumber: 26
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/[adminPath]/layout.js",
-                                            lineNumber: 306,
+                                            lineNumber: 335,
                                             columnNumber: 22
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                                        lineNumber: 305,
+                                        lineNumber: 334,
                                         columnNumber: 18
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                                lineNumber: 249,
+                                lineNumber: 269,
                                 columnNumber: 14
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                        lineNumber: 234,
+                        lineNumber: 254,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -1184,24 +1187,24 @@ function AdminLayoutContent({ children }) {
                             children: children
                         }, pathname, false, {
                             fileName: "[project]/src/app/[adminPath]/layout.js",
-                            lineNumber: 322,
+                            lineNumber: 351,
                             columnNumber: 14
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                        lineNumber: 321,
+                        lineNumber: 350,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                lineNumber: 226,
+                lineNumber: 246,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/[adminPath]/layout.js",
-        lineNumber: 126,
+        lineNumber: 146,
         columnNumber: 5
     }, this);
 }
@@ -1211,12 +1214,12 @@ function AdminLayout({ children }) {
             children: children
         }, void 0, false, {
             fileName: "[project]/src/app/[adminPath]/layout.js",
-            lineNumber: 335,
+            lineNumber: 364,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/[adminPath]/layout.js",
-        lineNumber: 334,
+        lineNumber: 363,
         columnNumber: 5
     }, this);
 }
@@ -1244,18 +1247,18 @@ function NavItem({ icon, label, href, active, darkMode }) {
                     children: label
                 }, void 0, false, {
                     fileName: "[project]/src/app/[adminPath]/layout.js",
-                    lineNumber: 352,
+                    lineNumber: 381,
                     columnNumber: 10
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/[adminPath]/layout.js",
-            lineNumber: 343,
+            lineNumber: 372,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/[adminPath]/layout.js",
-        lineNumber: 342,
+        lineNumber: 371,
         columnNumber: 5
     }, this);
 }
@@ -1283,7 +1286,7 @@ function MiniPatientRow({ name, issue, time, status }) {
                 children: name.substring(0, 2).toUpperCase()
             }, void 0, false, {
                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                lineNumber: 361,
+                lineNumber: 390,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1300,7 +1303,7 @@ function MiniPatientRow({ name, issue, time, status }) {
                         children: name
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                        lineNumber: 365,
+                        lineNumber: 394,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1311,13 +1314,13 @@ function MiniPatientRow({ name, issue, time, status }) {
                         children: issue
                     }, void 0, false, {
                         fileName: "[project]/src/app/[adminPath]/layout.js",
-                        lineNumber: 366,
+                        lineNumber: 395,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                lineNumber: 364,
+                lineNumber: 393,
                 columnNumber: 13
             }, this),
             status === 'active' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$check$2d$big$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__CheckCircle$3e$__["CheckCircle"], {
@@ -1325,7 +1328,7 @@ function MiniPatientRow({ name, issue, time, status }) {
                 color: "var(--accent)"
             }, void 0, false, {
                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                lineNumber: 369,
+                lineNumber: 398,
                 columnNumber: 17
             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 style: {
@@ -1335,13 +1338,13 @@ function MiniPatientRow({ name, issue, time, status }) {
                 children: time
             }, void 0, false, {
                 fileName: "[project]/src/app/[adminPath]/layout.js",
-                lineNumber: 371,
+                lineNumber: 400,
                 columnNumber: 17
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/[adminPath]/layout.js",
-        lineNumber: 360,
+        lineNumber: 389,
         columnNumber: 9
     }, this);
 }

@@ -7,7 +7,8 @@ export function LocationProvider({ children }) {
   const [location, setLocation] = useState('Detecting location...');
   const [city, setCity] = useState('');
 
-  useEffect(() => {
+  const detectLocation = () => {
+    setLocation('Detecting...');
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async (position) => {
         const { latitude, longitude } = position.coords;
@@ -33,10 +34,14 @@ export function LocationProvider({ children }) {
       setLocation('Mumbai, India');
       setCity('Mumbai');
     }
+  };
+
+  useEffect(() => {
+    detectLocation();
   }, []);
 
   return (
-    <LocationContext.Provider value={{ location, city, setLocation, setCity }}>
+    <LocationContext.Provider value={{ location, city, setLocation, setCity, detectLocation }}>
       {children}
     </LocationContext.Provider>
   );

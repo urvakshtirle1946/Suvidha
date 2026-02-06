@@ -17,7 +17,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
   
   // Load Labs/Hospitals on mount
   useEffect(() => {
-     fetch('http://localhost:5000/api/hospitals')
+     fetch('https://suvidha-server-4u66.onrender.com/api/hospitals')
        .then(res => res.json())
        .then(data => setLabs(data))
        .catch(err => console.error(err));
@@ -68,7 +68,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                hospitalId: selectedLab.id
            };
 
-           const res = await fetch(`http://localhost:5000/api/bookings`, {
+           const res = await fetch(`https://suvidha-server-4u66.onrender.com/api/bookings`, {
                method: 'POST',
                headers: { 'Content-Type': 'application/json' },
                body: JSON.stringify(bookingData)

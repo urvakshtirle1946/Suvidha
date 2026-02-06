@@ -6,7 +6,7 @@ const OFFERS = [
   { code: 'FIRST50', discount: '50% OFF', description: 'Flat 50% off on your first Lab Test booking. Max discount ₹500.', type: 'Lab Test' },
   { code: 'HEALTH20', discount: '20% OFF', description: 'Get 20% off on all Full Body Checkups.', type: 'Package' },
   { code: 'HOSP30', discount: '30% OFF', description: 'Exclusive 30% discount on OPD consultations at partner hospitals.', type: 'Hospital' },
-  { code: 'SUVIDHA10', discount: '10% OFF', description: 'Extra 10% off on all services for premium members.', type: 'All' },
+  { code: 'ZELP10', discount: '10% OFF', description: 'Extra 10% off on all services for premium members.', type: 'All' },
 ];
 
 export default function Offers() {

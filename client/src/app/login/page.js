@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [loadingGoogle, setLoadingGoogle] = useState(false);
 
   // Phone.Email credentials
-  const API_URL = 'http://localhost:5000'; 
+  const API_URL = 'https://suvidha-server-4u66.onrender.com'; 
   const PE_CLIENT_ID = process.env.NEXT_PUBLIC_PE_CLIENT_ID;
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function LoginPage() {
 
         try {
             // Verify with Backend (Hardcoded to localhost for validation)
-            const res = await fetch(`http://localhost:5000/api/auth/phone-login`, {
+            const res = await fetch(`https://suvidha-server-4u66.onrender.com/api/auth/phone-login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_json_url }),
@@ -110,7 +110,7 @@ export default function LoginPage() {
           </div>
 
           <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>
-              Welcome to Suvidha
+              Welcome to Zelp
           </h1>
           <p style={{ color: '#6b7280', marginBottom: '2rem' }}>
               Sign in to manage bookings & more

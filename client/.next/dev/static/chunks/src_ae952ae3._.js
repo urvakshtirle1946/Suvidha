@@ -82,36 +82,36 @@ function LocationProvider({ children }) {
     _s();
     const [location, setLocation] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('Detecting location...');
     const [city, setCity] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "LocationProvider.useEffect": ()=>{
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition({
-                    "LocationProvider.useEffect": async (position)=>{
-                        const { latitude, longitude } = position.coords;
-                        try {
-                            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-                            const data = await res.json();
-                            const detectedCity = data.address.city || data.address.town || data.address.state_district || 'Mumbai';
-                            const detectedArea = data.address.suburb || data.address.neighbourhood || data.address.road || '';
-                            setCity(detectedCity);
-                            setLocation(`${detectedArea ? detectedArea + ', ' : ''}${detectedCity}`);
-                        } catch (error) {
-                            console.error("Location fetch failed", error);
-                            setLocation('Mumbai, India');
-                            setCity('Mumbai');
-                        }
-                    }
-                }["LocationProvider.useEffect"], {
-                    "LocationProvider.useEffect": (err)=>{
-                        console.warn("Location permission denied", err);
-                        setLocation('Mumbai, India');
-                        setCity('Mumbai');
-                    }
-                }["LocationProvider.useEffect"]);
-            } else {
+    const detectLocation = ()=>{
+        setLocation('Detecting...');
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(async (position)=>{
+                const { latitude, longitude } = position.coords;
+                try {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                    const data = await res.json();
+                    const detectedCity = data.address.city || data.address.town || data.address.state_district || 'Mumbai';
+                    const detectedArea = data.address.suburb || data.address.neighbourhood || data.address.road || '';
+                    setCity(detectedCity);
+                    setLocation(`${detectedArea ? detectedArea + ', ' : ''}${detectedCity}`);
+                } catch (error) {
+                    console.error("Location fetch failed", error);
+                    setLocation('Mumbai, India');
+                    setCity('Mumbai');
+                }
+            }, (err)=>{
+                console.warn("Location permission denied", err);
                 setLocation('Mumbai, India');
                 setCity('Mumbai');
-            }
+            });
+        } else {
+            setLocation('Mumbai, India');
+            setCity('Mumbai');
+        }
+    };
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "LocationProvider.useEffect": ()=>{
+            detectLocation();
         }
     }["LocationProvider.useEffect"], []);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(LocationContext.Provider, {
@@ -119,12 +119,13 @@ function LocationProvider({ children }) {
             location,
             city,
             setLocation,
-            setCity
+            setCity,
+            detectLocation
         },
         children: children
     }, void 0, false, {
         fileName: "[project]/src/context/LocationContext.js",
-        lineNumber: 39,
+        lineNumber: 44,
         columnNumber: 5
     }, this);
 }

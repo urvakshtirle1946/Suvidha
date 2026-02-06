@@ -180,7 +180,7 @@ function AdminLayoutContent({ children }) {
                 <ShieldCheck size={24} color={darkMode ? '#000' : '#fff'} />
              </div>
              <div>
-                 <h1 style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#fff' }}>Suvidha</h1>
+                 <h1 style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#fff' }}>Zelp</h1>
                  <span style={{ fontSize: '0.75rem', opacity: 0.5, letterSpacing: '1px' }}>ADMIN</span>
              </div>
           </div>
@@ -263,7 +263,7 @@ function AdminLayoutContent({ children }) {
           }}>
              <div>
                  <h2 style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--text-primary)' }}>Hello, Admin!</h2>
-                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Here's what's happening in Suvidha today.</p>
+                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Here's what's happening in Zelp today.</p>
              </div>
              
              <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', position: 'relative' }}>

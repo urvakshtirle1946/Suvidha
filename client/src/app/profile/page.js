@@ -17,7 +17,7 @@ export default function Profile() {
 
   const fetchBookings = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/bookings?phone=${user.phone}`);
+      const res = await fetch(`https://suvidha-server-4u66.onrender.com/api/bookings?phone=${user.phone}`);
       if (res.ok) {
         const data = await res.json();
         setBookings(data);
@@ -52,7 +52,7 @@ export default function Profile() {
                                 <h3 style={{ fontSize: '1.3rem' }}>{booking.service_name}</h3>
                                 <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{booking.status}</span>
                             </div>
-                            <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>Booking ID: #SUVIDHA-{booking.id}</p>
+                            <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>Booking ID: #ZELP-{booking.id}</p>
                             
                             <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', color: '#fff', fontSize: '0.95rem' }}>
                                 <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>

@@ -3,13 +3,18 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
-import { ChevronDown, ShoppingCart, Menu, X } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
+import { ChevronDown, ShoppingCart, Menu, X, MapPin } from 'lucide-react';
 import { TextReveal } from './ui/text-reveal-animation';
+import { ZelpLogo } from './ui/zelp-text-reveal';
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import LocationModal from './LocationModal';
 
 export default function Navbar() {
-  const { location } = useLocation();
+  const { location, setLocation, detectLocation } = useLocation();
+  const { setIsCartOpen, cartCount } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [locationModalOpen, setLocationModalOpen] = useState(false);
 
   return (
     <>
@@ -39,14 +44,28 @@ export default function Navbar() {
           {/* Logo & Location */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1 }}>
               <Link href="/" style={{ textDecoration: 'none' }}>
-                  <TextReveal word="Suvidha" />
+                  <ZelpLogo className="h-10 text-gray-800" />
               </Link>
               
-              {/* Location Display - Desktop */}
-              <div className="hide-on-mobile" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                   <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <span style={{ fontWeight: 'bold', fontSize: '0.95rem', color: '#1f2937', maxWidth: '250px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {location || 'Detecting Location...'}
+              <div className="hide-on-mobile" style={{ position: 'relative' }}>
+                   <div 
+                      onClick={() => setLocationModalOpen(true)}
+                      style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '5px', 
+                          cursor: 'pointer',
+                          padding: '0.5rem',
+                          borderRadius: '8px',
+                          background: 'transparent',
+                          transition: 'background 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                   >
+                        <MapPin size={18} color="#0c831f" />
+                        <span style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#1f2937', maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {location || 'Select Location'}
                         </span>
                         <ChevronDown size={16} color="#1f2937" />
                    </div>
@@ -81,8 +100,23 @@ export default function Navbar() {
               </div>
               
               {/* Cart is always visible but smaller on mobile */}
-              <button className="btn btn-primary" style={{ borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem' }}>
-                  <ShoppingCart size={18} /> <span className="hide-on-mobile">My Cart</span>
+              {/* Cart is always visible but smaller on mobile */}
+              <button 
+                  className="btn btn-primary" 
+                  onClick={() => setIsCartOpen(true)}
+                  style={{ borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem' }}
+              >
+                  <ShoppingCart size={18} /> 
+                  <span className="hide-on-mobile">My Cart</span>
+                  {cartCount > 0 && (
+                      <span style={{ 
+                          background: '#fff', color: '#ff6f61', borderRadius: '50%', 
+                          width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: '0.75rem', fontWeight: 'bold'
+                      }}>
+                          {cartCount}
+                      </span>
+                  )}
               </button>
               
               {/* Mobile User Button if signed in */}
@@ -94,6 +128,14 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
+
+      {/* Location Modal */}
+      <LocationModal 
+        isOpen={locationModalOpen} 
+        onClose={() => setLocationModalOpen(false)}
+        onDetectLocation={detectLocation}
+        onSelectLocation={(city) => setLocation(city)}
+      />
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
@@ -112,9 +154,15 @@ export default function Navbar() {
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
         }}>
              {/* Mobile Location */}
-             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.5rem', background: '#f3f4f6', borderRadius: '8px' }}>
-                <MapPin size={16} color="#db2777" />
-                <span style={{ fontSize: '0.9rem', color: '#374151' }}>{location || 'Detecting...'}</span>
+             <div 
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setLocationModalOpen(true);
+                }}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.5rem', background: '#f3f4f6', borderRadius: '8px', cursor: 'pointer' }}
+             >
+                <MapPin size={16} color="#0c831f" />
+                <span style={{ fontSize: '0.9rem', color: '#374151' }}>{location || 'Select Location'}</span>
              </div>
 
              <Link href="/" onClick={() => setMobileMenuOpen(false)} style={{ padding: '0.8rem', borderBottom: '1px solid #f3f4f6', fontWeight: '500', color: '#1f2937' }}>
@@ -141,5 +189,4 @@ export default function Navbar() {
   );
 }
 
-// Helper icon import (was missing in original replaced block context, ensure we import MapPin)
-import { MapPin } from 'lucide-react';
+

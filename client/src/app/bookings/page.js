@@ -19,14 +19,17 @@ export default function Bookings() {
     
     if (user?.phone) {
         fetchBookings();
-        const interval = setInterval(fetchBookings, 5000); // Real-time update
+
+        const interval = setInterval(fetchBookings, 15000); // Poll every 15s
         return () => clearInterval(interval);
+    } else {
+        setLoading(false);
     }
   }, [user, isLoaded]);
 
   const fetchBookings = async () => {
       try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/bookings/user?phone=${encodeURIComponent(user.phone)}`);
+          const res = await fetch(`https://suvidha-server-4u66.onrender.com/api/bookings/user?phone=${encodeURIComponent(user.phone)}`);
           if (res.ok) {
               const data = await res.json();
               setBookings(data);

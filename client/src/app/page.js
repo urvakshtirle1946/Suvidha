@@ -25,8 +25,8 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const [hospitalsRes, servicesRes] = await Promise.all([
-          fetch('http://localhost:5000/api/hospitals'),
-          fetch('http://localhost:5000/api/services?limit=8')
+          fetch('https://suvidha-server-4u66.onrender.com/api/hospitals'),
+          fetch('https://suvidha-server-4u66.onrender.com/api/services?limit=8')
         ]);
 
         const hospitalsData = await hospitalsRes.json();
@@ -48,7 +48,7 @@ export default function Home() {
       try {
           // Visual feedback
           document.body.style.cursor = 'wait';
-          const res = await fetch(`http://localhost:5000/api/hospitals/${hospital.id}`);
+          const res = await fetch(`https://suvidha-server-4u66.onrender.com/api/hospitals/${hospital.id}`);
           if (!res.ok) throw new Error('Failed to fetch details');
           const fullData = await res.json();
           setSelectedHospitalForProfile(fullData);
@@ -135,7 +135,7 @@ export default function Home() {
                 borderRadius: '50%',
                 animation: 'spin 1s linear infinite'
             }}></div>
-            <p>Loading Suvidha...</p>
+            <p>Loading Zelp...</p>
             <style jsx>{`
                 @keyframes spin {
                     0% { transform: rotate(0deg); }
@@ -322,8 +322,15 @@ export default function Home() {
                           <Star size={12} fill="#166534" /> {hospital.rating || '4.5'}
                       </div>
                    </div>
-                   <p style={{ fontSize: '0.9rem', color: '#6b7280', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <MapPin size={14} /> {hospital.location}
+                   <p 
+                      onClick={(e) => {
+                         e.stopPropagation();
+                         window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hospital.location)}`, '_blank');
+                      }}
+                      style={{ fontSize: '0.9rem', color: '#6b7280', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}
+                      title="View on Google Maps"
+                   >
+                      <MapPin size={14} /> {hospital.location} (Get Directions)
                    </p>
                    <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ fontSize: '0.85rem', color: '#db2777', fontWeight: '600' }}>Up to {hospital.discount_percentage || '10'}% OFF</span>

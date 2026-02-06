@@ -6,11 +6,13 @@ import BookingModal from '@/components/BookingModal';
 import { Search, MapPin, Filter, Activity, Clock, SlidersHorizontal, ArrowUpDown, X, Lock, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
+import { useCart } from '@/context/CartContext';
 
 function HospitalsContent() {
   const router = useRouter();
   const { city } = useLocation();
   const { user } = useAuth();
+  const { addToCart, setIsCartOpen } = useCart();
   const searchParams = useSearchParams();
   const specialtyFilter = searchParams.get('specialty');
   const querySearch = searchParams.get('search');
@@ -26,7 +28,7 @@ function HospitalsContent() {
   useEffect(() => {
     const fetchHospitals = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/hospitals`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`);
         const data = await res.json();
          // Data now includes nested 'services' array
          setHospitals(data);
@@ -143,7 +145,7 @@ function HospitalsContent() {
                             <div style={{ 
                                 width: '60px', height: '60px', 
                                 background: hospital.image_url 
-                                    ? `url('${hospital.image_url.startsWith('/') ? (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000') + hospital.image_url : hospital.image_url}') center/cover no-repeat` 
+                                    ? `url('${hospital.image_url.startsWith('/') ? (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + hospital.image_url : hospital.image_url}') center/cover no-repeat` 
                                     : '#ffe4e6', 
                                 borderRadius: '8px',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center'
@@ -241,12 +243,12 @@ function HospitalsContent() {
                                              <button 
                                                  onClick={(e) => {
                                                      e.stopPropagation();
-                                                     setSelectedHospital({ ...hospital, ...service, hospital_name: hospital.name, id: service.id, hospitalId: hospital.id });
+                                                     addToCart({ ...hospital, ...service, hospital_name: hospital.name, id: service.id, hospitalId: hospital.id });
                                                  }}
                                                  className="btn btn-primary"
                                                  style={{ padding: '0.5rem 1.2rem', fontSize: '0.9rem' }}
                                              >
-                                                 Book
+                                                 Add
                                              </button>
                                          </div>
                                      </div>

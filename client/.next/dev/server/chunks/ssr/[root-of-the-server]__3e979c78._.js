@@ -504,7 +504,7 @@ function AdminLayoutContent({ children }) {
                                             fontWeight: 'bold',
                                             color: '#fff'
                                         },
-                                        children: "Suvidha"
+                                        children: "Zelp"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
                                         lineNumber: 183,
@@ -908,7 +908,7 @@ function AdminLayoutContent({ children }) {
                                             color: 'var(--text-secondary)',
                                             fontSize: '0.9rem'
                                         },
-                                        children: "Here's what's happening in Suvidha today."
+                                        children: "Here's what's happening in Zelp today."
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/[adminPath]/layout.js",
                                         lineNumber: 266,

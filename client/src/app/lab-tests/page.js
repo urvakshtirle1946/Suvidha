@@ -4,12 +4,14 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import BookingModal from '@/components/BookingModal';
 import { Search, MapPin, Star, Filter, Activity, Clock, SlidersHorizontal, TestTube } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
 
 function LabTestsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const querySearch = searchParams.get('search');
   
+  const { addToCart } = useCart();
   const [searchTerm, setSearchTerm] = useState(querySearch || '');
   const [selectedTest, setSelectedTest] = useState(null);
   const [tests, setTests] = useState([]);
@@ -20,7 +22,7 @@ function LabTestsContent() {
      const fetchData = async () => {
          try {
              // Reusing hospitals endpoint for now, assuming it returns services
-             const res = await fetch('http://localhost:5000/api/hospitals');
+             const res = await fetch('https://suvidha-server-4u66.onrender.com/api/hospitals');
              if (res.ok) {
                  const data = await res.json();
                  const enhancedData = data.map(h => ({
@@ -114,7 +116,7 @@ function LabTestsContent() {
                                  fontWeight: '600',
                                  padding: '0.8rem'
                              }}
-                             onClick={() => setSelectedTest(test)}
+                             onClick={() => addToCart(test)}
                              onMouseOver={(e) => { e.currentTarget.style.background = '#ff6f61'; e.currentTarget.style.color = '#fff'; }}
                              onMouseOut={(e) => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#ff6f61'; }}
                          >

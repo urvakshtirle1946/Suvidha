@@ -19,7 +19,7 @@ export default function BookingsManagement() {
 
   const fetchBookings = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/bookings`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/bookings`);
       if (res.ok) {
         const data = await res.json();
         setBookings(data);
@@ -33,7 +33,7 @@ export default function BookingsManagement() {
 
   const updateStatus = async (id, newStatus) => {
       try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/bookings/${id}/status`, {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/bookings/${id}/status`, {
               method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ status: newStatus })

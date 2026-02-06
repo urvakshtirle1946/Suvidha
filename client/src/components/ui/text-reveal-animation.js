@@ -1,7 +1,7 @@
 'use client';
 
 export function TextReveal({ word, textColor, brandYellow }) {
-  const WORD = word || "Suvidha";
+  const WORD = word || "Zelp";
   
   return (
     <div style={{ display: 'inline-block' }}>
@@ -9,7 +9,7 @@ export function TextReveal({ word, textColor, brandYellow }) {
         <h1 className="reveal-h1" style={{ margin: 0, padding: 0 }}>
           {WORD.split("").map((char, i) => {
             let charColor = textColor || 'var(--brand)';
-            if (WORD === "Suvidha" && i < 2) {
+            if (WORD === "Zelp" && i < 1) {
               charColor = brandYellow || 'var(--brand-yellow)';
             }
             

@@ -62,7 +62,7 @@ function LoginPage() {
         setLoading(true);
         try {
             // Force local for debugging
-            const apiUrl = 'http://localhost:5000';
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com';
             const res = await fetch(`${apiUrl}/api/auth/phone-login`, {
                 method: 'POST',
                 headers: {

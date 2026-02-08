@@ -22,7 +22,7 @@ export default function UserManagement() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/users`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/auth/users`);
       if (res.ok) {
         const data = await res.json();
         const mappedUsers = data.map(u => ({

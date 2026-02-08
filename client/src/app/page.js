@@ -35,9 +35,10 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://suvidha-server-4u66.onrender.com');
         const [hospitalsRes, servicesRes] = await Promise.all([
-          fetch('https://suvidha-server-4u66.onrender.com/api/hospitals'),
-          fetch('https://suvidha-server-4u66.onrender.com/api/services?limit=8')
+          fetch(`${apiUrl}/api/hospitals`),
+          fetch(`${apiUrl}/api/services?limit=8`)
         ]);
 
         const hospitalsData = await hospitalsRes.json();
@@ -91,9 +92,10 @@ export default function Home() {
 
   const handleHospitalClick = async (hospital) => {
       try {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://suvidha-server-4u66.onrender.com');
           // Visual feedback
           document.body.style.cursor = 'wait';
-          const res = await fetch(`https://suvidha-server-4u66.onrender.com/api/hospitals/${hospital.id}`);
+          const res = await fetch(`${apiUrl}/api/hospitals/${hospital.id}`);
           if (!res.ok) throw new Error('Failed to fetch details');
           const fullData = await res.json();
           setSelectedHospitalForProfile(fullData);
@@ -331,11 +333,12 @@ export default function Home() {
                 onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
               >
                   <div style={{ height: '180px', background: '#f3f4f6', overflow: 'hidden' }}>
-                      <img 
+                       <img 
+                          crossOrigin="anonymous"
                           src={hospital.image_url 
-                              ? (hospital.image_url.startsWith('data:') || hospital.image_url.startsWith('http') 
+                              ? (hospital.image_url.startsWith('data:') || hospital.image_url.startsWith('http') || hospital.image_url.includes('gradient')
                                   ? hospital.image_url 
-                                  : (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + hospital.image_url)
+                                  : (process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://suvidha-server-4u66.onrender.com')) + hospital.image_url)
                               : "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80"} 
                           alt={hospital.name} 
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }} 

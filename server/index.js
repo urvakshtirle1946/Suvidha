@@ -15,11 +15,20 @@ const bookingRoutes = require('./routes/bookingRoutes');
 const hospitalRoutes = require('./routes/hospitalRoutes');
 
 // Middleware
-app.use(helmet()); // Security Headers
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginEmbedderPolicy: false
+})); // Security Headers
 app.use(morgan('dev')); // HTTP Request Logger
 app.use(cors());
 app.use(express.json()); // Built-in middleware replaces body-parser
-app.use('/uploads', express.static('uploads'));
+const staticOptions = {
+  setHeaders: (res) => {
+    res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+  }
+};
+app.use('/uploads', express.static('uploads', staticOptions)); // For dynamic uploads
+app.use('/uploads', express.static('static/uploads', staticOptions)); // Fallback for repo images
 
 // Routes
 app.use('/api/auth', authRoutes);

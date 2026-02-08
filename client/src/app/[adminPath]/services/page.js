@@ -34,7 +34,7 @@ export default function ServiceManagement() {
   const fetchServices = async (currentPage = 1) => {
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/services?page=${currentPage}&limit=${LIMIT}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/services?page=${currentPage}&limit=${LIMIT}`);
       if (res.ok) {
         const result = await res.json();
         // Handle both new paginated response and old array response (fallback)
@@ -55,7 +55,7 @@ export default function ServiceManagement() {
 
   const fetchHospitals = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/hospitals`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`);
         if (res.ok) {
           const data = await res.json();
           setHospitals(data);
@@ -68,7 +68,7 @@ export default function ServiceManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/services`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/services`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)

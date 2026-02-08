@@ -23,8 +23,8 @@ export default function AdminDashboard() {
     // setLoading(true); // Don't set loading on poll to avoid flicker
     try {
       const [resBookings, resHospitals] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/bookings`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/hospitals`)
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/bookings`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`)
       ]);
 
       if (resBookings.ok) {

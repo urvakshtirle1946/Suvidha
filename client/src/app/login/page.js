@@ -8,27 +8,10 @@ export default function LoginPage() {
   const [activeTab, setActiveTab] = useState('login'); // 'login' or 'register'
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', password: '' });
   const [loading, setLoading] = useState(false);
-  const [isVerified, setIsVerified] = useState(false); 
-  const [showCodePopup, setShowCodePopup] = useState(true); 
-  const [accessCode, setAccessCode] = useState('');
   
   const { login } = useAuth();
   const router = useRouter();
 
-  const handleCodeSubmit = (e) => {
-      e.preventDefault();
-      // Dummy check for verify code
-      if (accessCode.trim().length > 0) {
-          setIsVerified(true);
-          setShowCodePopup(false);
-      } else {
-          alert("Please enter a valid code");
-      }
-  };
-
-  const handleNoCode = () => {
-      router.push('/early-access');
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,8 +32,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-        // Force local for debugging
-        const apiUrl = 'http://localhost:5000'; 
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://suvidha-server-4u66.onrender.com');
         
         const res = await fetch(`${apiUrl}/api/auth/phone-login`, {
             method: 'POST',
@@ -61,7 +43,15 @@ export default function LoginPage() {
             })
         });
 
-        const data = await res.json();
+        let data;
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            data = await res.json();
+        } else {
+            const text = await res.text();
+            console.error("Non-JSON response:", text);
+            throw new Error(`Server returned ${res.status}: ${text.substring(0, 100)}`);
+        }
 
         if (res.ok && data.success) {
              login({ ...data.user, token: data.token });
@@ -69,24 +59,15 @@ export default function LoginPage() {
              if (data.user.role === 'admin') {
                  router.push('/admin/dashboard'); 
              } else {
-                 if (activeTab === 'register') {
-                    // Explicitly go to home after registration
-                    router.push('/');
-                 } else {
-                    // For login, try to go back to intended page, or home
-                    // Since 'gate' logic redirects to /login, router.back() is correct IF the user came from a protected page.
-                    // However, if they came directly to /login, router.back() might fail.
-                    // Let's use push('/') to be safe and ensure they get into the app.
-                    router.push('/');
-                 }
+                 router.push('/');
              }
         } else {
-            alert(data.message || "Login Failed");
+            alert(data.message || "Login/Registration Failed");
             setLoading(false);
         }
     } catch (err) {
-        console.error("Login Error:", err);
-        alert("Something went wrong. Please try again.");
+        console.error("Auth Error:", err);
+        alert(`Error: ${err.message}`);
         setLoading(false);
     }
   };
@@ -94,80 +75,12 @@ export default function LoginPage() {
   return (
     <div style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f3f4f6' }}>
       
-      {/* Code Verification Popup */}
-      {!isVerified && showCodePopup && (
-         <div style={{
-             position: 'fixed', inset: 0,
-             background: 'rgba(0,0,0,0.7)',
-             backdropFilter: 'blur(5px)',
-             display: 'flex', alignItems: 'center', justifyContent: 'center',
-             zIndex: 100
-         }}>
-             <div style={{
-                 background: '#fff', padding: '2.5rem', borderRadius: '20px',
-                 width: '100%', maxWidth: '400px', textAlign: 'center',
-                 boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
-             }}>
-                 <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: '#111827' }}>
-                     Enter Access Code
-                 </h2>
-                 <p style={{ color: '#6b7280', marginBottom: '1.5rem' }}>
-                     This platform is currently in invite-only mode. Please enter your access code to continue.
-                 </p>
-                 
-                 <form onSubmit={handleCodeSubmit}>
-                     <input 
-                        type="text" 
-                        placeholder="Enter Code" 
-                        value={accessCode}
-                        onChange={(e) => setAccessCode(e.target.value)}
-                        style={{
-                            width: '100%', padding: '1rem', borderRadius: '10px',
-                            border: '1px solid #d1d5db', marginBottom: '1rem',
-                            fontSize: '1rem', textAlign: 'center', letterSpacing: '2px'
-                        }}
-                     />
-                     <button 
-                        type="submit"
-                        style={{
-                            width: '100%', padding: '1rem', borderRadius: '10px',
-                            background: '#2563eb', color: '#fff', border: 'none',
-                            fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer',
-                            marginBottom: '1rem'
-                        }}
-                     >
-                         Enter Code
-                     </button>
-                 </form>
-
-                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '0.5rem' }}>
-                     <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
-                     <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>OR</span>
-                     <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
-                 </div>
-
-                 <button 
-                    onClick={handleNoCode}
-                    style={{
-                        width: '100%', padding: '1rem', borderRadius: '10px',
-                        background: 'transparent', color: '#4b5563', border: '1px solid #d1d5db',
-                        fontWeight: '600', fontSize: '1rem', cursor: 'pointer',
-                        marginTop: '1rem'
-                    }}
-                 >
-                     I don't have a code
-                 </button>
-             </div>
-         </div>
-      )}
 
       {/* Main Login Form */}
       <div style={{ 
           background: '#fff', padding: '2.5rem', borderRadius: '20px', 
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
           width: '100%', maxWidth: '400px', textAlign: 'center',
-          filter: !isVerified ? 'blur(8px)' : 'none',
-          pointerEvents: !isVerified ? 'none' : 'auto',
           transition: 'all 0.5s ease'
       }}>
           

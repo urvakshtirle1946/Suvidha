@@ -1,29 +1,7 @@
-[00:00:05.269] Server  LOG     ✓ Ready in 3.3s
-[00:00:22.997] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:44.125] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:30:39.994] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:30:40.498] Browser ERROR   React has detected a change in the order of Hooks called by %s. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://react.dev/link/rules-of-hooks
-
-   Previous render            Next render
-   ------------------------------------------------------
-%s   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- Home 1. useContext                 useContext
-2. useContext                 useContext
-3. useContext                 useContext
-4. useEffect                  useEffect
-5. undefined                  useState
-
-[00:30:40.499] Browser ERROR   uncaughtError: Error: Rendered more hooks than during the previous render.
-[00:31:39.483] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:31:39.488] Server  LOG     ✓ Compiled in 295ms
-[00:31:42.441] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:31:57.875] Server  LOG     ✓ Compiled in 80ms
-[00:32:40.912] Server  LOG     ○ Compiling /early-access ...
-[00:33:30.666] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:39:00.346] Server  LOG     ✓ Compiled in 675ms
-[00:41:42.835] Server  LOG     ✓ Compiled in 920ms
-[00:45:43.427] Server  LOG     ✓ Compiled in 511ms
-[00:48:03.993] Browser ERROR   Login Error: {}
-[00:53:02.003] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:53:40.930] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:56:04.253] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:02.751] Server  LOG     ✓ Ready in 1830ms
+[00:00:51.779] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:03:25.543] Browser LOG     [ChromeTransport] chromePort disconnected
+[00:08:54.508] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:09:04.514] Browser ERROR   unhandledRejection: i: Failed to connect to MetaMask
+[00:11:51.572] Server  LOG     ✓ Compiled in 752ms
+[00:12:11.224] Server  LOG     ✓ Compiled in 1177ms

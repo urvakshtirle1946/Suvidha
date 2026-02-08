@@ -2,22 +2,28 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import Navbar from '@/components/Navbar';
-import { Calendar, Clock, MapPin, User, CheckCircle } from 'lucide-react';
+import AuthModal from '@/components/AuthModal';
+import { Calendar, Clock, MapPin, User, CheckCircle, Lock } from 'lucide-react';
+import { getApiUrl } from '@/utils/api';
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user, isLoaded } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   useEffect(() => {
     if (user?.phone) {
       fetchBookings();
+    } else if (isLoaded) {
+      setLoading(false);
     }
-  }, [user]);
+  }, [user, isLoaded]);
 
   const fetchBookings = async () => {
     try {
-      const res = await fetch(`https://suvidha-server-4u66.onrender.com/api/bookings?phone=${user.phone}`);
+      const apiUrl = getApiUrl();
+      const res = await fetch(`${apiUrl}/api/bookings?phone=${user.phone}`);
       if (res.ok) {
         const data = await res.json();
         setBookings(data);
@@ -29,51 +35,83 @@ export default function Profile() {
     }
   };
 
+  if (!isLoaded) return <div style={{ textAlign: 'center', padding: '3rem' }}>Loading...</div>;
+
   return (
-    <main style={{ paddingBottom: '100px' }}>
+    <main style={{ paddingBottom: '100px', minHeight: '100vh', background: '#f4f6fb' }}>
       <Navbar />
       
       <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 2rem)' }}>
-        <h1 style={{ marginBottom: '2rem' }}>My Bookings</h1>
+        <h1 style={{ marginBottom: '2rem', fontSize: '1.8rem', fontWeight: 'bold' }}>My Bookings</h1>
         
-        {loading ? (
-             <p style={{ color: 'var(--text-muted)' }}>Loading your appointments...</p>
+        {!user ? (
+            <div style={{ 
+                textAlign: 'center', padding: '5rem 2rem', background: '#fff', 
+                borderRadius: '24px', border: '1px solid #e5e7eb', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' 
+            }}>
+                <div style={{ 
+                    width: '80px', height: '80px', borderRadius: '50%', background: '#fef2f2', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem'
+                }}>
+                    <Lock size={40} color="#ef4444" />
+                </div>
+                <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#111827' }}>Login to see your profile</h2>
+                <p style={{ color: '#6b7280', marginBottom: '2rem', maxWidth: '400px', margin: '0 auto 2rem' }}>
+                    Please sign in with your phone number or email to view your personalized profile and booking history.
+                </p>
+                <button 
+                    onClick={() => setAuthModalOpen(true)}
+                    style={{ 
+                        background: '#0c831f', color: '#fff', border: 'none', 
+                        padding: '1rem 2.5rem', borderRadius: '12px', fontWeight: 'bold', 
+                        fontSize: '1rem', cursor: 'pointer', transition: 'transform 0.2s',
+                        boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)'
+                    }}
+                >
+                    Login / Sign Up
+                </button>
+            </div>
+        ) : loading ? (
+             <p style={{ color: '#6b7280' }}>Loading your appointments...</p>
         ) : bookings.length === 0 ? (
-             <div className="glass" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+             <div style={{ padding: '3rem', textAlign: 'center', color: '#6b7280', background: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
                  <h2>No bookings yet</h2>
                  <p>Your upcoming appointments will appear here.</p>
              </div>
         ) : (
-            <div className="grid-cards" style={{ gridTemplateColumns: '1fr' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem', maxWidth: '800px' }}>
                 {bookings.map((booking) => (
-                    <div key={booking.id} className="glass" style={{ padding: '1.5rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap', borderLeft: '4px solid var(--primary)' }}>
+                    <div key={booking.id} style={{ 
+                        padding: '1.5rem', background: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb',
+                        display: 'flex', gap: '1.5rem', flexWrap: 'wrap', borderLeft: '4px solid #0c831f' 
+                    }}>
                         <div style={{ flex: 1, minWidth: '250px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                                <h3 style={{ fontSize: '1.3rem' }}>{booking.service_name}</h3>
-                                <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{booking.status}</span>
+                                <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{booking.service_name}</h3>
+                                <span style={{ color: '#0c831f', fontWeight: 'bold', fontSize: '0.9rem' }}>{booking.status}</span>
                             </div>
-                            <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>Booking ID: #ZELP-{booking.id}</p>
+                            <p style={{ color: '#6b7280', marginBottom: '1rem', fontSize: '0.85rem' }}>Booking ID: #ZELP-{booking.id}</p>
                             
-                            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', color: '#fff', fontSize: '0.95rem' }}>
+                            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', color: '#374151', fontSize: '0.9rem' }}>
                                 <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <Calendar size={16} color="var(--primary)" /> {new Date(booking.booking_date).toLocaleDateString()}
+                                    <Calendar size={14} color="#0c831f" /> {new Date(booking.booking_date).toLocaleDateString()}
                                 </span>
                                 <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <Clock size={16} color="var(--primary)" /> {booking.booking_time}
+                                    <Clock size={14} color="#0c831f" /> {booking.booking_time}
                                 </span>
                             </div>
                         </div>
 
-                        <div style={{ flex: 1, minWidth: '250px', borderLeft: '1px solid rgba(255,255,255,0.1)', paddingLeft: '1.5rem' }}>
-                            <div style={{ marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <User size={16} color="var(--text-muted)" /> 
-                                <span>{booking.patient_name} ({booking.patient_age}, {booking.patient_gender})</span>
+                        <div style={{ flex: 1, minWidth: '250px', borderLeft: '1px solid #f3f4f6', paddingLeft: '1.5rem' }}>
+                            <div style={{ marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
+                                <User size={14} color="#6b7280" /> 
+                                <span>{booking.patient_name}</span>
                             </div>
-                            <div style={{ marginBottom: '0.8rem', display: 'flex', alignItems: 'start', gap: '8px' }}>
-                                <MapPin size={16} color="var(--text-muted)" style={{ marginTop: '2px' }} /> 
-                                <span style={{ color: 'var(--text-muted)' }}>{booking.address}</span>
+                            <div style={{ marginBottom: '0.8rem', display: 'flex', alignItems: 'start', gap: '8px', fontSize: '0.9rem' }}>
+                                <MapPin size={14} color="#6b7280" style={{ marginTop: '2px' }} /> 
+                                <span style={{ color: '#6b7280' }}>{booking.address}</span>
                             </div>
-                            <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginTop: '1rem', color: 'var(--accent)' }}>
+                            <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginTop: '1rem', color: '#111827' }}>
                                 Paid: ₹{booking.price}
                             </div>
                         </div>
@@ -82,6 +120,7 @@ export default function Profile() {
             </div>
         )}
       </div>
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </main>
   );
 }

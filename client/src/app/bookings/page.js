@@ -1,7 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
-import { Calendar, Clock, MapPin, CheckCircle, ChevronRight, Package } from 'lucide-react';
+import AuthModal from '@/components/AuthModal';
+import { Calendar, Clock, MapPin, CheckCircle, ChevronRight, Package, Lock } from 'lucide-react';
 
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
@@ -10,6 +11,7 @@ export default function Bookings() {
   const { user, isLoaded } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   useEffect(() => {
     if (isLoaded && !user) {
@@ -42,14 +44,6 @@ export default function Bookings() {
   };
 
   if (!isLoaded) return <div style={{ textAlign: 'center', padding: '3rem' }}>Loading...</div>;
-  if (!user) return (
-      <main style={{ minHeight: '100vh', background: '#f4f6fb', paddingBottom: '3rem' }}>
-        <Navbar />
-        <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 4rem)', textAlign: 'center' }}>
-            <h2>Please login on the main website to view your bookings</h2>
-        </div>
-      </main>
-  );
 
   return (
     <main style={{ minHeight: '100vh', background: '#f4f6fb', paddingBottom: '3rem' }}>
@@ -58,7 +52,34 @@ export default function Bookings() {
       <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 2rem)' }}>
         <h1 style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '2rem', color: '#111827' }}>Your Bookings</h1>
 
-        {loading ? (
+        {!user ? (
+            <div style={{ 
+                textAlign: 'center', padding: '5rem 2rem', background: '#fff', 
+                borderRadius: '24px', border: '1px solid #e5e7eb', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' 
+            }}>
+                <div style={{ 
+                    width: '80px', height: '80px', borderRadius: '50%', background: '#fef2f2', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem'
+                }}>
+                    <Lock size={40} color="#ef4444" />
+                </div>
+                <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#111827' }}>Login to see your bookings</h2>
+                <p style={{ color: '#6b7280', marginBottom: '2rem', maxWidth: '400px', margin: '0 auto 2rem' }}>
+                    Please sign in with your phone number or email to view your appointment history and upcoming services.
+                </p>
+                <button 
+                    onClick={() => setAuthModalOpen(true)}
+                    style={{ 
+                        background: '#0c831f', color: '#fff', border: 'none', 
+                        padding: '1rem 2.5rem', borderRadius: '12px', fontWeight: 'bold', 
+                        fontSize: '1rem', cursor: 'pointer', transition: 'transform 0.2s',
+                        boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)'
+                    }}
+                >
+                    Login / Sign Up
+                </button>
+            </div>
+        ) : loading ? (
           <div style={{ textAlign: 'center', padding: '3rem' }}>Loading your history...</div>
         ) : bookings.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '800px' }}>
@@ -130,6 +151,7 @@ export default function Bookings() {
           </div>
         )}
       </div>
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </main>
   );
 }

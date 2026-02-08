@@ -4,19 +4,21 @@ import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
 import Navbar from '@/components/Navbar';
+import AuthModal from '@/components/AuthModal';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Checkout() {
   const { cart, clearCart, cartTotal } = useCart();
-  const { user, login } = useAuth();
+  const { user } = useAuth();
   const { location } = useLocation();
   const router = useRouter();
   
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   
   // Schedule State
   const [selectedDate, setSelectedDate] = useState('');
@@ -24,7 +26,7 @@ export default function Checkout() {
 
   const handleCheckoutCallback = async () => {
     if (!user) {
-        login();
+        setAuthModalOpen(true);
         return;
     }
 
@@ -261,6 +263,7 @@ export default function Checkout() {
             </div>
         )}
       </div>
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </main>
   );
 }

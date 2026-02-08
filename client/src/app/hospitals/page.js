@@ -7,6 +7,7 @@ import { Search, MapPin, Filter, Activity, Clock, SlidersHorizontal, ArrowUpDown
 import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
 import { useCart } from '@/context/CartContext';
+import { getApiUrl } from '@/utils/api';
 
 function HospitalsContent() {
   const router = useRouter();
@@ -32,7 +33,8 @@ function HospitalsContent() {
         // Note: The backend should ideally support /api/services with hospital details joined.
         // If not, we might need to fetch hospitals and flatten the services.
         // Assuming /api/services returns a flat list including hospital_name.
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/services`);
+        const apiUrl = getApiUrl();
+        const res = await fetch(`${apiUrl}/api/services`);
         const data = await res.json();
         setHospitals(data); // Using 'hospitals' state variable for services list to minimize refactor, ideally rename state to 'services'
         setLoading(false);

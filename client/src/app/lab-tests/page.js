@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import BookingModal from '@/components/BookingModal';
 import { Search, MapPin, Star, Filter, Activity, Clock, SlidersHorizontal, TestTube } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { getApiUrl } from '@/utils/api';
 
 function LabTestsContent() {
   const router = useRouter();
@@ -21,8 +22,9 @@ function LabTestsContent() {
   useEffect(() => {
      const fetchData = async () => {
          try {
+             const apiUrl = getApiUrl();
              // Reusing hospitals endpoint for now, assuming it returns services
-             const res = await fetch('https://suvidha-server-4u66.onrender.com/api/hospitals');
+             const res = await fetch(`${apiUrl}/api/hospitals`);
              if (res.ok) {
                  const data = await res.json();
                  const enhancedData = data.map(h => ({

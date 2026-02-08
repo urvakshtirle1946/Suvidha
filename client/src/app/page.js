@@ -11,6 +11,7 @@ import {
   Activity, Stethoscope, Building2, Pill, TestTube, Truck, 
   Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
 } from 'lucide-react';
+import { getApiUrl } from '@/utils/api';
 
 export default function Home() {
   const { addToCart } = useCart();
@@ -30,7 +31,7 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://suvidha-server-4u66.onrender.com');
+        const apiUrl = getApiUrl();
         const [hospitalsRes, servicesRes] = await Promise.all([
           fetch(`${apiUrl}/api/hospitals`),
           fetch(`${apiUrl}/api/services?limit=8`)
@@ -87,7 +88,7 @@ export default function Home() {
 
   const handleHospitalClick = async (hospital) => {
       try {
-          const apiUrl = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://suvidha-server-4u66.onrender.com');
+          const apiUrl = getApiUrl();
           // Visual feedback
           document.body.style.cursor = 'wait';
           const res = await fetch(`${apiUrl}/api/hospitals/${hospital.id}`);

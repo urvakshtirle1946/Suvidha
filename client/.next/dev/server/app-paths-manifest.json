@@ -1,5 +1,7 @@
 {
   "/[adminPath]/login/page": "app/[adminPath]/login/page.js",
   "/[adminPath]/page": "app/[adminPath]/page.js",
+  "/bookings/page": "app/bookings/page.js",
+  "/checkout/page": "app/checkout/page.js",
   "/page": "app/page.js"
 }

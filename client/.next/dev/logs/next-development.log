@@ -29,3 +29,14 @@
 [00:52:15.570] Server  LOG     ✓ Compiled in 663ms
 [00:52:42.283] Server  LOG     ✓ Compiled in 3.4s
 [00:58:42.397] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:31:11.147] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:50:57.363] Server  LOG     ✓ Compiled in 319ms
+[01:52:21.813] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:52:28.058] Browser ERROR   Location fetch failed {}
+[01:53:52.670] Server  LOG     ✓ Compiled in 2s
+[01:53:52.803] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./src/context/LocationContext.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[01:53:55.663] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:55:39.344] Server  LOG     ✓ Compiled in 3.6s
+[01:55:47.967] Server  LOG     ✓ Compiled in 252ms
+[01:57:14.930] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:58:32.043] Server  LOG     ✓ Compiled in 686ms

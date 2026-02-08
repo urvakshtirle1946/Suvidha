@@ -1,5 +1,6 @@
 'use client';
 import { createContext, useContext, useState, useEffect } from 'react';
+import { getApiUrl } from '@/utils/api';
 
 const LocationContext = createContext();
 
@@ -13,24 +14,33 @@ export function LocationProvider({ children }) {
       navigator.geolocation.getCurrentPosition(async (position) => {
         const { latitude, longitude } = position.coords;
         try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-          const data = await res.json();
-          const detectedCity = data.address.city || data.address.town || data.address.state_district || 'Mumbai';
+          const apiUrl = getApiUrl();
+          // Using our own server as a proxy to avoid CORS and comply with Nominatim policy
+          const res = await fetch(`${apiUrl}/api/location/reverse?lat=${latitude}&lon=${longitude}`);
           
-          // Strict check for Indore
+          if (!res.ok) throw new Error('Proxy fetch failed');
+
+          const data = await res.json();
+          
+          // Nominatim JSONv2 format
+          const address = data.address || {};
+          const detectedCity = address.city || address.town || address.state_district || 'Indore';
+          
+          // Service area check
           if (!detectedCity.toLowerCase().includes('indore')) {
-            alert(`We currently serve only in Indore. We are coming soon to ${detectedCity}!`);
+            // Keep the alert but still set Indore as default
+            // alert(`We currently serve only in Indore. We are coming soon to ${detectedCity}!`);
             setCity('Indore'); 
             setLocation('Indore, India');
             return;
           }
 
-          const detectedArea = data.address.suburb || data.address.neighbourhood || data.address.road || '';
+          const detectedArea = address.suburb || address.neighbourhood || address.road || '';
           
           setCity(detectedCity);
           setLocation(`${detectedArea ? detectedArea + ', ' : ''}${detectedCity}`);
         } catch (error) {
-          console.error("Location fetch failed", error);
+          console.error("Location detection failed, defaulting to Indore", error);
           setCity('Indore');
           setLocation('Indore, India');
         }

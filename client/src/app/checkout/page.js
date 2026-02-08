@@ -6,8 +6,9 @@ import { useLocation } from '@/context/LocationContext';
 import Navbar from '@/components/Navbar';
 import AuthModal from '@/components/AuthModal';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, CheckCircle, AlertCircle, Calendar as CalendarIcon, Clock } from 'lucide-react';
 import Link from 'next/link';
+import { getApiUrl } from '@/utils/api';
 
 export default function Checkout() {
   const { cart, clearCart, cartTotal } = useCart();
@@ -62,7 +63,7 @@ export default function Checkout() {
                 };
 
                 requests.push(
-                    fetch(`https://suvidha-server-4u66.onrender.com/api/bookings`, {
+                    fetch(`${getApiUrl()}/api/bookings`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(bookingData)
@@ -102,15 +103,15 @@ export default function Checkout() {
   }
 
   return (
-    <main style={{ minHeight: '100vh', background: '#f4f6fb', paddingBottom: '3rem' }}>
+    <main className="checkout-page" style={{ minHeight: '100vh', background: '#f4f6fb', paddingBottom: '100px' }}>
       <Navbar />
       
       <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 2rem)' }}>
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2rem', color: '#6b7280', textDecoration: 'none' }}>
+        <Link href="/" className="back-link" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2rem', color: '#6b7280', textDecoration: 'none' }}>
             <ArrowLeft size={18} /> Continue Shopping
         </Link>
         
-        <h1 style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '2rem', color: '#111827' }}>Checkout</h1>
+        <h1 className="page-title" style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '2rem', color: '#111827' }}>Checkout</h1>
 
         {cart.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '3rem' }}>
@@ -118,12 +119,12 @@ export default function Checkout() {
                 <Link href="/hospitals" style={{ color: '#0c831f', textDecoration: 'underline' }}>Browse Services</Link>
             </div>
         ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '2rem' }}>
+            <div className="checkout-grid">
                 {/* Left: Items & Schedule */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                <div className="checkout-left">
                     
                     {/* Items List */}
-                    <div style={{ background: '#fff', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                    <div className="card item-list-card" style={{ background: '#fff', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
                         <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid #f3f4f6', paddingBottom: '1rem' }}>Order Items ({cart.length})</h3>
                         {cart.map((item, idx) => (
                             <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px dashed #f3f4f6', paddingBottom: '1rem' }}>
@@ -137,25 +138,25 @@ export default function Checkout() {
                     </div>
 
                     {/* Schedule Section */}
-                    <div style={{ background: '#fff', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                    <div className="card schedule-card" style={{ background: '#fff', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
                         <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                             Select Schedule
+                             <CalendarIcon size={18} color="#0c831f" /> Select Schedule
                         </h3>
                         
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
-                            <div>
-                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.9rem' }}>Date</label>
+                        <div className="schedule-grid">
+                            <div className="schedule-field">
+                                <label style={{ display: 'block', marginBottom: '0.8rem', fontWeight: '500', fontSize: '0.9rem', color: '#374151' }}>Preferred Date</label>
                                 <input 
                                     type="date" 
                                     value={selectedDate}
                                     onChange={(e) => setSelectedDate(e.target.value)}
                                     min={new Date().toISOString().split('T')[0]}
-                                    style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #d1d5db' }}
+                                    style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none', background: '#f9fafb' }}
                                 />
                             </div>
-                            <div>
-                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.9rem' }}>Time Slot</label>
-                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                            <div className="schedule-field">
+                                <label style={{ display: 'block', marginBottom: '0.8rem', fontWeight: '500', fontSize: '0.9rem', color: '#374151' }}>Pick a Time Slot</label>
+                                 <div className="time-slots-grid">
                                     {[
                                         "09:00 AM", "10:00 AM", "11:00 AM",
                                         "12:00 PM", "04:00 PM", "05:00 PM"
@@ -164,15 +165,16 @@ export default function Checkout() {
                                             key={slot}
                                             onClick={() => setSelectedTime(slot)}
                                             style={{ 
-                                                padding: '10px', 
+                                                padding: '12px 8px', 
                                                 textAlign: 'center',
                                                 border: selectedTime === slot ? '2px solid #0c831f' : '1px solid #e5e7eb',
                                                 background: selectedTime === slot ? '#f0fdf4' : '#fff',
                                                 color: selectedTime === slot ? '#0c831f' : '#374151',
-                                                borderRadius: '8px',
+                                                borderRadius: '10px',
                                                 cursor: 'pointer',
-                                                fontSize: '0.9rem',
-                                                fontWeight: '500'
+                                                fontSize: '0.85rem',
+                                                fontWeight: '600',
+                                                transition: 'all 0.2s'
                                             }}
                                         >
                                             {slot}
@@ -184,86 +186,261 @@ export default function Checkout() {
                     </div>
                 </div>
 
-                {/* Right: Bill Summary (Zepto Style) */}
-                <div style={{ background: '#fff', borderRadius: '12px', padding: '0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', height: 'fit-content', overflow: 'hidden' }}>
-                    
-                    <div style={{ padding: '1.5rem', borderBottom: '1px solid #f3f4f6' }}>
-                        <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '1rem' }}>Bill Summary</h3>
+                {/* Right: Bill Summary */}
+                <div className="checkout-right">
+                    <div className="bill-card" style={{ background: '#fff', borderRadius: '16px', padding: '0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', overflow: 'hidden', position: 'sticky', top: 'calc(var(--header-height) + 2rem)' }}>
                         
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem', color: '#4b5563', fontSize: '0.9rem' }}>
-                            <span>Item Total</span>
-                            <span>₹{cartTotal}</span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem', color: '#4b5563', fontSize: '0.9rem' }}>
-                            <span>Taxes & Fees</span>
-                            <span>₹50</span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: '#059669', fontSize: '0.9rem', fontWeight: '500' }}>
-                            <span>Discount</span>
-                            <span>-₹0</span>
-                        </div>
-                        
-                        <div style={{ borderTop: '1px dashed #e5e7eb', marginTop: '1rem', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.1rem', color: '#111827' }}>
-                            <span>To Pay</span>
-                            <span>₹{cartTotal + 50}</span>
-                        </div>
-                    </div>
-
-                    {/* Coupons */}
-                    <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid #f3f4f6', background: '#f9fafb' }}>
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                            <input 
-                                type="text" 
-                                placeholder="Enter Coupon Code" 
-                                style={{ flex: 1, padding: '0.6rem', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.9rem', outline: 'none' }}
-                            />
-                            <button style={{ color: '#ec4899', fontWeight: 'bold', fontSize: '0.9rem', background: 'transparent', border: 'none', cursor: 'pointer' }}>APPLY</button>
-                        </div>
-                    </div>
-
-                    {/* Payment Mode */}
-                    <div style={{ padding: '1.5rem' }}>
-                        <h4 style={{ fontSize: '0.95rem', fontWeight: 'bold', marginBottom: '1rem', color: '#374151' }}>Payment Options</h4>
-                        
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', cursor: 'pointer' }}>
-                                <input type="radio" name="payment" defaultChecked style={{ accentColor: '#0c831f' }} />
-                                <span>Pay at Hospital / Clinic</span>
-                            </label>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', cursor: 'pointer', opacity: 0.6 }}>
-                                <input type="radio" name="payment" disabled />
-                                <span>Pay Online (Coming Soon)</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div style={{ padding: '0 1.5rem 1.5rem' }}>
-                        {!user && (
-                            <div style={{ background: '#fee2e2', color: '#991b1b', padding: '0.8rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <AlertCircle size={16} /> Login required
+                        <div style={{ padding: '1.5rem', borderBottom: '1px solid #f3f4f6' }}>
+                            <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '1.5rem' }}>Bill Summary</h3>
+                            
+                            <div className="bill-row">
+                                <span>Item Total</span>
+                                <span>₹{cartTotal}</span>
                             </div>
-                        )}
-                        
-                        {error && (
-                            <div style={{ background: '#fee2e2', color: '#991b1b', padding: '0.8rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.9rem' }}>
-                                {error}
+                            <div className="bill-row">
+                                <span>Taxes & Fees</span>
+                                <span>₹50</span>
                             </div>
-                        )}
+                            <div className="bill-row discount">
+                                <span>Discount</span>
+                                <span>-₹0</span>
+                            </div>
+                            
+                            <div className="total-row">
+                                <span>To Pay</span>
+                                <span>₹{cartTotal + 50}</span>
+                            </div>
+                        </div>
 
-                        <button 
-                            onClick={handleCheckoutCallback}
-                            disabled={loading}
-                            style={{ width: '100%', background: '#0c831f', color: '#fff', border: 'none', padding: '1rem', borderRadius: '10px', fontWeight: 'bold', fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                        >
-                            <span>{loading ? 'Processing...' : user ? `Place Order` : 'Login to Continue'}</span>
-                            {!loading && user && <span>₹{cartTotal + 50} &gt;</span>}
-                        </button>
+                        {/* Coupons */}
+                        <div className="coupon-section" style={{ padding: '1.2rem 1.5rem', borderBottom: '1px solid #f3f4f6', background: '#f9fafb' }}>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <input 
+                                    type="text" 
+                                    placeholder="Enter Coupon Code" 
+                                    style={{ flex: 1, padding: '0.7rem', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.9rem', outline: 'none' }}
+                                />
+                                <button style={{ color: '#0c831f', fontWeight: 'bold', fontSize: '0.9rem', background: 'transparent', border: 'none', cursor: 'pointer' }}>APPLY</button>
+                            </div>
+                        </div>
+
+                        {/* Payment Mode */}
+                        <div style={{ padding: '1.5rem' }}>
+                            <h4 style={{ fontSize: '0.95rem', fontWeight: 'bold', marginBottom: '1.2rem', color: '#374151' }}>Payment Options</h4>
+                            
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.9rem', cursor: 'pointer' }}>
+                                    <input type="radio" name="payment" defaultChecked style={{ width: '18px', height: '18px', accentColor: '#0c831f' }} />
+                                    <span style={{ fontWeight: '500' }}>Pay at Hospital / Clinic</span>
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.9rem', cursor: 'pointer', opacity: 0.5 }}>
+                                    <input type="radio" name="payment" disabled style={{ width: '18px', height: '18px' }} />
+                                    <span style={{ fontWeight: '500' }}>Pay Online (Coming Soon)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className="hide-on-mobile" style={{ padding: '0 1.5rem 1.5rem' }}>
+                            {!user && (
+                                <div style={{ background: '#fef2f2', color: '#991b1b', padding: '0.8rem 1rem', borderRadius: '10px', marginBottom: '1.5rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #fee2e2' }}>
+                                    <AlertCircle size={18} /> Login required to place order
+                                </div>
+                            )}
+                            
+                            {error && (
+                                <div style={{ background: '#fef2f2', color: '#991b1b', padding: '0.8rem 1rem', borderRadius: '10px', marginBottom: '1.5rem', fontSize: '0.85rem', border: '1px solid #fee2e2' }}>
+                                    {error}
+                                </div>
+                            )}
+
+                            <button 
+                                onClick={handleCheckoutCallback}
+                                disabled={loading}
+                                style={{ 
+                                    width: '100%', background: '#0c831f', color: '#fff', border: 'none', 
+                                    padding: '1.2rem', borderRadius: '12px', fontWeight: 'bold', fontSize: '1.1rem', 
+                                    cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, 
+                                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                    boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)'
+                                }}
+                            >
+                                <span>{loading ? 'Processing...' : user ? `Place Order` : 'Login to Continue'}</span>
+                                {!loading && user && <span>₹{cartTotal + 50} &gt;</span>}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         )}
       </div>
+
+      {/* Mobile Sticky CTA */}
+      {cart.length > 0 && (
+          <div className="mobile-cta show-on-mobile">
+              <div className="mobile-cta-content container">
+                  <div className="cta-price">
+                      <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#111827' }}>₹{cartTotal + 50}</div>
+                      <div className="view-summary" onClick={() => {
+                          const el = document.querySelector('.bill-card');
+                          el?.scrollIntoView({ behavior: 'smooth' });
+                      }}>View Detailed Bill</div>
+                  </div>
+                  <button 
+                    onClick={handleCheckoutCallback}
+                    disabled={loading}
+                    className="cta-button"
+                  >
+                      {loading ? '...' : user ? 'Place Order' : 'Login'}
+                  </button>
+              </div>
+          </div>
+      )}
+
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+
+      <style jsx>{`
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        .checkout-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2rem;
+        }
+
+        .time-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .bill-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            color: #4b5563;
+            font-size: 0.95rem;
+        }
+
+        .bill-row.discount {
+            color: #059669;
+            font-weight: 500;
+        }
+
+        .total-row {
+            border-top: 1px dashed #e5e7eb;
+            margin-top: 1.2rem;
+            padding-top: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: #111827;
+        }
+
+        .mobile-cta {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            padding: 1rem 0;
+            box-shadow: 0 -10px 25px rgba(0,0,0,0.06);
+            z-index: 100;
+            display: none;
+        }
+
+        .mobile-cta-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .view-summary {
+            font-size: 0.75rem;
+            color: #0c831f;
+            text-decoration: underline;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .cta-button {
+            background: #0c831f;
+            color: #fff;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(12, 131, 31, 0.2);
+        }
+
+        .show-on-mobile {
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .checkout-right {
+                order: 2;
+            }
+
+            .bill-card {
+                position: static !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .show-on-mobile {
+                display: block;
+            }
+            
+            .hide-on-mobile {
+                display: none;
+            }
+
+            .checkout-page {
+                padding-bottom: 120px !important;
+            }
+
+            .page-title {
+                font-size: 1.5rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+
+            .schedule-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .time-slots-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .container {
+                padding-left: 1.2rem;
+                padding-right: 1.2rem;
+            }
+
+            .card {
+                padding: 1.2rem !important;
+            }
+        }
+      `}</style>
     </main>
   );
 }

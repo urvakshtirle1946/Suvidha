@@ -5,3 +5,27 @@
 [00:09:04.514] Browser ERROR   unhandledRejection: i: Failed to connect to MetaMask
 [00:11:51.572] Server  LOG     ✓ Compiled in 752ms
 [00:12:11.224] Server  LOG     ✓ Compiled in 1177ms
+[00:36:59.779] Server  LOG     ✓ Compiled in 4.4s
+[00:37:11.878] Server  LOG     ✓ Compiled in 1151ms
+[00:38:56.041] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:40:23.536] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:40:32.951] Browser ERROR   unhandledRejection: i: Failed to connect to MetaMask
+[00:41:12.720] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:44:20.179] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:44:28.202] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:44:38.252] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:46:47.761] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:46:51.595] Server  LOG     ○ Compiling /[adminPath]/login ...
+[00:46:56.611] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:47:04.640] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:47:09.771] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:47:44.951] Server  LOG     ✓ Compiled in 685ms
+[00:49:32.316] Server  LOG     ✓ Compiled in 408ms
+[00:49:37.008] Server  LOG     ✓ Compiled in 61ms
+[00:49:51.021] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:51:27.511] Server  LOG     ✓ Compiled in 7.2s
+[00:51:41.933] Server  LOG     ✓ Compiled in 551ms
+[00:51:59.654] Server  LOG     ✓ Compiled in 222ms
+[00:52:15.570] Server  LOG     ✓ Compiled in 663ms
+[00:52:42.283] Server  LOG     ✓ Compiled in 3.4s
+[00:58:42.397] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold

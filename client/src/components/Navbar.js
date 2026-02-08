@@ -8,6 +8,7 @@ import { ChevronDown, ShoppingCart, Menu, X, MapPin } from 'lucide-react';
 import { TextReveal } from './ui/text-reveal-animation';
 import { ZelpLogo } from './ui/zelp-text-reveal';
 import LocationModal from './LocationModal';
+import AuthModal from './AuthModal';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -15,6 +16,7 @@ export default function Navbar() {
   const { setIsCartOpen, cartCount } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [locationModalOpen, setLocationModalOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   return (
     <>
@@ -79,18 +81,15 @@ export default function Navbar() {
           </div>
           
           {/* Right Actions */}
-
-          {/* Right Actions */}
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
               <div className="hide-on-mobile" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                   {!user ? (
-                      <Link href="/login" style={{ textDecoration: 'none' }}>
-                        <button 
-                            style={{ background: 'transparent', border: 'none', fontWeight: '500', fontSize: '1.1rem', cursor: 'pointer', color: '#374151' }}
-                        >
-                            Login
-                        </button>
-                      </Link>
+                      <button 
+                          onClick={() => setAuthModalOpen(true)}
+                          style={{ background: 'transparent', border: 'none', fontWeight: '500', fontSize: '1.1rem', cursor: 'pointer', color: '#374151' }}
+                      >
+                          Login
+                      </button>
                   ) : (
                      <>
                          <Link href="/bookings" style={{ textDecoration: 'none', color: '#374151', fontSize: '1rem', fontWeight: '500' }}>
@@ -146,6 +145,12 @@ export default function Navbar() {
         onSelectLocation={(city) => setLocation(city)}
       />
 
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={authModalOpen} 
+        onClose={() => setAuthModalOpen(false)} 
+      />
+
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div style={{
@@ -182,9 +187,12 @@ export default function Navbar() {
              </Link>
              
              {!user ? (
-                 <Link href="/login" onClick={() => setMobileMenuOpen(false)} style={{ padding: '0.8rem', fontWeight: '600', color: '#ff6f61' }}>
+                 <button 
+                     onClick={() => { setAuthModalOpen(true); setMobileMenuOpen(false); }}
+                     style={{ padding: '0.8rem', fontWeight: '600', color: '#ff6f61', background: 'transparent', border: 'none', textAlign: 'left', fontSize: '1rem', cursor: 'pointer' }}
+                 >
                     Login / Sign Up
-                 </Link>
+                 </button>
              ) : (
                  <Link href="/bookings" onClick={() => setMobileMenuOpen(false)} style={{ padding: '0.8rem', fontWeight: '500', color: '#1f2937' }}>
                     My Bookings
@@ -195,5 +203,3 @@ export default function Navbar() {
     </>
   );
 }
-
-

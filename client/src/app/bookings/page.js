@@ -46,8 +46,7 @@ export default function Bookings() {
       <main style={{ minHeight: '100vh', background: '#f4f6fb', paddingBottom: '3rem' }}>
         <Navbar />
         <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 4rem)', textAlign: 'center' }}>
-            <h2>Please login to view your bookings</h2>
-            <Link href="/login" style={{ color: '#2563eb', textDecoration: 'underline' }}>Login here</Link>
+            <h2>Please login on the main website to view your bookings</h2>
         </div>
       </main>
   );

@@ -3,19 +3,18 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
 import { X, Calendar, User, MapPin, CheckCircle, Home, Plus, ArrowUpDown, Clock } from 'lucide-react';
-
+import AuthModal from './AuthModal';
+import { getApiUrl } from '@/utils/api';
 
 export default function BookingModal({ isOpen, onClose, service }) {
-  const { user, login } = useAuth();
+  const { user } = useAuth();
   const { location } = useLocation();
-  // Booking Flow: Service -> Time -> Payment
-  // We assume 'service' prop contains hospital info if coming from Hospital Profile.
-  // If coming from Popular Services, we might need to handle it. 
-  // For now, we set the initial step to 1 (Time Slot) as requested.
   
   const [step, setStep] = useState(1); // 1: Select Time, 2: Checkout, 3: Success
-  const [selectedLab, setSelectedLab] = useState(service); // Assume service object has hospital details or is self-sufficient
+  const [selectedLab, setSelectedLab] = useState(service);
   const [selectedTime, setSelectedTime] = useState(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
      if (isOpen) {
@@ -26,7 +25,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
 
   if (!isOpen || !service) return null;
 
-  const displayPrice = service.price; // Simplified price logic for direct flow
+  const displayPrice = service.price; 
   const displayMrp = service.price * 1.5; 
   
   const TIME_SLOTS = [
@@ -35,45 +34,49 @@ export default function BookingModal({ isOpen, onClose, service }) {
   ];
 
   const handleBooking = async () => {
-       // ... existing handleBooking logic ...
-       // Ensure we use 'service.hospitalId' if available or current context
-       // If no hospitalId, we might need a fallback or it might fail on backend if foreign key needed.
-       // For popular services, we might need to attach a default hospital ID or mock it.
-       if (!user) { login(); return; }
-       
-       try {
-           const bookingData = {
-               name: user.name || 'User',
-               userPhone: user.phone || '',
-               age: 0,
-               gender: 'Not Specified',
-               date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-               time: selectedTime,
-               address: location || 'India',
-               serviceName: service.name,
-               price: displayPrice,
-               hospitalId: service.hospitalId || service.id || 1 // Fallback ID
-           };
-           // ... fetch call ...
-           const res = await fetch(`https://suvidha-server-4u66.onrender.com/api/bookings`, {
-               method: 'POST',
-               headers: { 'Content-Type': 'application/json' },
-               body: JSON.stringify(bookingData)
-           });
+        if (!user) { 
+            setAuthModalOpen(true);
+            return; 
+        }
+        
+        setLoading(true);
+        try {
+            const bookingData = {
+                name: user.name || 'User',
+                userPhone: user.phone || '',
+                age: 0,
+                gender: 'Not Specified',
+                date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+                time: selectedTime,
+                address: location || 'India',
+                serviceName: service.name,
+                price: displayPrice,
+                hospitalId: service.hospitalId || service.id || 1 
+            };
 
-           if (res.ok) {
-               setStep(3);
-           } else {
-               alert('Booking Failed');
-           }
-       } catch (err) {
-           console.error(err);
-           alert('Error');
-       }
+            const apiUrl = getApiUrl();
+            const res = await fetch(`${apiUrl}/api/bookings`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bookingData)
+            });
+
+            if (res.ok) {
+                setStep(3);
+            } else {
+                alert('Booking Failed');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error creating booking');
+        } finally {
+            setLoading(false);
+        }
   };
 
 
   return (
+    <>
     <div style={{
       position: 'fixed', inset: 0, zIndex: 2000,
       background: 'rgba(0,0,0,0.5)',
@@ -142,7 +145,6 @@ export default function BookingModal({ isOpen, onClose, service }) {
                         </div>
                     </div>
 
-                    {/* Zepto-Style Bill Summary */}
                     <div style={{ background: '#fff', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb', marginBottom: '1.5rem' }}>
                         
                         <div style={{ padding: '1rem', borderBottom: '1px solid #f3f4f6' }}>
@@ -171,7 +173,6 @@ export default function BookingModal({ isOpen, onClose, service }) {
                             </div>
                         </div>
 
-                        {/* Coupon Code Section */}
                         <div style={{ padding: '0.8rem 1rem', borderBottom: '1px solid #f3f4f6', background: '#f9fafb' }}>
                             <div style={{ display: 'flex', gap: '8px' }}>
                                 <input 
@@ -183,7 +184,6 @@ export default function BookingModal({ isOpen, onClose, service }) {
                             </div>
                         </div>
 
-                        {/* Payment Options */}
                         <div style={{ padding: '1rem' }}>
                             <h4 style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.8rem', color: '#374151' }}>Payment Options</h4>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
@@ -197,19 +197,18 @@ export default function BookingModal({ isOpen, onClose, service }) {
                                 </label>
                             </div>
                         </div>
-
                     </div>
 
                     <button 
                         onClick={handleBooking}
+                        disabled={loading}
                         style={{ width: '100%', background: '#ff6f61', color: '#fff', border: 'none', padding: '1rem', borderRadius: '10px', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer' }}
                     >
-                        {user ? `Pay ₹${displayPrice}` : 'Login to Pay'}
+                        {loading ? 'Processing...' : (user ? `Pay ₹${displayPrice}` : 'Login to Pay')}
                     </button>
                 </>
             )}
 
-            {/* Step 3: Success */}
             {step === 3 && (
                 <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
                     <CheckCircle size={64} color="#059669" style={{ margin: '0 auto 1.5rem' }} />
@@ -221,5 +220,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
         </div>
       </div>
     </div>
+    <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+    </>
   );
 }

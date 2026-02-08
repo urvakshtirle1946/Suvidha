@@ -26,11 +26,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  useEffect(() => {
-    if (isLoaded && !user) {
-      router.push('/login');
-    }
-  }, [isLoaded, user, router]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -124,8 +119,8 @@ export default function Home() {
       { name: 'Physiotherapy', desc: 'Recovery', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9f43', href: '/hospitals?specialty=Physiotherapy' },
   ];
 
-  // If not loaded or not logged in, show loading or nothing (prevents flash)
-  if (!isLoaded || !user) {
+  // If auth state is not yet loaded, show loading to prevent flash
+  if (!isLoaded) {
       return (
         <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f4f6fb' }}>
             <div style={{

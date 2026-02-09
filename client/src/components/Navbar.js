@@ -46,7 +46,16 @@ export default function Navbar() {
           {/* Logo & Location */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1 }}>
               <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-                  <img src="/logo.png" alt="Zelp Logo" style={{ height: '32px', width: 'auto', objectFit: 'contain' }} />
+                  <span style={{ 
+                      fontSize: '1.8rem', 
+                      fontWeight: '800', 
+                      color: '#000', 
+                      letterSpacing: '-1.5px', 
+                      fontFamily: 'var(--font-outfit), sans-serif',
+                      lineHeight: 1
+                  }}>
+                      Zelp
+                  </span>
               </Link>
               
               <div className="hide-on-mobile" style={{ position: 'relative' }}>

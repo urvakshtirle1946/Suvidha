@@ -251,7 +251,7 @@ export default function Home() {
         <h2 style={{ marginBottom: '1.5rem', fontSize: 'clamp(1.2rem, 5vw, 1.5rem)' }}>Shop by Category</h2>
         <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', // Slightly smaller min-width for better mobile fit
+            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', 
             gap: '1rem', 
             marginBottom: '4rem' 
         }}>

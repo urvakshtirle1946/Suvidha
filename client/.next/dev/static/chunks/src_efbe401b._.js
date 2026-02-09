@@ -1149,7 +1149,7 @@ function AmbulanceRequest() {
             onClick: ()=>setIsOpen(true),
             style: {
                 position: 'fixed',
-                bottom: '100px',
+                bottom: '24px',
                 right: '24px',
                 width: 'auto',
                 minWidth: '60px',

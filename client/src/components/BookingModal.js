@@ -16,6 +16,8 @@ export default function BookingModal({ isOpen, onClose, service }) {
   const [transactionId, setTransactionId] = useState('');
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [paymentMode, setPaymentMode] = useState(null); // 'online' or 'hospital'
+  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
   const [labs, setLabs] = useState([]);
   const [fetchingLabs, setFetchingLabs] = useState(false);
 
@@ -78,14 +80,31 @@ export default function BookingModal({ isOpen, onClose, service }) {
       "04:00 PM", "05:00 PM", "06:00 PM", "07:00 PM"
   ];
 
-  const handleBooking = async () => {
+  const handlePayOnline = () => {
         if (!user) { 
             setAuthModalOpen(true);
             return; 
         }
-        
         if (!selectedLab || !selectedTime) return;
+        setPaymentMode('online');
         setStep(2); // Move to payment
+  };
+
+  const handlePayAtHospital = () => {
+        if (!user) { 
+            setAuthModalOpen(true);
+            return; 
+        }
+        if (!selectedLab || !selectedTime) return;
+        setPaymentMode('hospital');
+        setShowCompletionDialog(true);
+  };
+
+  const confirmCompletion = (isCompleted) => {
+        setShowCompletionDialog(false);
+        if (isCompleted) {
+            setStep(2); // Show QR
+        }
   };
 
   const finalizeBooking = async () => {
@@ -359,30 +378,99 @@ export default function BookingModal({ isOpen, onClose, service }) {
         </div>
 
         {/* Footer Action */}
-        {step < 3 && (
+        {step < 3 && !showCompletionDialog && (
             <div style={{ padding: '1.5rem', borderTop: '1px solid #f3f4f6', background: '#fff' }}>
-                <button 
-                    onClick={step === 1 ? handleBooking : finalizeBooking}
-                    disabled={loading || (step === 1 && (!selectedTime || !selectedLab)) || (step === 2 && !transactionId)}
-                    style={{ 
-                        width: '100%', 
-                        background: (step === 1 ? (selectedTime && selectedLab) : !!transactionId) ? '#ff6f61' : '#e5e7eb', 
-                        color: '#fff', 
-                        border: 'none', 
-                        padding: '1.2rem', 
-                        borderRadius: '16px', 
-                        fontWeight: '800', 
-                        fontSize: '1.1rem', 
-                        cursor: (step === 1 ? (selectedTime && selectedLab) : !!transactionId) ? 'pointer' : 'not-allowed',
-                        boxShadow: (step === 1 ? (selectedTime && selectedLab) : !!transactionId) ? '0 10px 15px -3px rgba(255, 111, 97, 0.3)' : 'none',
-                        transition: 'all 0.3s'
-                    }}
-                >
-                    {loading ? 'Processing...' : (step === 1 ? (selectedTime && selectedLab ? `Book Now • ₹${displayPrice}` : 'Select Time & Hospital') : 'Confirm Payment & Book')}
-                </button>
+                {step === 1 ? (
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                        <button 
+                            onClick={handlePayAtHospital}
+                            disabled={loading || !selectedTime || !selectedLab}
+                            style={{ 
+                                flex: 1,
+                                background: '#fff',
+                                color: (selectedTime && selectedLab) ? '#ff6f61' : '#e5e7eb', 
+                                border: `2px solid ${(selectedTime && selectedLab) ? '#ff6f61' : '#e5e7eb'}`, 
+                                padding: '1rem', 
+                                borderRadius: '16px', 
+                                fontWeight: '800', 
+                                fontSize: '1rem', 
+                                cursor: (selectedTime && selectedLab) ? 'pointer' : 'not-allowed',
+                                transition: 'all 0.3s'
+                            }}
+                        >
+                            Pay at Hospital
+                        </button>
+                        <button 
+                            onClick={handlePayOnline}
+                            disabled={loading || !selectedTime || !selectedLab}
+                            style={{ 
+                                flex: 1,
+                                background: (selectedTime && selectedLab) ? '#ff6f61' : '#e5e7eb', 
+                                color: '#fff', 
+                                border: 'none', 
+                                padding: '1rem', 
+                                borderRadius: '16px', 
+                                fontWeight: '800', 
+                                fontSize: '1rem', 
+                                cursor: (selectedTime && selectedLab) ? 'pointer' : 'not-allowed',
+                                boxShadow: (selectedTime && selectedLab) ? '0 10px 15px -3px rgba(255, 111, 97, 0.3)' : 'none',
+                                transition: 'all 0.3s'
+                            }}
+                        >
+                            Pay Online
+                        </button>
+                    </div>
+                ) : (
+                    <button 
+                        onClick={finalizeBooking}
+                        disabled={loading || !transactionId}
+                        style={{ 
+                            width: '100%', 
+                            background: transactionId ? '#ff6f61' : '#e5e7eb', 
+                            color: '#fff', 
+                            border: 'none', 
+                            padding: '1.2rem', 
+                            borderRadius: '16px', 
+                            fontWeight: '800', 
+                            fontSize: '1.1rem', 
+                            cursor: transactionId ? 'pointer' : 'not-allowed',
+                            boxShadow: transactionId ? '0 10px 15px -3px rgba(255, 111, 97, 0.3)' : 'none',
+                            transition: 'all 0.3s'
+                        }}
+                    >
+                        {loading ? 'Processing...' : 'Confirm Payment & Book'}
+                    </button>
+                )}
+                
                 <p style={{ textAlign: 'center', fontSize: '0.75rem', color: '#9ca3af', marginTop: '12px' }}>
-                    Step {step} of 2 • Secure payment verification
+                    {step === 1 ? 'Select payment method to proceed' : 'Step 2 of 2 • Secure payment verification'}
                 </p>
+            </div>
+        )}
+
+        {/* Completion Check Overlay */}
+        {showCompletionDialog && (
+            <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.98)', zIndex: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem', textAlign: 'center' }}>
+                <div style={{ background: '#fff5f4', p: '2rem', borderRadius: '24px', border: '1px solid #ffd1cd' }}>
+                    <h4 style={{ fontSize: '1.25rem', fontWeight: '800', marginBottom: '1rem', color: '#111827' }}>Confirmation</h4>
+                    <p style={{ color: '#4b5563', marginBottom: '2rem', lineHeight: '1.5' }}>
+                        Is your service that you booked completed?
+                    </p>
+                    <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
+                        <button 
+                            onClick={() => confirmCompletion(false)}
+                            style={{ flex: 1, padding: '0.8rem', borderRadius: '12px', border: '1px solid #e5e7eb', background: '#fff', fontWeight: '700', cursor: 'pointer' }}
+                        >
+                            No
+                        </button>
+                        <button 
+                            onClick={() => confirmCompletion(true)}
+                            style={{ flex: 1, padding: '0.8rem', borderRadius: '12px', border: 'none', background: '#ff6f61', color: '#fff', fontWeight: '700', cursor: 'pointer' }}
+                        >
+                            Yes
+                        </button>
+                    </div>
+                </div>
             </div>
         )}
       </div>

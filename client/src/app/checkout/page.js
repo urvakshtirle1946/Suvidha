@@ -114,6 +114,8 @@ export default function Checkout() {
   const [selectedTime, setSelectedTime] = useState('');
   const [transactionId, setTransactionId] = useState('');
   const [showPayment, setShowPayment] = useState(false);
+  const [paymentMode, setPaymentMode] = useState('hospital'); // 'hospital' or 'online'
+  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
 
   const updateCartWithProvider = (index, newItem) => {
     updateCartItem(index, newItem);
@@ -137,7 +139,18 @@ export default function Checkout() {
         return;
     }
 
-    setShowPayment(true); // Show payment overlay
+    if (paymentMode === 'online') {
+        setShowPayment(true); // Show payment overlay immediately
+    } else {
+        setShowCompletionDialog(true); // Show popup for hospital pay
+    }
+  };
+
+  const handleCompletionConfirm = (isCompleted) => {
+    setShowCompletionDialog(false);
+    if (isCompleted) {
+        setShowPayment(true);
+    }
   };
 
   const finalizeCheckout = async () => {
@@ -374,12 +387,24 @@ export default function Checkout() {
                             
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.9rem', cursor: 'pointer' }}>
-                                    <input type="radio" name="payment" defaultChecked style={{ width: '18px', height: '18px', accentColor: '#0c831f' }} />
+                                    <input 
+                                      type="radio" 
+                                      name="payment" 
+                                      checked={paymentMode === 'hospital'} 
+                                      onChange={() => setPaymentMode('hospital')}
+                                      style={{ width: '18px', height: '18px', accentColor: '#0c831f' }} 
+                                    />
                                     <span style={{ fontWeight: '500' }}>Pay at Hospital / Clinic</span>
                                 </label>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.9rem', cursor: 'pointer', opacity: 0.5 }}>
-                                    <input type="radio" name="payment" disabled style={{ width: '18px', height: '18px' }} />
-                                    <span style={{ fontWeight: '500' }}>Pay Online (Coming Soon)</span>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.9rem', cursor: 'pointer' }}>
+                                    <input 
+                                      type="radio" 
+                                      name="payment" 
+                                      checked={paymentMode === 'online'}
+                                      onChange={() => setPaymentMode('online')}
+                                      style={{ width: '18px', height: '18px', accentColor: '#0c831f' }} 
+                                    />
+                                    <span style={{ fontWeight: '500' }}>Pay Online</span>
                                 </label>
                             </div>
                         </div>
@@ -487,6 +512,31 @@ export default function Checkout() {
                   >
                         {loading ? 'Verifying...' : 'Book Appointment'}
                   </button>
+              </div>
+          </div>
+      )}
+
+      {showCompletionDialog && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 4000, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+              <div style={{ background: '#fff', width: '100%', maxWidth: '400px', borderRadius: '24px', padding: '2rem', textAlign: 'center' }}>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: '800', marginBottom: '1rem' }}>Confirmation</h3>
+                  <p style={{ color: '#64748b', marginBottom: '2rem', lineHeight: '1.5' }}>
+                      Is your service that you booked completed?
+                  </p>
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                      <button 
+                        onClick={() => handleCompletionConfirm(false)}
+                        style={{ flex: 1, padding: '0.8rem', borderRadius: '12px', border: '1px solid #e5e7eb', background: '#fff', fontWeight: '700', cursor: 'pointer' }}
+                      >
+                          No
+                      </button>
+                      <button 
+                        onClick={() => handleCompletionConfirm(true)}
+                        style={{ flex: 1, padding: '0.8rem', borderRadius: '12px', border: 'none', background: '#0c831f', color: '#fff', fontWeight: '700', cursor: 'pointer' }}
+                      >
+                          Yes
+                      </button>
+                  </div>
               </div>
           </div>
       )}

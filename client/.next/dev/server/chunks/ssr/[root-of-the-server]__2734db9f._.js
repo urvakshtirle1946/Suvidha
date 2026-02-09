@@ -263,7 +263,7 @@ const metadata = {
     title: "Zelp - Premium Healthcare Simplified",
     description: "Book verified hospital services and lab tests with best discounts.",
     icons: {
-        icon: "/zelp-favicon.png"
+        icon: "/favicon.png"
     }
 };
 ;

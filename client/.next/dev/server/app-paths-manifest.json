@@ -1,9 +1,3 @@
 {
-  "/[adminPath]/page": "app/[adminPath]/page.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/bookings/page": "app/bookings/page.js",
-  "/checkout/page": "app/checkout/page.js",
-  "/hospitals/page": "app/hospitals/page.js",
-  "/lab-tests/page": "app/lab-tests/page.js",
   "/page": "app/page.js"
 }

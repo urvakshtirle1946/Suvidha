@@ -45,8 +45,8 @@ export default function Navbar() {
 
           {/* Logo & Location */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1 }}>
-              <Link href="/" style={{ textDecoration: 'none' }}>
-                  <ZelpLogo className="h-10 text-gray-800" />
+              <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                  <img src="/logo.png" alt="Zelp Logo" style={{ height: '32px', width: 'auto', objectFit: 'contain' }} />
               </Link>
               
               <div className="hide-on-mobile" style={{ position: 'relative' }}>

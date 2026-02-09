@@ -14,6 +14,7 @@ const serviceRoutes = require('./routes/serviceRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const hospitalRoutes = require('./routes/hospitalRoutes');
 const locationRoutes = require('./routes/locationRoutes');
+const ambulanceRoutes = require('./routes/ambulanceRoutes');
 
 // Middleware
 app.use(helmet({
@@ -37,6 +38,7 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/hospitals', hospitalRoutes);
 app.use('/api/location', locationRoutes);
+app.use('/api/ambulance', ambulanceRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {

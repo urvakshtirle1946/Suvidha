@@ -24,7 +24,9 @@ export default function CartDrawer() {
 
       {/* Drawer */}
       <div style={{
-        position: 'fixed', top: 0, right: 0, bottom: 0, width: '100%', maxWidth: '400px',
+        position: 'fixed', top: 0, right: 0, bottom: 0, 
+        width: '100%', 
+        maxWidth: '420px',
         background: '#fff', zIndex: 3001, boxShadow: '-5px 0 15px rgba(0,0,0,0.1)',
         display: 'flex', flexDirection: 'column',
         animation: 'slideInRight 0.3s ease-out'

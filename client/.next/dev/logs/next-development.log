@@ -10,3 +10,206 @@
 [00:22:01.887] Server  LOG     ○ Compiling /bookings ...
 [00:26:00.635] Server  LOG     ✓ Compiled in 2.3s
 [00:30:01.588] Server  LOG     ✓ Compiled in 413ms
+[00:56:59.110] Server  LOG     ✓ Compiled in 2.1s
+[00:57:04.590] Server  LOG     ✓ Compiled in 405ms
+[00:57:05.390] Browser ERROR   In HTML, %s cannot be a descendant of <%s>.
+This will cause a hydration error.%s <a> a 
+
+  ...
+    <RedirectBoundary>
+      <RedirectErrorBoundary router={{...}}>
+        <InnerLayoutRouter url="/" tree={[...]} params={{}} cacheNode={{rsc:<Fragment>, ...}} segmentPath={[...]} ...>
+          <SegmentViewNode type="page" pagePath="page.js">
+            <SegmentTrieNode>
+            <ClientPageRoot Component={function Home} serverProvidedParams={{...}}>
+              <Home params={Promise} searchParams={Promise}>
+                <main style={{...}}>
+                  <Navbar>
+                    <nav style={{position:"...", ...}}>
+                      <div className="container ...">
+                        <button>
+                        <div style={{display:"flex", ...}}>
+                          <LinkComponent href="/" style={{...}}>
+>                           <a
+>                             style={{textDecoration:"none",display:"flex",alignItems:"center"}}
+>                             ref={function}
+>                             onClick={function onClick}
+>                             onMouseEnter={function onMouseEnter}
+>                             onTouchStart={function onTouchStart}
+>                             href="/"
+>                           >
+                              <LinkComponent href="/" style={{...}} className="uber-logo-...">
+>                               <a
+>                                 style={{textDecoration:"none",display:"flex",alignItems:"center",position:"relative"}}
+>                                 className="uber-logo-container"
+>                                 ref={function}
+>                                 onClick={function onClick}
+>                                 onMouseEnter={function onMouseEnter}
+>                                 onTouchStart={function onTouchStart}
+>                                 href="/"
+>                               >
+                          ...
+                        ...
+                    ...
+                  ...
+          ...
+        ...
+
+[00:57:05.391] Browser ERROR   <%s> cannot contain a nested %s.
+See this log for the ancestor stack trace. a <a>
+[00:57:11.742] Server  LOG     ✓ Compiled in 131ms
+[00:58:07.315] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:58:42.514] Server  LOG     ✓ Compiled in 141ms
+[00:58:50.373] Server  LOG     ✓ Compiled in 217ms
+[00:59:31.399] Server  LOG     ✓ Compiled in 1488ms
+[00:59:41.866] Server  LOG     ✓ Compiled in 138ms
+[01:00:13.301] Server  LOG     ✓ Compiled in 190ms
+[01:00:23.482] Server  LOG     ✓ Compiled in 66ms
+[01:00:30.733] Server  LOG     ✓ Compiled in 143ms
+[01:00:57.849] Server  LOG     ✓ Compiled in 916ms
+[01:01:08.212] Server  LOG     ✓ Compiled in 491ms
+[01:01:19.695] Server  LOG     ✓ Compiled in 418ms
+[01:06:43.265] Server  LOG     ○ Compiling /lab-tests ...
+[01:09:04.532] Server  LOG     ✓ Compiled in 1981ms
+[01:19:02.798] Server  LOG     ✓ Compiled in 1085ms
+[01:19:19.399] Server  LOG     ✓ Compiled in 497ms
+[01:19:34.795] Server  LOG     ✓ Compiled in 438ms
+[01:19:53.940] Server  LOG     ✓ Compiled in 394ms
+[01:20:03.794] Server  LOG     ✓ Compiled in 433ms
+[01:30:55.952] Server  LOG     ✓ Compiled in 5s
+[01:30:56.427] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./src/context/AuthContext.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[01:31:03.111] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:31:20.099] Server  LOG     ✓ Compiled in 12.2s
+[01:31:26.535] Server  LOG     ✓ Finished filesystem cache database compaction in 24.3s
+[01:31:27.612] Server  LOG     ✓ Finished writing to filesystem cache in 22.1s
+[01:33:56.475] Server  LOG     ✓ Compiled in 1019ms
+[01:34:48.142] Browser WARN    [GSI_LOGGER]: Provided button width is invalid: 100%
+[01:34:48.144] Browser WARN    [GSI_LOGGER]: Provided button width is invalid: 100%
+[01:43:06.658] Server  LOG     ✓ Compiled in 489ms
+[01:43:06.759] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./src/context/AuthContext.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[01:43:10.152] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:43:11.393] Browser WARN    Google Client ID is missing in environment variables
+[01:43:29.229] Browser WARN    [GSI_LOGGER]: Provided button width is invalid: 100%
+[01:43:29.229] Browser WARN    [GSI_LOGGER]: Provided button width is invalid: 100%
+[01:49:17.393] Browser WARN    [GSI_LOGGER]: Provided button width is invalid: 100%
+[01:50:00.651] Server  LOG     ✓ Compiled in 2.4s
+[01:50:00.723] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./src/context/AuthContext.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[01:50:03.168] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:50:19.085] Server  LOG     ✓ Compiled in 159ms
+[01:51:03.084] Server  LOG     ✓ Compiled in 286ms
+[02:12:06.339] Server  LOG     ✓ Compiled in 2.9s
+[02:12:07.429] Browser ERROR   ./src/components/AmbulanceRequest.js:290:13
+Ecmascript file had an error
+  288 |             </div>
+  289 |
+> 290 |             <style jsx>{`
+      |             ^^^^^^^^^^^^^
+> 291 |                 @keyframes slideUp {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 292 |                     from { transform: translateY(100%); opacity: 0; }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 293 |                     to { transform: translateY(0); opacity: 1; }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 294 |                 }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 295 |             `}</style>
+      | ^^^^^^^^^^^^^^^^^^^^^^^
+  296 |         </div>
+  297 |     );
+  298 | }
+
+Detected nested styled-jsx tag.
+Read more: https://nextjs.org/docs/messages/nested-styled-jsx-tags
+
+Import trace:
+  Server Component:
+    ./src/components/AmbulanceRequest.js
+    ./src/app/layout.js
+[02:13:23.532] Server  LOG     ✓ Compiled in 803ms
+[02:13:27.994] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:13:31.491] Browser ERROR   Failed to fetch data {}
+[02:13:34.401] Browser ERROR   Location detection failed, defaulting to Indore {}
+[02:13:35.411] Browser WARN    Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+[02:14:05.111] Server  LOG     ✓ Compiled in 90ms
+[02:14:32.909] Browser WARN    As of February 21st, 2024, google.maps.Marker is deprecated. Please use google.maps.marker.AdvancedMarkerElement instead. At this time, google.maps.Marker is not scheduled to be discontinued, but google.maps.marker.AdvancedMarkerElement is recommended over google.maps.Marker. While google.maps.Marker will continue to receive bug fixes for any major regressions, existing bugs in google.maps.Marker will not be addressed. At least 12 months notice will be given before support is discontinued. Please see https://developers.google.com/maps/deprecations for additional details and https://developers.google.com/maps/documentation/javascript/advanced-markers/migration for the migration guide.
+[02:14:34.043] Browser ERROR   Google Maps JavaScript API error: ApiProjectMapError
+https://developers.google.com/maps/documentation/javascript/error-messages#api-project-map-error
+[02:14:54.019] Browser ERROR   {}
+[02:16:14.430] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:16:18.807] Browser WARN    As of February 21st, 2024, google.maps.Marker is deprecated. Please use google.maps.marker.AdvancedMarkerElement instead. At this time, google.maps.Marker is not scheduled to be discontinued, but google.maps.marker.AdvancedMarkerElement is recommended over google.maps.Marker. While google.maps.Marker will continue to receive bug fixes for any major regressions, existing bugs in google.maps.Marker will not be addressed. At least 12 months notice will be given before support is discontinued. Please see https://developers.google.com/maps/deprecations for additional details and https://developers.google.com/maps/documentation/javascript/advanced-markers/migration for the migration guide.
+[02:16:19.046] Browser ERROR   Google Maps JavaScript API error: ApiProjectMapError
+https://developers.google.com/maps/documentation/javascript/error-messages#api-project-map-error
+[02:16:21.011] Browser WARN    Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+[02:17:28.710] Server  LOG     ✓ Compiled in 676ms
+[02:17:29.500] Browser ERROR   ./src/components/AmbulanceRequest.js:286:1
+Parsing ecmascript source code failed
+  284 |         </div>
+  285 |     );
+> 286 | }
+      | ^
+  287 |
+
+Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+
+Import trace:
+  Server Component:
+    ./src/components/AmbulanceRequest.js
+    ./src/app/layout.js
+[02:18:05.472] Server  LOG     ✓ Compiled in 145ms
+[02:18:06.392] Browser WARN    Performance warning! LoadScript has been reloaded unintentionally! You should not pass `libraries` prop as new array. Please keep an array of libraries as static class property for Components and PureComponents, or just a const variable outside of component, or somewhere in config files or ENV variables
+[02:18:20.383] Browser ERROR   Google Maps JavaScript API error: ApiProjectMapError
+https://developers.google.com/maps/documentation/javascript/error-messages#api-project-map-error
+[02:18:55.761] Server  LOG     ✓ Compiled in 276ms
+[02:18:56.400] Browser WARN    Performance warning! LoadScript has been reloaded unintentionally! You should not pass `libraries` prop as new array. Please keep an array of libraries as static class property for Components and PureComponents, or just a const variable outside of component, or somewhere in config files or ENV variables
+[02:19:22.629] Browser ERROR   Google Maps JavaScript API error: ApiProjectMapError
+https://developers.google.com/maps/documentation/javascript/error-messages#api-project-map-error
+[02:20:53.193] Server  LOG     ✓ Compiled in 1543ms
+[02:20:55.489] Server  ERROR   ⨯ ReferenceError: useLocation is not defined
+[02:20:59.843] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:21:00.393] Browser ERROR   uncaughtError: ReferenceError: useLocation is not defined
+[02:21:03.389] Server  LOG     ✓ Compiled in 229ms
+[02:21:03.897] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[02:21:03.898] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[02:21:05.269] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:28:20.599] Server  LOG     ✓ Compiled in 2.4s
+[02:28:26.023] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:28:27.361] Server  LOG     ✓ Compiled in 100ms
+[02:34:25.937] Server  LOG     ✓ Compiled in 671ms
+[02:34:27.412] Browser ERROR   uncaughtError: TypeError: Cannot read properties of undefined (reading '_leaflet_pos')
+[02:34:27.412] Browser ERROR   uncaughtError: Error: Map container is being reused by another instance
+[02:34:56.898] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:35:53.498] Server  LOG     ✓ Compiled in 418ms
+[02:41:26.372] Server  LOG     ✓ Compiled in 4.2s
+[02:43:49.716] Server  LOG     ✓ Compiled in 12.4s
+[02:46:43.757] Server  LOG     ✓ Compiled in 1917ms
+[02:46:44.482] Browser ERROR   ./src/components/AmbulanceRequest.js:175:13
+Parsing ecmascript source code failed
+  173 |                 }}
+  174 |                 className="ambulance-modal-container"
+> 175 |             >
+      |             ^
+  176 |                 <button 
+  177 |                     onClick={resetFlow}
+  178 |                     className="modal-close-btn"
+
+Unexpected token. Did you mean `{'>'}` or `&gt;`?
+
+Import trace:
+  Server Component:
+    ./src/components/AmbulanceRequest.js
+    ./src/app/layout.js
+[02:47:15.821] Server  LOG     ✓ Compiled in 226ms
+[02:48:59.576] Server  LOG     ✓ Compiled in 1705ms
+[02:49:04.924] Browser ERROR   uncaughtError: TypeError: Cannot read properties of undefined (reading '_leaflet_pos')
+[02:49:04.924] Browser ERROR   uncaughtError: Error: Map container is being reused by another instance
+[02:50:51.829] Server  LOG     ✓ Compiled in 1097ms
+[02:50:51.857] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[02:50:58.801] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:53:46.722] Server  LOG     ✓ Compiled in 17.9s
+[02:53:46.900] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./src/context/LocationContext.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[02:54:11.700] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:56:36.902] Server  LOG     ✓ Compiled in 7.9s
+[03:01:17.082] Server  LOG     ✓ Compiled in 512ms
+[03:02:48.416] Server  LOG     ✓ Compiled in 232ms
+[03:03:07.684] Server  LOG     ✓ Compiled in 448ms
+[03:03:17.294] Server  LOG     ✓ Compiled in 431ms

@@ -61,6 +61,44 @@
   }
 }
 
+/* Ambulance Animations */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
 .zelp-reveal {
   position: relative;
   width: 115px;
@@ -168,7 +206,45 @@ body:not(:has(.admin-root)) h6 {
 .nav-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+
+  .container,
+  .nav-container {
+    padding: 0 16px;
+    /* Slightly more space for content */
+  }
+}
+
+/* Responsive Grid System */
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  /* Reduced min-width */
+  gap: 1.5rem;
+}
+
+@media (max-width: 480px) {
+  .grid-cards {
+    grid-template-columns: 1fr;
+    /* Force single column on very small screens */
+    gap: 1rem;
+  }
+}
+
+/* Flex Helper for Mobile Stacking */
+.flex-stack-mobile {
+  display: flex;
+  flex-direction: row;
+}
+
+@media (max-width: 640px) {
+  .flex-stack-mobile {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
 .glass {
@@ -304,6 +380,16 @@ body:not(:has(.admin-root)) h6 {
   display: flex !important;
 }
 
+@media (max-width: 768px) {
+  .show-on-mobile {
+    display: flex !important;
+  }
+
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
 /* Navbar Responsiveness */
 .nav-content {
   display: flex;
@@ -346,36 +432,22 @@ body:not(:has(.admin-root)) h6 {
 
 /* Mobile Media Query (< 768px) */
 @media (max-width: 768px) {
-  .show-on-mobile {
-    display: flex !important;
+  :root {
+    --header-height: 64px;
   }
 
-  .hide-on-mobile {
-    display: none !important;
-  }
-
-  .nav-container {
-    padding: 0 1rem;
+  body {
+    font-size: 14px;
   }
 
   .reveal-h1 {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
   }
 
   /* Stack Search Bar */
   .search-bar-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.8rem;
-    padding: 0.8rem;
-  }
-
-  .search-bar-container>div:first-child {
-    border-right: none !important;
-    border-bottom: 1px solid #e5e7eb;
-    padding-right: 0 !important;
-    padding-bottom: 0.8rem;
-    margin-bottom: 0.2rem;
+    padding: 12px;
+    gap: 10px;
   }
 
   /* Filters adjustment */
@@ -387,14 +459,23 @@ body:not(:has(.admin-root)) h6 {
   .filters-actions {
     width: 100%;
     overflow-x: auto;
-    padding-bottom: 0.5rem;
-    /* Space for scrollbar */
+    padding-bottom: 5px;
     white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .filters-actions::-webkit-scrollbar {
+    display: none;
   }
 
   /* Grid adjustment for very small screens */
   .grid-cards {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .section {
+    padding: 1.5rem 0;
   }
 }
 

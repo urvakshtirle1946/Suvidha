@@ -96,6 +96,42 @@
   }
 }
 
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 #ef4444b3;
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px #ef444400;
+  }
+
+  100% {
+    box-shadow: 0 0 #ef444400;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .zelp-reveal {
   align-items: center;
   width: 115px;
@@ -180,7 +216,32 @@ h1, h2, h3, h4, h5, h6 {
 .container, .nav-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+  .container, .nav-container {
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-cards {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+.flex-stack-mobile {
+  flex-direction: row;
+  display: flex;
+}
+
+@media (max-width: 640px) {
+  .flex-stack-mobile {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
 .glass {
@@ -307,6 +368,16 @@ h1, h2, h3, h4, h5, h6 {
   display: flex !important;
 }
 
+@media (max-width: 768px) {
+  .show-on-mobile {
+    display: flex !important;
+  }
+
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
 .nav-content {
   justify-content: space-between;
   align-items: center;
@@ -346,35 +417,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (max-width: 768px) {
-  .show-on-mobile {
-    display: flex !important;
+  :root {
+    --header-height: 64px;
   }
 
-  .hide-on-mobile {
-    display: none !important;
-  }
-
-  .nav-container {
-    padding: 0 1rem;
+  body {
+    font-size: 14px;
   }
 
   .reveal-h1 {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
   }
 
   .search-bar-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: .8rem;
-    padding: .8rem;
-  }
-
-  .search-bar-container > div:first-child {
-    border-bottom: 1px solid #e5e7eb;
-    margin-bottom: .2rem;
-    padding-bottom: .8rem;
-    border-right: none !important;
-    padding-right: 0 !important;
+    gap: 10px;
+    padding: 12px;
   }
 
   .filters-container {
@@ -384,13 +441,23 @@ h1, h2, h3, h4, h5, h6 {
 
   .filters-actions {
     white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
     width: 100%;
-    padding-bottom: .5rem;
+    padding-bottom: 5px;
     overflow-x: auto;
+  }
+
+  .filters-actions::-webkit-scrollbar {
+    display: none;
   }
 
   .grid-cards {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .section {
+    padding: 1.5rem 0;
   }
 }
 

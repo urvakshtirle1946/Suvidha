@@ -1275,10 +1275,20 @@ function Navbar() {
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                                     href: "/",
                                     style: {
-                                        textDecoration: 'none'
+                                        textDecoration: 'none',
+                                        display: 'flex',
+                                        alignItems: 'center'
                                     },
-                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$zelp$2d$text$2d$reveal$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ZelpLogo"], {
-                                        className: "h-10 text-gray-800"
+                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        style: {
+                                            fontSize: '1.8rem',
+                                            fontWeight: '800',
+                                            color: '#000',
+                                            letterSpacing: '-1.5px',
+                                            fontFamily: 'var(--font-outfit), sans-serif',
+                                            lineHeight: 1
+                                        },
+                                        children: "Zelp"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Navbar.js",
                                         lineNumber: 49,
@@ -1314,7 +1324,7 @@ function Navbar() {
                                                 color: "#0c831f"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/Navbar.js",
-                                                lineNumber: 68,
+                                                lineNumber: 77,
                                                 columnNumber: 25
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1330,7 +1340,7 @@ function Navbar() {
                                                 children: location || 'Select Location'
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/Navbar.js",
-                                                lineNumber: 69,
+                                                lineNumber: 78,
                                                 columnNumber: 25
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__["ChevronDown"], {
@@ -1338,18 +1348,18 @@ function Navbar() {
                                                 color: "#1f2937"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/Navbar.js",
-                                                lineNumber: 72,
+                                                lineNumber: 81,
                                                 columnNumber: 25
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/Navbar.js",
-                                        lineNumber: 53,
+                                        lineNumber: 62,
                                         columnNumber: 20
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Navbar.js",
-                                    lineNumber: 52,
+                                    lineNumber: 61,
                                     columnNumber: 15
                                 }, this)
                             ]
@@ -1376,7 +1386,7 @@ function Navbar() {
                                     children: "Home"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Navbar.js",
-                                    lineNumber: 79,
+                                    lineNumber: 88,
                                     columnNumber: 14
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1388,13 +1398,13 @@ function Navbar() {
                                     children: "Services"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Navbar.js",
-                                    lineNumber: 80,
+                                    lineNumber: 89,
                                     columnNumber: 14
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/Navbar.js",
-                            lineNumber: 78,
+                            lineNumber: 87,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1424,7 +1434,7 @@ function Navbar() {
                                         children: "Login"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Navbar.js",
-                                        lineNumber: 87,
+                                        lineNumber: 96,
                                         columnNumber: 23
                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                                         children: [
@@ -1439,7 +1449,7 @@ function Navbar() {
                                                 children: "My Bookings"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/Navbar.js",
-                                                lineNumber: 95,
+                                                lineNumber: 104,
                                                 columnNumber: 26
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1453,7 +1463,7 @@ function Navbar() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/Navbar.js",
-                                                lineNumber: 98,
+                                                lineNumber: 107,
                                                 columnNumber: 26
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1469,14 +1479,14 @@ function Navbar() {
                                                 children: "Logout"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/Navbar.js",
-                                                lineNumber: 99,
+                                                lineNumber: 108,
                                                 columnNumber: 26
                                             }, this)
                                         ]
                                     }, void 0, true)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Navbar.js",
-                                    lineNumber: 85,
+                                    lineNumber: 94,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1494,7 +1504,7 @@ function Navbar() {
                                             size: 18
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Navbar.js",
-                                            lineNumber: 115,
+                                            lineNumber: 124,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1502,7 +1512,7 @@ function Navbar() {
                                             children: "My Cart"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Navbar.js",
-                                            lineNumber: 116,
+                                            lineNumber: 125,
                                             columnNumber: 19
                                         }, this),
                                         cartCount > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1521,13 +1531,13 @@ function Navbar() {
                                             children: cartCount
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Navbar.js",
-                                            lineNumber: 118,
+                                            lineNumber: 127,
                                             columnNumber: 23
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/Navbar.js",
-                                    lineNumber: 110,
+                                    lineNumber: 119,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1541,18 +1551,18 @@ function Navbar() {
                                         children: user.name.charAt(0)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Navbar.js",
-                                        lineNumber: 131,
+                                        lineNumber: 140,
                                         columnNumber: 23
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Navbar.js",
-                                    lineNumber: 129,
+                                    lineNumber: 138,
                                     columnNumber: 16
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/Navbar.js",
-                            lineNumber: 84,
+                            lineNumber: 93,
                             columnNumber: 11
                         }, this)
                     ]
@@ -1573,7 +1583,7 @@ function Navbar() {
                 onSelectLocation: (city)=>setLocation(city)
             }, void 0, false, {
                 fileName: "[project]/src/components/Navbar.js",
-                lineNumber: 141,
+                lineNumber: 150,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$AuthModal$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1581,7 +1591,7 @@ function Navbar() {
                 onClose: ()=>setAuthModalOpen(false)
             }, void 0, false, {
                 fileName: "[project]/src/components/Navbar.js",
-                lineNumber: 149,
+                lineNumber: 158,
                 columnNumber: 7
             }, this),
             mobileMenuOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1620,7 +1630,7 @@ function Navbar() {
                                 color: "#0c831f"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Navbar.js",
-                                lineNumber: 178,
+                                lineNumber: 187,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1631,13 +1641,13 @@ function Navbar() {
                                 children: location || 'Select Location'
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Navbar.js",
-                                lineNumber: 179,
+                                lineNumber: 188,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/Navbar.js",
-                        lineNumber: 171,
+                        lineNumber: 180,
                         columnNumber: 14
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1652,7 +1662,7 @@ function Navbar() {
                         children: "Home"
                     }, void 0, false, {
                         fileName: "[project]/src/components/Navbar.js",
-                        lineNumber: 182,
+                        lineNumber: 191,
                         columnNumber: 14
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1667,7 +1677,7 @@ function Navbar() {
                         children: "Services"
                     }, void 0, false, {
                         fileName: "[project]/src/components/Navbar.js",
-                        lineNumber: 185,
+                        lineNumber: 194,
                         columnNumber: 14
                     }, this),
                     !user ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1688,7 +1698,7 @@ function Navbar() {
                         children: "Login / Sign Up"
                     }, void 0, false, {
                         fileName: "[project]/src/components/Navbar.js",
-                        lineNumber: 190,
+                        lineNumber: 199,
                         columnNumber: 18
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                         href: "/bookings",
@@ -1701,13 +1711,13 @@ function Navbar() {
                         children: "My Bookings"
                     }, void 0, false, {
                         fileName: "[project]/src/components/Navbar.js",
-                        lineNumber: 197,
+                        lineNumber: 206,
                         columnNumber: 18
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/Navbar.js",
-                lineNumber: 156,
+                lineNumber: 165,
                 columnNumber: 9
             }, this)
         ]
@@ -1749,6 +1759,8 @@ function BookingModal({ isOpen, onClose, service }) {
     const [transactionId, setTransactionId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [authModalOpen, setAuthModalOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [paymentMode, setPaymentMode] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null); // 'online' or 'hospital'
+    const [showCompletionDialog, setShowCompletionDialog] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [labs, setLabs] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [fetchingLabs, setFetchingLabs] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
@@ -1811,13 +1823,29 @@ function BookingModal({ isOpen, onClose, service }) {
         "06:00 PM",
         "07:00 PM"
     ];
-    const handleBooking = async ()=>{
+    const handlePayOnline = ()=>{
         if (!user) {
             setAuthModalOpen(true);
             return;
         }
         if (!selectedLab || !selectedTime) return;
+        setPaymentMode('online');
         setStep(2); // Move to payment
+    };
+    const handlePayAtHospital = ()=>{
+        if (!user) {
+            setAuthModalOpen(true);
+            return;
+        }
+        if (!selectedLab || !selectedTime) return;
+        setPaymentMode('hospital');
+        setShowCompletionDialog(true);
+    };
+    const confirmCompletion = (isCompleted)=>{
+        setShowCompletionDialog(false);
+        if (isCompleted) {
+            setStep(2); // Show QR
+        }
     };
     const finalizeBooking = async ()=>{
         if (!transactionId || transactionId.length < 6) {
@@ -1873,7 +1901,7 @@ function BookingModal({ isOpen, onClose, service }) {
                 },
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     style: {
-                        width: '100%',
+                        width: '95%',
                         maxWidth: '480px',
                         background: '#fff',
                         borderRadius: '24px',
@@ -1881,7 +1909,8 @@ function BookingModal({ isOpen, onClose, service }) {
                         maxHeight: '92vh',
                         display: 'flex',
                         flexDirection: 'column',
-                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                        position: 'relative'
                     },
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1903,7 +1932,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                     children: step === 1 ? 'Schedule Appointment' : step === 2 ? 'Complete Payment' : 'Success'
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 150,
+                                    lineNumber: 170,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1921,18 +1950,18 @@ function BookingModal({ isOpen, onClose, service }) {
                                         size: 20
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/BookingModal.js",
-                                        lineNumber: 154,
+                                        lineNumber: 174,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 153,
+                                    lineNumber: 173,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/BookingModal.js",
-                            lineNumber: 149,
+                            lineNumber: 169,
                             columnNumber: 9
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1964,7 +1993,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             color: "#ff6f61"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 167,
+                                                            lineNumber: 187,
                                                             columnNumber: 30
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1975,13 +2004,13 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             children: "Date & Time"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 168,
+                                                            lineNumber: 188,
                                                             columnNumber: 30
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 166,
+                                                    lineNumber: 186,
                                                     columnNumber: 25
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2000,7 +2029,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 170,
+                                                    lineNumber: 190,
                                                     columnNumber: 25
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2025,18 +2054,18 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             children: slot
                                                         }, slot, false, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 176,
+                                                            lineNumber: 196,
                                                             columnNumber: 33
                                                         }, this))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 174,
+                                                    lineNumber: 194,
                                                     columnNumber: 25
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 165,
+                                            lineNumber: 185,
                                             columnNumber: 21
                                         }, this),
                                         !service.directBooking ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2054,7 +2083,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             color: "#ff6f61"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 198,
+                                                            lineNumber: 218,
                                                             columnNumber: 34
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2065,13 +2094,13 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             children: "Select Hospital (Sorted by Discount)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 199,
+                                                            lineNumber: 219,
                                                             columnNumber: 34
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 197,
+                                                    lineNumber: 217,
                                                     columnNumber: 29
                                                 }, this),
                                                 fetchingLabs ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2083,7 +2112,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                     children: "Finding best deals..."
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 203,
+                                                    lineNumber: 223,
                                                     columnNumber: 33
                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     style: {
@@ -2129,12 +2158,12 @@ function BookingModal({ isOpen, onClose, service }) {
                                                                         onError: (e)=>e.target.src = "https://images.unsplash.com/photo-1586773860418-d3b97898c75c?auto=format&fit=crop&w=100&q=80"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/BookingModal.js",
-                                                                        lineNumber: 223,
+                                                                        lineNumber: 243,
                                                                         columnNumber: 54
                                                                     }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                                    lineNumber: 222,
+                                                                    lineNumber: 242,
                                                                     columnNumber: 49
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2152,7 +2181,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                                             children: lab.hospital_name
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                                            lineNumber: 232,
+                                                                            lineNumber: 252,
                                                                             columnNumber: 53
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2168,7 +2197,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                                                     size: 12
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                                                    lineNumber: 234,
+                                                                                    lineNumber: 254,
                                                                                     columnNumber: 57
                                                                                 }, this),
                                                                                 " ",
@@ -2176,7 +2205,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                                            lineNumber: 233,
+                                                                            lineNumber: 253,
                                                                             columnNumber: 53
                                                                         }, this),
                                                                         discountPercent > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2198,13 +2227,13 @@ function BookingModal({ isOpen, onClose, service }) {
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                                            lineNumber: 237,
+                                                                            lineNumber: 257,
                                                                             columnNumber: 57
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                                    lineNumber: 231,
+                                                                    lineNumber: 251,
                                                                     columnNumber: 49
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2224,7 +2253,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                                            lineNumber: 243,
+                                                                            lineNumber: 263,
                                                                             columnNumber: 53
                                                                         }, this),
                                                                         lab.discount_price < lab.price && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2239,31 +2268,31 @@ function BookingModal({ isOpen, onClose, service }) {
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                                            lineNumber: 245,
+                                                                            lineNumber: 265,
                                                                             columnNumber: 57
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                                    lineNumber: 242,
+                                                                    lineNumber: 262,
                                                                     columnNumber: 49
                                                                 }, this)
                                                             ]
                                                         }, lab.id, true, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 211,
+                                                            lineNumber: 231,
                                                             columnNumber: 45
                                                         }, this);
                                                     })
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 205,
+                                                    lineNumber: 225,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 196,
+                                            lineNumber: 216,
                                             columnNumber: 25
                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             style: {
@@ -2291,12 +2320,12 @@ function BookingModal({ isOpen, onClose, service }) {
                                                         color: "#059669"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/BookingModal.js",
-                                                        lineNumber: 260,
+                                                        lineNumber: 280,
                                                         columnNumber: 33
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 259,
+                                                    lineNumber: 279,
                                                     columnNumber: 30
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2312,7 +2341,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             children: "Selected Hospital"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 263,
+                                                            lineNumber: 283,
                                                             columnNumber: 33
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2324,19 +2353,19 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             children: service.hospital_name
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 264,
+                                                            lineNumber: 284,
                                                             columnNumber: 33
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 262,
+                                                    lineNumber: 282,
                                                     columnNumber: 30
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 255,
+                                            lineNumber: 275,
                                             columnNumber: 25
                                         }, this),
                                         selectedLab && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2361,7 +2390,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             children: "Service Cost"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 273,
+                                                            lineNumber: 293,
                                                             columnNumber: 34
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2374,13 +2403,13 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 274,
+                                                            lineNumber: 294,
                                                             columnNumber: 34
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 272,
+                                                    lineNumber: 292,
                                                     columnNumber: 30
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2397,7 +2426,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             children: "suvidha discount"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 277,
+                                                            lineNumber: 297,
                                                             columnNumber: 34
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2407,20 +2436,20 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 278,
+                                                            lineNumber: 298,
                                                             columnNumber: 34
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 276,
+                                                    lineNumber: 296,
                                                     columnNumber: 30
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     style: {
                                                         display: 'flex',
                                                         justifyContent: 'space-between',
-                                                        fontSize: '1.1rem',
+                                                        fontSize: 'clamp(0.9rem, 4vw, 1.1rem)',
                                                         fontWeight: '800',
                                                         borderTop: '1px dashed #cbd5e1',
                                                         paddingTop: '10px',
@@ -2431,7 +2460,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             children: "Total to Pay"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 281,
+                                                            lineNumber: 301,
                                                             columnNumber: 34
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2441,25 +2470,25 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 282,
+                                                            lineNumber: 302,
                                                             columnNumber: 34
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 280,
+                                                    lineNumber: 300,
                                                     columnNumber: 30
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 271,
+                                            lineNumber: 291,
                                             columnNumber: 25
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 162,
+                                    lineNumber: 182,
                                     columnNumber: 17
                                 }, this),
                                 step === 2 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2488,19 +2517,19 @@ function BookingModal({ isOpen, onClose, service }) {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/BookingModal.js",
-                                                            lineNumber: 293,
+                                                            lineNumber: 313,
                                                             columnNumber: 61
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 292,
+                                                    lineNumber: 312,
                                                     columnNumber: 25
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     style: {
-                                                        width: '240px',
-                                                        height: '240px',
+                                                        width: 'clamp(180px, 60vw, 240px)',
+                                                        height: 'clamp(180px, 60vw, 240px)',
                                                         margin: '0 auto',
                                                         padding: '12px',
                                                         background: '#fff',
@@ -2524,18 +2553,18 @@ function BookingModal({ isOpen, onClose, service }) {
                                                         }
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/BookingModal.js",
-                                                        lineNumber: 303,
+                                                        lineNumber: 323,
                                                         columnNumber: 30
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 296,
+                                                    lineNumber: 316,
                                                     columnNumber: 25
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 291,
+                                            lineNumber: 311,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2554,7 +2583,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                     children: "UTR / Transaction ID"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 315,
+                                                    lineNumber: 335,
                                                     columnNumber: 26
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2576,7 +2605,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                     onBlur: (e)=>e.target.style.borderColor = '#f3f4f6'
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 318,
+                                                    lineNumber: 338,
                                                     columnNumber: 26
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2589,19 +2618,19 @@ function BookingModal({ isOpen, onClose, service }) {
                                                     children: "Enter the transaction ID after successful payment to confirm your booking."
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 331,
+                                                    lineNumber: 351,
                                                     columnNumber: 26
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 314,
+                                            lineNumber: 334,
                                             columnNumber: 21
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 290,
+                                    lineNumber: 310,
                                     columnNumber: 17
                                 }, this),
                                 step === 3 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2626,12 +2655,12 @@ function BookingModal({ isOpen, onClose, service }) {
                                                 color: "#059669"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/BookingModal.js",
-                                                lineNumber: 341,
+                                                lineNumber: 361,
                                                 columnNumber: 25
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 340,
+                                            lineNumber: 360,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -2644,7 +2673,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                             children: "Confirmed!"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 343,
+                                            lineNumber: 363,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2659,7 +2688,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                                     children: selectedLab?.hospital_name
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/BookingModal.js",
-                                                    lineNumber: 345,
+                                                    lineNumber: 365,
                                                     columnNumber: 45
                                                 }, this),
                                                 " is scheduled for ",
@@ -2668,7 +2697,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 344,
+                                            lineNumber: 364,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2683,7 +2712,7 @@ function BookingModal({ isOpen, onClose, service }) {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 347,
+                                            lineNumber: 367,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2702,49 +2731,103 @@ function BookingModal({ isOpen, onClose, service }) {
                                             children: "DONE"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/BookingModal.js",
-                                            lineNumber: 350,
+                                            lineNumber: 370,
                                             columnNumber: 21
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 339,
+                                    lineNumber: 359,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/BookingModal.js",
-                            lineNumber: 159,
+                            lineNumber: 179,
                             columnNumber: 9
                         }, this),
-                        step < 3 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        step < 3 && !showCompletionDialog && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             style: {
                                 padding: '1.5rem',
                                 borderTop: '1px solid #f3f4f6',
                                 background: '#fff'
                             },
                             children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                    onClick: step === 1 ? handleBooking : finalizeBooking,
-                                    disabled: loading || step === 1 && (!selectedTime || !selectedLab) || step === 2 && !transactionId,
+                                step === 1 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    style: {
+                                        display: 'flex',
+                                        gap: '12px'
+                                    },
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                            onClick: handlePayAtHospital,
+                                            disabled: loading || !selectedTime || !selectedLab,
+                                            style: {
+                                                flex: 1,
+                                                background: '#fff',
+                                                color: selectedTime && selectedLab ? '#ff6f61' : '#e5e7eb',
+                                                border: `2px solid ${selectedTime && selectedLab ? '#ff6f61' : '#e5e7eb'}`,
+                                                padding: '1rem',
+                                                borderRadius: '16px',
+                                                fontWeight: '800',
+                                                fontSize: '1rem',
+                                                cursor: selectedTime && selectedLab ? 'pointer' : 'not-allowed',
+                                                transition: 'all 0.3s'
+                                            },
+                                            children: "Pay at Hospital"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/BookingModal.js",
+                                            lineNumber: 386,
+                                            columnNumber: 25
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                            onClick: handlePayOnline,
+                                            disabled: loading || !selectedTime || !selectedLab,
+                                            style: {
+                                                flex: 1,
+                                                background: selectedTime && selectedLab ? '#ff6f61' : '#e5e7eb',
+                                                color: '#fff',
+                                                border: 'none',
+                                                padding: '1rem 0.5rem',
+                                                borderRadius: '16px',
+                                                fontWeight: '800',
+                                                fontSize: 'clamp(0.8rem, 3.5vw, 1rem)',
+                                                cursor: selectedTime && selectedLab ? 'pointer' : 'not-allowed',
+                                                boxShadow: selectedTime && selectedLab ? '0 10px 15px -3px rgba(255, 111, 97, 0.3)' : 'none',
+                                                transition: 'all 0.3s'
+                                            },
+                                            children: "Pay Online"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/BookingModal.js",
+                                            lineNumber: 404,
+                                            columnNumber: 25
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/components/BookingModal.js",
+                                    lineNumber: 385,
+                                    columnNumber: 21
+                                }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    onClick: finalizeBooking,
+                                    disabled: loading || !transactionId,
                                     style: {
                                         width: '100%',
-                                        background: (step === 1 ? selectedTime && selectedLab : !!transactionId) ? '#ff6f61' : '#e5e7eb',
+                                        background: transactionId ? '#ff6f61' : '#e5e7eb',
                                         color: '#fff',
                                         border: 'none',
-                                        padding: '1.2rem',
+                                        padding: '1rem',
                                         borderRadius: '16px',
                                         fontWeight: '800',
                                         fontSize: '1.1rem',
-                                        cursor: (step === 1 ? selectedTime && selectedLab : !!transactionId) ? 'pointer' : 'not-allowed',
-                                        boxShadow: (step === 1 ? selectedTime && selectedLab : !!transactionId) ? '0 10px 15px -3px rgba(255, 111, 97, 0.3)' : 'none',
+                                        cursor: transactionId ? 'pointer' : 'not-allowed',
+                                        boxShadow: transactionId ? '0 10px 15px -3px rgba(255, 111, 97, 0.3)' : 'none',
                                         transition: 'all 0.3s'
                                     },
-                                    children: loading ? 'Processing...' : step === 1 ? selectedTime && selectedLab ? `Book Now • ₹${displayPrice}` : 'Select Time & Hospital' : 'Confirm Payment & Book'
+                                    children: loading ? 'Processing...' : 'Confirm Payment & Book'
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 364,
-                                    columnNumber: 17
+                                    lineNumber: 425,
+                                    columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     style: {
@@ -2753,31 +2836,132 @@ function BookingModal({ isOpen, onClose, service }) {
                                         color: '#9ca3af',
                                         marginTop: '12px'
                                     },
-                                    children: [
-                                        "Step ",
-                                        step,
-                                        " of 2 • Secure payment verification"
-                                    ]
-                                }, void 0, true, {
+                                    children: step === 1 ? 'Select payment method to proceed' : 'Step 2 of 2 • Secure payment verification'
+                                }, void 0, false, {
                                     fileName: "[project]/src/components/BookingModal.js",
-                                    lineNumber: 383,
+                                    lineNumber: 446,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/BookingModal.js",
-                            lineNumber: 363,
+                            lineNumber: 383,
+                            columnNumber: 13
+                        }, this),
+                        showCompletionDialog && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            style: {
+                                position: 'absolute',
+                                inset: 0,
+                                background: 'rgba(255,255,255,0.98)',
+                                zIndex: 100,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '2rem',
+                                textAlign: 'center'
+                            },
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
+                                    background: '#fff5f4',
+                                    p: '2rem',
+                                    borderRadius: '24px',
+                                    border: '1px solid #ffd1cd'
+                                },
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
+                                        style: {
+                                            fontSize: '1.25rem',
+                                            fontWeight: '800',
+                                            marginBottom: '1rem',
+                                            color: '#111827'
+                                        },
+                                        children: "Confirmation"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/BookingModal.js",
+                                        lineNumber: 456,
+                                        columnNumber: 21
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                        style: {
+                                            color: '#4b5563',
+                                            marginBottom: '2rem',
+                                            lineHeight: '1.5'
+                                        },
+                                        children: "Is your service that you booked completed?"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/BookingModal.js",
+                                        lineNumber: 457,
+                                        columnNumber: 21
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        style: {
+                                            display: 'flex',
+                                            gap: '12px',
+                                            width: '100%'
+                                        },
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                onClick: ()=>confirmCompletion(false),
+                                                style: {
+                                                    flex: 1,
+                                                    padding: '0.8rem',
+                                                    borderRadius: '12px',
+                                                    border: '1px solid #e5e7eb',
+                                                    background: '#fff',
+                                                    fontWeight: '700',
+                                                    cursor: 'pointer'
+                                                },
+                                                children: "No"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/BookingModal.js",
+                                                lineNumber: 461,
+                                                columnNumber: 25
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                onClick: ()=>confirmCompletion(true),
+                                                style: {
+                                                    flex: 1,
+                                                    padding: '0.8rem',
+                                                    borderRadius: '12px',
+                                                    border: 'none',
+                                                    background: '#ff6f61',
+                                                    color: '#fff',
+                                                    fontWeight: '700',
+                                                    cursor: 'pointer'
+                                                },
+                                                children: "Yes"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/BookingModal.js",
+                                                lineNumber: 467,
+                                                columnNumber: 25
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/BookingModal.js",
+                                        lineNumber: 460,
+                                        columnNumber: 21
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/components/BookingModal.js",
+                                lineNumber: 455,
+                                columnNumber: 17
+                            }, this)
+                        }, void 0, false, {
+                            fileName: "[project]/src/components/BookingModal.js",
+                            lineNumber: 454,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/BookingModal.js",
-                    lineNumber: 141,
+                    lineNumber: 160,
                     columnNumber: 7
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/BookingModal.js",
-                lineNumber: 136,
+                lineNumber: 155,
                 columnNumber: 5
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$AuthModal$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -2785,7 +2969,7 @@ function BookingModal({ isOpen, onClose, service }) {
                 onClose: ()=>setAuthModalOpen(false)
             }, void 0, false, {
                 fileName: "[project]/src/components/BookingModal.js",
-                lineNumber: 390,
+                lineNumber: 479,
                 columnNumber: 5
             }, this)
         ]
@@ -2910,7 +3094,9 @@ function HospitalsContent() {
                                     background: '#fff',
                                     borderBottom: '1px solid #e5e7eb',
                                     padding: '10px 0',
-                                    marginBottom: '20px'
+                                    marginBottom: '20px',
+                                    flexWrap: 'wrap',
+                                    gap: '10px'
                                 },
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2934,20 +3120,23 @@ function HospitalsContent() {
                                                 onClick: ()=>setSelectedHospital(null)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/hospitals/page.js",
-                                                lineNumber: 91,
+                                                lineNumber: 92,
                                                 columnNumber: 50
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 90,
+                                        lineNumber: 91,
                                         columnNumber: 22
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         style: {
                                             display: 'flex',
                                             alignItems: 'center',
-                                            gap: '15px'
+                                            gap: '15px',
+                                            flex: 1,
+                                            justifyContent: 'flex-end',
+                                            minWidth: '200px'
                                         },
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2963,7 +3152,7 @@ function HospitalsContent() {
                                                         children: "1 item added"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/hospitals/page.js",
-                                                        lineNumber: 95,
+                                                        lineNumber: 96,
                                                         columnNumber: 30
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2976,13 +3165,13 @@ function HospitalsContent() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/hospitals/page.js",
-                                                        lineNumber: 96,
+                                                        lineNumber: 97,
                                                         columnNumber: 30
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/hospitals/page.js",
-                                                lineNumber: 94,
+                                                lineNumber: 95,
                                                 columnNumber: 26
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2999,13 +3188,13 @@ function HospitalsContent() {
                                                 children: "Go to cart"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/hospitals/page.js",
-                                                lineNumber: 98,
+                                                lineNumber: 99,
                                                 columnNumber: 26
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 93,
+                                        lineNumber: 94,
                                         columnNumber: 22
                                     }, this)
                                 ]
@@ -3033,7 +3222,7 @@ function HospitalsContent() {
                                                 color: "#db2777"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/hospitals/page.js",
-                                                lineNumber: 108,
+                                                lineNumber: 109,
                                                 columnNumber: 21
                                             }, this),
                                             " ",
@@ -3041,7 +3230,7 @@ function HospitalsContent() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 107,
+                                        lineNumber: 108,
                                         columnNumber: 18
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$search$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Search$3e$__["Search"], {
@@ -3049,7 +3238,7 @@ function HospitalsContent() {
                                         color: "#9ca3af"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 110,
+                                        lineNumber: 111,
                                         columnNumber: 18
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -3066,13 +3255,13 @@ function HospitalsContent() {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 111,
+                                        lineNumber: 112,
                                         columnNumber: 18
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/hospitals/page.js",
-                                lineNumber: 106,
+                                lineNumber: 107,
                                 columnNumber: 14
                             }, this)
                         ]
@@ -3089,20 +3278,20 @@ function HospitalsContent() {
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                 style: {
                                     marginBottom: '1.5rem',
-                                    fontSize: '1.2rem',
+                                    fontSize: '1.1rem',
                                     color: '#374151'
                                 },
                                 children: "Popular Categories"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/hospitals/page.js",
-                                lineNumber: 124,
+                                lineNumber: 125,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
                                     display: 'grid',
-                                    gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
-                                    gap: '1rem'
+                                    gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
+                                    gap: '0.8rem'
                                 },
                                 children: [
                                     {
@@ -3112,7 +3301,7 @@ function HospitalsContent() {
                                             color: "#ff6b6b"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/hospitals/page.js",
-                                            lineNumber: 127,
+                                            lineNumber: 128,
                                             columnNumber: 53
                                         }, this)
                                     },
@@ -3123,7 +3312,7 @@ function HospitalsContent() {
                                             color: "#54a0ff"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/hospitals/page.js",
-                                            lineNumber: 128,
+                                            lineNumber: 129,
                                             columnNumber: 48
                                         }, this)
                                     },
@@ -3134,7 +3323,7 @@ function HospitalsContent() {
                                             color: "#5f27cd"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/hospitals/page.js",
-                                            lineNumber: 129,
+                                            lineNumber: 130,
                                             columnNumber: 46
                                         }, this)
                                     },
@@ -3145,7 +3334,7 @@ function HospitalsContent() {
                                             color: "#ff9f43"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/hospitals/page.js",
-                                            lineNumber: 130,
+                                            lineNumber: 131,
                                             columnNumber: 53
                                         }, this)
                                     },
@@ -3156,7 +3345,7 @@ function HospitalsContent() {
                                             color: "#10ac84"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/hospitals/page.js",
-                                            lineNumber: 131,
+                                            lineNumber: 132,
                                             columnNumber: 49
                                         }, this)
                                     },
@@ -3167,7 +3356,7 @@ function HospitalsContent() {
                                             color: "#2e86de"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/hospitals/page.js",
-                                            lineNumber: 132,
+                                            lineNumber: 133,
                                             columnNumber: 52
                                         }, this)
                                     }
@@ -3204,7 +3393,7 @@ function HospitalsContent() {
                                                 children: cat.icon
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/hospitals/page.js",
-                                                lineNumber: 145,
+                                                lineNumber: 146,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3217,24 +3406,24 @@ function HospitalsContent() {
                                                 children: cat.name
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/hospitals/page.js",
-                                                lineNumber: 148,
+                                                lineNumber: 149,
                                                 columnNumber: 29
                                             }, this)
                                         ]
                                     }, idx, true, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 134,
+                                        lineNumber: 135,
                                         columnNumber: 25
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/src/app/hospitals/page.js",
-                                lineNumber: 125,
+                                lineNumber: 126,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/hospitals/page.js",
-                        lineNumber: 123,
+                        lineNumber: 124,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3254,7 +3443,7 @@ function HospitalsContent() {
                                         children: searchTerm ? `Results for "${searchTerm}"` : specialtyFilter ? `${specialtyFilter} Services` : categoryFilter ? `${categoryFilter === 'Lab' ? 'Pathology' : categoryFilter === 'Scan' ? 'Radiology' : categoryFilter} Services` : 'All Available Services'
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 158,
+                                        lineNumber: 159,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3268,13 +3457,13 @@ function HospitalsContent() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/hospitals/page.js",
-                                        lineNumber: 168,
+                                        lineNumber: 169,
                                         columnNumber: 18
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/hospitals/page.js",
-                                lineNumber: 157,
+                                lineNumber: 158,
                                 columnNumber: 14
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3301,31 +3490,31 @@ function HospitalsContent() {
                                             }
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/hospitals/page.js",
-                                            lineNumber: 177,
+                                            lineNumber: 178,
                                             columnNumber: 122
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/hospitals/page.js",
-                                    lineNumber: 172,
+                                    lineNumber: 173,
                                     columnNumber: 18
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/hospitals/page.js",
-                                lineNumber: 171,
+                                lineNumber: 172,
                                 columnNumber: 14
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/hospitals/page.js",
-                        lineNumber: 156,
+                        lineNumber: 157,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         style: {
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                            gap: '1.5rem'
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                            gap: '1.2rem'
                         },
                         children: filteredHospitals.map((item)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
@@ -3362,7 +3551,7 @@ function HospitalsContent() {
                                                             children: item.name
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/hospitals/page.js",
-                                                            lineNumber: 196,
+                                                            lineNumber: 197,
                                                             columnNumber: 30
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3378,7 +3567,7 @@ function HospitalsContent() {
                                                                     size: 12
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/hospitals/page.js",
-                                                                    lineNumber: 200,
+                                                                    lineNumber: 201,
                                                                     columnNumber: 34
                                                                 }, this),
                                                                 " ",
@@ -3386,13 +3575,13 @@ function HospitalsContent() {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/hospitals/page.js",
-                                                            lineNumber: 199,
+                                                            lineNumber: 200,
                                                             columnNumber: 30
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/hospitals/page.js",
-                                                    lineNumber: 195,
+                                                    lineNumber: 196,
                                                     columnNumber: 26
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3405,13 +3594,13 @@ function HospitalsContent() {
                                                     }
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/hospitals/page.js",
-                                                    lineNumber: 203,
+                                                    lineNumber: 204,
                                                     columnNumber: 26
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/hospitals/page.js",
-                                            lineNumber: 194,
+                                            lineNumber: 195,
                                             columnNumber: 22
                                         }, this),
                                         item.description && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3428,7 +3617,7 @@ function HospitalsContent() {
                                             children: item.description
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/hospitals/page.js",
-                                            lineNumber: 211,
+                                            lineNumber: 212,
                                             columnNumber: 26
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3450,7 +3639,7 @@ function HospitalsContent() {
                                                     children: "Reports in 24hrs"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/hospitals/page.js",
-                                                    lineNumber: 217,
+                                                    lineNumber: 218,
                                                     columnNumber: 26
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3462,13 +3651,13 @@ function HospitalsContent() {
                                                     children: "E-Report Available"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/hospitals/page.js",
-                                                    lineNumber: 218,
+                                                    lineNumber: 219,
                                                     columnNumber: 26
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/hospitals/page.js",
-                                            lineNumber: 216,
+                                            lineNumber: 217,
                                             columnNumber: 22
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3495,7 +3684,7 @@ function HospitalsContent() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/hospitals/page.js",
-                                                                lineNumber: 225,
+                                                                lineNumber: 226,
                                                                 columnNumber: 38
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3511,13 +3700,13 @@ function HospitalsContent() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/hospitals/page.js",
-                                                                lineNumber: 226,
+                                                                lineNumber: 227,
                                                                 columnNumber: 38
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/hospitals/page.js",
-                                                        lineNumber: 224,
+                                                        lineNumber: 225,
                                                         columnNumber: 34
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         style: {
@@ -3531,12 +3720,12 @@ function HospitalsContent() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/hospitals/page.js",
-                                                        lineNumber: 229,
+                                                        lineNumber: 230,
                                                         columnNumber: 34
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/hospitals/page.js",
-                                                    lineNumber: 222,
+                                                    lineNumber: 223,
                                                     columnNumber: 26
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3573,29 +3762,29 @@ function HospitalsContent() {
                                                     children: "ADD"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/hospitals/page.js",
-                                                    lineNumber: 232,
+                                                    lineNumber: 233,
                                                     columnNumber: 26
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/hospitals/page.js",
-                                            lineNumber: 221,
+                                            lineNumber: 222,
                                             columnNumber: 22
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/hospitals/page.js",
-                                    lineNumber: 193,
+                                    lineNumber: 194,
                                     columnNumber: 18
                                 }, this)
                             }, item.uniqueId || item.id, false, {
                                 fileName: "[project]/src/app/hospitals/page.js",
-                                lineNumber: 185,
+                                lineNumber: 186,
                                 columnNumber: 14
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/src/app/hospitals/page.js",
-                        lineNumber: 183,
+                        lineNumber: 184,
                         columnNumber: 9
                     }, this),
                     filteredHospitals.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3613,20 +3802,20 @@ function HospitalsContent() {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/hospitals/page.js",
-                                lineNumber: 252,
+                                lineNumber: 253,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: 'Try searching for "MRI", "CBC", "X-Ray", etc.'
                             }, void 0, false, {
                                 fileName: "[project]/src/app/hospitals/page.js",
-                                lineNumber: 253,
+                                lineNumber: 254,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/hospitals/page.js",
-                        lineNumber: 251,
+                        lineNumber: 252,
                         columnNumber: 13
                     }, this)
                 ]
@@ -3641,7 +3830,7 @@ function HospitalsContent() {
                 service: selectedHospital
             }, void 0, false, {
                 fileName: "[project]/src/app/hospitals/page.js",
-                lineNumber: 259,
+                lineNumber: 260,
                 columnNumber: 7
             }, this)
         ]
@@ -3661,17 +3850,17 @@ function Hospitals() {
             children: "Loading..."
         }, void 0, false, {
             fileName: "[project]/src/app/hospitals/page.js",
-            lineNumber: 270,
+            lineNumber: 271,
             columnNumber: 25
         }, void 0),
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(HospitalsContent, {}, void 0, false, {
             fileName: "[project]/src/app/hospitals/page.js",
-            lineNumber: 271,
+            lineNumber: 272,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/hospitals/page.js",
-        lineNumber: 270,
+        lineNumber: 271,
         columnNumber: 5
     }, this);
 }

@@ -189,14 +189,14 @@ export default function Home() {
             marginBottom: '3rem',
             overflow: 'hidden',
             boxShadow: '0 10px 30px rgba(0,0,0, 0.1)',
-            height: '300px'
+            height: 'clamp(200px, 40vh, 300px)'
         }}>
             {OFFERS.map((offer, index) => (
                 <div key={offer.id} style={{
                     position: 'absolute',
                     top: 0, left: 0, width: '100%', height: '100%',
                     background: offer.bg,
-                    padding: '3rem',
+                    padding: 'clamp(1.5rem, 5vw, 3rem)', // Responsive padding
                     color: '#fff',
                     opacity: currentSlide === index ? 1 : 0,
                     transition: 'opacity 0.8s ease-in-out',
@@ -205,13 +205,13 @@ export default function Home() {
                     flexDirection: 'column',
                     justifyContent: 'center'
                 }}>
-                    <h1 style={{ fontSize: '3rem', maxWidth: '600px', marginBottom: '1rem', color: '#fff', lineHeight: '1.2' }}>
+                    <h1 style={{ fontSize: 'clamp(1.5rem, 8vw, 3rem)', maxWidth: '600px', marginBottom: '0.5rem', color: '#fff', lineHeight: '1.2' }}>
                         {offer.title}
                     </h1>
-                    <p style={{ fontSize: '1.2rem', opacity: 0.9, marginBottom: '2rem' }}>
+                    <p style={{ fontSize: 'clamp(0.9rem, 4vw, 1.2rem)', opacity: 0.9, marginBottom: '1.5rem' }}>
                         {offer.subtitle}
                     </p>
-                    <button className="btn" style={{ background: '#fff', color: offer.btnColor, padding: '0.8rem 2rem', fontSize: '1.1rem', width: 'fit-content' }}>
+                    <button className="btn" style={{ background: '#fff', color: offer.btnColor, padding: '0.6rem 1.5rem', fontSize: '1rem', width: 'fit-content' }}>
                         {offer.btnText}
                     </button>
                     {/* Decorative Circles */}
@@ -248,8 +248,13 @@ export default function Home() {
         </div>
 
         {/* Categories Grid (Mini Promo Cards) */}
-        <h2 style={{ marginBottom: '1.5rem', fontSize: '1.5rem' }}>Shop by Category</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '1rem', marginBottom: '4rem' }}>
+        <h2 style={{ marginBottom: '1.5rem', fontSize: 'clamp(1.2rem, 5vw, 1.5rem)' }}>Shop by Category</h2>
+        <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', // Slightly smaller min-width for better mobile fit
+            gap: '1rem', 
+            marginBottom: '4rem' 
+        }}>
              {CATEGORIES.map((cat, index) => (
                  <Link key={index} href={cat.href} style={{ textDecoration: 'none' }}>
                     <div style={{ 
@@ -305,7 +310,7 @@ export default function Home() {
 
         {/* Popular Section (Horizontal Scroll with Controls) */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.5rem', margin: 0 }}>Popular Lab Tests</h2>
+            <h2 style={{ fontSize: 'clamp(1.2rem, 5vw, 1.5rem)', margin: 0 }}>Popular Lab Tests</h2>
             <div style={{ display: 'flex', gap: '8px' }}>
                 <button 
                     onClick={() => scroll('left')}
@@ -361,8 +366,13 @@ export default function Home() {
         />
 
         {/* Featured Hospitals Section */}
-        <h2 style={{ marginTop: '4rem', marginBottom: '1.5rem', fontSize: '1.5rem' }}>Featured Hospitals</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem', marginBottom: '4rem' }}>
+        <h2 style={{ marginTop: '4rem', marginBottom: '1.5rem', fontSize: 'clamp(1.2rem, 5vw, 1.5rem)' }}>Featured Hospitals</h2>
+        <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
+            gap: '1.5rem', 
+            marginBottom: '4rem' 
+        }}>
             {hospitals.map((hospital) => (
               <div 
                 key={hospital.id} 

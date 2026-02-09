@@ -85,12 +85,13 @@ function HospitalsContent() {
              {selectedHospital && (
                  <div style={{ 
                      display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
-                     background: '#fff', borderBottom: '1px solid #e5e7eb', padding: '10px 0', marginBottom: '20px' 
+                     background: '#fff', borderBottom: '1px solid #e5e7eb', padding: '10px 0', marginBottom: '20px',
+                     flexWrap: 'wrap', gap: '10px'
                  }}>
                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f3f4f6', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem' }}>
                          {selectedHospital.name} <X size={14} style={{ cursor: 'pointer' }} onClick={() => setSelectedHospital(null)} />
                      </div>
-                     <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flex: 1, justifyContent: 'flex-end', minWidth: '200px' }}>
                          <div style={{ textAlign: 'right' }}>
                              <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>1 item added</div>
                              <div style={{ fontWeight: 'bold' }}>₹{selectedHospital.price}</div>
@@ -121,8 +122,8 @@ function HospitalsContent() {
         {/* Categories Grid */}
         {!searchTerm && !specialtyFilter && (
             <div style={{ marginBottom: '3rem' }}>
-                <h2 style={{ marginBottom: '1.5rem', fontSize: '1.2rem', color: '#374151' }}>Popular Categories</h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '1rem' }}>
+                <h2 style={{ marginBottom: '1.5rem', fontSize: '1.1rem', color: '#374151' }}>Popular Categories</h2>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.8rem' }}>
                     {[
                         { name: 'Cardiology', icon: <Heart size={24} color="#ff6b6b"/> },
                         { name: 'X-Ray', icon: <Activity size={24} color="#54a0ff"/> },
@@ -180,7 +181,7 @@ function HospitalsContent() {
         </div>
 
         {/* Listings Grid - Service Centric */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.2rem' }}>
           {filteredHospitals.map((item) => (
              <div key={item.uniqueId || item.id} style={{ 
                  background: '#fff', 

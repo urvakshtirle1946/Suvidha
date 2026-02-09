@@ -158,10 +158,11 @@ export default function BookingModal({ isOpen, onClose, service }) {
       display: 'flex', alignItems: 'center', justifyContent: 'center'
     }}>
       <div style={{
-        width: '100%', maxWidth: '480px', 
+        width: '95%', maxWidth: '480px', 
         background: '#fff', borderRadius: '24px', overflow: 'hidden',
         maxHeight: '92vh', display: 'flex', flexDirection: 'column',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        position: 'relative'
       }}>
         
         {/* Header */}
@@ -190,7 +191,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                              Tomorrow, {new Date(Date.now() + 86400000).toDateString()}
                         </div>
                         
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '8px' }}>
                             {TIME_SLOTS.map(slot => (
                                 <button 
                                     key={slot}
@@ -296,7 +297,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                                  <span>suvidha discount</span>
                                  <span>-₹{displayMrp - displayPrice}</span>
                              </div>
-                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.1rem', fontWeight: '800', borderTop: '1px dashed #cbd5e1', paddingTop: '10px', color: '#1e293b' }}>
+                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(0.9rem, 4vw, 1.1rem)', fontWeight: '800', borderTop: '1px dashed #cbd5e1', paddingTop: '10px', color: '#1e293b' }}>
                                  <span>Total to Pay</span>
                                  <span>₹{displayPrice}</span>
                              </div>
@@ -313,7 +314,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                         </p>
                         
                         <div style={{ 
-                            width: '240px', height: '240px', margin: '0 auto', 
+                            width: 'clamp(180px, 60vw, 240px)', height: 'clamp(180px, 60vw, 240px)', margin: '0 auto', 
                             padding: '12px', background: '#fff', border: '2px solid #f3f4f6', 
                             borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                             boxShadow: '0 10px 20px rgba(0,0,0,0.05)'
@@ -381,7 +382,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
         {step < 3 && !showCompletionDialog && (
             <div style={{ padding: '1.5rem', borderTop: '1px solid #f3f4f6', background: '#fff' }}>
                 {step === 1 ? (
-                    <div style={{ display: 'flex', gap: '12px' }}>
+                    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                         <button 
                             onClick={handlePayAtHospital}
                             disabled={loading || !selectedTime || !selectedLab}
@@ -408,10 +409,10 @@ export default function BookingModal({ isOpen, onClose, service }) {
                                 background: (selectedTime && selectedLab) ? '#ff6f61' : '#e5e7eb', 
                                 color: '#fff', 
                                 border: 'none', 
-                                padding: '1rem', 
+                                padding: '1rem 0.5rem', 
                                 borderRadius: '16px', 
                                 fontWeight: '800', 
-                                fontSize: '1rem', 
+                                fontSize: 'clamp(0.8rem, 3.5vw, 1rem)', 
                                 cursor: (selectedTime && selectedLab) ? 'pointer' : 'not-allowed',
                                 boxShadow: (selectedTime && selectedLab) ? '0 10px 15px -3px rgba(255, 111, 97, 0.3)' : 'none',
                                 transition: 'all 0.3s'
@@ -429,7 +430,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                             background: transactionId ? '#ff6f61' : '#e5e7eb', 
                             color: '#fff', 
                             border: 'none', 
-                            padding: '1.2rem', 
+                            padding: '1rem', 
                             borderRadius: '16px', 
                             fontWeight: '800', 
                             fontSize: '1.1rem', 

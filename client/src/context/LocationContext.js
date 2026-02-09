@@ -7,51 +7,52 @@ const LocationContext = createContext();
 export function LocationProvider({ children }) {
   const [location, setLocation] = useState('Detecting location...');
   const [city, setCity] = useState('');
+  // Default to Indore coordinates
+  const [latitude, setLatitude] = useState(22.7196); 
+  const [longitude, setLongitude] = useState(75.8577);
 
   const detectLocation = () => {
     setLocation('Detecting...');
-    if (navigator.geolocation) {
+    if (typeof navigator !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async (position) => {
-        const { latitude, longitude } = position.coords;
+        const { latitude: lat, longitude: lng } = position.coords;
+        setLatitude(lat);
+        setLongitude(lng);
+
         try {
-          const apiUrl = getApiUrl();
-          // Using our own server as a proxy to avoid CORS and comply with Nominatim policy
-          const res = await fetch(`${apiUrl}/api/location/reverse?lat=${latitude}&lon=${longitude}`);
+          // Temporarily use Nominatim directly if API is slow, or stick to backend proxy if reliable.
+          // Let's assume backend proxy is fine but we must update coordinates FIRST to unlock UI.
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
           
-          if (!res.ok) throw new Error('Proxy fetch failed');
+          if (!res.ok) throw new Error('Fetch failed');
 
           const data = await res.json();
-          
-          // Nominatim JSONv2 format
           const address = data.address || {};
           const detectedCity = address.city || address.town || address.state_district || 'Indore';
-          
-          // Service area check
-          if (!detectedCity.toLowerCase().includes('indore')) {
-            // Keep the alert but still set Indore as default
-            // alert(`We currently serve only in Indore. We are coming soon to ${detectedCity}!`);
-            setCity('Indore'); 
-            setLocation('Indore, India');
-            return;
-          }
-
           const detectedArea = address.suburb || address.neighbourhood || address.road || '';
           
           setCity(detectedCity);
           setLocation(`${detectedArea ? detectedArea + ', ' : ''}${detectedCity}`);
         } catch (error) {
-          console.error("Location detection failed, defaulting to Indore", error);
+          console.error("Location reverse geocode failed", error);
+          // Fallback location name but keep coordinates
           setCity('Indore');
           setLocation('Indore, India');
         }
       }, (err) => {
         console.warn("Location permission denied", err);
+        // Fallback to Indore defaults
         setLocation('Indore, India');
         setCity('Indore');
+        setLatitude(22.7196);
+        setLongitude(75.8577);
       });
     } else {
+      // Fallback
       setLocation('Indore, India');
       setCity('Indore');
+      setLatitude(22.7196);
+      setLongitude(75.8577);
     }
   };
 
@@ -60,7 +61,7 @@ export function LocationProvider({ children }) {
   }, []);
 
   return (
-    <LocationContext.Provider value={{ location, city, setLocation, setCity, detectLocation }}>
+    <LocationContext.Provider value={{ location, city, setLocation, setCity, detectLocation, latitude, longitude }}>
       {children}
     </LocationContext.Provider>
   );

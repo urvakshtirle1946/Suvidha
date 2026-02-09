@@ -3,16 +3,16 @@ const db = require('../db');
 const smsService = require('../services/smsService');
 
 exports.createBooking = async (req, res) => {
-  const { name, age, gender, date, time, address, serviceName, price, userPhone, hospitalId, transactionId } = req.body;
+  const { name, age, gender, date, time, address, serviceName, price, userPhone, userEmail, hospitalId, transactionId } = req.body;
   
   try {
     // 1. Create Booking
     const query = `
-      INSERT INTO bookings (patient_name, patient_age, patient_gender, booking_date, booking_time, address, service_name, price, user_phone, hospital_id, transaction_id)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      INSERT INTO bookings (patient_name, patient_age, patient_gender, booking_date, booking_time, address, service_name, price, user_phone, user_email, hospital_id, transaction_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
       RETURNING id, status
     `;
-    const values = [name, age, gender, date, time, address, serviceName, price, userPhone, hospitalId || null, transactionId || null];
+    const values = [name, age, gender, date, time, address, serviceName, price, userPhone, userEmail, hospitalId || null, transactionId || null];
     
     const result = await db.query(query, values);
     
@@ -83,24 +83,30 @@ Thank you for choosing Suvidha!`;
 };
 
 exports.getBookings = async (req, res) => {
-  const { phone } = req.query;
-  try {
-    let query = `
-      SELECT b.*, h.name as hospital_name
-      FROM bookings b
-      LEFT JOIN hospitals h ON b.hospital_id = h.id
-    `;
-    let values = [];
-    
-    if (phone) {
-      query += ' WHERE b.user_phone = $1';
-      values.push(phone);
-    }
-    
-    query += ' ORDER BY b.created_at DESC';
-    
-    const result = await db.query(query, values);
-    res.json(result.rows);
+    const { phone, email } = req.query;
+    try {
+      let query = `
+        SELECT b.*, h.name as hospital_name
+        FROM bookings b
+        LEFT JOIN hospitals h ON b.hospital_id = h.id
+      `;
+      let values = [];
+      
+      if (phone && email) {
+        query += ' WHERE b.user_phone = $1 OR b.user_email = $2';
+        values.push(phone, email);
+      } else if (phone) {
+        query += ' WHERE b.user_phone = $1';
+        values.push(phone);
+      } else if (email) {
+        query += ' WHERE b.user_email = $1';
+        values.push(email);
+      }
+      
+      query += ' ORDER BY b.created_at DESC';
+      
+      const result = await db.query(query, values);
+      res.json(result.rows);
   } catch (error) {
     console.error('Database Error:', error);
     res.status(500).json({ success: false, message: 'Failed to fetch bookings' });

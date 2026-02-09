@@ -98,10 +98,10 @@ export default function Bookings() {
                 borderRadius: '12px', 
                 padding: '1.5rem', 
                 border: '1px solid #e5e7eb',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
+                boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                gap: '1rem'
               }}>
                 <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                    <div style={{ 
@@ -139,14 +139,15 @@ export default function Bookings() {
                    </div>
                 </div>
 
-                <div style={{ textAlign: 'right' }}>
+                <div style={{ textAlign: 'right', flex: 1, minWidth: '100px' }}>
                    <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#111827', marginBottom: '8px' }}>₹{booking.price}</div>
                    <button 
                        onClick={() => openDetails(booking)}
                        style={{ 
                            background: 'transparent', border: '1px solid #e5e7eb', 
                            padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: '500',
-                           cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px'
+                           cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px',
+                           marginLeft: 'auto'
                        }}
                     >
                        Details <ChevronRight size={14} />
@@ -171,8 +172,9 @@ export default function Bookings() {
               display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem'
           }}>
               <div style={{
-                  width: '100%', maxWidth: '500px', background: '#fff', borderRadius: '24px', overflow: 'hidden',
-                  boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', animation: 'zoomIn 0.2s ease-out'
+                  width: '95%', maxWidth: '500px', background: '#fff', borderRadius: '24px', overflow: 'hidden',
+                  boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', animation: 'zoomIn 0.2s ease-out',
+                  maxHeight: '90vh', overflowY: 'auto'
               }}>
                   <div style={{ padding: '1.5rem', borderBottom: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>Booking Details</h2>

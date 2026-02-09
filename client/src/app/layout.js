@@ -14,7 +14,7 @@ export const metadata = {
   title: "Zelp - Premium Healthcare Simplified",
   description: "Book verified hospital services and lab tests with best discounts.",
   icons: {
-    icon: "/favicon.png",
+    icon: "/favicon.ico",
   },
 };
 

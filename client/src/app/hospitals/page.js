@@ -7,7 +7,7 @@ import { Search, MapPin, Filter, Activity, Clock, SlidersHorizontal, ArrowUpDown
 import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
 import { useCart } from '@/context/CartContext';
-import { getApiUrl } from '@/utils/api';
+import { getApiUrl, getImageUrl } from '@/utils/api';
 
 function HospitalsContent() {
   const router = useRouter();
@@ -15,28 +15,33 @@ function HospitalsContent() {
   const { user } = useAuth();
   const { addToCart, setIsCartOpen } = useCart();
   const searchParams = useSearchParams();
+  const categoryFilter = searchParams.get('category');
   const specialtyFilter = searchParams.get('specialty');
   const querySearch = searchParams.get('search');
-  
   
   const [searchTerm, setSearchTerm] = useState(querySearch || '');
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [expandedId, setExpandedId] = useState(null); // Expansion State
+  const [expandedId, setExpandedId] = useState(null); 
 
-  // Fetch SERVICES (not just hospitals)
+  // Fetch SERVICES
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        // Fetching all services directly to separate from hospitals
-        // Note: The backend should ideally support /api/services with hospital details joined.
-        // If not, we might need to fetch hospitals and flatten the services.
-        // Assuming /api/services returns a flat list including hospital_name.
         const apiUrl = getApiUrl();
-        const res = await fetch(`${apiUrl}/api/services`);
+        let url = `${apiUrl}/api/services`;
+        if (categoryFilter) url += `?category=${categoryFilter}`;
+        
+        const res = await fetch(url);
         const data = await res.json();
-        setHospitals(data); // Using 'hospitals' state variable for services list to minimize refactor, ideally rename state to 'services'
+        
+        // Handle both flattened array and paginated object formats
+        const servicesArray = Array.isArray(data) 
+          ? data 
+          : (data && Array.isArray(data.data) ? data.data : []);
+          
+        setHospitals(servicesArray);
         setLoading(false);
       } catch (err) {
          console.error(err);
@@ -45,16 +50,16 @@ function HospitalsContent() {
     };
     
     fetchServices();
-  }, []);
+  }, [categoryFilter]);
 
-  const [sortOrder, setSortOrder] = useState(null); // 'asc', 'desc', or null
-
-  // Fetch SERVICES ... (omitted for brevity, assume existing useEffect is here)
+  const [sortOrder, setSortOrder] = useState(null); 
 
   const filteredHospitals = hospitals
     .filter(h => {
         const matchesSearch = h.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesSpecialty = !specialtyFilter || h.specialty?.toLowerCase() === specialtyFilter.toLowerCase();
+        const matchesSpecialty = !specialtyFilter || 
+                                 h.name.toLowerCase().includes(specialtyFilter.toLowerCase()) ||
+                                 (h.category && h.category.toLowerCase() === specialtyFilter.toLowerCase());
         return matchesSearch && matchesSpecialty;
     })
     .sort((a, b) => {
@@ -150,9 +155,16 @@ function HospitalsContent() {
         {/* Title & Filters */}
         <div className="filters-container" style={{ marginBottom: '1.5rem' }}>
              <div>
-                 <h1 style={{ fontSize: '1.4rem', color: '#111827', fontWeight: 'bold' }}>
-                    {searchTerm ? `Results for "${searchTerm}"` : specialtyFilter ? `${specialtyFilter} Services` : 'All Available Services'}
-                 </h1>
+                  <h1 style={{ fontSize: '1.4rem', color: '#111827', fontWeight: 'bold' }}>
+                    {searchTerm 
+                        ? `Results for "${searchTerm}"` 
+                        : specialtyFilter 
+                            ? `${specialtyFilter} Services` 
+                            : categoryFilter 
+                                ? `${categoryFilter === 'Lab' ? 'Pathology' : categoryFilter === 'Scan' ? 'Radiology' : categoryFilter} Services`
+                                : 'All Available Services'
+                    }
+                  </h1>
                  <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>{filteredHospitals.length} result(s) found</p>
              </div>
 
@@ -190,7 +202,7 @@ function HospitalsContent() {
                          </div>
                          <div style={{ 
                             width: '40px', height: '40px', borderRadius: '8px', 
-                            background: `url('${item.image_url ? (item.image_url.startsWith('data:') || item.image_url.startsWith('http') ? item.image_url : (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + item.image_url) : ''}') center/cover no-repeat`,
+                            background: `url('${getImageUrl(item.image_url) || ''}') center/cover no-repeat`,
                             backgroundColor: '#f3f4f6'
                          }}></div>
                      </div>

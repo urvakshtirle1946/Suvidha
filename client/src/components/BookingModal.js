@@ -4,29 +4,74 @@ import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
 import { X, Calendar, User, MapPin, CheckCircle, Home, Plus, ArrowUpDown, Clock } from 'lucide-react';
 import AuthModal from './AuthModal';
-import { getApiUrl } from '@/utils/api';
+import { getApiUrl, getImageUrl } from '@/utils/api';
 
 export default function BookingModal({ isOpen, onClose, service }) {
   const { user } = useAuth();
   const { location } = useLocation();
   
-  const [step, setStep] = useState(1); // 1: Select Time, 2: Checkout, 3: Success
-  const [selectedLab, setSelectedLab] = useState(service);
+  const [step, setStep] = useState(1); // 1: Selection, 2: Payment, 3: Success
+  const [selectedLab, setSelectedLab] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
+  const [transactionId, setTransactionId] = useState('');
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [labs, setLabs] = useState([]);
+  const [fetchingLabs, setFetchingLabs] = useState(false);
 
   useEffect(() => {
-     if (isOpen) {
+     if (isOpen && service) {
          setStep(1);
          setSelectedTime(null);
+         
+         if (service.directBooking) {
+             setSelectedLab(service);
+             setLabs([]); // No need to fetch others
+         } else {
+             fetchLabs(service.name, service.hospital_id);
+         }
      }
-  }, [isOpen]);
+  }, [isOpen, service]);
+
+  const fetchLabs = async (serviceName, preselectedId) => {
+      setFetchingLabs(true);
+      try {
+          const apiUrl = getApiUrl();
+          const cleanName = serviceName.split(' at ')[0]; 
+          const res = await fetch(`${apiUrl}/api/services?search=${encodeURIComponent(cleanName)}`);
+          if (res.ok) {
+              const data = await res.json();
+              const list = Array.isArray(data) ? data : (data.data || []);
+              
+              // Sort by discount percentage (highest first)
+              const sorted = list.sort((a,b) => {
+                  const discA = ((a.price - a.discount_price) / a.price) || 0;
+                  const discB = ((b.price - b.discount_price) / b.price) || 0;
+                  return discB - discA;
+              });
+
+              setLabs(sorted);
+              
+              // Pre-select if ID provided, or auto-select top one
+              if (preselectedId) {
+                  const found = sorted.find(l => l.hospital_id === preselectedId || l.id === preselectedId);
+                  if (found) setSelectedLab(found);
+              } else if (sorted.length > 0) {
+                  // Don't auto-select so user HAS to choose, as per request
+              }
+          }
+      } catch (err) {
+          console.error(err);
+      } finally {
+          setFetchingLabs(false);
+      }
+  };
 
   if (!isOpen || !service) return null;
 
-  const displayPrice = service.price; 
-  const displayMrp = service.price * 1.5; 
+  const currentService = selectedLab;
+  const displayPrice = currentService ? (currentService.discount_price || currentService.price) : 0; 
+  const displayMrp = currentService ? currentService.price : 0; 
   
   const TIME_SLOTS = [
       "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
@@ -39,6 +84,16 @@ export default function BookingModal({ isOpen, onClose, service }) {
             return; 
         }
         
+        if (!selectedLab || !selectedTime) return;
+        setStep(2); // Move to payment
+  };
+
+  const finalizeBooking = async () => {
+        if (!transactionId || transactionId.length < 6) {
+            alert('Please enter a valid Transaction ID');
+            return;
+        }
+
         setLoading(true);
         try {
             const bookingData = {
@@ -49,9 +104,10 @@ export default function BookingModal({ isOpen, onClose, service }) {
                 date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
                 time: selectedTime,
                 address: location || 'India',
-                serviceName: service.name,
+                serviceName: currentService.name,
                 price: displayPrice,
-                hospitalId: service.hospitalId || service.id || 1 
+                hospitalId: currentService.hospital_id || currentService.id,
+                transactionId: transactionId // Include transaction ID
             };
 
             const apiUrl = getApiUrl();
@@ -62,7 +118,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
             });
 
             if (res.ok) {
-                setStep(3);
+                setStep(3); // Success
             } else {
                 alert('Booking Failed');
             }
@@ -83,141 +139,252 @@ export default function BookingModal({ isOpen, onClose, service }) {
       display: 'flex', alignItems: 'center', justifyContent: 'center'
     }}>
       <div style={{
-        width: '100%', maxWidth: '450px', 
-        background: '#fff', borderRadius: '20px', overflow: 'hidden',
-        maxHeight: '90vh', display: 'flex', flexDirection: 'column'
+        width: '100%', maxWidth: '480px', 
+        background: '#fff', borderRadius: '24px', overflow: 'hidden',
+        maxHeight: '92vh', display: 'flex', flexDirection: 'column',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
       }}>
         
         {/* Header */}
-        <div style={{ padding: '1.2rem 1.5rem', borderBottom: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                {step > 1 && step < 3 && (
-                    <button onClick={() => setStep(step - 1)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#6b7280' }}>
-                        &lt;
-                    </button>
-                )}
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
-                    {step === 1 && 'Select Time Slot'}
-                    {step === 2 && 'Booking Summary'}
-                    {step === 3 && 'Success'}
-                </h3>
-            </div>
-            <button onClick={onClose} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#6b7280' }}>
-                <X size={24} />
+        <div style={{ padding: '1.5rem', borderBottom: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#111827' }}>
+                {step === 1 ? 'Schedule Appointment' : step === 2 ? 'Complete Payment' : 'Success'}
+            </h3>
+            <button onClick={onClose} style={{ background: '#f3f4f6', border: 'none', borderRadius: '50%', padding: '6px', cursor: 'pointer', color: '#6b7280', display: 'flex' }}>
+                <X size={20} />
             </button>
         </div>
 
         {/* Content Area */}
-        <div style={{ padding: '1.5rem', overflowY: 'auto', background: step === 0 ? '#f9fafb' : '#fff' }}>
+        <div style={{ flex: 1, padding: '1.5rem', overflowY: 'auto' }}>
 
-            {/* Step 1: Time Slot Selection */}
             {step === 1 && (
-                <div>
-                    <h4 style={{ marginBottom: '1rem', color: '#374151' }}>Date: Tomorrow, {new Date(Date.now() + 86400000).toDateString()}</h4>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-                        {TIME_SLOTS.map(slot => (
-                            <button 
-                                key={slot}
-                                onClick={() => { setSelectedTime(slot); setStep(2); }}
-                                style={{
-                                    padding: '10px', borderRadius: '8px', border: selectedTime === slot ? '2px solid #ff6f61' : '1px solid #e5e7eb',
-                                    background: selectedTime === slot ? '#fff5f4' : '#fff', color: selectedTime === slot ? '#ff6f61' : '#374151',
-                                    fontWeight: '500', cursor: 'pointer'
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                    
+                    {/* Date Picker (Static for now) */}
+                    <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                             <Calendar size={18} color="#ff6f61" />
+                             <span style={{ fontWeight: '700', color: '#374151' }}>Date & Time</span>
+                        </div>
+                        <div style={{ background: '#f9fafb', padding: '10px 15px', borderRadius: '12px', marginBottom: '1rem', border: '1px solid #f3f4f6', fontSize: '0.9rem', color: '#4b5563' }}>
+                             Tomorrow, {new Date(Date.now() + 86400000).toDateString()}
+                        </div>
+                        
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                            {TIME_SLOTS.map(slot => (
+                                <button 
+                                    key={slot}
+                                    onClick={() => setSelectedTime(slot)}
+                                    style={{
+                                        padding: '10px 5px', borderRadius: '10px', 
+                                        border: selectedTime === slot ? '2px solid #ff6f61' : '1px solid #e5e7eb',
+                                        background: selectedTime === slot ? '#fff5f4' : '#fff', 
+                                        color: selectedTime === slot ? '#ff6f61' : '#4b5563',
+                                        fontWeight: '600', cursor: 'pointer', fontSize: '0.85rem',
+                                        transition: 'all 0.2s'
+                                    }}
+                                >
+                                    {slot}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Hospital Selection */}
+                    {!service.directBooking ? (
+                        <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                                 <Home size={18} color="#ff6f61" />
+                                 <span style={{ fontWeight: '700', color: '#374151' }}>Select Hospital (Sorted by Discount)</span>
+                            </div>
+
+                            {fetchingLabs ? (
+                                <div style={{ textAlign: 'center', padding: '1.5rem', color: '#9ca3af' }}>Finding best deals...</div>
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    {labs.map(lab => {
+                                        const isSelected = selectedLab?.id === lab.id || selectedLab?.hospital_id === lab.hospital_id;
+                                        const discountPercent = Math.round(((lab.price - lab.discount_price) / lab.price) * 100);
+                                        
+                                        return (
+                                            <div 
+                                                key={lab.id} 
+                                                onClick={() => setSelectedLab(lab)}
+                                                style={{ 
+                                                    padding: '1rem', borderRadius: '16px', border: isSelected ? '2px solid #ff6f61' : '1px solid #f3f4f6',
+                                                    background: isSelected ? '#fff5f4' : '#fff', cursor: 'pointer',
+                                                    display: 'flex', gap: '12px', alignItems: 'center',
+                                                    boxShadow: isSelected ? '0 10px 15px -3px rgba(255, 111, 97, 0.1)' : 'none',
+                                                    transition: 'all 0.2s'
+                                                }}
+                                            >
+                                                <div style={{ width: '50px', height: '50px', borderRadius: '10px', overflow: 'hidden', background: '#f3f4f6', flexShrink: 0 }}>
+                                                     <img 
+                                                        src={getImageUrl(lab.hospital_image || lab.image_url) || "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=100&q=80"} 
+                                                        alt={lab.hospital_name}
+                                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                        onError={(e) => e.target.src = "https://images.unsplash.com/photo-1586773860418-d3b97898c75c?auto=format&fit=crop&w=100&q=80"}
+                                                     />
+                                                </div>
+
+                                                <div style={{ flex: 1 }}>
+                                                    <div style={{ fontWeight: '800', fontSize: '0.95rem', color: '#111827', marginBottom: '2px' }}>{lab.hospital_name}</div>
+                                                    <div style={{ fontSize: '0.8rem', color: '#6b7280', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                        <MapPin size={12} /> {lab.hospital_location}
+                                                    </div>
+                                                    {discountPercent > 0 && (
+                                                        <div style={{ marginTop: '6px', width: 'fit-content', background: '#dcfce7', color: '#166534', px: '8px', py: '2px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '700', padding: '2px 8px' }}>
+                                                            {discountPercent}% OFF
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div style={{ textAlign: 'right' }}>
+                                                    <div style={{ fontSize: '1.2rem', fontWeight: '800', color: isSelected ? '#ff6f61' : '#111827' }}>₹{lab.discount_price || lab.price}</div>
+                                                    {lab.discount_price < lab.price && (
+                                                        <div style={{ fontSize: '0.85rem', textDecoration: 'line-through', color: '#9ca3af' }}>₹{lab.price}</div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <div style={{ 
+                            background: '#f0fdf4', border: '1px solid #bcf0da', 
+                            padding: '1.2rem', borderRadius: '16px', display: 'flex', gap: '12px', alignItems: 'center' 
+                        }}>
+                             <div style={{ width: '48px', height: '48px', background: '#fff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Home size={24} color="#059669" />
+                             </div>
+                             <div>
+                                <div style={{ fontSize: '0.8rem', color: '#047857', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Selected Hospital</div>
+                                <div style={{ fontSize: '1.1rem', fontWeight: '800', color: '#064e3b' }}>{service.hospital_name}</div>
+                             </div>
+                        </div>
+                    )}
+
+                    {/* Bill Summary - Sticky/Fixed at bottom of scroll */}
+                    {selectedLab && (
+                        <div style={{ marginTop: '1rem', background: '#f8fafc', borderRadius: '16px', padding: '1rem', border: '1px solid #e2e8f0' }}>
+                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '6px', color: '#64748b' }}>
+                                 <span>Service Cost</span>
+                                 <span style={{ textDecoration: 'line-through' }}>₹{displayMrp}</span>
+                             </div>
+                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '10px', color: '#059669', fontWeight: '600' }}>
+                                 <span>suvidha discount</span>
+                                 <span>-₹{displayMrp - displayPrice}</span>
+                             </div>
+                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.1rem', fontWeight: '800', borderTop: '1px dashed #cbd5e1', paddingTop: '10px', color: '#1e293b' }}>
+                                 <span>Total to Pay</span>
+                                 <span>₹{displayPrice}</span>
+                             </div>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {step === 2 && (
+                <div style={{ padding: '1rem 0' }}>
+                    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                        <p style={{ color: '#64748b', fontSize: '0.95rem', marginBottom: '1.5rem' }}>
+                            Scan QR with any UPI app to pay <b>₹{displayPrice}</b>
+                        </p>
+                        
+                        <div style={{ 
+                            width: '240px', height: '240px', margin: '0 auto', 
+                            padding: '12px', background: '#fff', border: '2px solid #f3f4f6', 
+                            borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            boxShadow: '0 10px 20px rgba(0,0,0,0.05)'
+                        }}>
+                             {/* Placeholder for QR Code - User should place the actual image here */}
+                             <img 
+                                src={getImageUrl('/uploads/Qr.jpg')} 
+                                alt="Payment QR" 
+                                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                onError={(e) => {
+                                    e.target.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=upi://pay?pa=suvidha@okaxis&pn=Suvidha&cu=INR";
                                 }}
-                            >
-                                {slot}
-                            </button>
-                        ))}
+                             />
+                        </div>
+                    </div>
+
+                    <div style={{ marginTop: '2rem' }}>
+                         <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: '#1f2937', marginBottom: '8px' }}>
+                            UTR / Transaction ID
+                         </label>
+                         <input 
+                            type="text"
+                            placeholder="Enter 12-digit transaction ID"
+                            value={transactionId}
+                            onChange={(e) => setTransactionId(e.target.value)}
+                            style={{ 
+                                width: '100%', padding: '1rem', borderRadius: '12px', 
+                                border: '2px solid #f3f4f6', fontSize: '1rem', fontWeight: '600',
+                                outline: 'none', transition: 'border-color 0.2s'
+                            }}
+                            onFocus={(e) => e.target.style.borderColor = '#ff6f61'}
+                            onBlur={(e) => e.target.style.borderColor = '#f3f4f6'}
+                         />
+                         <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '8px', lineHeight: '1.4' }}>
+                            Enter the transaction ID after successful payment to confirm your booking.
+                         </p>
                     </div>
                 </div>
             )}
 
-            {/* Step 2: Summary */}
-            {step === 2 && (
-                <>
-                    <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', padding: '1rem', marginBottom: '1.5rem' }}>
-                        <div style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '10px' }}>Booking for:</div>
-                        <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '4px' }}>{service.name}</div>
-                        <div style={{ fontSize: '0.9rem', color: '#374151' }}>at {selectedLab?.name}</div>
-                        <div style={{ marginTop: '10px', display: 'flex', gap: '1rem', fontSize: '0.85rem', color: '#6b7280' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14}/> Tomorrow</div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={14}/> {selectedTime}</div>
-                        </div>
-                    </div>
-
-                    <div style={{ background: '#fff', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb', marginBottom: '1.5rem' }}>
-                        
-                        <div style={{ padding: '1rem', borderBottom: '1px solid #f3f4f6' }}>
-                            <h4 style={{ fontSize: '0.95rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '1rem' }}>Bill Summary</h4>
-                            
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.6rem', color: '#4b5563', fontSize: '0.85rem' }}>
-                                <span>Item Total (MRP)</span>
-                                <span style={{ textDecoration: 'line-through' }}>₹{displayMrp}</span>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.6rem', color: '#4b5563', fontSize: '0.85rem' }}>
-                                <span>Discounted Price</span>
-                                <span>₹{displayPrice}</span>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.6rem', color: '#059669', fontSize: '0.85rem', fontWeight: '500' }}>
-                                <span>Total Savings</span>
-                                <span>-₹{displayMrp - displayPrice}</span>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.6rem', color: '#4b5563', fontSize: '0.85rem' }}>
-                                <span>Taxes & Fees</span>
-                                <span>₹0</span>
-                            </div>
-                            
-                            <div style={{ borderTop: '1px dashed #e5e7eb', marginTop: '0.8rem', paddingTop: '0.8rem', display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1rem', color: '#111827' }}>
-                                <span>To Pay</span>
-                                <span>₹{displayPrice}</span>
-                            </div>
-                        </div>
-
-                        <div style={{ padding: '0.8rem 1rem', borderBottom: '1px solid #f3f4f6', background: '#f9fafb' }}>
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                                <input 
-                                    type="text" 
-                                    placeholder="Enter Coupon Code" 
-                                    style={{ flex: 1, padding: '0.5rem', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '0.85rem', outline: 'none' }}
-                                />
-                                <button style={{ color: '#ec4899', fontWeight: 'bold', fontSize: '0.8rem', background: 'transparent', border: 'none', cursor: 'pointer' }}>APPLY</button>
-                            </div>
-                        </div>
-
-                        <div style={{ padding: '1rem' }}>
-                            <h4 style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.8rem', color: '#374151' }}>Payment Options</h4>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', cursor: 'pointer' }}>
-                                    <input type="radio" name="modalPayment" defaultChecked style={{ accentColor: '#0c831f' }} />
-                                    <span>Pay at Hospital / Clinic</span>
-                                </label>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', cursor: 'pointer', opacity: 0.6 }}>
-                                    <input type="radio" name="modalPayment" disabled />
-                                    <span>Pay Online (Coming Soon)</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button 
-                        onClick={handleBooking}
-                        disabled={loading}
-                        style={{ width: '100%', background: '#ff6f61', color: '#fff', border: 'none', padding: '1rem', borderRadius: '10px', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer' }}
-                    >
-                        {loading ? 'Processing...' : (user ? `Pay ₹${displayPrice}` : 'Login to Pay')}
-                    </button>
-                </>
-            )}
-
             {step === 3 && (
-                <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
-                    <CheckCircle size={64} color="#059669" style={{ margin: '0 auto 1.5rem' }} />
-                    <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Booking Confirmed!</h2>
-                    <p style={{ color: '#6b7280' }}>Your appointment is successfully scheduled for {selectedTime}, tomorrow.</p>
+                <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+                    <div style={{ width: '80px', height: '80px', background: '#dcfce7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+                        <CheckCircle size={48} color="#059669" />
+                    </div>
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: '900', marginBottom: '1rem', color: '#111827' }}>Confirmed!</h2>
+                    <p style={{ color: '#64748b', lineHeight: '1.6', fontSize: '1rem' }}>
+                        Your appointment at <b>{selectedLab?.hospital_name}</b> is scheduled for {selectedTime}, tomorrow.
+                    </p>
+                    <p style={{ marginTop: '1rem', fontSize: '0.85rem', color: '#9ca3af' }}>
+                        Transaction ID: {transactionId}
+                    </p>
+                    <button 
+                        onClick={onClose}
+                        style={{ marginTop: '2.5rem', width: '100%', background: '#111827', color: '#fff', border: 'none', padding: '1rem', borderRadius: '14px', fontWeight: '700', cursor: 'pointer' }}
+                    >
+                        DONE
+                    </button>
                 </div>
             )}
 
         </div>
+
+        {/* Footer Action */}
+        {step < 3 && (
+            <div style={{ padding: '1.5rem', borderTop: '1px solid #f3f4f6', background: '#fff' }}>
+                <button 
+                    onClick={step === 1 ? handleBooking : finalizeBooking}
+                    disabled={loading || (step === 1 && (!selectedTime || !selectedLab)) || (step === 2 && !transactionId)}
+                    style={{ 
+                        width: '100%', 
+                        background: (step === 1 ? (selectedTime && selectedLab) : !!transactionId) ? '#ff6f61' : '#e5e7eb', 
+                        color: '#fff', 
+                        border: 'none', 
+                        padding: '1.2rem', 
+                        borderRadius: '16px', 
+                        fontWeight: '800', 
+                        fontSize: '1.1rem', 
+                        cursor: (step === 1 ? (selectedTime && selectedLab) : !!transactionId) ? 'pointer' : 'not-allowed',
+                        boxShadow: (step === 1 ? (selectedTime && selectedLab) : !!transactionId) ? '0 10px 15px -3px rgba(255, 111, 97, 0.3)' : 'none',
+                        transition: 'all 0.3s'
+                    }}
+                >
+                    {loading ? 'Processing...' : (step === 1 ? (selectedTime && selectedLab ? `Book Now • ₹${displayPrice}` : 'Select Time & Hospital') : 'Confirm Payment & Book')}
+                </button>
+                <p style={{ textAlign: 'center', fontSize: '0.75rem', color: '#9ca3af', marginTop: '12px' }}>
+                    Step {step} of 2 • Secure payment verification
+                </p>
+            </div>
+        )}
       </div>
     </div>
     <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />

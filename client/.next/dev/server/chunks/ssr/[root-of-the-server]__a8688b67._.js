@@ -84,12 +84,24 @@ function useAuth() {
 
 __turbopack_context__.s([
     "getApiUrl",
-    ()=>getApiUrl
+    ()=>getApiUrl,
+    "getImageUrl",
+    ()=>getImageUrl
 ]);
 const getApiUrl = ()=>{
     if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
     ;
     return process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com';
+};
+const getImageUrl = (url)=>{
+    if (!url) return null;
+    if (url.startsWith('data:') || url.startsWith('http') || url.includes('gradient')) {
+        return url;
+    }
+    const baseUrl = getApiUrl();
+    // Ensure no double slashes
+    const cleanUrl = url.startsWith('/') ? url : `/${url}`;
+    return `${baseUrl}${cleanUrl}`;
 };
 }),
 "[project]/src/context/LocationContext.js [app-ssr] (ecmascript)", ((__turbopack_context__) => {
@@ -230,6 +242,15 @@ function CartProvider({ children }) {
     const removeFromCart = (itemId)=>{
         setCart((prev)=>prev.filter((item)=>item.id !== itemId));
     };
+    const updateCartItem = (index, newItem)=>{
+        setCart((prev)=>{
+            const next = [
+                ...prev
+            ];
+            next[index] = newItem;
+            return next;
+        });
+    };
     const updateQuantity = (itemId, delta)=>{
         setCart((prev)=>prev.map((item)=>{
                 if (item.id === itemId) {
@@ -253,6 +274,7 @@ function CartProvider({ children }) {
             addToCart,
             removeFromCart,
             updateQuantity,
+            updateCartItem,
             clearCart,
             isCartOpen,
             setIsCartOpen,
@@ -262,7 +284,7 @@ function CartProvider({ children }) {
         children: children
     }, void 0, false, {
         fileName: "[project]/src/context/CartContext.js",
-        lineNumber: 63,
+        lineNumber: 71,
         columnNumber: 5
     }, this);
 }
@@ -322,7 +344,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trash$2d$2$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Trash2$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/trash-2.js [app-ssr] (ecmascript) <export default as Trash2>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$context$2f$CartContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/context/CartContext.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/utils/api.js [app-ssr] (ecmascript)");
 'use client';
+;
 ;
 ;
 ;
@@ -347,7 +371,7 @@ function CartDrawer() {
                 className: "jsx-c40002f2af8db874"
             }, void 0, false, {
                 fileName: "[project]/src/components/CartDrawer.js",
-                lineNumber: 16,
+                lineNumber: 17,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -391,7 +415,7 @@ function CartDrawer() {
                                         size: 20
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/CartDrawer.js",
-                                        lineNumber: 38,
+                                        lineNumber: 39,
                                         columnNumber: 13
                                     }, this),
                                     " My Cart (",
@@ -400,7 +424,7 @@ function CartDrawer() {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/CartDrawer.js",
-                                lineNumber: 37,
+                                lineNumber: 38,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -418,18 +442,18 @@ function CartDrawer() {
                                     color: "#374151"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/CartDrawer.js",
-                                    lineNumber: 44,
+                                    lineNumber: 45,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/CartDrawer.js",
-                                lineNumber: 40,
+                                lineNumber: 41,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/CartDrawer.js",
-                        lineNumber: 33,
+                        lineNumber: 34,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -462,12 +486,12 @@ function CartDrawer() {
                                         size: 48
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/CartDrawer.js",
-                                        lineNumber: 53,
+                                        lineNumber: 54,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/CartDrawer.js",
-                                    lineNumber: 52,
+                                    lineNumber: 53,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -478,7 +502,7 @@ function CartDrawer() {
                                     children: "Your cart is empty"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/CartDrawer.js",
-                                    lineNumber: 55,
+                                    lineNumber: 56,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -496,13 +520,13 @@ function CartDrawer() {
                                     children: "Start Shopping"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/CartDrawer.js",
-                                    lineNumber: 56,
+                                    lineNumber: 57,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/CartDrawer.js",
-                            lineNumber: 51,
+                            lineNumber: 52,
                             columnNumber: 13
                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             style: {
@@ -531,7 +555,7 @@ function CartDrawer() {
                                             },
                                             className: "jsx-c40002f2af8db874",
                                             children: item.image_url ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
-                                                src: item.image_url.startsWith('/') ? `${process.env.NEXT_PUBLIC_API_URL}${item.image_url}` : item.image_url,
+                                                src: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getImageUrl"])(item.image_url),
                                                 alt: item.name,
                                                 style: {
                                                     width: '100%',
@@ -541,7 +565,7 @@ function CartDrawer() {
                                                 className: "jsx-c40002f2af8db874"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/CartDrawer.js",
-                                                lineNumber: 73,
+                                                lineNumber: 74,
                                                 columnNumber: 25
                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 style: {
@@ -556,12 +580,12 @@ function CartDrawer() {
                                                 children: "No Img"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/CartDrawer.js",
-                                                lineNumber: 75,
+                                                lineNumber: 76,
                                                 columnNumber: 25
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/CartDrawer.js",
-                                            lineNumber: 68,
+                                            lineNumber: 69,
                                             columnNumber: 20
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -581,7 +605,7 @@ function CartDrawer() {
                                                     children: item.name
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/CartDrawer.js",
-                                                    lineNumber: 81,
+                                                    lineNumber: 82,
                                                     columnNumber: 22
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -594,7 +618,7 @@ function CartDrawer() {
                                                     children: item.hospital_name || 'Service'
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/CartDrawer.js",
-                                                    lineNumber: 82,
+                                                    lineNumber: 83,
                                                     columnNumber: 22
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -617,7 +641,7 @@ function CartDrawer() {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/CartDrawer.js",
-                                                            lineNumber: 85,
+                                                            lineNumber: 86,
                                                             columnNumber: 24
                                                         }, this),
                                                         " ",
@@ -649,12 +673,12 @@ function CartDrawer() {
                                                                         size: 14
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/CartDrawer.js",
-                                                                        lineNumber: 94,
+                                                                        lineNumber: 95,
                                                                         columnNumber: 30
                                                                     }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/CartDrawer.js",
-                                                                    lineNumber: 89,
+                                                                    lineNumber: 90,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -668,7 +692,7 @@ function CartDrawer() {
                                                                     children: item.quantity || 1
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/CartDrawer.js",
-                                                                    lineNumber: 96,
+                                                                    lineNumber: 97,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -686,30 +710,30 @@ function CartDrawer() {
                                                                         size: 14
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/CartDrawer.js",
-                                                                        lineNumber: 101,
+                                                                        lineNumber: 102,
                                                                         columnNumber: 30
                                                                     }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/CartDrawer.js",
-                                                                    lineNumber: 97,
+                                                                    lineNumber: 98,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/CartDrawer.js",
-                                                            lineNumber: 88,
+                                                            lineNumber: 89,
                                                             columnNumber: 24
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/CartDrawer.js",
-                                                    lineNumber: 84,
+                                                    lineNumber: 85,
                                                     columnNumber: 22
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/CartDrawer.js",
-                                            lineNumber: 80,
+                                            lineNumber: 81,
                                             columnNumber: 20
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -728,28 +752,28 @@ function CartDrawer() {
                                                 size: 16
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/CartDrawer.js",
-                                                lineNumber: 116,
+                                                lineNumber: 117,
                                                 columnNumber: 23
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/CartDrawer.js",
-                                            lineNumber: 108,
+                                            lineNumber: 109,
                                             columnNumber: 20
                                         }, this)
                                     ]
                                 }, item.id, true, {
                                     fileName: "[project]/src/components/CartDrawer.js",
-                                    lineNumber: 66,
+                                    lineNumber: 67,
                                     columnNumber: 17
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/src/components/CartDrawer.js",
-                            lineNumber: 64,
+                            lineNumber: 65,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/CartDrawer.js",
-                        lineNumber: 49,
+                        lineNumber: 50,
                         columnNumber: 9
                     }, this),
                     cart.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -775,7 +799,7 @@ function CartDrawer() {
                                         children: "Total"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/CartDrawer.js",
-                                        lineNumber: 128,
+                                        lineNumber: 129,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -786,13 +810,13 @@ function CartDrawer() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/CartDrawer.js",
-                                        lineNumber: 129,
+                                        lineNumber: 130,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/CartDrawer.js",
-                                lineNumber: 127,
+                                lineNumber: 128,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -816,19 +840,19 @@ function CartDrawer() {
                                 children: "Proceed to Checkout"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/CartDrawer.js",
-                                lineNumber: 131,
+                                lineNumber: 132,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/CartDrawer.js",
-                        lineNumber: 126,
+                        lineNumber: 127,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/CartDrawer.js",
-                lineNumber: 25,
+                lineNumber: 26,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {

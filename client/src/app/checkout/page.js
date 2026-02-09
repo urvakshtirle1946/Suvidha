@@ -6,12 +6,100 @@ import { useLocation } from '@/context/LocationContext';
 import Navbar from '@/components/Navbar';
 import AuthModal from '@/components/AuthModal';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, CheckCircle, AlertCircle, Calendar as CalendarIcon, Clock } from 'lucide-react';
+import { ArrowLeft, CheckCircle, AlertCircle, Calendar as CalendarIcon, Clock, MapPin, X } from 'lucide-react';
 import Link from 'next/link';
-import { getApiUrl } from '@/utils/api';
+import { getApiUrl, getImageUrl } from '@/utils/api';
+import { useEffect } from 'react';
+
+function ProviderList({ serviceName, currentHospitalId, onSelect }) {
+    const [labs, setLabs] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProviders = async () => {
+            try {
+                const apiUrl = getApiUrl();
+                const cleanName = serviceName.split(' at ')[0];
+                const res = await fetch(`${apiUrl}/api/services?search=${encodeURIComponent(cleanName)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const list = Array.isArray(data) ? data : (data.data || []);
+                    
+                    // Deduplicate by hospital_id (keep lowest price if duplicates exist)
+                    const uniqueProviders = [];
+                    const seenHospitals = new Set();
+                    
+                    // Sort by price first so we keep the cheapest version of a service at a hospital
+                    const sortedByPrice = [...list].sort((a,b) => (a.discount_price || a.price) - (b.discount_price || b.price));
+                    
+                    for (const item of sortedByPrice) {
+                        const hId = item.hospital_id || item.id;
+                        if (!seenHospitals.has(hId)) {
+                            uniqueProviders.push(item);
+                            seenHospitals.add(hId);
+                        }
+                    }
+
+                    // Now sort the unique list by highest discount percentage
+                    const sorted = uniqueProviders.sort((a,b) => {
+                        const discA = ((a.price - a.discount_price) / a.price) || 0;
+                        const discB = ((b.price - b.discount_price) / b.price) || 0;
+                        return discB - discA;
+                    });
+                    setLabs(sorted);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProviders();
+    }, [serviceName]);
+
+    if (loading) return <div style={{ fontSize: '0.8rem', color: '#9ca3af' }}>Finding providers...</div>;
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {labs.map(lab => {
+                const isSelected = (lab.hospital_id || lab.id) === currentHospitalId;
+                const discountPercent = Math.round(((lab.price - lab.discount_price) / lab.price) * 100);
+                
+                return (
+                    <div 
+                        key={lab.id} 
+                        onClick={() => onSelect(lab)}
+                        style={{ 
+                            padding: '8px 12px', border: isSelected ? '2px solid #0c831f' : '1px solid #e5e7eb',
+                            borderRadius: '10px', background: isSelected ? '#f0fdf4' : '#fff', cursor: 'pointer',
+                            display: 'flex', gap: '10px', alignItems: 'center',
+                            transition: 'all 0.2s'
+                        }}
+                    >
+                        <div style={{ width: '40px', height: '40px', borderRadius: '8px', overflow: 'hidden', background: '#f3f4f6', flexShrink: 0 }}>
+                             <img 
+                                src={getImageUrl(lab.hospital_image || lab.image_url) || "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=100&q=80"} 
+                                alt={lab.hospital_name}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                onError={(e) => e.target.src = "https://images.unsplash.com/photo-1586773860418-d3b97898c75c?auto=format&fit=crop&w=100&q=80"}
+                             />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ fontWeight: '700', fontSize: '0.85rem', color: isSelected ? '#0c831f' : '#1f2937' }}>{lab.hospital_name}</div>
+                            {discountPercent > 0 && (
+                                <span style={{ fontSize: '0.7rem', color: '#059669', fontWeight: 'bold' }}>{discountPercent}% SAVING</span>
+                            )}
+                        </div>
+                        <div style={{ textAlign: 'right', fontWeight: 'bold', fontSize: '0.9rem' }}>₹{lab.discount_price || lab.price}</div>
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
 
 export default function Checkout() {
-  const { cart, clearCart, cartTotal } = useCart();
+  const { cart, clearCart, cartTotal, updateCartItem } = useCart();
   const { user } = useAuth();
   const { location } = useLocation();
   const router = useRouter();
@@ -24,6 +112,12 @@ export default function Checkout() {
   // Schedule State
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+  const [transactionId, setTransactionId] = useState('');
+  const [showPayment, setShowPayment] = useState(false);
+
+  const updateCartWithProvider = (index, newItem) => {
+    updateCartItem(index, newItem);
+  };
 
   const handleCheckoutCallback = async () => {
     if (!user) {
@@ -33,6 +127,22 @@ export default function Checkout() {
 
     if (!selectedDate || !selectedTime) {
         setError("Please select a date and time slot for your appointment.");
+        return;
+    }
+
+    // Check if every item has a provider
+    const missingProvider = cart.find(item => !item.hospitalId);
+    if (missingProvider) {
+        setError(`Please select a hospital provider for ${missingProvider.name}`);
+        return;
+    }
+
+    setShowPayment(true); // Show payment overlay
+  };
+
+  const finalizeCheckout = async () => {
+    if (!transactionId || transactionId.length < 6) {
+        alert('Please enter a valid Transaction ID');
         return;
     }
 
@@ -49,6 +159,10 @@ export default function Checkout() {
             const quantity = item.quantity || 1;
             const requests = [];
             for (let i = 0; i < quantity; i++) {
+                if (!item.hospitalId) {
+                    throw new Error(`Please select a provider for ${item.name}`);
+                }
+
                 const bookingData = {
                     name: user.name || 'User',
                     userPhone: user.phone || '', 
@@ -59,7 +173,8 @@ export default function Checkout() {
                     address: location || 'New Delhi, India',
                     serviceName: item.name,
                     price: item.price,
-                    hospitalId: item.hospitalId || 1 
+                    hospitalId: item.hospitalId,
+                    transactionId: transactionId
                 };
 
                 requests.push(
@@ -127,12 +242,41 @@ export default function Checkout() {
                     <div className="card item-list-card" style={{ background: '#fff', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
                         <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid #f3f4f6', paddingBottom: '1rem' }}>Order Items ({cart.length})</h3>
                         {cart.map((item, idx) => (
-                            <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px dashed #f3f4f6', paddingBottom: '1rem' }}>
-                                <div>
-                                    <div style={{ fontWeight: '600', color: '#1f2937' }}>{item.name}</div>
-                                    <div style={{ fontSize: '0.85rem', color: '#6b7280' }}>Qty: {item.quantity || 1}</div>
+                            <div key={idx} style={{ marginBottom: '1.5rem', borderBottom: '1px dashed #f3f4f6', paddingBottom: '1rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                                    <div>
+                                        <div style={{ fontWeight: '700', color: '#111827', fontSize: '1.1rem' }}>{item.name}</div>
+                                        <div style={{ fontSize: '0.85rem', color: '#6b7280', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+                                             <MapPin size={14} color="#ff6f61" /> {item.hospital_name || 'No Hospital Selected'}
+                                        </div>
+                                    </div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{ fontWeight: '800', fontSize: '1.1rem' }}>₹{item.price * (item.quantity || 1)}</div>
+                                        {item.discount_price && item.discount_price < item.price && (
+                                            <div style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 'bold' }}>-₹{(item.price - item.discount_price) * (item.quantity || 1)} OFF</div>
+                                        )}
+                                    </div>
                                 </div>
-                                <div style={{ fontWeight: 'bold' }}>₹{item.price * (item.quantity || 1)}</div>
+
+                                <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                                     <div style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '8px', textTransform: 'uppercase' }}>Select Provider (Best Price First)</div>
+                                     <ProviderList 
+                                        serviceName={item.name} 
+                                        currentHospitalId={item.hospitalId} 
+                                        onSelect={(newProvider) => {
+                                            // Update cart item with new provider details
+                                            const updatedItem = {
+                                                ...item,
+                                                hospitalId: newProvider.hospital_id || newProvider.id,
+                                                hospital_name: newProvider.hospital_name,
+                                                price: parseFloat(newProvider.discount_price || newProvider.price),
+                                                discount_price: parseFloat(newProvider.discount_price)
+                                            };
+                                            // We need a way to update specific item in cart
+                                            updateCartWithProvider(idx, updatedItem);
+                                        }}
+                                     />
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -291,6 +435,57 @@ export default function Checkout() {
                     className="cta-button"
                   >
                       {loading ? '...' : user ? 'Place Order' : 'Login'}
+                  </button>
+              </div>
+          </div>
+      )}
+
+      {showPayment && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 3000, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+              <div style={{ background: '#fff', width: '100%', maxWidth: '440px', borderRadius: '24px', padding: '2rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', position: 'relative' }}>
+                  <button 
+                    onClick={() => setShowPayment(false)} 
+                    style={{ position: 'absolute', top: '20px', right: '20px', background: '#f3f4f6', border: 'none', borderRadius: '50%', padding: '6px', cursor: 'pointer' }}
+                  >
+                        <X size={20} />
+                  </button>
+
+                  <h3 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '1.5rem', textAlign: 'center' }}>Scan & Pay</h3>
+                  
+                  <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                        <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+                            Pay <b>₹{cartTotal + 50}</b> to confirm your home booking.
+                        </p>
+                        <div style={{ width: '220px', height: '220px', margin: '0 auto', background: '#fff', border: '1px solid #f3f4f6', borderRadius: '16px', padding: '10px' }}>
+                             <img src={getImageUrl('/uploads/Qr.jpg')} alt="QR" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={(e) => e.target.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=upi://pay?pa=suvidha@okaxis&pn=Suvidha&cu=INR"} />
+                        </div>
+                  </div>
+
+                  <div style={{ marginBottom: '2rem' }}>
+                       <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: '#1f2937', marginBottom: '8px' }}>Transaction ID (UTR)</label>
+                       <input 
+                         type="text" 
+                         className="payment-input"
+                         placeholder="12-digit transaction ID" 
+                         value={transactionId}
+                         onChange={(e) => setTransactionId(e.target.value)}
+                         style={{ 
+                            width: '100%', padding: '1rem', borderRadius: '12px', border: '2px solid #f3f4f6', 
+                            fontSize: '1.1rem', fontWeight: '600', outline: 'none'
+                         }}
+                       />
+                  </div>
+
+                  <button 
+                    onClick={finalizeCheckout}
+                    disabled={loading || !transactionId}
+                    style={{ 
+                        width: '100%', padding: '1rem', background: transactionId ? '#0c831f' : '#e5e7eb', 
+                        color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '1.1rem',
+                        cursor: transactionId ? 'pointer' : 'not-allowed'
+                    }}
+                  >
+                        {loading ? 'Verifying...' : 'Book Appointment'}
                   </button>
               </div>
           </div>

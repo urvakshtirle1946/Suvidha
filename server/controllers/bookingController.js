@@ -3,16 +3,16 @@ const db = require('../db');
 const smsService = require('../services/smsService');
 
 exports.createBooking = async (req, res) => {
-  const { name, age, gender, date, time, address, serviceName, price, userPhone, hospitalId } = req.body;
+  const { name, age, gender, date, time, address, serviceName, price, userPhone, hospitalId, transactionId } = req.body;
   
   try {
     // 1. Create Booking
     const query = `
-      INSERT INTO bookings (patient_name, patient_age, patient_gender, booking_date, booking_time, address, service_name, price, user_phone, hospital_id)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      INSERT INTO bookings (patient_name, patient_age, patient_gender, booking_date, booking_time, address, service_name, price, user_phone, hospital_id, transaction_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       RETURNING id, status
     `;
-    const values = [name, age, gender, date, time, address, serviceName, price, userPhone, hospitalId || null];
+    const values = [name, age, gender, date, time, address, serviceName, price, userPhone, hospitalId || null, transactionId || null];
     
     const result = await db.query(query, values);
     
@@ -34,6 +34,7 @@ Service: ${serviceName}
 Date: ${date}
 Time: ${time}
 Hospital: ${hospital.name}
+Transaction ID: ${transactionId || 'N/A'}
 
 Please confirm availability.`;
 

@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar';
 import BookingModal from '@/components/BookingModal';
 import { Search, MapPin, Star, Filter, Activity, Clock, SlidersHorizontal, TestTube } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import { getApiUrl } from '@/utils/api';
+import { getApiUrl, getImageUrl } from '@/utils/api';
 
 function LabTestsContent() {
   const router = useRouter();
@@ -18,23 +18,25 @@ function LabTestsContent() {
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch Services (mocked as Labs)
+  // Fetch Services (Real Lab Tests)
   useEffect(() => {
      const fetchData = async () => {
          try {
              const apiUrl = getApiUrl();
-             // Reusing hospitals endpoint for now, assuming it returns services
-             const res = await fetch(`${apiUrl}/api/hospitals`);
+             const res = await fetch(`${apiUrl}/api/services?category=Lab`);
              if (res.ok) {
-                 const data = await res.json();
-                 const enhancedData = data.map(h => ({
-                     ...h,
-                     name: h.name + ' - Lab Service', // Mocking name to look like a test
+                 const rawData = await res.json();
+                 // Handle both formats
+                 const data = Array.isArray(rawData) ? rawData : (rawData?.data || []);
+                 
+                 const enhancedData = data.map(s => ({
+                     ...s,
                      reportTime: 'Report within 24 hours',
-                     price: Math.floor(h.rating * 50),
-                     marketPrice: Math.floor(h.rating * 100),
-                     discount: Math.floor(Math.random() * 40) + 10,
-                     image: h.image_url || null
+                     price: parseFloat(s.discount_price || s.price),
+                     marketPrice: parseFloat(s.price),
+                     discount: s.discount_price ? Math.round(((s.price - s.discount_price) / s.price) * 100) : 0,
+                     image: getImageUrl(s.hospital_image || s.image_url) || null,
+                     location: s.hospital_location || 'Suvidha Partner'
                  }));
                  setTests(enhancedData);
              }
@@ -82,10 +84,16 @@ function LabTestsContent() {
           {filteredTests.map((test) => (
              <div key={test.id} className="glass" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'transform 0.2s', border: '1px solid #e5e7eb' }}>
                 
-                <div style={{ height: '160px', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                   <div style={{ width: '60px', height: '60px', background: '#bae6fd', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                       <TestTube size={32} color="#0284c7" />
-                   </div>
+                <div style={{ height: '160px', background: '#e0f2fe', position: 'relative', overflow: 'hidden' }}>
+                   {test.image ? (
+                       <img src={test.image} alt={test.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                   ) : (
+                       <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                           <div style={{ width: '60px', height: '60px', background: '#bae6fd', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                               <TestTube size={32} color="#0284c7" />
+                           </div>
+                       </div>
+                   )}
                 </div>
                 
                 <div style={{ padding: '1.2rem', display: 'flex', flexDirection: 'column', flex: 1 }}>

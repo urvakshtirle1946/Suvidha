@@ -3,6 +3,7 @@ import { Fragment } from 'react';
 import { X, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
+import { getImageUrl } from '@/utils/api';
 
 export default function CartDrawer() {
   const { cart, removeFromCart, updateQuantity, clearCart, cartTotal, isCartOpen, setIsCartOpen } = useCart();
@@ -70,7 +71,7 @@ export default function CartDrawer() {
                      flexShrink: 0
                    }}>
                       {item.image_url ? (
-                        <img src={item.image_url.startsWith('/') ? `${process.env.NEXT_PUBLIC_API_URL}${item.image_url}` : item.image_url} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img src={getImageUrl(item.image_url)} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       ) : (
                         <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc' }}>No Img</div>
                       )}

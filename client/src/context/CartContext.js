@@ -42,6 +42,14 @@ export function CartProvider({ children }) {
     setCart((prev) => prev.filter((item) => item.id !== itemId));
   };
 
+  const updateCartItem = (index, newItem) => {
+    setCart((prev) => {
+        const next = [...prev];
+        next[index] = newItem;
+        return next;
+    });
+  };
+
   const updateQuantity = (itemId, delta) => {
     setCart((prev) => prev.map((item) => {
       if (item.id === itemId) {
@@ -65,6 +73,7 @@ export function CartProvider({ children }) {
       addToCart, 
       removeFromCart, 
       updateQuantity, 
+      updateCartItem,
       clearCart, 
       isCartOpen, 
       setIsCartOpen,

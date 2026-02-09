@@ -45,33 +45,52 @@ export default function HospitalProfileModal({ isOpen, onClose, hospital, onBook
         <div style={{ padding: '2rem', overflowY: 'auto', flex: 1 }}>
            <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#111827' }}>Available Services & Offers</h3>
            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {hospital.services.map((service, index) => (
-                <div key={index} style={{ 
-                  padding: '1.2rem', 
-                  border: '1px solid #e5e7eb', 
-                  borderRadius: '12px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
-                   <div>
-                      <div style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '4px' }}>{service.name}</div>
-                      <div style={{ fontSize: '0.85rem', color: '#059669', fontWeight: '600' }}>{service.discount}% OFF</div>
-                   </div>
-                   <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '15px' }}>
-                      <div>
-                         <div style={{ fontWeight: 'bold', color: '#111827' }}>₹{service.price}</div>
-                         <div style={{ fontSize: '0.8rem', textDecoration: 'line-through', color: '#9ca3af' }}>₹{Math.floor(service.price / (1 - service.discount/100))}</div>
-                      </div>
-                      <button 
-                        onClick={() => onBookService(service)}
-                        style={{ background: '#ff6f61', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' }}
-                      >
-                         BOOK
-                      </button>
-                   </div>
-                </div>
-              ))}
+              {hospital.services.map((service, index) => {
+                const basePrice = parseFloat(service.price);
+                const discountedPrice = parseFloat(service.discount_price || service.price);
+                const discountPercent = Math.round(((basePrice - discountedPrice) / basePrice) * 100);
+                
+                return (
+                  <div key={index} style={{ 
+                    padding: '1.2rem', 
+                    border: '1px solid #e5e7eb', 
+                    borderRadius: '12px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}>
+                     <div>
+                        <div style={{ fontWeight: 'bold', color: '#1f2937', marginBottom: '4px' }}>{service.name}</div>
+                        {discountPercent > 0 && (
+                          <div style={{ fontSize: '0.85rem', color: '#059669', fontWeight: '600' }}>{discountPercent}% OFF</div>
+                        )}
+                        {service.description && (
+                          <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '4px' }}>{service.description}</div>
+                        )}
+                     </div>
+                     <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '15px' }}>
+                        <div>
+                           <div style={{ fontWeight: 'bold', color: '#111827' }}>₹{discountedPrice}</div>
+                           {discountPercent > 0 && (
+                             <div style={{ fontSize: '0.8rem', textDecoration: 'line-through', color: '#9ca3af' }}>₹{basePrice}</div>
+                           )}
+                        </div>
+                        <button 
+                          onClick={() => onBookService({ 
+                            ...service, 
+                            price: discountedPrice,
+                            hospital_id: hospital.id,
+                            hospital_name: hospital.name,
+                            directBooking: true
+                          })}
+                          style={{ background: '#ff6f61', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' }}
+                        >
+                           BOOK
+                        </button>
+                     </div>
+                  </div>
+                );
+              })}
            </div>
         </div>
 

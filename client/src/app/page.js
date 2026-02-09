@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import BookingModal from '@/components/BookingModal';
@@ -9,9 +9,10 @@ import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { 
   Activity, Stethoscope, Building2, Pill, TestTube, Truck, 
-  Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin
+  Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin,
+  ChevronLeft, ChevronRight
 } from 'lucide-react';
-import { getApiUrl } from '@/utils/api';
+import { getApiUrl, getImageUrl } from '@/utils/api';
 
 export default function Home() {
   const { addToCart } = useCart();
@@ -26,6 +27,14 @@ export default function Home() {
   const [popularServices, setPopularServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const sliderRef = useRef(null);
+
+  const scroll = (direction) => {
+    if (sliderRef.current) {
+      const scrollAmount = direction === 'left' ? -300 : 300;
+      sliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
 
 
   useEffect(() => {
@@ -38,10 +47,16 @@ export default function Home() {
         ]);
 
         const hospitalsData = await hospitalsRes.json();
-        const servicesData = await servicesRes.json();
+        let servicesData = await servicesRes.json();
 
-        setHospitals(hospitalsData);
-        setPopularServices(servicesData);
+        setHospitals(Array.isArray(hospitalsData) ? hospitalsData : []);
+        
+        // Handle both flattened array and paginated object formats
+        const servicesArray = Array.isArray(servicesData) 
+          ? servicesData 
+          : (servicesData && Array.isArray(servicesData.data) ? servicesData.data : []);
+          
+        setPopularServices(servicesArray);
       } catch (err) {
         console.error('Failed to fetch data', err);
       } finally {
@@ -106,18 +121,18 @@ export default function Home() {
 
   // Categories with assigned colors to match the "Promo Card" aesthetic but smaller
   const CATEGORIES = [
-      { name: 'Cardiology', desc: 'Heart Care', icon: <Heart size={50} color="rgba(255,255,255,0.3)" />, color: '#ff6b6b', href: '/hospitals?specialty=Cardiac' },
-      { name: 'Radiology', desc: 'Scans & X-Rays', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#a55eea', href: '/hospitals?specialty=Radiology' },
-      { name: 'Pathology', desc: 'Lab Tests', icon: <TestTube size={50} color="rgba(255,255,255,0.3)" />, color: '#fd9644', href: '/hospitals?specialty=Pathology' },
+      { name: 'Cardiology', desc: 'Heart Care', icon: <Heart size={50} color="rgba(255,255,255,0.3)" />, color: '#ff6b6b', href: '/hospitals?specialty=Cardiologist' },
+      { name: 'Radiology', desc: 'Scans & X-Rays', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#a55eea', href: '/hospitals?category=Scan' },
+      { name: 'Pathology', desc: 'Lab Tests', icon: <TestTube size={50} color="rgba(255,255,255,0.3)" />, color: '#fd9644', href: '/lab-tests' },
       { name: 'Orthopedic', desc: 'Bone Health', icon: <Bone size={50} color="rgba(255,255,255,0.3)" />, color: '#5f27cd', href: '/hospitals?specialty=Orthopedic' },
-      { name: 'Pediatric', desc: 'Child Care', icon: <Baby size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9ff3', textColor: '#1f2937', href: '/hospitals?specialty=Pediatric' },
-      { name: 'Neurology', desc: 'Brain Care', icon: <Brain size={50} color="rgba(255,255,255,0.3)" />, color: '#54a0ff', href: '/hospitals?specialty=Neurology' },
-      { name: 'Eye Care', desc: 'Vision', icon: <Eye size={50} color="rgba(255,255,255,0.3)" />, color: '#1dd1a1', href: '/hospitals?specialty=Eye' },
-      { name: 'Dental', desc: 'Oral Health', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#f368e0', href: '/hospitals?specialty=Dentist' },
+      { name: 'Pediatric', desc: 'Child Care', icon: <Baby size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9ff3', textColor: '#1f2937', href: '/hospitals?specialty=Pediatrician' },
+      { name: 'Neurology', desc: 'Brain Care', icon: <Brain size={50} color="rgba(255,255,255,0.3)" />, color: '#54a0ff', href: '/hospitals?specialty=Neurologist' },
+      { name: 'Eye Care', desc: 'Vision', icon: <Eye size={50} color="rgba(255,255,255,0.3)" />, color: '#1dd1a1', href: '/hospitals?specialty=Ophthalmologist' },
+      { name: 'Dermatology', desc: 'Skin & Hair', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#00d2d3', href: '/hospitals?specialty=Dermatologist' },
       { name: 'Diabetes', desc: 'Sugar Levels', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ee5253', href: '/hospitals?specialty=Diabetes' },
-      { name: 'Skin Care', desc: 'Dermatology', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#00d2d3', href: '/hospitals?specialty=Dermatology' },
-      { name: 'Ayurveda', desc: 'Natural', icon: <Stethoscope size={50} color="rgba(255,255,255,0.3)" />, color: '#10ac84', href: '/hospitals?specialty=Ayurveda' },
-      { name: 'Physiotherapy', desc: 'Recovery', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9f43', href: '/hospitals?specialty=Physiotherapy' },
+      { name: 'Surgeries', desc: 'Expert Operations', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9f43', href: '/hospitals?category=Surgery' },
+      { name: 'Physiotherapy', desc: 'Recovery', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#10ac84', href: '/hospitals?specialty=Physiotherapy' },
+      { name: 'Counseling', desc: 'Mental Health', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#f368e0', href: '/hospitals?specialty=Psychotherapy' },
   ];
 
   // If auth state is not yet loaded, show loading to prevent flash
@@ -288,18 +303,53 @@ export default function Home() {
              ))}
         </div>
 
-        {/* Popular Section (Horizontal Scroll) */}
-        <h2 style={{ marginBottom: '1.5rem', fontSize: '1.5rem' }}>Popular Lab Tests</h2>
-        <div style={{ display: 'flex', gap: '1.5rem', overflowX: 'auto', paddingBottom: '1rem', scrollbarWidth: 'none' }}>
+        {/* Popular Section (Horizontal Scroll with Controls) */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h2 style={{ fontSize: '1.5rem', margin: 0 }}>Popular Lab Tests</h2>
+            <div style={{ display: 'flex', gap: '8px' }}>
+                <button 
+                    onClick={() => scroll('left')}
+                    style={{ 
+                        background: '#fff', border: '1px solid #e5e7eb', borderRadius: '50%', 
+                        width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        cursor: 'pointer', color: '#374151'
+                    }}
+                >
+                    <ChevronLeft size={20} />
+                </button>
+                <button 
+                    onClick={() => scroll('right')}
+                    style={{ 
+                        background: '#fff', border: '1px solid #e5e7eb', borderRadius: '50%', 
+                        width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        cursor: 'pointer', color: '#374151'
+                    }}
+                >
+                    <ChevronRight size={20} />
+                </button>
+            </div>
+        </div>
+
+        <div 
+            ref={sliderRef}
+            style={{ 
+                display: 'flex', 
+                gap: '1.5rem', 
+                overflowX: 'auto', 
+                paddingBottom: '1rem', 
+                scrollbarWidth: 'none',
+                scrollBehavior: 'smooth'
+            }}
+        >
             {popularServices.map((service) => (
                 <ProductCard 
                     key={service.id}
                     title={service.name} 
                     time="Reports in 24 hrs" 
-                    price={`₹${service.price}`}
-                    oldPrice={service.discount_price ? `₹${service.discount_price}` : `₹${Math.round(service.price * 1.5)}`}
-                    discount="Limited Offer"
-                    onAdd={() => addToCart({ ...service, quantity: 1, hospital_name: 'Popular Service' })}
+                    price={`₹${service.discount_price || service.price}`}
+                    oldPrice={service.discount_price ? `₹${service.price}` : `₹${Math.round(service.price * 1.5)}`}
+                    discount={service.discount_price ? `${Math.round(((service.price - service.discount_price) / service.price) * 100)}% OFF` : "Limited Offer"}
+                    onAdd={() => addToCart({ ...service, quantity: 1, hospital_name: service.hospital_name || 'Popular Service' })}
                 />
             ))}
         </div>
@@ -331,11 +381,7 @@ export default function Home() {
                   <div style={{ height: '180px', background: '#f3f4f6', overflow: 'hidden' }}>
                        <img 
                           crossOrigin="anonymous"
-                          src={hospital.image_url 
-                              ? (hospital.image_url.startsWith('data:') || hospital.image_url.startsWith('http') || hospital.image_url.includes('gradient')
-                                  ? hospital.image_url 
-                                  : (process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://suvidha-server-4u66.onrender.com')) + hospital.image_url)
-                              : "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80"} 
+                          src={getImageUrl(hospital.image_url) || "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80"} 
                           alt={hospital.name} 
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                           onError={(e) => e.target.src = "https://images.unsplash.com/photo-1586773860418-d3b97898c75c?auto=format&fit=crop&w=800&q=80"}
@@ -373,7 +419,7 @@ export default function Home() {
            hospital={selectedHospitalForProfile}
            onBookService={(service) => {
               setSelectedHospitalForProfile(null);
-              setSelectedProduct({ ...service, name: `${service.name} at ${selectedHospitalForProfile.name}` });
+              setSelectedProduct(service);
            }}
         />
 

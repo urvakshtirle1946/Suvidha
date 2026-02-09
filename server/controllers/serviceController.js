@@ -4,24 +4,41 @@ exports.getAllServices = async (req, res) => {
   try {
     const page = req.query.page ? parseInt(req.query.page) : null;
     const limit = req.query.limit ? parseInt(req.query.limit) : null;
+    const category = req.query.category;
+    const hospital_id = req.query.hospital_id;
 
     let queryText = `
-      SELECT s.*, h.name as hospital_name 
+      SELECT s.*, h.name as hospital_name, h.location as hospital_location, h.image_url as hospital_image
       FROM services s 
       LEFT JOIN hospitals h ON s.hospital_id = h.id 
+      WHERE 1=1
     `;
+    const values = [];
+    let placeholderIndex = 1;
+
+    if (category) {
+      queryText += ` AND s.category = $${placeholderIndex++}`;
+      values.push(category);
+    }
+
+    if (hospital_id) {
+      queryText += ` AND s.hospital_id = $${placeholderIndex++}`;
+      values.push(hospital_id);
+    }
     
     // If pagination is requested (page is present), we need count and offset
     if (page && limit) {
       const offset = (page - 1) * limit;
       
       // Get Total Count
-      const countResult = await db.query('SELECT COUNT(*) FROM services');
-      const total = parseInt(countResult.rows[0].count);
+      const countRes = await db.query(`SELECT COUNT(*) FROM services s WHERE 1=1 ${category ? 'AND category = $1' : ''} ${hospital_id ? (category ? 'AND hospital_id = $2' : 'AND hospital_id = $1') : ''}`, values);
+      const total = parseInt(countRes.rows[0].count);
       
       // Get Paginated Data
-      queryText += ` ORDER BY s.created_at DESC LIMIT $1 OFFSET $2`;
-      const result = await db.query(queryText, [limit, offset]);
+      queryText += ` ORDER BY s.created_at DESC LIMIT $${placeholderIndex++} OFFSET $${placeholderIndex++}`;
+      values.push(limit, offset);
+      
+      const result = await db.query(queryText, values);
       
       return res.json({
         data: result.rows,
@@ -36,9 +53,8 @@ exports.getAllServices = async (req, res) => {
 
     // Legacy / Non-paginated (but limit supported) behavior
     queryText += ` ORDER BY s.created_at DESC`;
-    const values = [];
     if (limit) {
-      queryText += ' LIMIT $1';
+      queryText += ` LIMIT $${placeholderIndex++}`;
       values.push(limit);
     }
     

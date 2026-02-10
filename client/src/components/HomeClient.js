@@ -7,21 +7,36 @@ import HospitalProfileModal from '@/components/HospitalProfileModal';
 import AmbulanceRequest from '@/components/AmbulanceRequest';
 import { 
   Activity, Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin,
-  ChevronLeft, ChevronRight, TestTube, ArrowRight, Clock
+  ChevronLeft, ChevronRight, TestTube
 } from 'lucide-react';
 import { getApiUrl, getImageUrl } from '@/utils/api';
 
+'use client';
+import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
+import BookingModal from '@/components/BookingModal';
+import HospitalProfileModal from '@/components/HospitalProfileModal';
+import AmbulanceRequest from '@/components/AmbulanceRequest';
+import { 
+  Activity, Heart, Search, MapPin, 
+  ChevronRight, Car, Building2, Pill, FlaskConical, Stethoscope
+} from 'lucide-react';
+import { getApiUrl, getImageUrl } from '@/utils/api';
+import { useAuth } from '@/context/AuthContext';
+
 export default function HomeClient({ hospitals, popularServices }) {
+  const { user } = useAuth();
   const { addToCart } = useCart();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedHospitalForProfile, setSelectedHospitalForProfile] = useState(null);
   const sliderRef = useRef(null);
 
-  const scroll = (direction) => {
-    if (sliderRef.current) {
-      const scrollAmount = direction === 'left' ? -300 : 300;
-      sliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
+  const getGreeting = () => {
+      const hour = new Date().getHours();
+      if (hour < 12) return 'Good morning';
+      if (hour < 18) return 'Good afternoon';
+      return 'Good evening';
   };
 
   const handleHospitalClick = async (hospital) => {
@@ -40,181 +55,180 @@ export default function HomeClient({ hospitals, popularServices }) {
       }
   };
 
-  // Uber-style categories: Clean, simple icons, minimal colors
-  const CATEGORIES = [
-      { name: 'Cardiology', icon: <Heart size={28} />, href: '/hospitals?specialty=Cardiologist' },
-      { name: 'Radiology', icon: <Activity size={28} />, href: '/hospitals?category=Scan' },
-      { name: 'Pathology', icon: <TestTube size={28} />, href: '/lab-tests' },
-      { name: 'Orthopedic', icon: <Bone size={28} />, href: '/hospitals?specialty=Orthopedic' },
-      { name: 'Pediatric', icon: <Baby size={28} />, href: '/hospitals?specialty=Pediatrician' },
-      { name: 'Neurology', icon: <Brain size={28} />, href: '/hospitals?specialty=Neurologist' },
-      { name: 'Eye Care', icon: <Eye size={28} />, href: '/hospitals?specialty=Ophthalmologist' },
-      { name: 'Dermatology', icon: <Smile size={28} />, href: '/hospitals?specialty=Dermatologist' },
+  const MAIN_SERVICES = [
+      { id: 'ambulance', name: 'Ambulance', icon: <Car size={32} />, color: '#000', bg: '#f3f4f6', link: '#' }, // Triggers modal contextually
+      { id: 'hospital', name: 'Hospitals', icon: <Building2 size={32} />, color: '#000', bg: '#f3f4f6', link: '/hospitals' },
+      { id: 'lab', name: 'Lab Tests', icon: <FlaskConical size={32} />, color: '#000', bg: '#f3f4f6', link: '/lab-tests' },
+      { id: 'pharmacy', name: 'Medicines', icon: <Pill size={32} />, color: '#000', bg: '#f3f4f6', link: '/hospitals' },
+  ];
+
+  const SECONDARY_SERVICES = [
+      { name: 'Cardiology', icon: <Heart size={20} />, link: '/hospitals?specialty=Cardiologist' },
+      { name: 'Scan/X-Ray', icon: <Activity size={20} />, link: '/hospitals?category=Scan' },
+      { name: 'Doctors', icon: <Stethoscope size={20} />, link: '/hospitals?specialty=General' },
+      { name: 'Checkups', icon: <Activity size={20} />, link: '/lab-tests' },
   ];
 
   return (
-    <main style={{ paddingBottom: '100px', background: '#fff', minHeight: '100vh', color: '#000' }}>
+    <main style={{ paddingBottom: '100px', background: '#fff', minHeight: '100vh', fontFamily: 'var(--font-outfit)' }}>
       
-      <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 2rem)' }}>
+      <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 1.5rem)', maxWidth: '800px' }}>
 
-        {/* Hero Section - Uber Style */}
+        {/* Uber-like Header */}
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#000' }}>
+            {getGreeting()}, {user?.name ? user.name.split(' ')[0] : 'Guest'}
+        </h1>
+        
+        {/* Search Bar - Pill Shape */}
         <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-            gap: '2rem', 
-            alignItems: 'center', 
-            marginBottom: '4rem',
-            background: '#f6f6f6',
-            borderRadius: '12px',
-            overflow: 'hidden'
+            position: 'relative', 
+            marginBottom: '2.5rem',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+            borderRadius: '50px',
+            background: '#f3f4f6'
         }}>
-             <div style={{ padding: '3rem' }}>
-                 <h1 style={{ fontSize: '3rem', fontWeight: '800', lineHeight: '1.1', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
-                     Healthcare, <br/> simplified.
-                 </h1>
-                 <p style={{ fontSize: '1.1rem', color: '#555', marginBottom: '2rem', lineHeight: '1.6' }}>
-                     Book appointments, lab tests, and ambulance services with a single tap. Reliable care, right when you need it.
-                 </p>
-                 <button className="btn-black" style={{ 
-                     background: '#000', color: '#fff', padding: '12px 24px', borderRadius: '8px', 
-                     fontSize: '1rem', fontWeight: '600', border: 'none', cursor: 'pointer',
-                     display: 'inline-flex', alignItems: 'center', gap: '8px'
-                 }}>
-                     Get Started <ArrowRight size={18} />
-                 </button>
-             </div>
-             <div style={{ height: '400px', background: '#e5e7eb', position: 'relative' }}>
-                 <img 
-                    src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80" 
-                    alt="Healthcare" 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                 />
-             </div>
-        </div>
-
-        {/* Suggestions / Categories */}
-        <div style={{ marginBottom: '4rem' }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '2rem', color: '#000' }}>Suggestions</h2>
-            <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', 
-                gap: '12px' 
-            }}>
-                {CATEGORIES.map((cat, index) => (
-                    <Link key={index} href={cat.href} style={{ textDecoration: 'none' }}>
-                        <div style={{ 
-                            background: '#f6f6f6', 
-                            borderRadius: '12px', 
-                            padding: '1.5rem 1rem', 
-                            display: 'flex', 
-                            flexDirection: 'column', 
-                            alignItems: 'center', 
-                            justifyContent: 'center',
-                            gap: '12px',
-                            cursor: 'pointer',
-                            transition: 'background 0.2s',
-                            height: '110px'
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.background = '#eeeeee'}
-                        onMouseOut={(e) => e.currentTarget.style.background = '#f6f6f6'}
-                        >
-                            <div style={{ color: '#000' }}>{cat.icon}</div>
-                            <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#000', textAlign: 'center' }}>{cat.name}</span>
-                        </div>
-                    </Link>
-                ))}
+            <div style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)' }}>
+                <Search size={24} color="#000" />
             </div>
-        </div>
-
-        {/* Popular Services - Horizontal Scroll */}
-        <div style={{ marginBottom: '4rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h2 style={{ fontSize: '2rem', fontWeight: '700', margin: 0, color: '#000' }}>Popular Tests</h2>
-                <div style={{ display: 'flex', gap: '12px' }}>
-                    <button onClick={() => scroll('left')} className="nav-btn"><ChevronLeft size={20} /></button>
-                    <button onClick={() => scroll('right')} className="nav-btn"><ChevronRight size={20} /></button>
-                </div>
-            </div>
-
-            <div 
-                ref={sliderRef}
-                style={{ 
-                    display: 'flex', gap: '1.5rem', overflowX: 'auto', paddingBottom: '1rem', 
-                    scrollbarWidth: 'none', scrollBehavior: 'smooth' 
+            <input 
+                type="text" 
+                placeholder="Where to? (Find hospitals, labs...)" 
+                style={{
+                    width: '100%',
+                    padding: '18px 20px 18px 60px',
+                    borderRadius: '50px',
+                    border: 'none',
+                    background: 'transparent',
+                    fontSize: '1.1rem',
+                    fontWeight: '500',
+                    outline: 'none',
+                    color: '#000'
                 }}
-            >
-                {popularServices.map((service) => (
-                    <ProductCard 
-                        key={service.id}
-                        title={service.name} 
-                        time="24h Report" 
-                        image={getImageUrl(service.image_url || service.hospital_image)}
-                        price={`₹${service.discount_price || service.price}`}
-                        onAdd={() => addToCart({ ...service, quantity: 1, hospital_name: service.hospital_name || 'Popular Service' })}
-                    />
-                ))}
-            </div>
+            />
         </div>
 
-        <BookingModal 
-             isOpen={!!selectedProduct}
-             onClose={() => setSelectedProduct(null)}
-             service={selectedProduct}
-        />
-
-        {/* Featured Hospitals - Large Cards */}
-        <h2 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '2rem', color: '#000' }}>Nearby Hospitals</h2>
+        {/* Main Service Grid (Uber Style) */}
         <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', 
-            gap: '2rem', 
-            marginBottom: '4rem' 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+            gap: '12px', 
+            marginBottom: '2rem' 
         }}>
-            {hospitals.map((hospital) => (
+            {MAIN_SERVICES.map((service, idx) => (
+                <Link key={idx} href={service.link} style={{ textDecoration: 'none' }}>
+                    <div style={{ 
+                        background: service.bg, 
+                        borderRadius: '12px', 
+                        padding: '1.5rem 1rem', 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center', // Center content for Uber style
+                        justifyContent: 'center',
+                        gap: '12px',
+                        cursor: 'pointer',
+                        transition: 'transform 0.1s'
+                    }}
+                    onMouseOver={e => e.currentTarget.style.background = '#e5e7eb'}
+                    onMouseOut={e => e.currentTarget.style.background = service.bg}
+                    >
+                        <div style={{ 
+                            marginLeft: 'auto', marginRight: 'auto' // Center icon
+                        }}>
+                             {service.icon}
+                        </div>
+                        <span style={{ fontWeight: '600', color: '#000', fontSize: '1rem' }}>{service.name}</span>
+                    </div>
+                </Link>
+            ))}
+        </div>
+
+        {/* Secondary Horizontal List */}
+        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '1rem', scrollbarWidth: 'none', marginBottom: '2rem' }}>
+            {SECONDARY_SERVICES.map((item, idx) => (
+                <Link key={idx} href={item.link} style={{ textDecoration: 'none' }}>
+                    <div style={{ 
+                        display: 'flex', alignItems: 'center', gap: '8px', 
+                        padding: '8px 16px', borderRadius: '30px', background: '#fff', 
+                        border: '1px solid #e5e7eb', whitespace: 'nowrap', cursor: 'pointer' 
+                    }}>
+                        {item.icon}
+                        <span style={{ fontWeight: '500', color: '#000', fontSize: '0.9rem' }}>{item.name}</span>
+                    </div>
+                </Link>
+            ))}
+        </div>
+
+
+        {/* Featured Section - More Minimal */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0, color: '#000' }}>Featured Hospitals</h2>
+        </div>
+
+        <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', 
+            gap: '20px', 
+            marginBottom: '3rem' 
+        }}>
+            {hospitals.slice(0, 4).map((hospital) => (
               <div 
                 key={hospital.id} 
                 onClick={() => handleHospitalClick(hospital)}
-                style={{ cursor: 'pointer', background: 'transparent' }}
+                style={{ cursor: 'pointer' }}
               >
                   <div style={{ 
-                      height: '200px', borderRadius: '12px', overflow: 'hidden', marginBottom: '12px',
-                      background: '#f3f4f6', position: 'relative'
+                      height: '160px', borderRadius: '12px', overflow: 'hidden', marginBottom: '12px',
+                      background: '#f3f4f6'
                   }}>
                        <img 
                           crossOrigin="anonymous"
-                          src={getImageUrl(hospital.image_url) || "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80"} 
+                          src={getImageUrl(hospital.image_url)} 
                           alt={hospital.name} 
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                          onError={(e) => e.target.src = "https://images.unsplash.com/photo-1586773860418-d3b97898c75c?auto=format&fit=crop&w=800&q=80"}
+                          onError={(e) => e.target.style.display = 'none'}
                       />
-                      {hospital.discount_percentage && (
-                          <div style={{ 
-                              position: 'absolute', top: '12px', left: '12px', 
-                              background: '#0c831f', color: '#fff', padding: '4px 12px', 
-                              borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold' 
-                          }}>
-                              {hospital.discount_percentage}% OFF
-                          </div>
-                      )}
                   </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <div>
-                          <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#000', marginBottom: '4px' }}>{hospital.name}</h3>
-                          <p style={{ fontSize: '0.9rem', color: '#555', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              {hospital.location}
-                          </p>
-                      </div>
-                      <div style={{ 
-                          background: '#f6f6f6', padding: '6px 10px', borderRadius: '20px', 
-                          fontSize: '0.85rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' 
-                      }}>
-                          {hospital.rating || '4.5'} <Star size={12} fill="#000" strokeWidth={0} />
-                      </div>
+                  <div>
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#000', margin: 0, marginBottom: '4px' }}>{hospital.name}</h3>
+                      <p style={{ fontSize: '0.9rem', color: '#6b7280', margin: 0 }}>{hospital.location}</p>
+                      {hospital.discount_percentage && (
+                          <span style={{ fontSize: '0.8rem', color: '#16a34a', fontWeight: '500', display: 'flex', gap: '4px', marginTop: '4px' }}>
+                             {hospital.discount_percentage}% Promo
+                          </span>
+                      )}
                   </div>
               </div>
             ))}
         </div>
+
+        {/* Popular Tests - Horizontal Minimal */}
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: '0 0 1.5rem 0', color: '#000' }}>Popular Tests</h2>
+        <div 
+            ref={sliderRef}
+            style={{ 
+                display: 'flex', 
+                gap: '16px', 
+                overflowX: 'auto', 
+                paddingBottom: '1rem', 
+                scrollbarWidth: 'none'
+            }}
+        >
+            {popularServices.map((service) => (
+                <div key={service.id} style={{ minWidth: '200px', cursor: 'pointer' }} onClick={() => setSelectedProduct(service)}>
+                    <div style={{ height: '120px', background: '#f9fafb', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
+                         <img 
+                            src={getImageUrl(service.image_url || service.hospital_image)} 
+                            alt={service.name}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }}
+                            onError={(e) => e.target.style.display = 'none'}
+                        />
+                    </div>
+                    <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#000', margin: 0 }}>{service.name}</h3>
+                    <p style={{ fontSize: '0.9rem', color: '#6b7280', margin: '2px 0' }}>₹{service.discount_price || service.price}</p>
+                </div>
+            ))}
+        </div>
+
 
         <HospitalProfileModal 
            isOpen={!!selectedHospitalForProfile} 
@@ -226,54 +240,60 @@ export default function HomeClient({ hospitals, popularServices }) {
            }}
         />
 
-      </div>
-      <AmbulanceRequest />
+        <BookingModal 
+             isOpen={!!selectedProduct}
+             onClose={() => setSelectedProduct(null)}
+             service={selectedProduct}
+        />
 
-      <style jsx>{`
-          .nav-btn {
-              background: #f6f6f6;
-              border: none;
-              border-radius: 50%;
-              width: 36px;
-              height: 36px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              cursor: pointer;
-              transition: background 0.2s;
-              color: #000;
-          }
-          .nav-btn:hover {
-              background: #e5e5e5;
-          }
-      `}</style>
+      </div>
+      
+      {/* Keeping Ambulance Request Floating Button but ensuring it matches theme */}
+      <AmbulanceRequest />
     </main>
   );
 }
 
-function ProductCard({ title, time, price, onAdd, image }) {
+function ProductCard({ title, time, price, oldPrice, discount, onAdd, image }) {
     return (
         <div style={{ 
-            minWidth: '200px', 
-            background: 'transparent', 
-            cursor: 'pointer',
+            minWidth: '220px', 
+            background: '#fff', 
+            borderRadius: '12px', 
+            border: '1px solid #eee', 
+            padding: '0', 
+            overflow: 'hidden',
             flexShrink: 0
-        }} onClick={onAdd}>
-            <div style={{ 
-                height: '140px', background: '#f6f6f6', borderRadius: '12px', 
-                marginBottom: '10px', overflow: 'hidden', position: 'relative' 
-            }}>
+        }}>
+            <div style={{ height: '120px', background: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                 {image ? (
-                    <img src={image} alt={title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => e.target.style.display = 'none'} />
+                    <img 
+                        src={image} 
+                        alt={title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        onError={(e) => e.target.style.display = 'none'}
+                    />
                 ) : (
-                    <Activity size={40} color="#ccc" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
+                    <Activity size={40} color="#ccc" />
                 )}
             </div>
-            <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#000', marginBottom: '4px' }}>{title}</h3>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: '#555' }}>
-                 <span>{price}</span>
-                 <span style={{ width: '4px', height: '4px', background: '#ccc', borderRadius: '50%' }}></span>
-                 <span><Clock size={12} style={{ display: 'inline', marginRight: '4px' }}/>{time}</span>
+            <div style={{ padding: '1rem' }}>
+                <div style={{ fontSize: '0.75rem', color: '#666', background: '#f3f4f6', width: 'fit-content', padding: '2px 6px', borderRadius: '4px', marginBottom: '8px' }}>
+                    {time}
+                </div>
+                <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem', color: '#1f2937' }}>{title}</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
+                    <div>
+                        <span style={{ display: 'block', fontSize: '1rem', fontWeight: 'bold' }}>{price}</span>
+                        <span style={{ fontSize: '0.8rem', textDecoration: 'line-through', color: '#9ca3af' }}>{oldPrice}</span>
+                    </div>
+                    <button 
+                        onClick={onAdd}
+                        style={{ border: '1px solid #ff6f61', color: '#ff6f61', background: '#fff', borderRadius: '6px', padding: '6px 16px', fontWeight: '600', cursor: 'pointer' }}
+                    >
+                        ADD
+                    </button>
+                </div>
             </div>
         </div>
     );

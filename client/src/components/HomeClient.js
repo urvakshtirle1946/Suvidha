@@ -22,6 +22,14 @@ export default function HomeClient({ hospitals, popularServices }) {
   const sliderRef = useRef(null);
 
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      router.push(`/hospitals?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   const OFFERS = [
       {
@@ -106,15 +114,7 @@ export default function HomeClient({ hospitals, popularServices }) {
         </h1>
         
         {/* Search Bar - Pill Shape */}
-  const [searchQuery, setSearchQuery] = useState('');
-  const router = useRouter(); // You'll need to import useRouter at the top
 
-  const handleSearch = (e) => {
-    if (e.key === 'Enter' && searchQuery.trim()) {
-      router.push(`/hospitals?search=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
-  // ... existing code ...
         <div style={{ 
             position: 'relative', 
             marginBottom: '2.5rem',

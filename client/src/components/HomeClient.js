@@ -115,12 +115,41 @@ export default function HomeClient({ hospitals, popularServices }) {
         
         {/* Search Bar - Pill Shape */}
 
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  useEffect(() => {
+    if (searchQuery.length > 1) {
+        const lowerQuery = searchQuery.toLowerCase();
+        
+        // Filter Categories
+        const matchedCategories = CATEGORIES.filter(cat => 
+            cat.name.toLowerCase().includes(lowerQuery)
+        ).map(cat => ({ type: 'category', ...cat }));
+
+        // Filter Hospitals
+        const matchedHospitals = hospitals.filter(hosp => 
+            hosp.name.toLowerCase().includes(lowerQuery) || 
+            hosp.location.toLowerCase().includes(lowerQuery)
+        ).map(hosp => ({ type: 'hospital', ...hosp }));
+
+        setSuggestions([...matchedCategories, ...matchedHospitals]);
+        setShowSuggestions(true);
+    } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+    }
+  }, [searchQuery, hospitals]);
+
+  /* ... */
+
         <div style={{ 
             position: 'relative', 
             marginBottom: '2.5rem',
             boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
             borderRadius: '50px',
-            background: '#f3f4f6'
+            background: '#f3f4f6',
+            zIndex: 50 // Ensure it sits above other content
         }}>
             <div style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)' }}>
                 <Search size={24} color="#000" />
@@ -131,6 +160,9 @@ export default function HomeClient({ hospitals, popularServices }) {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleSearch}
+                onFocus={() => { if(searchQuery.length > 1) setShowSuggestions(true); }}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} // Delay to allow click
+                autoComplete="off"
                 aria-label="Search hospitals and services"
                 style={{
                     width: '100%',
@@ -144,6 +176,69 @@ export default function HomeClient({ hospitals, popularServices }) {
                     color: '#000'
                 }}
             />
+            
+            {/* Suggestions Dropdown */}
+            {showSuggestions && suggestions.length > 0 && (
+                <div style={{
+                    position: 'absolute',
+                    top: '120%',
+                    left: 0,
+                    right: 0,
+                    background: '#fff',
+                    borderRadius: '16px',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                    padding: '8px 0',
+                    overflow: 'hidden',
+                    zIndex: 100
+                }}>
+                    {suggestions.slice(0, 6).map((item, idx) => (
+                        <div 
+                            key={idx}
+                            onClick={() => {
+                                if (item.type === 'category') {
+                                    router.push(item.link);
+                                } else {
+                                    handleHospitalClick(item);
+                                }
+                                setShowSuggestions(false);
+                            }}
+                            onMouseDown={(e) => e.preventDefault()} // Prevent blur on click
+                            style={{
+                                padding: '12px 20px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px',
+                                cursor: 'pointer',
+                                borderBottom: idx !== suggestions.length - 1 ? '1px solid #f3f4f6' : 'none',
+                                transition: 'background 0.1s'
+                            }}
+                            onMouseOver={e => e.currentTarget.style.background = '#f9fafb'}
+                            onMouseOut={e => e.currentTarget.style.background = '#fff'}
+                        >
+                            <div style={{ 
+                                background: '#f3f4f6', 
+                                padding: '8px', 
+                                borderRadius: '50%', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center' 
+                            }}>
+                                {item.type === 'category' ? (
+                                    <div style={{ transform: 'scale(0.8)' }}>{item.icon}</div>
+                                ) : (
+                                    <MapPin size={18} color="#6b7280" />
+                                )}
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <span style={{ fontWeight: '500', color: '#1f2937', fontSize: '0.95rem' }}>{item.name}</span>
+                                <span style={{ fontSize: '0.8rem', color: '#9ca3af' }}>
+                                    {item.type === 'category' ? 'Category' : item.location}
+                                </span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
 
         {/* Re-added Offers Slider - Moved after Search Bar */}

@@ -27,7 +27,9 @@ export default function PaymentReminder() {
             const res = await fetch(`${apiUrl}/api/bookings?phone=${encodeURIComponent(user.phone)}`);
             if (res.ok) {
                 const data = await res.json();
+                console.log("Fetched Bookings for Reminder:", data);
                 const pending = data.filter(b => b.transaction_id === 'PAY_AT_HOSPITAL' && b.status !== 'Completed' && b.status !== 'Cancelled');
+                console.log("Pending Bookings:", pending);
                 setPendingBookings(pending);
                 // Adjust index if out of bounds
                 if (currentIndex >= pending.length && pending.length > 0) {
@@ -88,10 +90,10 @@ export default function PaymentReminder() {
             {/* Floating Widget Card */}
             {!viewLink && (
                 <div style={{
-                    position: 'fixed', bottom: '90px', right: '24px', zIndex: 998,
+                    position: 'fixed', bottom: '90px', right: '24px', zIndex: 20000,
                     background: '#fff', width: '300px', borderRadius: '16px',
                     boxShadow: '0 10px 30px rgba(0,0,0,0.15)', border: '1px solid #e5e7eb',
-                    overflow: 'hidden', animation: 'slideUp 0.5s ease-out'
+                    overflow: 'hidden'
                 }}>
                     {/* Header */}
                     <div style={{ background: '#0c831f', padding: '12px 16px', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

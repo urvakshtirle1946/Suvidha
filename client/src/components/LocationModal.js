@@ -46,19 +46,22 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
             background: '#f3f4f6',
             border: 'none',
             borderRadius: '50%',
-            width: '32px',
-            height: '32px',
+            width: '36px',
+            height: '36px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            zIndex: 10
           }}
         >
           <X size={20} color="#000" />
         </button>
 
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem', marginTop: '1rem' }}>Select Location</h2>
+
         {/* Search Bar */}
-        <div className="search-container">
+        <div className="search-container" style={{ marginTop: '1rem' }}>
           <Search className="search-icon" size={20} />
           <input
             type="text"

@@ -57,25 +57,30 @@ export default function BookingModal({ isOpen, onClose, service }) {
               const seenIds = new Set();
               
               for (const item of sorted) {
-                  // Use hospital_id if available, otherwise assume distinct item
-                  const itemsId = item.hospital_id; 
-                  // Only deduplicate if we actually have a hospital_id to group by
-                  if (itemsId) {
-                      if (!seenIds.has(itemsId)) {
-                          seenIds.add(itemsId);
+                  // Robust ID check: hospital_id, hospitalId, or fallback to name+location
+                  const uniqueKey = item.hospital_id || item.hospitalId || `${item.hospital_name}-${item.hospital_location}`;
+                  
+                  if (uniqueKey) {
+                      if (!seenIds.has(uniqueKey)) {
+                          seenIds.add(uniqueKey);
                           uniqueLabs.push(item);
                       }
                   } else {
-                      // If no hospital_id, push it (safe fallback)
+                      // If completely unidentifiable, push it (unlikely)
                       uniqueLabs.push(item);
                   }
               }
 
               setLabs(uniqueLabs);
               
-              // Pre-select if ID provided, or auto-select top one
+              // Pre-select if ID provided
               if (preselectedId) {
-                  const found = uniqueLabs.find(l => l.hospital_id === preselectedId || l.id === preselectedId);
+                  // Check against both hospital_id and id
+                  const found = uniqueLabs.find(l => 
+                      (l.hospital_id && l.hospital_id == preselectedId) || 
+                      (l.hospitalId && l.hospitalId == preselectedId) ||
+                      (l.id && l.id == preselectedId)
+                  );
                   if (found) setSelectedLab(found);
               } else if (uniqueLabs.length > 0) {
                   // Don't auto-select so user HAS to choose, as per request

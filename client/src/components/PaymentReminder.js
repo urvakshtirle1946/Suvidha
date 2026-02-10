@@ -2,21 +2,20 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { getApiUrl } from '@/utils/api';
-import { X, CreditCard, ChevronRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Info, CreditCard } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function PaymentReminder() {
     const { user, isLoaded } = useAuth();
     const [pendingBookings, setPendingBookings] = useState([]);
-    const [isOpen, setIsOpen] = useState(false);
-    const [selectedBooking, setSelectedBooking] = useState(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [viewLink, setViewLink] = useState(null); // 'pay' | 'details' | null
     const [txnId, setTxnId] = useState('');
     const [paying, setPaying] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
         if (!isLoaded || !user) return;
-
         fetchPending();
         const interval = setInterval(fetchPending, 30000); // Check every 30s
         return () => clearInterval(interval);
@@ -30,6 +29,10 @@ export default function PaymentReminder() {
                 const data = await res.json();
                 const pending = data.filter(b => b.transaction_id === 'PAY_AT_HOSPITAL' && b.status !== 'Completed' && b.status !== 'Cancelled');
                 setPendingBookings(pending);
+                // Adjust index if out of bounds
+                if (currentIndex >= pending.length && pending.length > 0) {
+                    setCurrentIndex(0);
+                }
             }
         } catch (err) {
             console.error(err);
@@ -44,7 +47,8 @@ export default function PaymentReminder() {
         setPaying(true);
         try {
             const apiUrl = getApiUrl();
-            const res = await fetch(`${apiUrl}/api/bookings/${selectedBooking.id}/pay`, {
+            const currentBooking = pendingBookings[currentIndex];
+            const res = await fetch(`${apiUrl}/api/bookings/${currentBooking.id}/pay`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ transactionId: txnId })
@@ -52,8 +56,8 @@ export default function PaymentReminder() {
 
             if (res.ok) {
                 alert("Payment Recorded Successfully");
-                setSelectedBooking(null);
                 setTxnId('');
+                setViewLink(null);
                 fetchPending(); // Refresh list
                 router.refresh();
             } else {
@@ -67,81 +71,123 @@ export default function PaymentReminder() {
         }
     };
 
+    const nextSlide = () => {
+        setCurrentIndex((prev) => (prev + 1) % pendingBookings.length);
+    };
+
+    const prevSlide = () => {
+        setCurrentIndex((prev) => (prev - 1 + pendingBookings.length) % pendingBookings.length);
+    };
+
     if (pendingBookings.length === 0) return null;
+
+    const currentBooking = pendingBookings[currentIndex];
 
     return (
         <>
-            {/* Floating Trigger Button */}
-            {!isOpen && (
-                <div 
-                    onClick={() => setIsOpen(true)}
-                    style={{
-                        position: 'fixed', bottom: '90px', right: '24px', zIndex: 999,
-                        background: '#0c831f', color: '#fff', padding: '12px 20px',
-                        borderRadius: '50px', boxShadow: '0 4px 15px rgba(12, 131, 31, 0.4)',
-                        display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer',
-                        fontWeight: 'bold', animation: 'bounce 2s infinite'
-                    }}
-                >
-                    <CreditCard size={20} />
-                    <span>Pay Pending ({pendingBookings.length})</span>
+            {/* Floating Widget Card */}
+            {!viewLink && (
+                <div style={{
+                    position: 'fixed', bottom: '90px', right: '24px', zIndex: 998,
+                    background: '#fff', width: '300px', borderRadius: '16px',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.15)', border: '1px solid #e5e7eb',
+                    overflow: 'hidden', animation: 'slideUp 0.5s ease-out'
+                }}>
+                    {/* Header */}
+                    <div style={{ background: '#0c831f', padding: '12px 16px', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ fontWeight: 'bold', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <CreditCard size={16} /> Pending Payments ({pendingBookings.length})
+                        </div>
+                        {pendingBookings.length > 1 && (
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                <button onClick={prevSlide} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '2px', color: '#fff' }}><ChevronLeft size={16} /></button>
+                                <button onClick={nextSlide} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '2px', color: '#fff' }}><ChevronRight size={16} /></button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Content */}
+                    <div style={{ padding: '16px' }}>
+                        <h4 style={{ margin: '0 0 4px 0', fontSize: '1rem', fontWeight: 'bold', color: '#111827', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {currentBooking.service_name}
+                        </h4>
+                        <p style={{ margin: 0, fontSize: '0.85rem', color: '#6b7280', marginBottom: '12px' }}>
+                            {new Date(currentBooking.booking_date).toLocaleDateString()}
+                        </p>
+                        
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', background: '#f3f4f6', padding: '8px 12px', borderRadius: '8px' }}>
+                            <span style={{ fontSize: '0.85rem', color: '#4b5563' }}>Amount Due:</span>
+                            <span style={{ fontSize: '1rem', fontWeight: 'bold', color: '#0c831f' }}>₹{currentBooking.price}</span>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                            <button 
+                                onClick={() => setViewLink('details')}
+                                style={{ flex: 1, padding: '8px', border: '1px solid #e5e7eb', background: '#fff', borderRadius: '8px', fontWeight: '600', color: '#374151', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', fontSize: '0.85rem' }}
+                            >
+                                <Info size={14} /> Details
+                            </button>
+                            <button 
+                                onClick={() => setViewLink('pay')}
+                                style={{ flex: 1, padding: '8px', border: 'none', background: '#0c831f', borderRadius: '8px', fontWeight: '600', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', fontSize: '0.85rem' }}
+                            >
+                                Pay Now
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
 
-            {/* Modal */}
-            {isOpen && (
+            {/* Modal for Pay or Details */}
+            {viewLink && (
                 <div style={{ position: 'fixed', inset: 0, zIndex: 3000, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-                    <div style={{ background: '#fff', width: '100%', maxWidth: '440px', borderRadius: '24px', padding: '2rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', position: 'relative', maxHeight: '80vh', overflowY: 'auto' }}>
+                    <div style={{ background: '#fff', width: '100%', maxWidth: '400px', borderRadius: '24px', padding: '2rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', position: 'relative' }}>
                         <button 
-                            onClick={() => { setIsOpen(false); setSelectedBooking(null); }} 
+                            onClick={() => setViewLink(null)} 
                             style={{ position: 'absolute', top: '20px', right: '20px', background: '#f3f4f6', border: 'none', borderRadius: '50%', padding: '6px', cursor: 'pointer' }}
                         >
                             <X size={20} />
                         </button>
 
-                        <h3 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '1.5rem', textAlign: 'center' }}>
-                            {selectedBooking ? 'Complete Payment' : 'Pending Payments'}
-                        </h3>
-
-                        {!selectedBooking ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                {pendingBookings.map(booking => (
-                                    <div key={booking.id} style={{ padding: '1rem', border: '1px solid #e5e7eb', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <div>
-                                            <div style={{ fontWeight: 'bold' }}>{booking.service_name}</div>
-                                            <div style={{ fontSize: '0.85rem', color: '#6b7280' }}>{new Date(booking.booking_date).toLocaleDateString()}</div>
-                                            <div style={{ color: '#0c831f', fontWeight: 'bold', fontSize: '0.9rem' }}>₹{booking.price}</div>
-                                        </div>
-                                        <button 
-                                            onClick={() => setSelectedBooking(booking)}
-                                            style={{ background: '#0c831f', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem' }}
-                                        >
-                                            Pay <ChevronRight size={14} />
-                                        </button>
+                        {viewLink === 'details' && (
+                            <>
+                                <h3 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '1.5rem', textAlign: 'center' }}>Bill Summary</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                    <DetailRow label="Service" value={currentBooking.service_name} />
+                                    <DetailRow label="Hospital" value={currentBooking.hospital_name || 'N/A'} />
+                                    <DetailRow label="Date" value={new Date(currentBooking.booking_date).toLocaleDateString()} />
+                                    <DetailRow label="Time" value={currentBooking.time_slot} />
+                                    <DetailRow label="Patient" value={currentBooking.patient_name} />
+                                    <DetailRow label="Phone" value={currentBooking.user_phone} />
+                                    <div style={{ borderTop: '1px dashed #e5e7eb', margin: '8px 0' }}></div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '1.1rem', fontWeight: 'bold' }}>
+                                        <span>Total Amount</span>
+                                        <span style={{ color: '#0c831f' }}>₹{currentBooking.price}</span>
                                     </div>
-                                ))}
-                            </div>
-                        ) : (
-                            // Scan & Pay View
-                            <div>
+                                </div>
                                 <button 
-                                    onClick={() => setSelectedBooking(null)}
-                                    style={{ marginBottom: '1rem', background: 'transparent', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}
+                                    onClick={() => setViewLink('pay')}
+                                    style={{ width: '100%', marginTop: '24px', padding: '12px', background: '#0c831f', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer' }}
                                 >
-                                    ← Back to list
+                                    Proceed to Pay
                                 </button>
-                                
+                            </>
+                        )}
+
+                        {viewLink === 'pay' && (
+                           <div>
+                                <h3 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '1rem', textAlign: 'center' }}>Complete Payment</h3>
                                 <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
                                     <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-                                        Pay <b>₹{selectedBooking.price}</b> for {selectedBooking.service_name}
+                                        Scan QR to pay <b>₹{currentBooking.price}</b>
                                     </p>
-                                    <div style={{ width: '220px', height: '220px', margin: '0 auto', background: '#fff', border: '1px solid #f3f4f6', borderRadius: '16px', padding: '10px' }}>
+                                    <div style={{ width: '200px', height: '200px', margin: '0 auto', background: '#fff', border: '1px solid #f3f4f6', borderRadius: '16px', padding: '10px' }}>
                                          <img src="https://suvidha-server-4u66.onrender.com/uploads/Qr.jpg" alt="QR" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={(e) => e.target.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=upi://pay?pa=suvidha@okaxis&pn=Suvidha&cu=INR"} />
                                     </div>
                                 </div>
 
                                 <div style={{ marginBottom: '2rem' }}>
-                                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: '#1f2937', marginBottom: '8px' }}>Transaction ID (UTR)</label>
+                                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: '#1f2937', marginBottom: '8px', textAlign: 'left' }}>Transaction ID (UTR)</label>
                                      <input 
                                        type="text" 
                                        placeholder="12-digit transaction ID" 
@@ -165,18 +211,33 @@ export default function PaymentReminder() {
                                 >
                                       {paying ? 'Verifying...' : 'Confirm Payment'}
                                 </button>
-                            </div>
+                                <button 
+                                    onClick={() => setViewLink('details')}
+                                    style={{ background: 'transparent', border: 'none', color: '#6b7280', marginTop: '12px', fontSize: '0.9rem', cursor: 'pointer', display: 'block', width: '100%' }}
+                                >
+                                    Back to details
+                                </button>
+                            </div> 
                         )}
                     </div>
                 </div>
             )}
             
             <style jsx>{`
-                @keyframes bounce {
-                    0%, 100% { transform: translateY(0); }
-                    50% { transform: translateY(-5px); }
+                @keyframes slideUp {
+                    from { transform: translateY(20px); opacity: 0; }
+                    to { transform: translateY(0); opacity: 1; }
                 }
             `}</style>
         </>
+    );
+}
+
+function DetailRow({ label, value }) {
+    return (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ color: '#6b7280', fontSize: '0.95rem' }}>{label}</span>
+            <span style={{ fontWeight: '600', color: '#1f2937', textAlign: 'right' }}>{value}</span>
+        </div>
     );
 }

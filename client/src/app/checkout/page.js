@@ -115,7 +115,7 @@ export default function Checkout() {
   const [transactionId, setTransactionId] = useState('');
   const [showPayment, setShowPayment] = useState(false);
   const [paymentMode, setPaymentMode] = useState('hospital'); // 'hospital' or 'online'
-  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
+  /* Removed showCompletionDialog state */
 
   const updateCartWithProvider = (index, newItem) => {
     updateCartItem(index, newItem);
@@ -140,21 +140,20 @@ export default function Checkout() {
     }
 
     if (paymentMode === 'online') {
-        setShowPayment(true); // Show payment overlay immediately
+        setShowPayment(true); 
     } else {
-        setShowCompletionDialog(true); // Show popup for hospital pay
+        // Pay at Hospital - finalize immediately
+        finalizeCheckout(); 
     }
   };
 
-  const handleCompletionConfirm = (isCompleted) => {
-    setShowCompletionDialog(false);
-    if (isCompleted) {
-        setShowPayment(true);
-    }
-  };
+  /* Removed handleCompletionConfirm */
 
   const finalizeCheckout = async () => {
-    if (!transactionId || transactionId.length < 6) {
+    const isHospitalPay = paymentMode === 'hospital';
+    const currentTxnId = isHospitalPay ? 'PAY_AT_HOSPITAL' : transactionId;
+
+    if (!isHospitalPay && (!currentTxnId || currentTxnId.length < 6)) {
         alert('Please enter a valid Transaction ID');
         return;
     }
@@ -187,7 +186,7 @@ export default function Checkout() {
                     serviceName: item.name,
                     price: item.price,
                     hospitalId: item.hospitalId,
-                    transactionId: transactionId
+                    transactionId: currentTxnId
                 };
 
                 requests.push(
@@ -512,31 +511,6 @@ export default function Checkout() {
                   >
                         {loading ? 'Verifying...' : 'Book Appointment'}
                   </button>
-              </div>
-          </div>
-      )}
-
-      {showCompletionDialog && (
-          <div style={{ position: 'fixed', inset: 0, zIndex: 4000, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-              <div style={{ background: '#fff', width: '100%', maxWidth: '400px', borderRadius: '24px', padding: '2rem', textAlign: 'center' }}>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: '800', marginBottom: '1rem' }}>Confirmation</h3>
-                  <p style={{ color: '#64748b', marginBottom: '2rem', lineHeight: '1.5' }}>
-                      Is your service that you booked completed?
-                  </p>
-                  <div style={{ display: 'flex', gap: '12px' }}>
-                      <button 
-                        onClick={() => handleCompletionConfirm(false)}
-                        style={{ flex: 1, padding: '0.8rem', borderRadius: '12px', border: '1px solid #e5e7eb', background: '#fff', fontWeight: '700', cursor: 'pointer' }}
-                      >
-                          No
-                      </button>
-                      <button 
-                        onClick={() => handleCompletionConfirm(true)}
-                        style={{ flex: 1, padding: '0.8rem', borderRadius: '12px', border: 'none', background: '#0c831f', color: '#fff', fontWeight: '700', cursor: 'pointer' }}
-                      >
-                          Yes
-                      </button>
-                  </div>
               </div>
           </div>
       )}

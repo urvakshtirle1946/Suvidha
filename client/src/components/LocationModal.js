@@ -72,37 +72,45 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
 
         {/* Popular Cities Section */}
         <div className="text-center">
-          <h3 className="popular-cities-title">Popular Cities</h3>
+          <h3 className="popular-cities-title">
+             {searchTerm ? 'Search Results' : 'Popular Cities'}
+          </h3>
           
           <div className="cities-grid">
-            {POPULAR_CITIES.map((city) => (
-              <button
-                key={city.name}
-                onClick={() => {
-                  if (city.name !== 'Indore') {
-                     alert('Coming Soon to ' + city.name + '!');
-                     return;
-                  }
-                  onSelectLocation(city.name + ', India');
-                  onClose();
-                }}
-                style={{ 
-                   opacity: city.name === 'Indore' ? 1 : 0.6,
-                   border: city.name === 'Indore' ? '1px solid #0c831f' : '1px solid #e5e7eb'
-                }}
-                className="city-item"
-              >
-                {/* Icon Placeholder */}
-                <div className="city-icon-box">
-                   {city.name !== 'Indore' && <div style={{ position: 'absolute', top: 5, right: 5 }}><Lock size={12} color="#9ca3af"/></div>}
-                   <Building2 className="city-icon" size={24} color={city.name === 'Indore' ? '#0c831f' : "#9ca3af"} />
+            {POPULAR_CITIES.filter(city => city.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 ? (
+                <div style={{ gridColumn: '1 / -1', color: '#6b7280', padding: '2rem' }}>
+                    No cities found matching "{searchTerm}"
                 </div>
-                <span className="city-name" style={{ fontWeight: city.name === 'Indore' ? 'bold' : 'normal', color: city.name === 'Indore' ? '#0c831f' : 'inherit' }}>
-                  {city.name}
-                </span>
-                {city.name === 'Indore' && <div style={{ fontSize: '0.7rem', color: '#0c831f', background: '#e6f4ea', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>Service Available</div>}
-              </button>
-            ))}
+            ) : (
+                POPULAR_CITIES.filter(city => city.name.toLowerCase().includes(searchTerm.toLowerCase())).map((city) => (
+                <button
+                    key={city.name}
+                    onClick={() => {
+                    if (city.name !== 'Indore') {
+                        alert('Coming Soon to ' + city.name + '!');
+                        return;
+                    }
+                    onSelectLocation(city.name + ', India');
+                    onClose();
+                    }}
+                    style={{ 
+                    opacity: city.name === 'Indore' ? 1 : 0.6,
+                    border: city.name === 'Indore' ? '1px solid #0c831f' : '1px solid #e5e7eb'
+                    }}
+                    className="city-item"
+                >
+                    {/* Icon Placeholder */}
+                    <div className="city-icon-box">
+                    {city.name !== 'Indore' && <div style={{ position: 'absolute', top: 5, right: 5 }}><Lock size={12} color="#9ca3af"/></div>}
+                    <Building2 className="city-icon" size={24} color={city.name === 'Indore' ? '#0c831f' : "#9ca3af"} />
+                    </div>
+                    <span className="city-name" style={{ fontWeight: city.name === 'Indore' ? 'bold' : 'normal', color: city.name === 'Indore' ? '#0c831f' : 'inherit' }}>
+                    {city.name}
+                    </span>
+                    {city.name === 'Indore' && <div style={{ fontSize: '0.7rem', color: '#0c831f', background: '#e6f4ea', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>Service Available</div>}
+                </button>
+                ))
+            )}
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>

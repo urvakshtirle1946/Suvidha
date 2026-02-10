@@ -32,6 +32,42 @@ export default function HomeClient({ hospitals, popularServices }) {
   const [selectedHospitalForProfile, setSelectedHospitalForProfile] = useState(null);
   const sliderRef = useRef(null);
 
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const OFFERS = [
+      {
+          id: 1,
+          title: "Healthcare, simplified.",
+          subtitle: "Lab Tests • Medicines • Nursing • Doctor Visits",
+          bg: "#111827", // Black for Uber look
+          btnText: "Book Now",
+          btnColor: "#000"
+      },
+      {
+          id: 2,
+          title: "50% OFF Full Body Checkups",
+          subtitle: "Includes 80+ Tests. Home Collection Available.",
+          bg: "#166534", // Dark Green
+          btnText: "View Package",
+          btnColor: "#166534"
+      },
+      {
+          id: 3,
+          title: "Pharmacy: Flat 20% OFF",
+          subtitle: "On all prescription medicines. Fast delivery.",
+          bg: "#9d174d", // Dark Pink
+          btnText: "Order Now",
+          btnColor: "#9d174d"
+      }
+  ];
+
+  useEffect(() => {
+      const timer = setInterval(() => {
+          setCurrentSlide((prev) => (prev + 1) % OFFERS.length);
+      }, 5000);
+      return () => clearInterval(timer);
+  }, []);
+
   const getGreeting = () => {
       const hour = new Date().getHours();
       if (hour < 12) return 'Good morning';
@@ -156,6 +192,64 @@ export default function HomeClient({ hospitals, popularServices }) {
                     </div>
                 </Link>
             ))}
+        </div>
+
+        {/* Re-added Offers Slider */}
+        <div style={{
+            position: 'relative',
+            borderRadius: '16px',
+            marginBottom: '3rem',
+            overflow: 'hidden',
+            boxShadow: '0 4px 20px rgba(0,0,0, 0.08)',
+            height: '240px' // Slightly smaller height
+        }}>
+            {OFFERS.map((offer, index) => (
+                <div key={offer.id} style={{
+                    position: 'absolute',
+                    top: 0, left: 0, width: '100%', height: '100%',
+                    background: offer.bg,
+                    padding: '2rem',
+                    color: '#fff',
+                    opacity: currentSlide === index ? 1 : 0,
+                    transition: 'opacity 0.6s ease-in-out',
+                    zIndex: currentSlide === index ? 2 : 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center'
+                }}>
+                    <h1 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', maxWidth: '600px', marginBottom: '0.5rem', color: '#fff', lineHeight: '1.2' }}>
+                        {offer.title}
+                    </h1>
+                    <p style={{ fontSize: 'clamp(0.9rem, 3vw, 1.1rem)', opacity: 0.9, marginBottom: '1.5rem', maxWidth: '500px' }}>
+                        {offer.subtitle}
+                    </p>
+                </div>
+            ))}
+
+            {/* Dots Indicators */}
+            <div style={{
+                position: 'absolute',
+                bottom: '20px',
+                left: '24px', // Align left for cleaner look
+                display: 'flex',
+                gap: '8px',
+                zIndex: 10
+            }}>
+                {OFFERS.map((_, index) => (
+                    <div
+                        key={index}
+                        onClick={() => setCurrentSlide(index)}
+                        style={{
+                            width: '8px',
+                            height: '8px',
+                            borderRadius: '50%',
+                            background: currentSlide === index ? '#fff' : 'rgba(255,255,255,0.3)',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s'
+                        }}
+                    />
+                ))}
+            </div>
         </div>
 
 

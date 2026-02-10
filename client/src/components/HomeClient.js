@@ -102,7 +102,7 @@ export default function HomeClient({ hospitals, popularServices }) {
   return (
     <main style={{ paddingBottom: '100px', background: '#fff', minHeight: '100vh', fontFamily: 'var(--font-outfit)' }}>
       
-      <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 1.5rem)', maxWidth: '800px' }}>
+      <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 1.5rem)', maxWidth: '1000px' }}>
 
 
         {/* Re-added Offers Slider - Moved to Top */}
@@ -148,7 +148,8 @@ export default function HomeClient({ hospitals, popularServices }) {
             marginBottom: '2.5rem',
             boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
             borderRadius: '50px',
-            background: '#f3f4f6',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
             zIndex: 50 // Ensure it sits above other content
         }}>
             <div style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)' }}>
@@ -181,15 +182,16 @@ export default function HomeClient({ hospitals, popularServices }) {
             {showSuggestions && suggestions.length > 0 && (
                 <div style={{
                     position: 'absolute',
-                    top: '120%',
+                    top: '125%', // Increased spacing
                     left: 0,
                     right: 0,
                     background: '#fff',
                     borderRadius: '16px',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
                     padding: '8px 0',
                     overflow: 'hidden',
-                    zIndex: 100
+                    zIndex: 100,
+                    border: '1px solid #f3f4f6'
                 }}>
                     {suggestions.slice(0, 6).map((item, idx) => (
                         <div 
@@ -204,10 +206,10 @@ export default function HomeClient({ hospitals, popularServices }) {
                             }}
                             onMouseDown={(e) => e.preventDefault()} // Prevent blur on click
                             style={{
-                                padding: '12px 20px',
+                                padding: '14px 24px',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '12px',
+                                gap: '16px',
                                 cursor: 'pointer',
                                 borderBottom: idx !== suggestions.length - 1 ? '1px solid #f3f4f6' : 'none',
                                 transition: 'background 0.1s'
@@ -217,7 +219,7 @@ export default function HomeClient({ hospitals, popularServices }) {
                         >
                             <div style={{ 
                                 background: '#f3f4f6', 
-                                padding: '8px', 
+                                padding: '10px', 
                                 borderRadius: '50%', 
                                 display: 'flex', 
                                 alignItems: 'center', 
@@ -226,12 +228,12 @@ export default function HomeClient({ hospitals, popularServices }) {
                                 {item.type === 'category' ? (
                                     <div style={{ transform: 'scale(0.8)' }}>{item.icon}</div>
                                 ) : (
-                                    <MapPin size={18} color="#6b7280" />
+                                    <MapPin size={20} color="#6b7280" />
                                 )}
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <span style={{ fontWeight: '500', color: '#1f2937', fontSize: '0.95rem' }}>{item.name}</span>
-                                <span style={{ fontSize: '0.8rem', color: '#9ca3af' }}>
+                                <span style={{ fontWeight: '600', color: '#1f2937', fontSize: '1rem' }}>{item.name}</span>
+                                <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
                                     {item.type === 'category' ? 'Category' : item.location}
                                 </span>
                             </div>

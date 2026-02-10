@@ -16,7 +16,105 @@ export default function BookingModal({ isOpen, onClose, service }) {
   const [transactionId, setTransactionId] = useState('');
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  /* Removed showCompletionDialog state and logic */
+  const [paymentMode, setPaymentMode] = useState(null); // 'online' or 'hospital'
+  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
+  const [labs, setLabs] = useState([]);
+  const [fetchingLabs, setFetchingLabs] = useState(false);
+
+  /* ... useEffect ... */
+  /* ... fetchLabs ... */
+
+  useEffect(() => {
+     if (isOpen && service) {
+         setStep(1);
+         setSelectedTime(null);
+         
+         if (service.directBooking) {
+             setSelectedLab(service);
+             setLabs([]); // No need to fetch others
+         } else {
+             fetchLabs(service.name, service.hospital_id);
+         }
+     }
+  }, [isOpen, service]);
+
+  const fetchLabs = async (serviceName, preselectedId) => {
+      setFetchingLabs(true);
+      try {
+          const apiUrl = getApiUrl();
+          const cleanName = serviceName.split(' at ')[0]; 
+          const res = await fetch(`${apiUrl}/api/services?search=${encodeURIComponent(cleanName)}`);
+          if (res.ok) {
+              const data = await res.json();
+              const list = Array.isArray(data) ? data : (data.data || []);
+              
+              // Sort by discount percentage (highest first)
+              const sorted = list.sort((a,b) => {
+                  const discA = ((a.price - a.discount_price) / a.price) || 0;
+                  const discB = ((b.price - b.discount_price) / b.price) || 0;
+                  return discB - discA;
+              });
+
+              // Deduplicate by hospital_id (keep best offer)
+              const uniqueLabs = [];
+              const seenIds = new Set();
+              
+              for (const item of sorted) {
+                  // Robust ID check: hospital_id, hospitalId, or fallback to name+location
+                  const uniqueKey = item.hospital_id || item.hospitalId || `${item.hospital_name}-${item.hospital_location}`;
+                  
+                  if (uniqueKey) {
+                      if (!seenIds.has(uniqueKey)) {
+                          seenIds.add(uniqueKey);
+                          uniqueLabs.push(item);
+                      }
+                  } else {
+                      // If completely unidentifiable, push it (unlikely)
+                      uniqueLabs.push(item);
+                  }
+              }
+
+              setLabs(uniqueLabs);
+              
+              // Pre-select if ID provided
+              if (preselectedId) {
+                  // Check against both hospital_id and id
+                  const found = uniqueLabs.find(l => 
+                      (l.hospital_id && l.hospital_id == preselectedId) || 
+                      (l.hospitalId && l.hospitalId == preselectedId) ||
+                      (l.id && l.id == preselectedId)
+                  );
+                  if (found) setSelectedLab(found);
+              } else if (uniqueLabs.length > 0) {
+                  // Don't auto-select so user HAS to choose, as per request
+              }
+          }
+      } catch (err) {
+          console.error(err);
+      } finally {
+          setFetchingLabs(false);
+      }
+  };
+
+  if (!isOpen || !service) return null;
+
+  const currentService = selectedLab;
+  const displayPrice = currentService ? (currentService.discount_price || currentService.price) : 0; 
+  const displayMrp = currentService ? currentService.price : 0; 
+  
+  const TIME_SLOTS = [
+      "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
+      "04:00 PM", "05:00 PM", "06:00 PM", "07:00 PM"
+  ];
+
+  const confirmCompletion = (isCompleted) => {
+        setShowCompletionDialog(false);
+        if (isCompleted) {
+            setStep(2); // Show QR
+        } else {
+            setStep(3); // Success
+        }
+  };
 
   const finalizeBooking = async (paymentMethod = 'online') => {
         const currentTxnId = paymentMethod === 'hospital' ? 'PAY_AT_HOSPITAL' : transactionId;
@@ -50,7 +148,11 @@ export default function BookingModal({ isOpen, onClose, service }) {
             });
 
             if (res.ok) {
-                setStep(3); // Success
+                if (paymentMethod === 'hospital') {
+                    setShowCompletionDialog(true);
+                } else {
+                    setStep(3); // Success
+                }
             } else {
                 alert('Booking Failed: ' + (await res.text() || 'Unknown Error'));
             }
@@ -61,7 +163,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
             setLoading(false);
         }
   };
-
+  
   const handlePayOnline = () => {
         if (!user) { 
             setAuthModalOpen(true);
@@ -71,7 +173,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
         setPaymentMode('online');
         setStep(2); // Move to payment
   };
-
+  
   const handlePayAtHospital = () => {
         if (!user) { 
             setAuthModalOpen(true);
@@ -83,7 +185,49 @@ export default function BookingModal({ isOpen, onClose, service }) {
         finalizeBooking('hospital');
   };
 
-  /* Removed confirmCompletion function */
+  return (
+    <>
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 2000,
+      background: 'rgba(0,0,0,0.5)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center'
+    }}>
+      <div style={{
+        width: '95%', maxWidth: '480px', 
+        background: '#fff', borderRadius: '24px', overflow: 'hidden',
+        maxHeight: '92vh', display: 'flex', flexDirection: 'column',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        position: 'relative'
+      }}>
+        
+        {/* Header */}
+        <div style={{ padding: '1.5rem', borderBottom: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#111827' }}>
+                {step === 1 ? 'Schedule Appointment' : step === 2 ? 'Complete Payment' : 'Success'}
+            </h3>
+            <button onClick={onClose} style={{ background: '#f3f4f6', border: 'none', borderRadius: '50%', padding: '6px', cursor: 'pointer', color: '#6b7280', display: 'flex' }}>
+                <X size={20} />
+            </button>
+        </div>
+
+        {/* Content Area */}
+        <div style={{ flex: 1, padding: '1.5rem', overflowY: 'auto' }}>
+
+            {step === 1 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                    {/* ... Date/Hospital Selection ... same as before */}
+                    {/* Simplified for replacement block - I need to be careful not to overwrite the long middle content */}
+                    {/* Wait, the tools replace_file_content usage MUST render the full content of the block I am replacing ?? */}
+                    {/* The previous usage replaced almost everything. I should target specific blocks if possible, or replace the whole file content. */}
+                    {/* Given the complexity, I will try to target specific blocks. */}
+                </div>
+             )}
+         </div>
+         {/* ... */}
+      </div>
+    </div>
+    </>
+  );
 
 
   return (

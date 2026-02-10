@@ -39,9 +39,22 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
         {/* Close Button */}
         <button 
           onClick={onClose}
-          className="modal-close"
+          style={{
+            position: 'absolute',
+            right: '20px',
+            top: '20px',
+            background: '#f3f4f6',
+            border: 'none',
+            borderRadius: '50%',
+            width: '32px',
+            height: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer'
+          }}
         >
-          <X size={20} color="#6b7280" />
+          <X size={20} color="#000" />
         </button>
 
         {/* Search Bar */}

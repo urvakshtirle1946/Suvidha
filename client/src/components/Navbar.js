@@ -31,7 +31,7 @@ export default function Navbar() {
       }}>
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '100%', maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }}>
               {/* Mobile Menu Button */}
               <button 
                 className="show-on-mobile"
@@ -56,15 +56,15 @@ export default function Navbar() {
                    <div 
                       onClick={() => setLocationModalOpen(true)}
                       style={{ 
-                          display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer',
-                          padding: '8px 16px', borderRadius: '50px', background: '#f3f4f6', 
+                          display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer',
+                          padding: '10px 20px', borderRadius: '50px', background: '#f3f4f6', 
                           transition: 'background 0.2s'
                       }}
                       onMouseEnter={(e) => e.currentTarget.style.background = '#e5e7eb'}
                       onMouseLeave={(e) => e.currentTarget.style.background = '#f3f4f6'}
                    >
-                        <MapPin size={16} color="#000" />
-                        <span style={{ fontWeight: '500', fontSize: '0.9rem', color: '#000', maxWidth: '160px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <MapPin size={18} color="#000" />
+                        <span style={{ fontWeight: '500', fontSize: '0.95rem', color: '#000', maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {location || 'Select Location'}
                         </span>
                         <ChevronDown size={14} color="#000" />
@@ -74,17 +74,17 @@ export default function Navbar() {
 
 
           {/* Right Actions */}
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
               
               {/* Desktop Nav Links (Minimal) */}
-              <div className="hide-on-mobile" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', marginRight: '1rem' }}>
+              <div className="hide-on-mobile" style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginRight: '1rem' }}>
                    {!user ? (
                       <button 
                           onClick={() => setAuthModalOpen(true)}
                           style={{ 
                               background: '#000', color: '#fff', border: 'none', 
-                              fontWeight: '500', fontSize: '0.9rem', cursor: 'pointer',
-                              padding: '8px 20px', borderRadius: '50px'
+                              fontWeight: '500', fontSize: '0.95rem', cursor: 'pointer',
+                              padding: '10px 24px', borderRadius: '50px'
                           }}
                       >
                           Log in
@@ -99,16 +99,16 @@ export default function Navbar() {
                   onClick={() => setIsCartOpen(true)}
                   style={{ 
                       borderRadius: '50px', display: 'flex', alignItems: 'center', gap: '8px', 
-                      padding: '8px 16px', background: '#000', color: '#fff', border: 'none', cursor: 'pointer'
+                      padding: '10px 20px', background: '#000', color: '#fff', border: 'none', cursor: 'pointer'
                   }}
               >
-                  <ShoppingCart size={18} /> 
-                  <span className="hide-on-mobile" style={{ fontSize: '0.9rem', fontWeight: '500' }}>Cart</span>
+                  <ShoppingCart size={20} /> 
+                  <span className="hide-on-mobile" style={{ fontSize: '0.95rem', fontWeight: '500' }}>Cart</span>
                   {cartCount > 0 && (
                       <span style={{ 
                           background: '#fff', color: '#000', borderRadius: '50%', 
-                          width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: '0.75rem', fontWeight: 'bold'
+                          width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: '0.8rem', fontWeight: 'bold'
                       }}>
                           {cartCount}
                       </span>

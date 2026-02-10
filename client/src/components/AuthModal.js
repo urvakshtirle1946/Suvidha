@@ -18,6 +18,8 @@ export default function AuthModal({ isOpen, onClose }) {
         password: ''
     });
 
+    const [googlePendingToken, setGooglePendingToken] = useState(null);
+
     if (!isOpen) return null;
 
     const handleChange = (e) => {
@@ -34,15 +36,52 @@ export default function AuthModal({ isOpen, onClose }) {
                 body: JSON.stringify({ token: credentialResponse.credential })
             });
             const data = await res.json();
+            
             if (res.ok && data.success) {
                 login({ ...data.user, token: data.token });
                 onClose();
+            } else if (data.requiresPhone) {
+                // User is new and needs to provide phone number
+                setGooglePendingToken(credentialResponse.credential);
+                setActiveTab('google-phone');
+                setFormData({ ...formData, phone: '' }); // Reset phone field
+                alert(data.message); // "Phone number is required..."
             } else {
                 alert(data.message || 'Google Login Failed');
             }
         } catch (err) {
             console.error('Google Auth Error:', err);
             alert('Google Login Failed');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGooglePhoneSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        const apiUrl = getApiUrl();
+        
+        try {
+            const res = await fetch(`${apiUrl}/api/auth/google-login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    token: googlePendingToken, 
+                    phone: formData.phone 
+                })
+            });
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                login({ ...data.user, token: data.token });
+                onClose();
+            } else {
+                alert(data.message || 'Registration Failed');
+            }
+        } catch (err) {
+            console.error('Google Phone Submit Error:', err);
+            alert('Failed to complete registration');
         } finally {
             setLoading(false);
         }
@@ -118,63 +157,73 @@ export default function AuthModal({ isOpen, onClose }) {
 
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                     <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>
-                        {activeTab === 'login' ? 'Welcome Back' : 'Create Account'}
+                        {activeTab === 'login' ? 'Welcome Back' : activeTab === 'register' ? 'Create Account' : 'Complete Profile'}
                     </h2>
                     <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>
-                        {activeTab === 'login' ? 'Sign in to access your bookings' : 'Join Zelp for premium healthcare'}
+                        {activeTab === 'login' ? 'Sign in to access your bookings' : 
+                         activeTab === 'register' ? 'Join Zelp for premium healthcare' : 
+                         'Please enter your phone number to continue'}
                     </p>
                 </div>
 
-                <div style={{ 
-                    display: 'flex', background: '#f3f4f6', padding: '4px', borderRadius: '12px', marginBottom: '1.5rem' 
-                }}>
-                    <button 
-                        onClick={() => setActiveTab('login')}
-                        style={{
-                            flex: 1, padding: '8px', border: 'none', borderRadius: '8px',
-                            background: activeTab === 'login' ? '#fff' : 'transparent',
-                            color: activeTab === 'login' ? '#111827' : '#6b7280',
-                            fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s',
-                            boxShadow: activeTab === 'login' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'
-                        }}
-                    >
-                        Login
-                    </button>
-                    <button 
-                        onClick={() => setActiveTab('register')}
-                        style={{
-                            flex: 1, padding: '8px', border: 'none', borderRadius: '8px',
-                            background: activeTab === 'register' ? '#fff' : 'transparent',
-                            color: activeTab === 'register' ? '#111827' : '#6b7280',
-                            fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s',
-                            boxShadow: activeTab === 'register' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'
-                        }}
-                    >
-                        Register
-                    </button>
-                </div>
+                {activeTab !== 'google-phone' && (
+                    <div style={{ 
+                        display: 'flex', background: '#f3f4f6', padding: '4px', borderRadius: '12px', marginBottom: '1.5rem' 
+                    }}>
+                        <button 
+                            onClick={() => setActiveTab('login')}
+                            style={{
+                                flex: 1, padding: '8px', border: 'none', borderRadius: '8px',
+                                background: activeTab === 'login' ? '#fff' : 'transparent',
+                                color: activeTab === 'login' ? '#111827' : '#6b7280',
+                                fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s',
+                                boxShadow: activeTab === 'login' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'
+                            }}
+                        >
+                            Login
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('register')}
+                            style={{
+                                flex: 1, padding: '8px', border: 'none', borderRadius: '8px',
+                                background: activeTab === 'register' ? '#fff' : 'transparent',
+                                color: activeTab === 'register' ? '#111827' : '#6b7280',
+                                fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s',
+                                boxShadow: activeTab === 'register' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'
+                            }}
+                        >
+                            Register
+                        </button>
+                    </div>
+                )}
 
-                {/* Google Login Button */}
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-                    <GoogleLogin
-                        onSuccess={handleGoogleSuccess}
-                        onError={() => {
-                            console.log('Login Failed');
-                            alert('Google Login Failed');
-                        }}
-                        theme="filled_blue"
-                        shape="pill"
-                        text={activeTab === 'login' ? "signin_with" : "signup_with"}
-                    />
-                </div>
+                {/* Google Login Button - Hide when asking for phone */}
+                {activeTab !== 'google-phone' && (
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onError={() => {
+                                console.log('Login Failed');
+                                alert('Google Login Failed');
+                            }}
+                            theme="filled_blue"
+                            shape="pill"
+                            text={activeTab === 'login' ? "signin_with" : "signup_with"}
+                        />
+                    </div>
+                )}
 
-                <div style={{ display: 'flex', alignItems: 'center', margin: '0 0 1.5rem 0', color: '#9ca3af', fontSize: '0.8rem' }}>
-                    <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
-                    <span style={{ padding: '0 10px' }}>OR</span>
-                    <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
-                </div>
+                {activeTab !== 'google-phone' && (
+                    <div style={{ display: 'flex', alignItems: 'center', margin: '0 0 1.5rem 0', color: '#9ca3af', fontSize: '0.8rem' }}>
+                        <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
+                        <span style={{ padding: '0 10px' }}>OR</span>
+                        <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
+                    </div>
+                )}
 
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <form onSubmit={activeTab === 'google-phone' ? handleGooglePhoneSubmit : handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    
+                    {/* Normal Register Fields */}
                     {activeTab === 'register' && (
                         <div style={{ position: 'relative' }}>
                             <User size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
@@ -189,19 +238,22 @@ export default function AuthModal({ isOpen, onClose }) {
                         </div>
                     )}
 
-                    <div style={{ position: 'relative' }}>
-                        <Mail size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
-                        <input 
-                            type="email" name="email" placeholder="Email Address" required
-                            value={formData.email} onChange={handleChange}
-                            style={{
-                                width: '100%', padding: '12px 12px 12px 40px', borderRadius: '12px',
-                                border: '1px solid #e5e7eb', outline: 'none', fontSize: '0.95rem'
-                            }}
-                        />
-                    </div>
+                    {activeTab !== 'google-phone' && (
+                        <div style={{ position: 'relative' }}>
+                            <Mail size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+                            <input 
+                                type="email" name="email" placeholder="Email Address" required
+                                value={formData.email} onChange={handleChange}
+                                style={{
+                                    width: '100%', padding: '12px 12px 12px 40px', borderRadius: '12px',
+                                    border: '1px solid #e5e7eb', outline: 'none', fontSize: '0.95rem'
+                                }}
+                            />
+                        </div>
+                    )}
 
-                    {activeTab === 'register' && (
+                    {/* Phone Field - Show for Register OR Google Phone Step */}
+                    {(activeTab === 'register' || activeTab === 'google-phone') && (
                         <div style={{ position: 'relative' }}>
                             <Phone size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
                             <input 
@@ -215,17 +267,19 @@ export default function AuthModal({ isOpen, onClose }) {
                         </div>
                     )}
 
-                    <div style={{ position: 'relative' }}>
-                        <Lock size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
-                        <input 
-                            type="password" name="password" placeholder="Password" required
-                            value={formData.password} onChange={handleChange}
-                            style={{
-                                width: '100%', padding: '12px 12px 12px 40px', borderRadius: '12px',
-                                border: '1px solid #e5e7eb', outline: 'none', fontSize: '0.95rem'
-                            }}
-                        />
-                    </div>
+                    {activeTab !== 'google-phone' && (
+                        <div style={{ position: 'relative' }}>
+                            <Lock size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+                            <input 
+                                type="password" name="password" placeholder="Password" required
+                                value={formData.password} onChange={handleChange}
+                                style={{
+                                    width: '100%', padding: '12px 12px 12px 40px', borderRadius: '12px',
+                                    border: '1px solid #e5e7eb', outline: 'none', fontSize: '0.95rem'
+                                }}
+                            />
+                        </div>
+                    )}
 
                     <button 
                         type="submit" disabled={loading}
@@ -235,20 +289,36 @@ export default function AuthModal({ isOpen, onClose }) {
                             cursor: 'pointer', marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
                         }}
                     >
-                        {loading ? 'Processing...' : (activeTab === 'login' ? 'Sign In' : 'Create Account')}
+                        {loading ? 'Processing...' : (activeTab === 'login' ? 'Sign In' : activeTab === 'register' ? 'Create Account' : 'Complete Registration')}
                         {!loading && <ArrowRight size={18} />}
                     </button>
                 </form>
 
-                <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem', color: '#6b7280' }}>
-                    {activeTab === 'login' ? "Don't have an account? " : "Already have an account? "}
-                    <span 
-                        onClick={() => setActiveTab(activeTab === 'login' ? 'register' : 'login')}
-                        style={{ color: '#0c831f', fontWeight: '600', cursor: 'pointer' }}
-                    >
-                        {activeTab === 'login' ? 'Register Now' : 'Login'}
-                    </span>
-                </p>
+                {activeTab !== 'google-phone' && (
+                    <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem', color: '#6b7280' }}>
+                        {activeTab === 'login' ? "Don't have an account? " : "Already have an account? "}
+                        <span 
+                            onClick={() => setActiveTab(activeTab === 'login' ? 'register' : 'login')}
+                            style={{ color: '#0c831f', fontWeight: '600', cursor: 'pointer' }}
+                        >
+                            {activeTab === 'login' ? 'Register Now' : 'Login'}
+                        </span>
+                    </p>
+                )}
+                
+                {activeTab === 'google-phone' && (
+                     <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem', color: '#6b7280' }}>
+                        <span 
+                            onClick={() => {
+                                setActiveTab('login');
+                                setGooglePendingToken(null);
+                            }}
+                            style={{ color: '#6b7280', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}
+                        >
+                           <X size={14}/> Cancel
+                        </span>
+                    </p>
+                )}
             </div>
             <style jsx>{`
                 @keyframes modalSlideUp {

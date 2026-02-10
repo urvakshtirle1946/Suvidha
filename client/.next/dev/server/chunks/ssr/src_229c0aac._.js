@@ -692,6 +692,7 @@ function AuthModal({ isOpen, onClose }) {
         phone: '',
         password: ''
     });
+    const [googlePendingToken, setGooglePendingToken] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     if (!isOpen) return null;
     const handleChange = (e)=>{
         setFormData({
@@ -719,12 +720,53 @@ function AuthModal({ isOpen, onClose }) {
                     token: data.token
                 });
                 onClose();
+            } else if (data.requiresPhone) {
+                // User is new and needs to provide phone number
+                setGooglePendingToken(credentialResponse.credential);
+                setActiveTab('google-phone');
+                setFormData({
+                    ...formData,
+                    phone: ''
+                }); // Reset phone field
+                alert(data.message); // "Phone number is required..."
             } else {
                 alert(data.message || 'Google Login Failed');
             }
         } catch (err) {
             console.error('Google Auth Error:', err);
             alert('Google Login Failed');
+        } finally{
+            setLoading(false);
+        }
+    };
+    const handleGooglePhoneSubmit = async (e)=>{
+        e.preventDefault();
+        setLoading(true);
+        const apiUrl = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getApiUrl"])();
+        try {
+            const res = await fetch(`${apiUrl}/api/auth/google-login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    token: googlePendingToken,
+                    phone: formData.phone
+                })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                login({
+                    ...data.user,
+                    token: data.token
+                });
+                onClose();
+            } else {
+                alert(data.message || 'Registration Failed');
+            }
+        } catch (err) {
+            console.error('Google Phone Submit Error:', err);
+            alert('Failed to complete registration');
         } finally{
             setLoading(false);
         }
@@ -819,12 +861,12 @@ function AuthModal({ isOpen, onClose }) {
                             size: 18
                         }, void 0, false, {
                             fileName: "[project]/src/components/AuthModal.js",
-                            lineNumber: 116,
+                            lineNumber: 155,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/AuthModal.js",
-                        lineNumber: 107,
+                        lineNumber: 146,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -842,10 +884,10 @@ function AuthModal({ isOpen, onClose }) {
                                     marginBottom: '0.5rem'
                                 },
                                 className: "jsx-74ae01b9c3aeb5aa",
-                                children: activeTab === 'login' ? 'Welcome Back' : 'Create Account'
+                                children: activeTab === 'login' ? 'Welcome Back' : activeTab === 'register' ? 'Create Account' : 'Complete Profile'
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 120,
+                                lineNumber: 159,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -854,19 +896,19 @@ function AuthModal({ isOpen, onClose }) {
                                     fontSize: '0.9rem'
                                 },
                                 className: "jsx-74ae01b9c3aeb5aa",
-                                children: activeTab === 'login' ? 'Sign in to access your bookings' : 'Join Zelp for premium healthcare'
+                                children: activeTab === 'login' ? 'Sign in to access your bookings' : activeTab === 'register' ? 'Join Zelp for premium healthcare' : 'Please enter your phone number to continue'
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 123,
+                                lineNumber: 162,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/AuthModal.js",
-                        lineNumber: 119,
+                        lineNumber: 158,
                         columnNumber: 17
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    activeTab !== 'google-phone' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         style: {
                             display: 'flex',
                             background: '#f3f4f6',
@@ -894,8 +936,8 @@ function AuthModal({ isOpen, onClose }) {
                                 children: "Login"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 131,
-                                columnNumber: 21
+                                lineNumber: 173,
+                                columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 onClick: ()=>setActiveTab('register'),
@@ -915,16 +957,16 @@ function AuthModal({ isOpen, onClose }) {
                                 children: "Register"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 143,
-                                columnNumber: 21
+                                lineNumber: 185,
+                                columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/AuthModal.js",
-                        lineNumber: 128,
-                        columnNumber: 17
+                        lineNumber: 170,
+                        columnNumber: 21
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    activeTab !== 'google-phone' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         style: {
                             display: 'flex',
                             justifyContent: 'center',
@@ -942,15 +984,15 @@ function AuthModal({ isOpen, onClose }) {
                             text: activeTab === 'login' ? "signin_with" : "signup_with"
                         }, void 0, false, {
                             fileName: "[project]/src/components/AuthModal.js",
-                            lineNumber: 159,
-                            columnNumber: 21
+                            lineNumber: 203,
+                            columnNumber: 25
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/AuthModal.js",
-                        lineNumber: 158,
-                        columnNumber: 17
+                        lineNumber: 202,
+                        columnNumber: 21
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    activeTab !== 'google-phone' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         style: {
                             display: 'flex',
                             alignItems: 'center',
@@ -969,8 +1011,8 @@ function AuthModal({ isOpen, onClose }) {
                                 className: "jsx-74ae01b9c3aeb5aa"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 172,
-                                columnNumber: 21
+                                lineNumber: 218,
+                                columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 style: {
@@ -980,8 +1022,8 @@ function AuthModal({ isOpen, onClose }) {
                                 children: "OR"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 173,
-                                columnNumber: 21
+                                lineNumber: 219,
+                                columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
@@ -992,17 +1034,17 @@ function AuthModal({ isOpen, onClose }) {
                                 className: "jsx-74ae01b9c3aeb5aa"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 174,
-                                columnNumber: 21
+                                lineNumber: 220,
+                                columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/AuthModal.js",
-                        lineNumber: 171,
-                        columnNumber: 17
+                        lineNumber: 217,
+                        columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
-                        onSubmit: handleSubmit,
+                        onSubmit: activeTab === 'google-phone' ? handleGooglePhoneSubmit : handleSubmit,
                         style: {
                             display: 'flex',
                             flexDirection: 'column',
@@ -1027,7 +1069,7 @@ function AuthModal({ isOpen, onClose }) {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 180,
+                                        lineNumber: 229,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1048,16 +1090,16 @@ function AuthModal({ isOpen, onClose }) {
                                         className: "jsx-74ae01b9c3aeb5aa"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 181,
+                                        lineNumber: 230,
                                         columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 179,
+                                lineNumber: 228,
                                 columnNumber: 25
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            activeTab !== 'google-phone' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
                                     position: 'relative'
                                 },
@@ -1074,8 +1116,8 @@ function AuthModal({ isOpen, onClose }) {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 193,
-                                        columnNumber: 25
+                                        lineNumber: 243,
+                                        columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                         type: "email",
@@ -1095,16 +1137,16 @@ function AuthModal({ isOpen, onClose }) {
                                         className: "jsx-74ae01b9c3aeb5aa"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 194,
-                                        columnNumber: 25
+                                        lineNumber: 244,
+                                        columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 192,
-                                columnNumber: 21
+                                lineNumber: 242,
+                                columnNumber: 25
                             }, this),
-                            activeTab === 'register' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            (activeTab === 'register' || activeTab === 'google-phone') && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
                                     position: 'relative'
                                 },
@@ -1121,7 +1163,7 @@ function AuthModal({ isOpen, onClose }) {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 206,
+                                        lineNumber: 258,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1142,16 +1184,16 @@ function AuthModal({ isOpen, onClose }) {
                                         className: "jsx-74ae01b9c3aeb5aa"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 207,
+                                        lineNumber: 259,
                                         columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 205,
+                                lineNumber: 257,
                                 columnNumber: 25
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            activeTab !== 'google-phone' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
                                     position: 'relative'
                                 },
@@ -1168,8 +1210,8 @@ function AuthModal({ isOpen, onClose }) {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 219,
-                                        columnNumber: 25
+                                        lineNumber: 272,
+                                        columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                         type: "password",
@@ -1189,14 +1231,14 @@ function AuthModal({ isOpen, onClose }) {
                                         className: "jsx-74ae01b9c3aeb5aa"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 220,
-                                        columnNumber: 25
+                                        lineNumber: 273,
+                                        columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 218,
-                                columnNumber: 21
+                                lineNumber: 271,
+                                columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 type: "submit",
@@ -1219,27 +1261,27 @@ function AuthModal({ isOpen, onClose }) {
                                 },
                                 className: "jsx-74ae01b9c3aeb5aa",
                                 children: [
-                                    loading ? 'Processing...' : activeTab === 'login' ? 'Sign In' : 'Create Account',
+                                    loading ? 'Processing...' : activeTab === 'login' ? 'Sign In' : activeTab === 'register' ? 'Create Account' : 'Complete Registration',
                                     !loading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$right$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowRight$3e$__["ArrowRight"], {
                                         size: 18
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 239,
+                                        lineNumber: 293,
                                         columnNumber: 38
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 230,
+                                lineNumber: 284,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/AuthModal.js",
-                        lineNumber: 177,
+                        lineNumber: 224,
                         columnNumber: 17
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                    activeTab !== 'google-phone' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         style: {
                             textAlign: 'center',
                             marginTop: '1.5rem',
@@ -1260,19 +1302,62 @@ function AuthModal({ isOpen, onClose }) {
                                 children: activeTab === 'login' ? 'Register Now' : 'Login'
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 245,
-                                columnNumber: 21
+                                lineNumber: 300,
+                                columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/AuthModal.js",
-                        lineNumber: 243,
-                        columnNumber: 17
+                        lineNumber: 298,
+                        columnNumber: 21
+                    }, this),
+                    activeTab === 'google-phone' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        style: {
+                            textAlign: 'center',
+                            marginTop: '1.5rem',
+                            fontSize: '0.85rem',
+                            color: '#6b7280'
+                        },
+                        className: "jsx-74ae01b9c3aeb5aa",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                            onClick: ()=>{
+                                setActiveTab('login');
+                                setGooglePendingToken(null);
+                            },
+                            style: {
+                                color: '#6b7280',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '5px'
+                            },
+                            className: "jsx-74ae01b9c3aeb5aa",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$x$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__X$3e$__["X"], {
+                                    size: 14
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/AuthModal.js",
+                                    lineNumber: 318,
+                                    columnNumber: 28
+                                }, this),
+                                " Cancel"
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/src/components/AuthModal.js",
+                            lineNumber: 311,
+                            columnNumber: 25
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/AuthModal.js",
+                        lineNumber: 310,
+                        columnNumber: 22
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/AuthModal.js",
-                lineNumber: 97,
+                lineNumber: 136,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1282,7 +1367,7 @@ function AuthModal({ isOpen, onClose }) {
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/AuthModal.js",
-        lineNumber: 90,
+        lineNumber: 129,
         columnNumber: 9
     }, this);
 }

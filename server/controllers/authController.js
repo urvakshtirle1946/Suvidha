@@ -144,7 +144,7 @@ const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 exports.googleLogin = async (req, res) => {
-    const { token } = req.body;
+    const { token, phone } = req.body;
     try {
         const ticket = await client.verifyIdToken({
             idToken: token,
@@ -163,10 +163,27 @@ exports.googleLogin = async (req, res) => {
             user = checkUser.rows[0];
             role = user.role;
         } else {
-            // Create new user
-            // Use Google ID as a placeholder phone number (must be unique)
-            const placeholderPhone = `G-${sub.substring(0, 10)}`; 
+            // User does not exist (NEW USER)
             
+            // If phone is not provided, ask for it
+            if (!phone) {
+                return res.status(200).json({ 
+                    success: false, 
+                    requiresPhone: true, 
+                    message: 'Phone number is required for registration.' 
+                });
+            }
+
+            // Check if phone number is already taken by another account
+            const checkPhone = await db.query('SELECT * FROM users WHERE phone = $1', [phone]);
+            if (checkPhone.rows.length > 0) {
+                 return res.status(400).json({ 
+                     success: false, 
+                     message: 'Phone number already registered. Please login with phone number.' 
+                 });
+            }
+
+            // Create new user with verified Google Email + Provided Phone
             // Generate a random password (user won't know it, they login via Google)
             const randomPassword = crypto.randomBytes(16).toString('hex');
             const salt = await bcrypt.genSalt(10);
@@ -174,7 +191,7 @@ exports.googleLogin = async (req, res) => {
 
             const newUser = await db.query(
                 'INSERT INTO users (name, email, phone, password, role) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-                [name, email, placeholderPhone, hashedPassword, role]
+                [name, email, phone, hashedPassword, role]
             );
             user = newUser.rows[0];
         }

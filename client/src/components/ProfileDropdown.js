@@ -53,16 +53,36 @@ export default function ProfileDropdown({ onOpenSettings }) {
             {/* Dropdown Menu */}
             {isOpen && (
                 <div style={{
-                    position: 'absolute', top: '120%', right: 0,
-                    width: '220px', background: '#fff', borderRadius: '12px',
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    position: 'absolute', 
+                    top: 'calc(100% + 10px)', 
+                    right: 0,
+                    width: '220px', 
+                    background: '#fff', 
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.05)',
                     border: '1px solid #f3f4f6',
-                    overflow: 'hidden', zIndex: 50
+                    overflow: 'visible', 
+                    zIndex: 9999
                 }}>
-                    <div style={{ padding: '12px 16px', borderBottom: '1px solid #f3f4f6', background: '#f9fafb' }}>
-                        <p style={{ fontWeight: '600', color: '#111827', fontSize: '0.95rem' }}>{user.name}</p>
-                        <p style={{ fontSize: '0.8rem', color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email || user.phone}</p>
-                    </div>
+                    {/* Arrow pointing up */}
+                    <div style={{
+                        position: 'absolute',
+                        top: '-6px',
+                        right: '12px',
+                        width: '12px',
+                        height: '12px',
+                        background: '#fff',
+                        transform: 'rotate(45deg)',
+                        borderLeft: '1px solid #f3f4f6',
+                        borderTop: '1px solid #f3f4f6',
+                        zIndex: 1
+                    }}></div>
+
+                    <div style={{ position: 'relative', zIndex: 2, background: '#fff', borderRadius: '12px', overflow: 'hidden' }}>
+                        <div style={{ padding: '12px 16px', borderBottom: '1px solid #f3f4f6', background: '#f9fafb' }}>
+                            <p style={{ fontWeight: '600', color: '#111827', fontSize: '0.95rem' }}>{user.name}</p>
+                            <p style={{ fontSize: '0.8rem', color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email || user.phone}</p>
+                        </div>
 
                     <div style={{ padding: '4px' }}>
                         <Link href="/bookings" onClick={() => setIsOpen(false)} style={{ textDecoration: 'none' }}>
@@ -84,6 +104,7 @@ export default function ProfileDropdown({ onOpenSettings }) {
                             <span>Logout</span>
                         </div>
                     </div>
+                  </div> {/* Closing inner content div */}
                 </div>
             )}
             

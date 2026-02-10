@@ -16,6 +16,11 @@ export default function Bookings() {
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
 
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [paymentBooking, setPaymentBooking] = useState(null);
+  const [txnId, setTxnId] = useState('');
+  const [paying, setPaying] = useState(false);
+
   useEffect(() => {
     if (isLoaded && !user) {
         setLoading(false); // Not logged in
@@ -50,6 +55,42 @@ export default function Bookings() {
   const openDetails = (booking) => {
     setSelectedBooking(booking);
     setDetailsModalOpen(true);
+  };
+
+  const handlePayNow = (e, booking) => {
+      e.stopPropagation();
+      setPaymentBooking(booking);
+      setTxnId('');
+      setPaymentModalOpen(true);
+  };
+
+  const confirmPayment = async () => {
+      if (!txnId || txnId.length < 6) {
+          alert("Please enter a valid Transaction ID");
+          return;
+      }
+      setPaying(true);
+      try {
+          const apiUrl = getApiUrl();
+          const res = await fetch(`${apiUrl}/api/bookings/${paymentBooking.id}/pay`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ transactionId: txnId })
+          });
+
+          if (res.ok) {
+              alert("Payment Recorded Successfully");
+              setPaymentModalOpen(false);
+              fetchBookings(); // Refresh list
+          } else {
+              alert("Payment Failed: " + await res.text());
+          }
+      } catch (err) {
+          console.error(err);
+          alert("Error processing payment");
+      } finally {
+          setPaying(false);
+      }
   };
 
   if (!isLoaded) return <div style={{ textAlign: 'center', padding: '3rem' }}>Loading...</div>;
@@ -139,19 +180,34 @@ export default function Bookings() {
                    </div>
                 </div>
 
-                <div style={{ textAlign: 'right', flex: 1, minWidth: '100px' }}>
+                <div style={{ textAlign: 'right', flex: 1, minWidth: '100px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center' }}>
                    <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#111827', marginBottom: '8px' }}>₹{booking.price}</div>
-                   <button 
-                       onClick={() => openDetails(booking)}
-                       style={{ 
-                           background: 'transparent', border: '1px solid #e5e7eb', 
-                           padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: '500',
-                           cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px',
-                           marginLeft: 'auto'
-                       }}
-                    >
-                       Details <ChevronRight size={14} />
-                   </button>
+                   
+                   <div style={{ display: 'flex', gap: '8px' }}>
+                        {/* Pay Now Button for Pay at Hospital pending bookings */}
+                        {booking.transaction_id === 'PAY_AT_HOSPITAL' && booking.status !== 'Completed' && (
+                            <button
+                                onClick={(e) => handlePayNow(e, booking)}
+                                style={{
+                                    background: '#0c831f', color: '#fff', border: 'none',
+                                    padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: '600',
+                                    cursor: 'pointer', boxShadow: '0 2px 4px rgba(12, 131, 31, 0.2)'
+                                }}
+                            >
+                                Pay Now
+                            </button>
+                        )}
+                        <button 
+                            onClick={() => openDetails(booking)}
+                            style={{ 
+                                background: 'transparent', border: '1px solid #e5e7eb', 
+                                padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: '500',
+                                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px'
+                            }}
+                            >
+                            Details <ChevronRight size={14} />
+                        </button>
+                   </div>
                 </div>
               </div>
             ))}
@@ -258,6 +314,58 @@ export default function Bookings() {
                           <CheckCircle size={16} /> {selectedBooking.status}
                       </div>
                   </div>
+              </div>
+          </div>
+      )}
+
+      {/* Payment Modal */}
+      {paymentModalOpen && paymentBooking && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 3000, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+              <div style={{ background: '#fff', width: '100%', maxWidth: '440px', borderRadius: '24px', padding: '2rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', position: 'relative' }}>
+                  <button 
+                    onClick={() => setPaymentModalOpen(false)} 
+                    style={{ position: 'absolute', top: '20px', right: '20px', background: '#f3f4f6', border: 'none', borderRadius: '50%', padding: '6px', cursor: 'pointer' }}
+                  >
+                        <X size={20} />
+                  </button>
+
+                  <h3 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '1.5rem', textAlign: 'center' }}>Scan & Pay</h3>
+                  
+                  <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                        <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+                            Pay <b>₹{paymentBooking.price}</b> to confirm your booking at {paymentBooking.hospital_name || 'Clinic'}
+                        </p>
+                        <div style={{ width: '220px', height: '220px', margin: '0 auto', background: '#fff', border: '1px solid #f3f4f6', borderRadius: '16px', padding: '10px' }}>
+                             <img src="https://suvidha-server-4u66.onrender.com/uploads/Qr.jpg" alt="QR" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={(e) => e.target.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=upi://pay?pa=suvidha@okaxis&pn=Suvidha&cu=INR"} />
+                        </div>
+                  </div>
+
+                  <div style={{ marginBottom: '2rem' }}>
+                       <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: '#1f2937', marginBottom: '8px' }}>Transaction ID (UTR)</label>
+                       <input 
+                         type="text" 
+                         className="payment-input"
+                         placeholder="12-digit transaction ID" 
+                         value={txnId}
+                         onChange={(e) => setTxnId(e.target.value)}
+                         style={{ 
+                            width: '100%', padding: '1rem', borderRadius: '12px', border: '2px solid #f3f4f6', 
+                            fontSize: '1.1rem', fontWeight: '600', outline: 'none'
+                         }}
+                       />
+                  </div>
+
+                  <button 
+                    onClick={confirmPayment}
+                    disabled={paying || !txnId}
+                    style={{ 
+                        width: '100%', padding: '1rem', background: txnId ? '#0c831f' : '#e5e7eb', 
+                        color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '1.1rem',
+                        cursor: txnId ? 'pointer' : 'not-allowed'
+                    }}
+                  >
+                        {paying ? 'Verifying...' : 'Confirm Payment'}
+                  </button>
               </div>
           </div>
       )}

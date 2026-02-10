@@ -133,3 +133,28 @@ exports.updateBookingStatus = async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to update booking status' });
   }
 };
+
+exports.payBooking = async (req, res) => {
+    const { id } = req.params;
+    const { transactionId } = req.body;
+
+    if (!transactionId || transactionId.length < 6) {
+        return res.status(400).json({ success: false, message: 'Valid Transaction ID required' });
+    }
+
+    try {
+        const result = await db.query(
+            "UPDATE bookings SET transaction_id = $1, status = 'Confirmed' WHERE id = $2 RETURNING *",
+            [transactionId, id]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Booking not found' });
+        }
+
+        res.json({ success: true, booking: result.rows[0], message: 'Payment recorded successfully' });
+    } catch (error) {
+        console.error('Database Error:', error);
+        res.status(500).json({ success: false, message: 'Failed to record payment' });
+    }
+};

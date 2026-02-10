@@ -7,7 +7,8 @@ import HospitalProfileModal from '@/components/HospitalProfileModal';
 import AmbulanceRequest from '@/components/AmbulanceRequest';
 import { 
   Activity, Heart, Search, MapPin, 
-  ChevronRight, Car, Building2, Pill, FlaskConical, Stethoscope
+  ChevronRight, Car, Building2, Pill, FlaskConical, Stethoscope,
+  Baby, Brain, Bone, Eye, Smile
 } from 'lucide-react';
 import { getApiUrl, getImageUrl } from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
@@ -78,18 +79,15 @@ export default function HomeClient({ hospitals, popularServices }) {
       }
   };
 
-  const MAIN_SERVICES = [
-      { id: 'ambulance', name: 'Ambulance', icon: <Car size={32} />, color: '#000', bg: '#f3f4f6', link: '#' }, // Triggers modal contextually
-      { id: 'hospital', name: 'Hospitals', icon: <Building2 size={32} />, color: '#000', bg: '#f3f4f6', link: '/hospitals' },
-      { id: 'lab', name: 'Lab Tests', icon: <FlaskConical size={32} />, color: '#000', bg: '#f3f4f6', link: '/lab-tests' },
-      { id: 'pharmacy', name: 'Medicines', icon: <Pill size={32} />, color: '#000', bg: '#f3f4f6', link: '/hospitals' },
-  ];
-
-  const SECONDARY_SERVICES = [
-      { name: 'Cardiology', icon: <Heart size={20} />, link: '/hospitals?specialty=Cardiologist' },
-      { name: 'Scan/X-Ray', icon: <Activity size={20} />, link: '/hospitals?category=Scan' },
-      { name: 'Doctors', icon: <Stethoscope size={20} />, link: '/hospitals?specialty=General' },
-      { name: 'Checkups', icon: <Activity size={20} />, link: '/lab-tests' },
+  const CATEGORIES = [
+      { name: 'Cardiology', icon: <Heart size={32} />, bg: '#fef2f2', link: '/hospitals?specialty=Cardiologist' }, // Light red
+      { name: 'Orthopedic', icon: <Bone size={32} />, bg: '#f5f3ff', link: '/hospitals?specialty=Orthopedic' }, // Light violet
+      { name: 'Pediatric', icon: <Baby size={32} />, bg: '#fdf2f8', link: '/hospitals?specialty=Pediatrician' }, // Light pink
+      { name: 'Neurology', icon: <Brain size={32} />, bg: '#eff6ff', link: '/hospitals?specialty=Neurologist' }, // Light blue
+      { name: 'Eye Care', icon: <Eye size={32} />, bg: '#ecfdf5', link: '/hospitals?specialty=Ophthalmologist' }, // Light green
+      { name: 'Dermatology', icon: <Smile size={32} />, bg: '#ecfeff', link: '/hospitals?specialty=Dermatologist' }, // Light cyan
+      { name: 'Radiology', icon: <Activity size={32} />, bg: '#faf5ff', link: '/hospitals?category=Scan' }, // Light purple
+      { name: 'General', icon: <Stethoscope size={32} />, bg: '#f3f4f6', link: '/hospitals?specialty=General' }, // Gray
   ];
 
   return (
@@ -192,52 +190,37 @@ export default function HomeClient({ hospitals, popularServices }) {
             </div>
         </div>
 
-        {/* Main Service Grid (Uber Style) */}
+        {/* Categories Grid (Uber Style) */}
         <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+            gridTemplateColumns: 'repeat(4, 1fr)', // Force 4 columns for Uber look
             gap: '12px', 
-            marginBottom: '2rem' 
+            marginBottom: '3rem' 
         }}>
-            {MAIN_SERVICES.map((service, idx) => (
-                <Link key={idx} href={service.link} style={{ textDecoration: 'none' }}>
+            {CATEGORIES.map((cat, idx) => (
+                <Link key={idx} href={cat.link} style={{ textDecoration: 'none' }}>
                     <div style={{ 
-                        background: service.bg, 
+                        background: cat.bg, 
                         borderRadius: '12px', 
-                        padding: '1.5rem 1rem', 
+                        padding: '1.2rem 0.5rem', 
                         display: 'flex', 
                         flexDirection: 'column', 
-                        alignItems: 'center', // Center content for Uber style
+                        alignItems: 'center', 
                         justifyContent: 'center',
-                        gap: '12px',
+                        gap: '10px',
                         cursor: 'pointer',
-                        transition: 'transform 0.1s'
+                        transition: 'transform 0.1s',
+                        height: '110px' // Fixed height for uniformity
                     }}
-                    onMouseOver={e => e.currentTarget.style.background = '#e5e7eb'}
-                    onMouseOut={e => e.currentTarget.style.background = service.bg}
+                    onMouseOver={e => e.currentTarget.style.transform = 'scale(1.02)'}
+                    onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
                     >
                         <div style={{ 
-                            marginLeft: 'auto', marginRight: 'auto' // Center icon
+                            color: '#000'
                         }}>
-                             {service.icon}
+                             {cat.icon}
                         </div>
-                        <span style={{ fontWeight: '600', color: '#000', fontSize: '1rem' }}>{service.name}</span>
-                    </div>
-                </Link>
-            ))}
-        </div>
-
-        {/* Secondary Horizontal List */}
-        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '1rem', scrollbarWidth: 'none', marginBottom: '2rem' }}>
-            {SECONDARY_SERVICES.map((item, idx) => (
-                <Link key={idx} href={item.link} style={{ textDecoration: 'none' }}>
-                    <div style={{ 
-                        display: 'flex', alignItems: 'center', gap: '8px', 
-                        padding: '8px 16px', borderRadius: '30px', background: '#fff', 
-                        border: '1px solid #e5e7eb', whitespace: 'nowrap', cursor: 'pointer' 
-                    }}>
-                        {item.icon}
-                        <span style={{ fontWeight: '500', color: '#000', fontSize: '0.9rem' }}>{item.name}</span>
+                        <span style={{ fontWeight: '500', color: '#000', fontSize: '0.85rem', textAlign: 'center' }}>{cat.name}</span>
                     </div>
                 </Link>
             ))}

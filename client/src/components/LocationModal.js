@@ -105,9 +105,28 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
             ))}
           </div>
 
-          <button className="view-all-btn">
-            View All Cities
-          </button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
+            <button className="view-all-btn">
+                View All Cities
+            </button>
+            
+            <button 
+                onClick={onClose}
+                style={{ 
+                    padding: '0.8rem 2rem', 
+                    borderRadius: '8px', 
+                    border: '1px solid #e5e7eb',
+                    background: '#fff',
+                    color: '#6b7280',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    width: '100%',
+                    marginTop: '1rem'
+                }}
+            >
+                Close
+            </button>
+          </div>
         </div>
 
       </div>

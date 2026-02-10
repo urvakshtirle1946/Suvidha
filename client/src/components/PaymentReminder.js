@@ -76,7 +76,7 @@ export default function PaymentReminder() {
                 <div 
                     onClick={() => setIsOpen(true)}
                     style={{
-                        position: 'fixed', bottom: '20px', right: '20px', zIndex: 999,
+                        position: 'fixed', bottom: '90px', right: '24px', zIndex: 999,
                         background: '#0c831f', color: '#fff', padding: '12px 20px',
                         borderRadius: '50px', boxShadow: '0 4px 15px rgba(12, 131, 31, 0.4)',
                         display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer',

@@ -20,7 +20,7 @@ export const metadata = {
 
 import AdminSessionManager from "@/components/AdminSessionManager";
 import CartDrawer from "@/components/CartDrawer";
-
+import PaymentReminder from "@/components/PaymentReminder";
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
@@ -35,6 +35,7 @@ export default function RootLayout({ children }) {
                 <CartProvider>
                   <AdminSessionManager />
                   <CartDrawer />
+                  <PaymentReminder />
                   {children}
                 </CartProvider>
               </LocationProvider>

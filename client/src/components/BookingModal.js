@@ -52,13 +52,32 @@ export default function BookingModal({ isOpen, onClose, service }) {
                   return discB - discA;
               });
 
-              setLabs(sorted);
+              // Deduplicate by hospital_id (keep best offer)
+              const uniqueLabs = [];
+              const seenIds = new Set();
+              
+              for (const item of sorted) {
+                  // Use hospital_id if available, otherwise assume distinct item
+                  const itemsId = item.hospital_id; 
+                  // Only deduplicate if we actually have a hospital_id to group by
+                  if (itemsId) {
+                      if (!seenIds.has(itemsId)) {
+                          seenIds.add(itemsId);
+                          uniqueLabs.push(item);
+                      }
+                  } else {
+                      // If no hospital_id, push it (safe fallback)
+                      uniqueLabs.push(item);
+                  }
+              }
+
+              setLabs(uniqueLabs);
               
               // Pre-select if ID provided, or auto-select top one
               if (preselectedId) {
-                  const found = sorted.find(l => l.hospital_id === preselectedId || l.id === preselectedId);
+                  const found = uniqueLabs.find(l => l.hospital_id === preselectedId || l.id === preselectedId);
                   if (found) setSelectedLab(found);
-              } else if (sorted.length > 0) {
+              } else if (uniqueLabs.length > 0) {
                   // Don't auto-select so user HAS to choose, as per request
               }
           }

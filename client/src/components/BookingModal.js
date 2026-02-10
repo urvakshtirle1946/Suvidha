@@ -16,93 +16,51 @@ export default function BookingModal({ isOpen, onClose, service }) {
   const [transactionId, setTransactionId] = useState('');
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [paymentMode, setPaymentMode] = useState(null); // 'online' or 'hospital'
-  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
-  const [labs, setLabs] = useState([]);
-  const [fetchingLabs, setFetchingLabs] = useState(false);
+  /* Removed showCompletionDialog state and logic */
 
-  useEffect(() => {
-     if (isOpen && service) {
-         setStep(1);
-         setSelectedTime(null);
-         
-         if (service.directBooking) {
-             setSelectedLab(service);
-             setLabs([]); // No need to fetch others
-         } else {
-             fetchLabs(service.name, service.hospital_id);
-         }
-     }
-  }, [isOpen, service]);
+  const finalizeBooking = async (paymentMethod = 'online') => {
+        const currentTxnId = paymentMethod === 'hospital' ? 'PAY_AT_HOSPITAL' : transactionId;
 
-  const fetchLabs = async (serviceName, preselectedId) => {
-      setFetchingLabs(true);
-      try {
-          const apiUrl = getApiUrl();
-          const cleanName = serviceName.split(' at ')[0]; 
-          const res = await fetch(`${apiUrl}/api/services?search=${encodeURIComponent(cleanName)}`);
-          if (res.ok) {
-              const data = await res.json();
-              const list = Array.isArray(data) ? data : (data.data || []);
-              
-              // Sort by discount percentage (highest first)
-              const sorted = list.sort((a,b) => {
-                  const discA = ((a.price - a.discount_price) / a.price) || 0;
-                  const discB = ((b.price - b.discount_price) / b.price) || 0;
-                  return discB - discA;
-              });
+        if (paymentMethod !== 'hospital' && (!currentTxnId || currentTxnId.length < 6)) {
+            alert('Please enter a valid Transaction ID');
+            return;
+        }
 
-              // Deduplicate by hospital_id (keep best offer)
-              const uniqueLabs = [];
-              const seenIds = new Set();
-              
-              for (const item of sorted) {
-                  // Robust ID check: hospital_id, hospitalId, or fallback to name+location
-                  const uniqueKey = item.hospital_id || item.hospitalId || `${item.hospital_name}-${item.hospital_location}`;
-                  
-                  if (uniqueKey) {
-                      if (!seenIds.has(uniqueKey)) {
-                          seenIds.add(uniqueKey);
-                          uniqueLabs.push(item);
-                      }
-                  } else {
-                      // If completely unidentifiable, push it (unlikely)
-                      uniqueLabs.push(item);
-                  }
-              }
+        setLoading(true);
+        try {
+            const bookingData = {
+                name: user.name || 'User',
+                userPhone: user.phone || '',
+                age: 0, // Should be collected in form ideally
+                gender: 'Not Specified',
+                date: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Tomorrow
+                time: selectedTime,
+                address: location || 'India',
+                serviceName: currentService.name,
+                price: displayPrice,
+                hospitalId: currentService.hospital_id || currentService.id,
+                transactionId: currentTxnId
+            };
 
-              setLabs(uniqueLabs);
-              
-              // Pre-select if ID provided
-              if (preselectedId) {
-                  // Check against both hospital_id and id
-                  const found = uniqueLabs.find(l => 
-                      (l.hospital_id && l.hospital_id == preselectedId) || 
-                      (l.hospitalId && l.hospitalId == preselectedId) ||
-                      (l.id && l.id == preselectedId)
-                  );
-                  if (found) setSelectedLab(found);
-              } else if (uniqueLabs.length > 0) {
-                  // Don't auto-select so user HAS to choose, as per request
-              }
-          }
-      } catch (err) {
-          console.error(err);
-      } finally {
-          setFetchingLabs(false);
-      }
+            const apiUrl = getApiUrl();
+            const res = await fetch(`${apiUrl}/api/bookings`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bookingData)
+            });
+
+            if (res.ok) {
+                setStep(3); // Success
+            } else {
+                alert('Booking Failed: ' + (await res.text() || 'Unknown Error'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error creating booking');
+        } finally {
+            setLoading(false);
+        }
   };
-
-  if (!isOpen || !service) return null;
-
-  const currentService = selectedLab;
-  const displayPrice = currentService ? (currentService.discount_price || currentService.price) : 0; 
-  const displayMrp = currentService ? currentService.price : 0; 
-  
-  const TIME_SLOTS = [
-      "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
-      "04:00 PM", "05:00 PM", "06:00 PM", "07:00 PM"
-  ];
 
   const handlePayOnline = () => {
         if (!user) { 
@@ -121,57 +79,11 @@ export default function BookingModal({ isOpen, onClose, service }) {
         }
         if (!selectedLab || !selectedTime) return;
         setPaymentMode('hospital');
-        setShowCompletionDialog(true);
+        // Directly book without payment step
+        finalizeBooking('hospital');
   };
 
-  const confirmCompletion = (isCompleted) => {
-        setShowCompletionDialog(false);
-        if (isCompleted) {
-            setStep(2); // Show QR
-        }
-  };
-
-  const finalizeBooking = async () => {
-        if (!transactionId || transactionId.length < 6) {
-            alert('Please enter a valid Transaction ID');
-            return;
-        }
-
-        setLoading(true);
-        try {
-            const bookingData = {
-                name: user.name || 'User',
-                userPhone: user.phone || '',
-                age: 0,
-                gender: 'Not Specified',
-                date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-                time: selectedTime,
-                address: location || 'India',
-                serviceName: currentService.name,
-                price: displayPrice,
-                hospitalId: currentService.hospital_id || currentService.id,
-                transactionId: transactionId // Include transaction ID
-            };
-
-            const apiUrl = getApiUrl();
-            const res = await fetch(`${apiUrl}/api/bookings`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(bookingData)
-            });
-
-            if (res.ok) {
-                setStep(3); // Success
-            } else {
-                alert('Booking Failed');
-            }
-        } catch (err) {
-            console.error(err);
-            alert('Error creating booking');
-        } finally {
-            setLoading(false);
-        }
-  };
+  /* Removed confirmCompletion function */
 
 
   return (

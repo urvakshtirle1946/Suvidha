@@ -99,6 +99,42 @@ export default function HomeClient({ hospitals, popularServices }) {
 
 
         {/* Re-added Offers Slider - Moved to Top */}
+
+
+        {/* Uber-like Header */}
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#000' }}>
+            {getGreeting()}, {user?.name ? user.name.split(' ')[0] : 'Guest'}
+        </h1>
+        
+        {/* Search Bar - Pill Shape */}
+        <div style={{ 
+            position: 'relative', 
+            marginBottom: '2.5rem',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+            borderRadius: '50px',
+            background: '#f3f4f6'
+        }}>
+            <div style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)' }}>
+                <Search size={24} color="#000" />
+            </div>
+            <input 
+                type="text" 
+                placeholder="Where to? (Find hospitals, labs...)" 
+                style={{
+                    width: '100%',
+                    padding: '18px 20px 18px 60px',
+                    borderRadius: '50px',
+                    border: 'none',
+                    background: 'transparent',
+                    fontSize: '1.1rem',
+                    fontWeight: '500',
+                    outline: 'none',
+                    color: '#000'
+                }}
+            />
+        </div>
+
+        {/* Re-added Offers Slider - Moved after Search Bar */}
         <div style={{
             position: 'relative',
             borderRadius: '16px',
@@ -154,39 +190,6 @@ export default function HomeClient({ hospitals, popularServices }) {
                     />
                 ))}
             </div>
-        </div>
-
-        {/* Uber-like Header */}
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#000' }}>
-            {getGreeting()}, {user?.name ? user.name.split(' ')[0] : 'Guest'}
-        </h1>
-        
-        {/* Search Bar - Pill Shape */}
-        <div style={{ 
-            position: 'relative', 
-            marginBottom: '2.5rem',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-            borderRadius: '50px',
-            background: '#f3f4f6'
-        }}>
-            <div style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)' }}>
-                <Search size={24} color="#000" />
-            </div>
-            <input 
-                type="text" 
-                placeholder="Where to? (Find hospitals, labs...)" 
-                style={{
-                    width: '100%',
-                    padding: '18px 20px 18px 60px',
-                    borderRadius: '50px',
-                    border: 'none',
-                    background: 'transparent',
-                    fontSize: '1.1rem',
-                    fontWeight: '500',
-                    outline: 'none',
-                    color: '#000'
-                }}
-            />
         </div>
 
         {/* Main Service Grid (Uber Style) */}

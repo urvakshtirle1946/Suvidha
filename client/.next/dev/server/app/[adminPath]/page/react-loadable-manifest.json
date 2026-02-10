@@ -1,11 +1,1 @@
-{
-  "[project]/src/components/LeafletMap.js [app-client] (ecmascript, next/dynamic entry)": {
-    "id": "[project]/src/components/LeafletMap.js [app-client] (ecmascript, next/dynamic entry)",
-    "files": [
-      "static/chunks/node_modules_11cd6a26._.js",
-      "static/chunks/src_components_LeafletMap_ea8e9065.js",
-      "static/chunks/node_modules_leaflet_dist_leaflet_ef5f0413.css",
-      "static/chunks/src_components_LeafletMap_f557e8fd.js"
-    ]
-  }
-}
+{}

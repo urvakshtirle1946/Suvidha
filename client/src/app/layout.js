@@ -20,7 +20,7 @@ export const metadata = {
 
 import AdminSessionManager from "@/components/AdminSessionManager";
 import CartDrawer from "@/components/CartDrawer";
-import AmbulanceRequest from "@/components/AmbulanceRequest";
+
 
 export default function RootLayout({ children }) {
   return (
@@ -32,7 +32,6 @@ export default function RootLayout({ children }) {
               <CartProvider>
                 <AdminSessionManager />
                 <CartDrawer />
-                <AmbulanceRequest />
                 {children}
               </CartProvider>
             </LocationProvider>

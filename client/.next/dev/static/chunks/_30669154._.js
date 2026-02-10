@@ -126,44 +126,47 @@ function LocationProvider({ children }) {
     _s();
     const [location, setLocation] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('Detecting location...');
     const [city, setCity] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
+    // Default to Indore coordinates
+    const [latitude, setLatitude] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(22.7196);
+    const [longitude, setLongitude] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(75.8577);
     const detectLocation = ()=>{
         setLocation('Detecting...');
-        if (navigator.geolocation) {
+        if (typeof navigator !== 'undefined' && navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(async (position)=>{
-                const { latitude, longitude } = position.coords;
+                const { latitude: lat, longitude: lng } = position.coords;
+                setLatitude(lat);
+                setLongitude(lng);
                 try {
-                    const apiUrl = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$api$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getApiUrl"])();
-                    // Using our own server as a proxy to avoid CORS and comply with Nominatim policy
-                    const res = await fetch(`${apiUrl}/api/location/reverse?lat=${latitude}&lon=${longitude}`);
-                    if (!res.ok) throw new Error('Proxy fetch failed');
+                    // Temporarily use Nominatim directly if API is slow, or stick to backend proxy if reliable.
+                    // Let's assume backend proxy is fine but we must update coordinates FIRST to unlock UI.
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+                    if (!res.ok) throw new Error('Fetch failed');
                     const data = await res.json();
-                    // Nominatim JSONv2 format
                     const address = data.address || {};
                     const detectedCity = address.city || address.town || address.state_district || 'Indore';
-                    // Service area check
-                    if (!detectedCity.toLowerCase().includes('indore')) {
-                        // Keep the alert but still set Indore as default
-                        // alert(`We currently serve only in Indore. We are coming soon to ${detectedCity}!`);
-                        setCity('Indore');
-                        setLocation('Indore, India');
-                        return;
-                    }
                     const detectedArea = address.suburb || address.neighbourhood || address.road || '';
                     setCity(detectedCity);
                     setLocation(`${detectedArea ? detectedArea + ', ' : ''}${detectedCity}`);
                 } catch (error) {
-                    console.error("Location detection failed, defaulting to Indore", error);
+                    console.error("Location reverse geocode failed", error);
+                    // Fallback location name but keep coordinates
                     setCity('Indore');
                     setLocation('Indore, India');
                 }
             }, (err)=>{
                 console.warn("Location permission denied", err);
+                // Fallback to Indore defaults
                 setLocation('Indore, India');
                 setCity('Indore');
+                setLatitude(22.7196);
+                setLongitude(75.8577);
             });
         } else {
+            // Fallback
             setLocation('Indore, India');
             setCity('Indore');
+            setLatitude(22.7196);
+            setLongitude(75.8577);
         }
     };
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
@@ -177,16 +180,18 @@ function LocationProvider({ children }) {
             city,
             setLocation,
             setCity,
-            detectLocation
+            detectLocation,
+            latitude,
+            longitude
         },
         children: children
     }, void 0, false, {
         fileName: "[project]/src/context/LocationContext.js",
-        lineNumber: 63,
+        lineNumber: 64,
         columnNumber: 5
     }, this);
 }
-_s(LocationProvider, "zAdFO6M1uFOZy+V6/GOZY95gLAg=");
+_s(LocationProvider, "tl4qUQUpm6p2Kd602Euwl3jEoGw=");
 _c = LocationProvider;
 const useLocation = ()=>{
     _s1();

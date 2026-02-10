@@ -3,6 +3,17 @@ import HomeClient from '@/components/HomeClient';
 
 export const revalidate = 60; // Revalidate every 60 seconds (ISR)
 
+export const metadata = {
+  title: 'Suvidha - Search Hospitals, Doctors & Book Lab Tests',
+  description: 'Find nearby hospitals, book ambulance services, schedule lab tests, and order medicines online with Suvidha. Your one-stop healthcare platform.',
+  keywords: ['hospitals near me', 'ambulance booking', 'lab tests', 'online pharmacy', 'doctor appointments', 'healthcare india'],
+  openGraph: {
+    title: 'Suvidha - Simplified Healthcare Services',
+    description: 'Book ambulances, tests, and medicines instantly.',
+    type: 'website',
+  }
+};
+
 async function getHospitals() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com';
   try {

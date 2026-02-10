@@ -110,7 +110,7 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
               >
                 {/* Icon Placeholder */}
                 <div className="city-icon-box">
-                   {city.name !== 'Indore' && <div style={{ position: 'absolute', top: 5, right: 5 }}><Lock size={12} color="#9ca3af"/></div>}
+                   {/* Lock Icon Removed */}
                    <Building2 className="city-icon" size={24} color={city.name === 'Indore' ? '#0c831f' : "#9ca3af"} />
                 </div>
                 <span className="city-name" style={{ fontWeight: city.name === 'Indore' ? 'bold' : 'normal', color: city.name === 'Indore' ? '#0c831f' : 'inherit' }}>

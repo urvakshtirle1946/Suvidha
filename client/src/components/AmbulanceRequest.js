@@ -123,10 +123,10 @@ export default function AmbulanceRequest() {
                     bottom: '24px',
                     right: '24px',
                     width: 'auto',
-                    minWidth: '60px',
-                    height: '60px',
-                    padding: '0 20px',
-                    borderRadius: '30px',
+                    minWidth: '48px',
+                    height: '48px',
+                    padding: '0 16px',
+                    borderRadius: '24px',
                     background: '#ef4444',
                     color: 'white',
                     border: 'none',
@@ -136,22 +136,22 @@ export default function AmbulanceRequest() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '12px',
+                    gap: '8px',
                     fontWeight: '600',
-                    fontSize: '16px',
+                    fontSize: '14px',
                     transition: 'all 0.2s',
                     animation: 'pulse 2s infinite'
                 }}
                 onMouseOver={e => {
                     e.currentTarget.style.transform = 'scale(1.05)';
-                    e.currentTarget.style.padding = '0 24px';
+                    e.currentTarget.style.padding = '0 20px';
                 }}
                 onMouseOut={e => {
                     e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.padding = '0 20px';
+                    e.currentTarget.style.padding = '0 16px';
                 }}
             >
-                <Ambulance size={24} />
+                <Ambulance size={20} />
                 <span style={{ whiteSpace: 'nowrap' }}>Request Ambulance</span>
             </button>
         );

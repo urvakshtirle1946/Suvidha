@@ -13,11 +13,24 @@ const POPULAR_CITIES = [
   { name: 'Chennai', icon: '/icons/chennai.png' },
   { name: 'Kolkata', icon: '/icons/kolkata.png' },
   { name: 'Kochi', icon: '/icons/kochi.png' },
+  { name: 'Jaipur', icon: '/icons/jaipur.png' },
+  { name: 'Lucknow', icon: '/icons/lucknow.png' },
+  { name: 'Indore', icon: '/icons/indore.png' },
+  { name: 'Bhopal', icon: '/icons/bhopal.png' },
+  { name: 'Surat', icon: '/icons/surat.png' },
+  { name: 'Nagpur', icon: '/icons/nagpur.png' },
+  { name: 'Patna', icon: '/icons/patna.png' },
+  { name: 'Ludhiana', icon: '/icons/ludhiana.png' },
+  { name: 'Kanpur', icon: '/icons/kanpur.png' },
+  { name: 'Agra', icon: '/icons/agra.png' },
+  { name: 'Varanasi', icon: '/icons/varanasi.png' },
+  { name: 'Visakhapatnam', icon: '/icons/vizag.png' },
+  { name: 'Coimbatore', icon: '/icons/coimbatore.png' },
+  { name: 'Thiruvananthapuram', icon: '/icons/trivandrum.png' },
 ];
 
 export default function LocationModal({ isOpen, onClose, onSelectLocation, onDetectLocation }) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [showAllCities, setShowAllCities] = useState(false);
 
   // Prevent scrolling when modal is open
   useEffect(() => {
@@ -35,20 +48,18 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
 
   // Filter logic
   const filteredCities = POPULAR_CITIES.filter(city => city.name.toLowerCase().includes(searchTerm.toLowerCase()));
-  
-  // Decide what to render: if searching, show all matches. If not, show 10 or all based on toggle.
-  const citiesDisplay = searchTerm ? filteredCities : (showAllCities ? POPULAR_CITIES : POPULAR_CITIES.slice(0, 10));
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content">
+      <div className="modal-content" style={{ maxHeight: '90vh', overflowY: 'auto' }}>
         
         {/* Close Button (Top Right) */}
         <button 
           onClick={onClose}
           className="modal-close"
+          style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', zIndex: 10 }}
         >
-          <X size={20} color="#6b7280" />
+          <X size={24} color="#6b7280" />
         </button>
 
         {/* Search Bar */}
@@ -78,7 +89,7 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
         {/* Popular Cities / Search Results */}
         <div className="text-center">
           <h3 className="popular-cities-title">
-             {searchTerm ? 'Search Results' : 'Popular Cities'}
+             {searchTerm ? 'Search Results' : 'All Cities'}
           </h3>
           
           <div className="cities-grid">
@@ -87,7 +98,7 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
                     No cities found matching "{searchTerm}"
                 </div>
             ) : (
-                citiesDisplay.map((city) => (
+                filteredCities.map((city) => (
                 <button
                     key={city.name}
                     onClick={() => {
@@ -117,38 +128,8 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
                 ))
             )}
           </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'center' }}>
-            {!searchTerm && (
-                <button 
-                    className="view-all-btn" 
-                    onClick={() => setShowAllCities(!showAllCities)}
-                >
-                    {showAllCities ? 'View Less' : 'View All Cities'}
-                </button>
-            )}
-            
-            {/* Bottom Cross Button */}
-            <button 
-                onClick={onClose}
-                style={{ 
-                    padding: '8px', 
-                    borderRadius: '50%', 
-                    border: '1px solid #e5e7eb',
-                    background: '#fff',
-                    color: '#6b7280',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
-                    width: '40px',
-                    height: '40px'
-                }}
-            >
-                <X size={20} />
-            </button>
-          </div>
+          
+           {/* No bottom buttons needed as requested */}
         </div>
 
       </div>

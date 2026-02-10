@@ -31,6 +31,7 @@ const POPULAR_CITIES = [
 
 export default function LocationModal({ isOpen, onClose, onSelectLocation, onDetectLocation }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [showAllCities, setShowAllCities] = useState(false);
 
   // Prevent scrolling when modal is open
   useEffect(() => {
@@ -48,6 +49,9 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
 
   // Filter logic
   const filteredCities = POPULAR_CITIES.filter(city => city.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  
+  // Display logic: Show condensed list unless searching or expanded
+  const citiesDisplay = searchTerm ? filteredCities : (showAllCities ? POPULAR_CITIES : POPULAR_CITIES.slice(0, 15));
 
   return (
     <div className="modal-overlay">
@@ -89,7 +93,7 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
         {/* Popular Cities / Search Results */}
         <div className="text-center">
           <h3 className="popular-cities-title">
-             {searchTerm ? 'Search Results' : 'All Cities'}
+             {searchTerm ? 'Search Results' : 'Popular Cities'}
           </h3>
           
           <div className="cities-grid">
@@ -98,7 +102,7 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
                     No cities found matching "{searchTerm}"
                 </div>
             ) : (
-                filteredCities.map((city) => (
+                citiesDisplay.map((city) => (
                 <button
                     key={city.name}
                     onClick={() => {
@@ -129,7 +133,17 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
             )}
           </div>
           
-           {/* No bottom buttons needed as requested */}
+           {/* View More Button (Hidden if searching) */}
+           {!searchTerm && (
+                <div style={{ marginTop: '1.5rem' }}>
+                    <button 
+                        className="view-all-btn" 
+                        onClick={() => setShowAllCities(!showAllCities)}
+                    >
+                        {showAllCities ? 'Show Less' : 'View More Cities'}
+                    </button>
+                </div>
+            )}
         </div>
 
       </div>

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import BookingModal from '@/components/BookingModal';
 import HospitalProfileModal from '@/components/HospitalProfileModal';
@@ -105,6 +106,15 @@ export default function HomeClient({ hospitals, popularServices }) {
         </h1>
         
         {/* Search Bar - Pill Shape */}
+  const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter(); // You'll need to import useRouter at the top
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      router.push(`/hospitals?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+  // ... existing code ...
         <div style={{ 
             position: 'relative', 
             marginBottom: '2.5rem',
@@ -118,6 +128,10 @@ export default function HomeClient({ hospitals, popularServices }) {
             <input 
                 type="text" 
                 placeholder="Where to? (Find hospitals, labs...)" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearch}
+                aria-label="Search hospitals and services"
                 style={{
                     width: '100%',
                     padding: '18px 20px 18px 60px',

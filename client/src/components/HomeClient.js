@@ -7,7 +7,7 @@ import HospitalProfileModal from '@/components/HospitalProfileModal';
 import AmbulanceRequest from '@/components/AmbulanceRequest';
 import { 
   Activity, Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin,
-  ChevronLeft, ChevronRight, TestTube
+  ChevronLeft, ChevronRight, TestTube, ArrowRight, Clock
 } from 'lucide-react';
 import { getApiUrl, getImageUrl } from '@/utils/api';
 
@@ -15,7 +15,6 @@ export default function HomeClient({ hospitals, popularServices }) {
   const { addToCart } = useCart();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedHospitalForProfile, setSelectedHospitalForProfile] = useState(null);
-  const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef(null);
 
   const scroll = (direction) => {
@@ -25,44 +24,9 @@ export default function HomeClient({ hospitals, popularServices }) {
     }
   };
 
-  const OFFERS = [
-      {
-          id: 1,
-          title: "Healthcare at your fingertips.",
-          subtitle: "Lab Tests • Medicines • Nursing • Doctor Visits",
-          bg: "linear-gradient(to right, #0c831f, #33b249)", // Green
-          btnText: "Book Now",
-          btnColor: "#0c831f"
-      },
-      {
-          id: 2,
-          title: "50% OFF on Full Body Checkups",
-          subtitle: "Includes 80+ Tests. Home Collection Available.",
-          bg: "linear-gradient(to right, #2563eb, #60a5fa)", // Blue
-          btnText: "View Package",
-          btnColor: "#2563eb"
-      },
-      {
-          id: 3,
-          title: "Pharmacy: Flat 20% OFF",
-          subtitle: "On all prescription medicines. fast delivery.",
-          bg: "linear-gradient(to right, #db2777, #f472b6)", // Pink
-          btnText: "Order Now",
-          btnColor: "#db2777"
-      }
-  ];
-
-  useEffect(() => {
-      const timer = setInterval(() => {
-          setCurrentSlide((prev) => (prev + 1) % OFFERS.length);
-      }, 5000);
-      return () => clearInterval(timer);
-  }, []);
-
   const handleHospitalClick = async (hospital) => {
       try {
           const apiUrl = getApiUrl();
-          // Visual feedback
           document.body.style.cursor = 'wait';
           const res = await fetch(`${apiUrl}/api/hospitals/${hospital.id}`);
           if (!res.ok) throw new Error('Failed to fetch details');
@@ -70,210 +34,126 @@ export default function HomeClient({ hospitals, popularServices }) {
           setSelectedHospitalForProfile(fullData);
       } catch (err) {
           console.error("Error fetching hospital details:", err);
-          // Fallback to basic data if fetch fails, though services will be missing
           setSelectedHospitalForProfile(hospital);
       } finally {
           document.body.style.cursor = 'default';
       }
   };
 
-  // Categories with assigned colors to match the "Promo Card" aesthetic but smaller
+  // Uber-style categories: Clean, simple icons, minimal colors
   const CATEGORIES = [
-      { name: 'Cardiology', desc: 'Heart Care', icon: <Heart size={50} color="rgba(255,255,255,0.3)" />, color: '#ff6b6b', href: '/hospitals?specialty=Cardiologist' },
-      { name: 'Radiology', desc: 'Scans & X-Rays', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#a55eea', href: '/hospitals?category=Scan' },
-      { name: 'Pathology', desc: 'Lab Tests', icon: <TestTube size={50} color="rgba(255,255,255,0.3)" />, color: '#fd9644', href: '/lab-tests' },
-      { name: 'Orthopedic', desc: 'Bone Health', icon: <Bone size={50} color="rgba(255,255,255,0.3)" />, color: '#5f27cd', href: '/hospitals?specialty=Orthopedic' },
-      { name: 'Pediatric', desc: 'Child Care', icon: <Baby size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9ff3', textColor: '#1f2937', href: '/hospitals?specialty=Pediatrician' },
-      { name: 'Neurology', desc: 'Brain Care', icon: <Brain size={50} color="rgba(255,255,255,0.3)" />, color: '#54a0ff', href: '/hospitals?specialty=Neurologist' },
-      { name: 'Eye Care', desc: 'Vision', icon: <Eye size={50} color="rgba(255,255,255,0.3)" />, color: '#1dd1a1', href: '/hospitals?specialty=Ophthalmologist' },
-      { name: 'Dermatology', desc: 'Skin & Hair', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#00d2d3', href: '/hospitals?specialty=Dermatologist' },
-      { name: 'Diabetes', desc: 'Sugar Levels', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ee5253', href: '/hospitals?specialty=Diabetes' },
-      { name: 'Surgeries', desc: 'Expert Operations', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9f43', href: '/hospitals?category=Surgery' },
-      { name: 'Physiotherapy', desc: 'Recovery', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#10ac84', href: '/hospitals?specialty=Physiotherapy' },
-      { name: 'Counseling', desc: 'Mental Health', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#f368e0', href: '/hospitals?specialty=Psychotherapy' },
+      { name: 'Cardiology', icon: <Heart size={28} />, href: '/hospitals?specialty=Cardiologist' },
+      { name: 'Radiology', icon: <Activity size={28} />, href: '/hospitals?category=Scan' },
+      { name: 'Pathology', icon: <TestTube size={28} />, href: '/lab-tests' },
+      { name: 'Orthopedic', icon: <Bone size={28} />, href: '/hospitals?specialty=Orthopedic' },
+      { name: 'Pediatric', icon: <Baby size={28} />, href: '/hospitals?specialty=Pediatrician' },
+      { name: 'Neurology', icon: <Brain size={28} />, href: '/hospitals?specialty=Neurologist' },
+      { name: 'Eye Care', icon: <Eye size={28} />, href: '/hospitals?specialty=Ophthalmologist' },
+      { name: 'Dermatology', icon: <Smile size={28} />, href: '/hospitals?specialty=Dermatologist' },
   ];
 
   return (
-    <main style={{ paddingBottom: '100px', background: '#f4f6fb', minHeight: '100vh' }}>
+    <main style={{ paddingBottom: '100px', background: '#fff', minHeight: '100vh', color: '#000' }}>
       
       <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 2rem)' }}>
 
-        {/* Offers Slider */}
-        <div style={{
-            position: 'relative',
-            borderRadius: '16px',
-            marginBottom: '3rem',
-            overflow: 'hidden',
-            boxShadow: '0 10px 30px rgba(0,0,0, 0.1)',
-            height: 'clamp(200px, 40vh, 300px)'
+        {/* Hero Section - Uber Style */}
+        <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+            gap: '2rem', 
+            alignItems: 'center', 
+            marginBottom: '4rem',
+            background: '#f6f6f6',
+            borderRadius: '12px',
+            overflow: 'hidden'
         }}>
-            {OFFERS.map((offer, index) => (
-                <div key={offer.id} style={{
-                    position: 'absolute',
-                    top: 0, left: 0, width: '100%', height: '100%',
-                    background: offer.bg,
-                    padding: 'clamp(1.5rem, 5vw, 3rem)', // Responsive padding
-                    color: '#fff',
-                    opacity: currentSlide === index ? 1 : 0,
-                    transition: 'opacity 0.8s ease-in-out',
-                    zIndex: currentSlide === index ? 2 : 1,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center'
-                }}>
-                    <h1 style={{ fontSize: 'clamp(1.5rem, 8vw, 3rem)', maxWidth: '600px', marginBottom: '0.5rem', color: '#fff', lineHeight: '1.2' }}>
-                        {offer.title}
-                    </h1>
-                    <p style={{ fontSize: 'clamp(0.9rem, 4vw, 1.2rem)', opacity: 0.9, marginBottom: '1.5rem' }}>
-                        {offer.subtitle}
-                    </p>
-                    <button className="btn" style={{ background: '#fff', color: offer.btnColor, padding: '0.6rem 1.5rem', fontSize: '1rem', width: 'fit-content' }}>
-                        {offer.btnText}
-                    </button>
-                    {/* Decorative Circles */}
-                    <div style={{ position: 'absolute', right: '-50px', bottom: '-50px', width: '300px', height: '300px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}></div>
-                    <div style={{ position: 'absolute', right: '150px', top: '-50px', width: '150px', height: '150px', background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }}></div>
-                </div>
-            ))}
+             <div style={{ padding: '3rem' }}>
+                 <h1 style={{ fontSize: '3rem', fontWeight: '800', lineHeight: '1.1', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
+                     Healthcare, <br/> simplified.
+                 </h1>
+                 <p style={{ fontSize: '1.1rem', color: '#555', marginBottom: '2rem', lineHeight: '1.6' }}>
+                     Book appointments, lab tests, and ambulance services with a single tap. Reliable care, right when you need it.
+                 </p>
+                 <button className="btn-black" style={{ 
+                     background: '#000', color: '#fff', padding: '12px 24px', borderRadius: '8px', 
+                     fontSize: '1rem', fontWeight: '600', border: 'none', cursor: 'pointer',
+                     display: 'inline-flex', alignItems: 'center', gap: '8px'
+                 }}>
+                     Get Started <ArrowRight size={18} />
+                 </button>
+             </div>
+             <div style={{ height: '400px', background: '#e5e7eb', position: 'relative' }}>
+                 <img 
+                    src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80" 
+                    alt="Healthcare" 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                 />
+             </div>
+        </div>
 
-            {/* Dots Indicators */}
-            <div style={{
-                position: 'absolute',
-                bottom: '20px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                display: 'flex',
-                gap: '10px',
-                zIndex: 10
+        {/* Suggestions / Categories */}
+        <div style={{ marginBottom: '4rem' }}>
+            <h2 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '2rem', color: '#000' }}>Suggestions</h2>
+            <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', 
+                gap: '12px' 
             }}>
-                {OFFERS.map((_, index) => (
-                    <div
-                        key={index}
-                        onClick={() => setCurrentSlide(index)}
-                        style={{
-                            width: '10px',
-                            height: '10px',
-                            borderRadius: '50%',
-                            background: currentSlide === index ? '#fff' : 'rgba(255,255,255,0.4)',
+                {CATEGORIES.map((cat, index) => (
+                    <Link key={index} href={cat.href} style={{ textDecoration: 'none' }}>
+                        <div style={{ 
+                            background: '#f6f6f6', 
+                            borderRadius: '12px', 
+                            padding: '1.5rem 1rem', 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            alignItems: 'center', 
+                            justifyContent: 'center',
+                            gap: '12px',
                             cursor: 'pointer',
-                            transition: 'all 0.3s'
+                            transition: 'background 0.2s',
+                            height: '110px'
                         }}
-                    />
+                        onMouseOver={(e) => e.currentTarget.style.background = '#eeeeee'}
+                        onMouseOut={(e) => e.currentTarget.style.background = '#f6f6f6'}
+                        >
+                            <div style={{ color: '#000' }}>{cat.icon}</div>
+                            <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#000', textAlign: 'center' }}>{cat.name}</span>
+                        </div>
+                    </Link>
                 ))}
             </div>
         </div>
 
-        {/* Categories Grid (Mini Promo Cards) */}
-        <h2 style={{ marginBottom: '1.5rem', fontSize: 'clamp(1.2rem, 5vw, 1.5rem)' }}>Shop by Category</h2>
-        <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', 
-            gap: '1rem', 
-            marginBottom: '4rem' 
-        }}>
-             {CATEGORIES.map((cat, index) => (
-                 <Link key={index} href={cat.href} style={{ textDecoration: 'none' }}>
-                    <div style={{ 
-                        background: `linear-gradient(135deg, ${cat.color}, ${cat.color}dd)`, 
-                        borderRadius: '20px', 
-                        padding: '1.5rem', 
-                        display: 'flex', 
-                        flexDirection: 'column', 
-                        justifyContent: 'space-between',
-                        color: cat.textColor || '#fff',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        height: '180px', 
-                        cursor: 'pointer',
-                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                        boxShadow: '0 8px 15px rgba(0,0,0,0.1)',
-                        border: '1px solid rgba(255,255,255,0.1)'
-                    }}
-                    onMouseOver={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
-                        e.currentTarget.style.boxShadow = '0 15px 30px rgba(0,0,0,0.15)';
-                    }}
-                    onMouseOut={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                        e.currentTarget.style.boxShadow = '0 8px 15px rgba(0,0,0,0.1)';
-                    }}
-                    >
-                        <div style={{ zIndex: 1 }}>
-                            <h3 style={{ fontSize: '1.2rem', marginBottom: '0.4rem', lineHeight: '1.2', fontWeight: 'bold' }}>{cat.name}</h3>
-                            <p style={{ fontSize: '0.85rem', opacity: 0.9, marginBottom: '1rem' }}>{cat.desc}</p>
-                            
-                            <span style={{ 
-                                fontSize: '0.8rem', 
-                                background: 'rgba(255,255,255,0.25)', 
-                                backdropFilter: 'blur(4px)',
-                                padding: '6px 12px', 
-                                borderRadius: '10px',
-                                fontWeight: '600',
-                                border: '1px solid rgba(255,255,255,0.3)'
-                            }}>
-                                View More
-                            </span>
-                        </div>
-                        
-                        {/* Decorative Icon */}
-                        <div style={{ position: 'absolute', right: '-10px', bottom: '-10px', transform: 'rotate(-10deg)' }}>
-                            {cat.icon}
-                        </div>
-                    </div>
-                 </Link>
-             ))}
-        </div>
-
-        {/* Popular Section (Horizontal Scroll with Controls) */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-            <h2 style={{ fontSize: 'clamp(1.2rem, 5vw, 1.5rem)', margin: 0 }}>Popular Lab Tests</h2>
-            <div style={{ display: 'flex', gap: '8px' }}>
-                <button 
-                    onClick={() => scroll('left')}
-                    style={{ 
-                        background: '#fff', border: '1px solid #e5e7eb', borderRadius: '50%', 
-                        width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        cursor: 'pointer', color: '#374151'
-                    }}
-                >
-                    <ChevronLeft size={20} />
-                </button>
-                <button 
-                    onClick={() => scroll('right')}
-                    style={{ 
-                        background: '#fff', border: '1px solid #e5e7eb', borderRadius: '50%', 
-                        width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        cursor: 'pointer', color: '#374151'
-                    }}
-                >
-                    <ChevronRight size={20} />
-                </button>
+        {/* Popular Services - Horizontal Scroll */}
+        <div style={{ marginBottom: '4rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h2 style={{ fontSize: '2rem', fontWeight: '700', margin: 0, color: '#000' }}>Popular Tests</h2>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                    <button onClick={() => scroll('left')} className="nav-btn"><ChevronLeft size={20} /></button>
+                    <button onClick={() => scroll('right')} className="nav-btn"><ChevronRight size={20} /></button>
+                </div>
             </div>
-        </div>
 
-        <div 
-            ref={sliderRef}
-            style={{ 
-                display: 'flex', 
-                gap: '1.5rem', 
-                overflowX: 'auto', 
-                paddingBottom: '1rem', 
-                scrollbarWidth: 'none',
-                scrollBehavior: 'smooth'
-            }}
-        >
-            {popularServices.map((service) => (
-                <ProductCard 
-                    key={service.id}
-                    title={service.name} 
-                    time="Reports in 24 hrs" 
-                    image={getImageUrl(service.image_url || service.hospital_image)}
-                    price={`₹${service.discount_price || service.price}`}
-                    oldPrice={service.discount_price ? `₹${service.price}` : `₹${Math.round(service.price * 1.5)}`}
-                    discount={service.discount_price ? `${Math.round(((service.price - service.discount_price) / service.price) * 100)}% OFF` : "Limited Offer"}
-                    onAdd={() => addToCart({ ...service, quantity: 1, hospital_name: service.hospital_name || 'Popular Service' })}
-                />
-            ))}
+            <div 
+                ref={sliderRef}
+                style={{ 
+                    display: 'flex', gap: '1.5rem', overflowX: 'auto', paddingBottom: '1rem', 
+                    scrollbarWidth: 'none', scrollBehavior: 'smooth' 
+                }}
+            >
+                {popularServices.map((service) => (
+                    <ProductCard 
+                        key={service.id}
+                        title={service.name} 
+                        time="24h Report" 
+                        image={getImageUrl(service.image_url || service.hospital_image)}
+                        price={`₹${service.discount_price || service.price}`}
+                        onAdd={() => addToCart({ ...service, quantity: 1, hospital_name: service.hospital_name || 'Popular Service' })}
+                    />
+                ))}
+            </div>
         </div>
 
         <BookingModal 
@@ -282,30 +162,24 @@ export default function HomeClient({ hospitals, popularServices }) {
              service={selectedProduct}
         />
 
-        {/* Featured Hospitals Section */}
-        <h2 style={{ marginTop: '4rem', marginBottom: '1.5rem', fontSize: 'clamp(1.2rem, 5vw, 1.5rem)' }}>Featured Hospitals</h2>
+        {/* Featured Hospitals - Large Cards */}
+        <h2 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '2rem', color: '#000' }}>Nearby Hospitals</h2>
         <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
-            gap: '1.5rem', 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', 
+            gap: '2rem', 
             marginBottom: '4rem' 
         }}>
             {hospitals.map((hospital) => (
               <div 
                 key={hospital.id} 
                 onClick={() => handleHospitalClick(hospital)}
-                style={{ 
-                  background: '#fff', 
-                  borderRadius: '16px', 
-                  overflow: 'hidden', 
-                  cursor: 'pointer',
-                  border: '1px solid #e5e7eb',
-                  transition: 'transform 0.2s, box-shadow 0.2s'
-                }}
-                onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.05)' }}
-                onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
+                style={{ cursor: 'pointer', background: 'transparent' }}
               >
-                  <div style={{ height: '180px', background: '#f3f4f6', overflow: 'hidden' }}>
+                  <div style={{ 
+                      height: '200px', borderRadius: '12px', overflow: 'hidden', marginBottom: '12px',
+                      background: '#f3f4f6', position: 'relative'
+                  }}>
                        <img 
                           crossOrigin="anonymous"
                           src={getImageUrl(hospital.image_url) || "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80"} 
@@ -313,29 +187,31 @@ export default function HomeClient({ hospitals, popularServices }) {
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                           onError={(e) => e.target.src = "https://images.unsplash.com/photo-1586773860418-d3b97898c75c?auto=format&fit=crop&w=800&q=80"}
                       />
+                      {hospital.discount_percentage && (
+                          <div style={{ 
+                              position: 'absolute', top: '12px', left: '12px', 
+                              background: '#0c831f', color: '#fff', padding: '4px 12px', 
+                              borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold' 
+                          }}>
+                              {hospital.discount_percentage}% OFF
+                          </div>
+                      )}
                   </div>
-                <div style={{ padding: '1.5rem' }}>
-                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#111827', margin: 0 }}>{hospital.name}</h3>
-                      <div style={{ background: '#f0fdf4', color: '#166534', padding: '2px 8px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Star size={12} fill="#166534" /> {hospital.rating || '4.5'}
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div>
+                          <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#000', marginBottom: '4px' }}>{hospital.name}</h3>
+                          <p style={{ fontSize: '0.9rem', color: '#555', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              {hospital.location}
+                          </p>
                       </div>
-                   </div>
-                   <p 
-                      onClick={(e) => {
-                         e.stopPropagation();
-                         window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hospital.location)}`, '_blank');
-                      }}
-                      style={{ fontSize: '0.9rem', color: '#6b7280', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}
-                      title="View on Google Maps"
-                   >
-                      <MapPin size={14} /> {hospital.location} (Get Directions)
-                   </p>
-                   <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.85rem', color: '#db2777', fontWeight: '600' }}>Up to {hospital.discount_percentage || '10'}% OFF</span>
-                      <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#111827' }}>View Services &gt;</span>
-                   </div>
-                </div>
+                      <div style={{ 
+                          background: '#f6f6f6', padding: '6px 10px', borderRadius: '20px', 
+                          fontSize: '0.85rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' 
+                      }}>
+                          {hospital.rating || '4.5'} <Star size={12} fill="#000" strokeWidth={0} />
+                      </div>
+                  </div>
               </div>
             ))}
         </div>
@@ -352,50 +228,52 @@ export default function HomeClient({ hospitals, popularServices }) {
 
       </div>
       <AmbulanceRequest />
+
+      <style jsx>{`
+          .nav-btn {
+              background: #f6f6f6;
+              border: none;
+              border-radius: 50%;
+              width: 36px;
+              height: 36px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              transition: background 0.2s;
+              color: #000;
+          }
+          .nav-btn:hover {
+              background: #e5e5e5;
+          }
+      `}</style>
     </main>
   );
 }
 
-function ProductCard({ title, time, price, oldPrice, discount, onAdd, image }) {
+function ProductCard({ title, time, price, onAdd, image }) {
     return (
         <div style={{ 
-            minWidth: '220px', 
-            background: '#fff', 
-            borderRadius: '12px', 
-            border: '1px solid #eee', 
-            padding: '0', 
-            overflow: 'hidden',
+            minWidth: '200px', 
+            background: 'transparent', 
+            cursor: 'pointer',
             flexShrink: 0
-        }}>
-            <div style={{ height: '120px', background: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+        }} onClick={onAdd}>
+            <div style={{ 
+                height: '140px', background: '#f6f6f6', borderRadius: '12px', 
+                marginBottom: '10px', overflow: 'hidden', position: 'relative' 
+            }}>
                 {image ? (
-                    <img 
-                        src={image} 
-                        alt={title}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        onError={(e) => e.target.style.display = 'none'}
-                    />
+                    <img src={image} alt={title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => e.target.style.display = 'none'} />
                 ) : (
-                    <Activity size={40} color="#ccc" />
+                    <Activity size={40} color="#ccc" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
                 )}
             </div>
-            <div style={{ padding: '1rem' }}>
-                <div style={{ fontSize: '0.75rem', color: '#666', background: '#f3f4f6', width: 'fit-content', padding: '2px 6px', borderRadius: '4px', marginBottom: '8px' }}>
-                    {time}
-                </div>
-                <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem', color: '#1f2937' }}>{title}</h3>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
-                    <div>
-                        <span style={{ display: 'block', fontSize: '1rem', fontWeight: 'bold' }}>{price}</span>
-                        <span style={{ fontSize: '0.8rem', textDecoration: 'line-through', color: '#9ca3af' }}>{oldPrice}</span>
-                    </div>
-                    <button 
-                        onClick={onAdd}
-                        style={{ border: '1px solid #ff6f61', color: '#ff6f61', background: '#fff', borderRadius: '6px', padding: '6px 16px', fontWeight: '600', cursor: 'pointer' }}
-                    >
-                        ADD
-                    </button>
-                </div>
+            <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#000', marginBottom: '4px' }}>{title}</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: '#555' }}>
+                 <span>{price}</span>
+                 <span style={{ width: '4px', height: '4px', background: '#ccc', borderRadius: '50%' }}></span>
+                 <span><Clock size={12} style={{ display: 'inline', marginRight: '4px' }}/>{time}</span>
             </div>
         </div>
     );

@@ -45,7 +45,7 @@ export default function AuthModal({ isOpen, onClose }) {
                 setGooglePendingToken(credentialResponse.credential);
                 setActiveTab('google-phone');
                 setFormData({ ...formData, phone: '' }); // Reset phone field
-                alert(data.message); // "Phone number is required..."
+                // alert(data.message); // REMOVED ALERT for seamless transition
             } else {
                 alert(data.message || 'Google Login Failed');
             }

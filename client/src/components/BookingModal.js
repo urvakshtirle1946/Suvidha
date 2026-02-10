@@ -17,12 +17,8 @@ export default function BookingModal({ isOpen, onClose, service }) {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [paymentMode, setPaymentMode] = useState(null); // 'online' or 'hospital'
-  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
   const [labs, setLabs] = useState([]);
   const [fetchingLabs, setFetchingLabs] = useState(false);
-
-  /* ... useEffect ... */
-  /* ... fetchLabs ... */
 
   useEffect(() => {
      if (isOpen && service) {
@@ -31,7 +27,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
          
          if (service.directBooking) {
              setSelectedLab(service);
-             setLabs([]); // No need to fetch others
+             setLabs([]); 
          } else {
              fetchLabs(service.name, service.hospital_id);
          }
@@ -48,45 +44,36 @@ export default function BookingModal({ isOpen, onClose, service }) {
               const data = await res.json();
               const list = Array.isArray(data) ? data : (data.data || []);
               
-              // Sort by discount percentage (highest first)
+              // Sort by discount
               const sorted = list.sort((a,b) => {
                   const discA = ((a.price - a.discount_price) / a.price) || 0;
                   const discB = ((b.price - b.discount_price) / b.price) || 0;
                   return discB - discA;
               });
 
-              // Deduplicate by hospital_id (keep best offer)
+              // Deduplicate
               const uniqueLabs = [];
               const seenIds = new Set();
-              
               for (const item of sorted) {
-                  // Robust ID check: hospital_id, hospitalId, or fallback to name+location
                   const uniqueKey = item.hospital_id || item.hospitalId || `${item.hospital_name}-${item.hospital_location}`;
-                  
                   if (uniqueKey) {
                       if (!seenIds.has(uniqueKey)) {
                           seenIds.add(uniqueKey);
                           uniqueLabs.push(item);
                       }
                   } else {
-                      // If completely unidentifiable, push it (unlikely)
                       uniqueLabs.push(item);
                   }
               }
-
               setLabs(uniqueLabs);
               
-              // Pre-select if ID provided
               if (preselectedId) {
-                  // Check against both hospital_id and id
                   const found = uniqueLabs.find(l => 
                       (l.hospital_id && l.hospital_id == preselectedId) || 
                       (l.hospitalId && l.hospitalId == preselectedId) ||
                       (l.id && l.id == preselectedId)
                   );
                   if (found) setSelectedLab(found);
-              } else if (uniqueLabs.length > 0) {
-                  // Don't auto-select so user HAS to choose, as per request
               }
           }
       } catch (err) {
@@ -107,15 +94,6 @@ export default function BookingModal({ isOpen, onClose, service }) {
       "04:00 PM", "05:00 PM", "06:00 PM", "07:00 PM"
   ];
 
-  const confirmCompletion = (isCompleted) => {
-        setShowCompletionDialog(false);
-        if (isCompleted) {
-            setStep(2); // Show QR
-        } else {
-            setStep(3); // Success
-        }
-  };
-
   const finalizeBooking = async (paymentMethod = 'online') => {
         const currentTxnId = paymentMethod === 'hospital' ? 'PAY_AT_HOSPITAL' : transactionId;
 
@@ -129,9 +107,9 @@ export default function BookingModal({ isOpen, onClose, service }) {
             const bookingData = {
                 name: user.name || 'User',
                 userPhone: user.phone || '',
-                age: 0, // Should be collected in form ideally
+                age: 0,
                 gender: 'Not Specified',
-                date: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Tomorrow
+                date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
                 time: selectedTime,
                 address: location || 'India',
                 serviceName: currentService.name,
@@ -148,11 +126,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
             });
 
             if (res.ok) {
-                if (paymentMethod === 'hospital') {
-                    setShowCompletionDialog(true);
-                } else {
-                    setStep(3); // Success
-                }
+                setStep(3); // Success immediately
             } else {
                 alert('Booking Failed: ' + (await res.text() || 'Unknown Error'));
             }
@@ -163,25 +137,18 @@ export default function BookingModal({ isOpen, onClose, service }) {
             setLoading(false);
         }
   };
-  
+
   const handlePayOnline = () => {
-        if (!user) { 
-            setAuthModalOpen(true);
-            return; 
-        }
+        if (!user) { setAuthModalOpen(true); return; }
         if (!selectedLab || !selectedTime) return;
         setPaymentMode('online');
-        setStep(2); // Move to payment
+        setStep(2); 
   };
   
   const handlePayAtHospital = () => {
-        if (!user) { 
-            setAuthModalOpen(true);
-            return; 
-        }
+        if (!user) { setAuthModalOpen(true); return; }
         if (!selectedLab || !selectedTime) return;
         setPaymentMode('hospital');
-        // Directly book without payment step
         finalizeBooking('hospital');
   };
 
@@ -215,53 +182,8 @@ export default function BookingModal({ isOpen, onClose, service }) {
 
             {step === 1 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                    {/* ... Date/Hospital Selection ... same as before */}
-                    {/* Simplified for replacement block - I need to be careful not to overwrite the long middle content */}
-                    {/* Wait, the tools replace_file_content usage MUST render the full content of the block I am replacing ?? */}
-                    {/* The previous usage replaced almost everything. I should target specific blocks if possible, or replace the whole file content. */}
-                    {/* Given the complexity, I will try to target specific blocks. */}
-                </div>
-             )}
-         </div>
-         {/* ... */}
-      </div>
-    </div>
-    </>
-  );
-
-
-  return (
-    <>
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 2000,
-      background: 'rgba(0,0,0,0.5)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center'
-    }}>
-      <div style={{
-        width: '95%', maxWidth: '480px', 
-        background: '#fff', borderRadius: '24px', overflow: 'hidden',
-        maxHeight: '92vh', display: 'flex', flexDirection: 'column',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-        position: 'relative'
-      }}>
-        
-        {/* Header */}
-        <div style={{ padding: '1.5rem', borderBottom: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff' }}>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#111827' }}>
-                {step === 1 ? 'Schedule Appointment' : step === 2 ? 'Complete Payment' : 'Success'}
-            </h3>
-            <button onClick={onClose} style={{ background: '#f3f4f6', border: 'none', borderRadius: '50%', padding: '6px', cursor: 'pointer', color: '#6b7280', display: 'flex' }}>
-                <X size={20} />
-            </button>
-        </div>
-
-        {/* Content Area */}
-        <div style={{ flex: 1, padding: '1.5rem', overflowY: 'auto' }}>
-
-            {step === 1 && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                     
-                    {/* Date Picker (Static for now) */}
+                    {/* Date Picker */}
                     <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
                              <Calendar size={18} color="#ff6f61" />
@@ -399,7 +321,6 @@ export default function BookingModal({ isOpen, onClose, service }) {
                             borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                             boxShadow: '0 10px 20px rgba(0,0,0,0.05)'
                         }}>
-                             {/* Placeholder for QR Code - User should place the actual image here */}
                              <img 
                                 src={getImageUrl('/uploads/Qr.jpg')} 
                                 alt="Payment QR" 
@@ -459,7 +380,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
         </div>
 
         {/* Footer Action */}
-        {step < 3 && !showCompletionDialog && (
+        {step < 3 && (
             <div style={{ padding: '1.5rem', borderTop: '1px solid #f3f4f6', background: '#fff' }}>
                 {step === 1 ? (
                     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
@@ -526,32 +447,6 @@ export default function BookingModal({ isOpen, onClose, service }) {
                 <p style={{ textAlign: 'center', fontSize: '0.75rem', color: '#9ca3af', marginTop: '12px' }}>
                     {step === 1 ? 'Select payment method to proceed' : 'Step 2 of 2 • Secure payment verification'}
                 </p>
-            </div>
-        )}
-
-        {/* Completion Check Overlay */}
-        {showCompletionDialog && (
-            <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.98)', zIndex: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem', textAlign: 'center' }}>
-                <div style={{ background: '#fff5f4', p: '2rem', borderRadius: '24px', border: '1px solid #ffd1cd' }}>
-                    <h4 style={{ fontSize: '1.25rem', fontWeight: '800', marginBottom: '1rem', color: '#111827' }}>Confirmation</h4>
-                    <p style={{ color: '#4b5563', marginBottom: '2rem', lineHeight: '1.5' }}>
-                        Is your service that you booked completed?
-                    </p>
-                    <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
-                        <button 
-                            onClick={() => confirmCompletion(false)}
-                            style={{ flex: 1, padding: '0.8rem', borderRadius: '12px', border: '1px solid #e5e7eb', background: '#fff', fontWeight: '700', cursor: 'pointer' }}
-                        >
-                            No
-                        </button>
-                        <button 
-                            onClick={() => confirmCompletion(true)}
-                            style={{ flex: 1, padding: '0.8rem', borderRadius: '12px', border: 'none', background: '#ff6f61', color: '#fff', fontWeight: '700', cursor: 'pointer' }}
-                        >
-                            Yes
-                        </button>
-                    </div>
-                </div>
             </div>
         )}
       </div>

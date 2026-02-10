@@ -3,21 +3,6 @@ import PaymentReminder from '@/components/PaymentReminder';
 // ... (existing imports)
 
 export default function HomeClient({ hospitals, popularServices }) {
-  // ... (existing code)
-
-  return (
-    <main style={{ paddingBottom: '100px', background: '#f4f6fb', minHeight: '100vh' }}>
-      
-      {/* ... (existing JSX) ... */}
-
-      <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 2rem)' }}>
-            {/* ... */}
-      </div>
-      <AmbulanceRequest />
-      <PaymentReminder />
-    </main>
-  );
-}
   const { addToCart } = useCart();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedHospitalForProfile, setSelectedHospitalForProfile] = useState(null);

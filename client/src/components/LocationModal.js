@@ -17,6 +17,7 @@ const POPULAR_CITIES = [
 
 export default function LocationModal({ isOpen, onClose, onSelectLocation, onDetectLocation }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [showAllCities, setShowAllCities] = useState(false);
 
   // Prevent scrolling when modal is open
   useEffect(() => {
@@ -32,11 +33,17 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
 
   if (!isOpen) return null;
 
+  // Filter logic
+  const filteredCities = POPULAR_CITIES.filter(city => city.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  
+  // Decide what to render: if searching, show all matches. If not, show 10 or all based on toggle.
+  const citiesDisplay = searchTerm ? filteredCities : (showAllCities ? POPULAR_CITIES : POPULAR_CITIES.slice(0, 10));
+
   return (
     <div className="modal-overlay">
       <div className="modal-content">
         
-        {/* Close Button */}
+        {/* Close Button (Top Right) */}
         <button 
           onClick={onClose}
           className="modal-close"
@@ -59,8 +66,6 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
         {/* Detect Location */}
         <button 
           onClick={() => {
-            // Logic to handle detection restriction should ideally be in Context, 
-            // but for now we'll just allow detection and let the user know if it's not Indore
             onDetectLocation();
             onClose();
           }}
@@ -70,19 +75,19 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
           <span>Detect my location</span>
         </button>
 
-        {/* Popular Cities Section */}
+        {/* Popular Cities / Search Results */}
         <div className="text-center">
           <h3 className="popular-cities-title">
              {searchTerm ? 'Search Results' : 'Popular Cities'}
           </h3>
           
           <div className="cities-grid">
-            {POPULAR_CITIES.filter(city => city.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 ? (
+            {filteredCities.length === 0 ? (
                 <div style={{ gridColumn: '1 / -1', color: '#6b7280', padding: '2rem' }}>
                     No cities found matching "{searchTerm}"
                 </div>
             ) : (
-                POPULAR_CITIES.filter(city => city.name.toLowerCase().includes(searchTerm.toLowerCase())).map((city) => (
+                citiesDisplay.map((city) => (
                 <button
                     key={city.name}
                     onClick={() => {
@@ -113,26 +118,35 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
             )}
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
-            <button className="view-all-btn">
-                View All Cities
-            </button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'center' }}>
+            {!searchTerm && (
+                <button 
+                    className="view-all-btn" 
+                    onClick={() => setShowAllCities(!showAllCities)}
+                >
+                    {showAllCities ? 'View Less' : 'View All Cities'}
+                </button>
+            )}
             
+            {/* Bottom Cross Button */}
             <button 
                 onClick={onClose}
                 style={{ 
-                    padding: '0.8rem 2rem', 
-                    borderRadius: '8px', 
+                    padding: '8px', 
+                    borderRadius: '50%', 
                     border: '1px solid #e5e7eb',
                     background: '#fff',
                     color: '#6b7280',
-                    fontWeight: '600',
                     cursor: 'pointer',
-                    width: '100%',
-                    marginTop: '1rem'
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
+                    width: '40px',
+                    height: '40px'
                 }}
             >
-                Close
+                <X size={20} />
             </button>
           </div>
         </div>

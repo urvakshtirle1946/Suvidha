@@ -672,7 +672,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$user$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__User$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/user.js [app-ssr] (ecmascript) <export default as User>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$right$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowRight$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/arrow-right.js [app-ssr] (ecmascript) <export default as ArrowRight>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/utils/api.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$oauth$2f$google$2f$dist$2f$index$2e$esm$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@react-oauth/google/dist/index.esm.js [app-ssr] (ecmascript)");
 'use client';
+;
 ;
 ;
 ;
@@ -681,6 +683,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$api$2e$js__$
 ;
 function AuthModal({ isOpen, onClose }) {
     const { login } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$context$2f$AuthContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useAuth"])();
+    // ... existing state ...
     const [activeTab, setActiveTab] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('login'); // 'login' or 'register'
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [formData, setFormData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
@@ -695,6 +698,36 @@ function AuthModal({ isOpen, onClose }) {
             ...formData,
             [e.target.name]: e.target.value
         });
+    };
+    const handleGoogleSuccess = async (credentialResponse)=>{
+        try {
+            setLoading(true);
+            const apiUrl = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getApiUrl"])();
+            const res = await fetch(`${apiUrl}/api/auth/google-login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    token: credentialResponse.credential
+                })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                login({
+                    ...data.user,
+                    token: data.token
+                });
+                onClose();
+            } else {
+                alert(data.message || 'Google Login Failed');
+            }
+        } catch (err) {
+            console.error('Google Auth Error:', err);
+            alert('Google Login Failed');
+        } finally{
+            setLoading(false);
+        }
     };
     const handleSubmit = async (e)=>{
         e.preventDefault();
@@ -786,12 +819,12 @@ function AuthModal({ isOpen, onClose }) {
                             size: 18
                         }, void 0, false, {
                             fileName: "[project]/src/components/AuthModal.js",
-                            lineNumber: 89,
+                            lineNumber: 116,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/AuthModal.js",
-                        lineNumber: 80,
+                        lineNumber: 107,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -812,7 +845,7 @@ function AuthModal({ isOpen, onClose }) {
                                 children: activeTab === 'login' ? 'Welcome Back' : 'Create Account'
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 93,
+                                lineNumber: 120,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -824,13 +857,13 @@ function AuthModal({ isOpen, onClose }) {
                                 children: activeTab === 'login' ? 'Sign in to access your bookings' : 'Join Zelp for premium healthcare'
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 96,
+                                lineNumber: 123,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/AuthModal.js",
-                        lineNumber: 92,
+                        lineNumber: 119,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -861,7 +894,7 @@ function AuthModal({ isOpen, onClose }) {
                                 children: "Login"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 104,
+                                lineNumber: 131,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -882,13 +915,90 @@ function AuthModal({ isOpen, onClose }) {
                                 children: "Register"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 116,
+                                lineNumber: 143,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/AuthModal.js",
-                        lineNumber: 101,
+                        lineNumber: 128,
+                        columnNumber: 17
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            display: 'flex',
+                            justifyContent: 'center',
+                            marginBottom: '1.5rem'
+                        },
+                        className: "jsx-74ae01b9c3aeb5aa",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$oauth$2f$google$2f$dist$2f$index$2e$esm$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["GoogleLogin"], {
+                            onSuccess: handleGoogleSuccess,
+                            onError: ()=>{
+                                console.log('Login Failed');
+                                alert('Google Login Failed');
+                            },
+                            theme: "filled_blue",
+                            shape: "pill",
+                            text: activeTab === 'login' ? "signin_with" : "signup_with"
+                        }, void 0, false, {
+                            fileName: "[project]/src/components/AuthModal.js",
+                            lineNumber: 159,
+                            columnNumber: 21
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/AuthModal.js",
+                        lineNumber: 158,
+                        columnNumber: 17
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            display: 'flex',
+                            alignItems: 'center',
+                            margin: '0 0 1.5rem 0',
+                            color: '#9ca3af',
+                            fontSize: '0.8rem'
+                        },
+                        className: "jsx-74ae01b9c3aeb5aa",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
+                                    flex: 1,
+                                    height: '1px',
+                                    background: '#e5e7eb'
+                                },
+                                className: "jsx-74ae01b9c3aeb5aa"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/AuthModal.js",
+                                lineNumber: 172,
+                                columnNumber: 21
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                style: {
+                                    padding: '0 10px'
+                                },
+                                className: "jsx-74ae01b9c3aeb5aa",
+                                children: "OR"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/AuthModal.js",
+                                lineNumber: 173,
+                                columnNumber: 21
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
+                                    flex: 1,
+                                    height: '1px',
+                                    background: '#e5e7eb'
+                                },
+                                className: "jsx-74ae01b9c3aeb5aa"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/AuthModal.js",
+                                lineNumber: 174,
+                                columnNumber: 21
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/components/AuthModal.js",
+                        lineNumber: 171,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -917,7 +1027,7 @@ function AuthModal({ isOpen, onClose }) {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 133,
+                                        lineNumber: 180,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -938,13 +1048,13 @@ function AuthModal({ isOpen, onClose }) {
                                         className: "jsx-74ae01b9c3aeb5aa"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 134,
+                                        lineNumber: 181,
                                         columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 132,
+                                lineNumber: 179,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -964,7 +1074,7 @@ function AuthModal({ isOpen, onClose }) {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 146,
+                                        lineNumber: 193,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -985,13 +1095,13 @@ function AuthModal({ isOpen, onClose }) {
                                         className: "jsx-74ae01b9c3aeb5aa"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 147,
+                                        lineNumber: 194,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 145,
+                                lineNumber: 192,
                                 columnNumber: 21
                             }, this),
                             activeTab === 'register' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1011,7 +1121,7 @@ function AuthModal({ isOpen, onClose }) {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 159,
+                                        lineNumber: 206,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1032,13 +1142,13 @@ function AuthModal({ isOpen, onClose }) {
                                         className: "jsx-74ae01b9c3aeb5aa"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 160,
+                                        lineNumber: 207,
                                         columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 158,
+                                lineNumber: 205,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1058,7 +1168,7 @@ function AuthModal({ isOpen, onClose }) {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 172,
+                                        lineNumber: 219,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1079,13 +1189,13 @@ function AuthModal({ isOpen, onClose }) {
                                         className: "jsx-74ae01b9c3aeb5aa"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 173,
+                                        lineNumber: 220,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 171,
+                                lineNumber: 218,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1114,19 +1224,19 @@ function AuthModal({ isOpen, onClose }) {
                                         size: 18
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthModal.js",
-                                        lineNumber: 192,
+                                        lineNumber: 239,
                                         columnNumber: 38
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 183,
+                                lineNumber: 230,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/AuthModal.js",
-                        lineNumber: 130,
+                        lineNumber: 177,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1150,19 +1260,19 @@ function AuthModal({ isOpen, onClose }) {
                                 children: activeTab === 'login' ? 'Register Now' : 'Login'
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthModal.js",
-                                lineNumber: 198,
+                                lineNumber: 245,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/AuthModal.js",
-                        lineNumber: 196,
+                        lineNumber: 243,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/AuthModal.js",
-                lineNumber: 70,
+                lineNumber: 97,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1172,7 +1282,7 @@ function AuthModal({ isOpen, onClose }) {
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/AuthModal.js",
-        lineNumber: 63,
+        lineNumber: 90,
         columnNumber: 9
     }, this);
 }

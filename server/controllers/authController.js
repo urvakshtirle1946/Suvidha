@@ -139,3 +139,68 @@ exports.getAllUsers = async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to fetch users' });
   }
 };
+
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+exports.googleLogin = async (req, res) => {
+    const { token } = req.body;
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        const { email, name, sub } = payload; // sub is the unique Google ID
+
+        // Check if user exists by email
+        const checkUser = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+        
+        let user;
+        let role = 'user';
+
+        if (checkUser.rows.length > 0) {
+            user = checkUser.rows[0];
+            role = user.role;
+        } else {
+            // Create new user
+            // Use Google ID as a placeholder phone number (must be unique)
+            const placeholderPhone = `G-${sub.substring(0, 10)}`; 
+            
+            // Generate a random password (user won't know it, they login via Google)
+            const randomPassword = crypto.randomBytes(16).toString('hex');
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(randomPassword, salt);
+
+            const newUser = await db.query(
+                'INSERT INTO users (name, email, phone, password, role) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+                [name, email, placeholderPhone, hashedPassword, role]
+            );
+            user = newUser.rows[0];
+        }
+
+        // Generate JWT
+        const jwtToken = jwt.sign(
+            { phone: user.phone, role: user.role, name: user.name, email: user.email }, 
+            process.env.JWT_SECRET || 'secret', 
+            { expiresIn: '30d' }
+        );
+
+        return res.status(200).json({ 
+            success: true, 
+            token: jwtToken, 
+            user: {
+                id: user.phone,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                role: user.role
+            },
+            message: 'Google Login Successful' 
+        });
+
+    } catch (error) {
+        console.error("Google Auth Error:", error);
+        res.status(401).json({ success: false, message: 'Invalid Google Token' });
+    }
+};

@@ -4,8 +4,11 @@ import { useAuth } from '@/context/AuthContext';
 import { X, Phone, Mail, Lock, User, ArrowRight } from 'lucide-react';
 import { getApiUrl } from '@/utils/api';
 
+import { GoogleLogin } from '@react-oauth/google';
+
 export default function AuthModal({ isOpen, onClose }) {
     const { login } = useAuth();
+    // ... existing state ...
     const [activeTab, setActiveTab] = useState('login'); // 'login' or 'register'
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -19,6 +22,30 @@ export default function AuthModal({ isOpen, onClose }) {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleGoogleSuccess = async (credentialResponse) => {
+        try {
+            setLoading(true);
+            const apiUrl = getApiUrl();
+            const res = await fetch(`${apiUrl}/api/auth/google-login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: credentialResponse.credential })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                login({ ...data.user, token: data.token });
+                onClose();
+            } else {
+                alert(data.message || 'Google Login Failed');
+            }
+        } catch (err) {
+            console.error('Google Auth Error:', err);
+            alert('Google Login Failed');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -125,6 +152,26 @@ export default function AuthModal({ isOpen, onClose }) {
                     >
                         Register
                     </button>
+                </div>
+
+                {/* Google Login Button */}
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                    <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={() => {
+                            console.log('Login Failed');
+                            alert('Google Login Failed');
+                        }}
+                        theme="filled_blue"
+                        shape="pill"
+                        text={activeTab === 'login' ? "signin_with" : "signup_with"}
+                    />
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', margin: '0 0 1.5rem 0', color: '#9ca3af', fontSize: '0.8rem' }}>
+                    <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
+                    <span style={{ padding: '0 10px' }}>OR</span>
+                    <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
                 </div>
 
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

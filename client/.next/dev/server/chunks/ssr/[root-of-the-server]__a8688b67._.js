@@ -89,9 +89,11 @@ __turbopack_context__.s([
     ()=>getImageUrl
 ]);
 const getApiUrl = ()=>{
-    if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
+    if ("TURBOPACK compile-time truthy", 1) {
+        return 'http://localhost:5000';
+    }
+    //TURBOPACK unreachable
     ;
-    return process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com';
 };
 const getImageUrl = (url)=>{
     if (!url) return null;

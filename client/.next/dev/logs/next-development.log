@@ -1,8 +1,6 @@
-[00:00:02.693] Server  LOG     ✓ Ready in 1888ms
-[00:00:31.534] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:08:31.413] Server  LOG     ✓ Compiled in 1277ms
-[00:10:00.716] Server  LOG     ✓ Compiled in 1429ms
-[00:10:03.902] Server  LOG     ✓ Compiled in 446ms
-[00:10:05.617] Server  LOG     ✓ Compiled in 112ms
-[00:13:39.166] Server  LOG     ✓ Compiled in 267ms
-[00:13:40.892] Server  LOG     ✓ Compiled in 40ms
+[00:00:02.487] Server  LOG     ✓ Ready in 1780ms
+[00:00:06.356] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:11.285] Browser ERROR   Location reverse geocode failed {}
+[00:00:20.385] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:40.751] Browser ERROR   Location reverse geocode failed {}
+[00:02:47.627] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold

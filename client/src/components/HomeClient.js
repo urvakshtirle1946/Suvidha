@@ -6,19 +6,6 @@ import BookingModal from '@/components/BookingModal';
 import HospitalProfileModal from '@/components/HospitalProfileModal';
 import AmbulanceRequest from '@/components/AmbulanceRequest';
 import { 
-  Activity, Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin,
-  ChevronLeft, ChevronRight, TestTube
-} from 'lucide-react';
-import { getApiUrl, getImageUrl } from '@/utils/api';
-
-'use client';
-import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import { useCart } from '@/context/CartContext';
-import BookingModal from '@/components/BookingModal';
-import HospitalProfileModal from '@/components/HospitalProfileModal';
-import AmbulanceRequest from '@/components/AmbulanceRequest';
-import { 
   Activity, Heart, Search, MapPin, 
   ChevronRight, Car, Building2, Pill, FlaskConical, Stethoscope
 } from 'lucide-react';

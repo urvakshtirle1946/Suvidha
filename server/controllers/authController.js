@@ -125,18 +125,18 @@ exports.phoneLogin = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
+    // Simplified query to avoid grouping errors if any, and ensure we get all users
     const query = `
-      SELECT u.*, COUNT(b.id) as booking_count 
+      SELECT u.id, u.name, u.email, u.phone, u.role, u.created_at,
+      (SELECT COUNT(*) FROM bookings b WHERE b.user_phone = u.phone) as booking_count
       FROM users u
-      LEFT JOIN bookings b ON u.phone = b.user_phone
-      GROUP BY u.id
       ORDER BY u.created_at DESC
     `;
     const result = await db.query(query);
     res.json(result.rows);
   } catch (error) {
-    console.error('Database Error:', error);
-    res.status(500).json({ success: false, message: 'Failed to fetch users' });
+    console.error('Database Error in getAllUsers:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch users', error: error.message });
   }
 };
 
@@ -219,5 +219,56 @@ exports.googleLogin = async (req, res) => {
     } catch (error) {
         console.error("Google Auth Error:", error);
         res.status(401).json({ success: false, message: 'Invalid Google Token' });
+    }
+};
+
+exports.updateProfile = async (req, res) => {
+    const { name, email, phone, password } = req.body;
+    
+    // Check if user exists
+    const checkUser = await db.query('SELECT * FROM users WHERE phone = $1', [phone]);
+    if (checkUser.rows.length === 0) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    
+    try {
+        let hashedPassword = checkUser.rows[0].password;
+        if (password && password.trim() !== '') {
+            const salt = await bcrypt.genSalt(10);
+            hashedPassword = await bcrypt.hash(password, salt);
+        }
+
+        await db.query(
+            'UPDATE users SET name = $1, email = $2, password = $3 WHERE phone = $4',
+            [name, email, hashedPassword, phone]
+        );
+
+        // Fetch updated user to return
+        const updatedUserRaw = await db.query('SELECT * FROM users WHERE phone = $1', [phone]);
+        const updatedUser = updatedUserRaw.rows[0];
+
+        // Generate new token with updated details
+        const token = jwt.sign(
+            { phone: updatedUser.phone, role: updatedUser.role, name: updatedUser.name, email: updatedUser.email }, 
+            process.env.JWT_SECRET || 'secret', 
+            { expiresIn: '30d' }
+        );
+
+        res.json({ 
+            success: true, 
+            message: 'Profile updated successfully',
+            token,
+            user: {
+                id: updatedUser.phone,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                phone: updatedUser.phone,
+                role: updatedUser.role
+            }
+        });
+
+    } catch (err) {
+        console.error("Update Profile Error:", err);
+        res.status(500).json({ success: false, message: 'Server Error' });
     }
 };

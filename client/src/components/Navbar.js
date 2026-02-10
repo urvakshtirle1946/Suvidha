@@ -8,6 +8,8 @@ import { ChevronDown, ShoppingCart, Menu, X, MapPin } from 'lucide-react';
 import { TextReveal } from './ui/text-reveal-animation';
 import { ZelpLogo } from './ui/zelp-text-reveal';
 import LocationModal from './LocationModal';
+import SettingsModal from './SettingsModal';
+import ProfileDropdown from './ProfileDropdown';
 import AuthModal from './AuthModal';
 
 export default function Navbar() {
@@ -17,20 +19,14 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [locationModalOpen, setLocationModalOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 
   return (
     <>
       <nav style={{ 
-        position: 'fixed', 
-        top: 0, 
-        left: 0, 
-        right: 0, 
-        zIndex: 1000, 
-        height: 'var(--header-height)',
-        background: '#fff',
-        borderBottom: '1px solid #e5e7eb',
-        display: 'flex',
-        alignItems: 'center'
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000, 
+        height: 'var(--header-height)', background: '#fff', borderBottom: '1px solid #e5e7eb',
+        display: 'flex', alignItems: 'center'
       }}>
         <div className="container nav-content">
           
@@ -47,12 +43,8 @@ export default function Navbar() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1 }}>
               <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
                   <span style={{ 
-                      fontSize: '1.8rem', 
-                      fontWeight: '800', 
-                      color: '#000', 
-                      letterSpacing: '-1.5px', 
-                      fontFamily: 'var(--font-outfit), sans-serif',
-                      lineHeight: 1
+                      fontSize: '1.8rem', fontWeight: '800', color: '#000', 
+                      letterSpacing: '-1.5px', fontFamily: 'var(--font-outfit), sans-serif', lineHeight: 1
                   }}>
                       Zelp
                   </span>
@@ -62,14 +54,8 @@ export default function Navbar() {
                    <div 
                       onClick={() => setLocationModalOpen(true)}
                       style={{ 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          gap: '5px', 
-                          cursor: 'pointer',
-                          padding: '0.5rem',
-                          borderRadius: '8px',
-                          background: 'transparent',
-                          transition: 'background 0.2s'
+                          display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer',
+                          padding: '0.5rem', borderRadius: '8px', background: 'transparent', transition: 'background 0.2s'
                       }}
                       onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
                       onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
@@ -100,18 +86,7 @@ export default function Navbar() {
                           Login
                       </button>
                   ) : (
-                     <>
-                         <Link href="/bookings" style={{ textDecoration: 'none', color: '#374151', fontSize: '1rem', fontWeight: '500' }}>
-                            My Bookings
-                         </Link>
-                         <div style={{ fontWeight: '500', color: '#0c831f' }}>Hi, {user.name.split(' ')[0]}</div>
-                         <button 
-                             onClick={logout}
-                             style={{ background: 'transparent', border: 'none', fontSize: '0.9rem', color: '#dc2626', cursor: 'pointer', fontWeight: '500' }}
-                         >
-                             Logout
-                         </button>
-                     </>
+                     <ProfileDropdown onOpenSettings={() => setSettingsModalOpen(true)} />
                   )}
               </div>
               
@@ -134,11 +109,14 @@ export default function Navbar() {
                   )}
               </button>
               
-              {/* Mobile User Section */}
+              {/* Mobile User Section - Keep initial or user icon */}
                <div className="show-on-mobile">
                   {user && (
-                      <div style={{ fontSize: '0.9rem', color: '#0c831f', fontWeight: '500' }}>
-                          {user.name.charAt(0)}
+                      <div 
+                        onClick={() => setMobileMenuOpen(true)}
+                        style={{ fontSize: '0.9rem', color: '#0c831f', fontWeight: '500', cursor: 'pointer' }}
+                      >
+                          {user.name.charAt(0).toUpperCase()}
                       </div>
                   )}
                </div>
@@ -158,6 +136,12 @@ export default function Navbar() {
       <AuthModal 
         isOpen={authModalOpen} 
         onClose={() => setAuthModalOpen(false)} 
+      />
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={settingsModalOpen}
+        onClose={() => setSettingsModalOpen(false)}
       />
 
       {/* Mobile Menu Overlay */}
@@ -203,9 +187,23 @@ export default function Navbar() {
                     Login / Sign Up
                  </button>
              ) : (
-                 <Link href="/bookings" onClick={() => setMobileMenuOpen(false)} style={{ padding: '0.8rem', fontWeight: '500', color: '#1f2937' }}>
-                    My Bookings
-                 </Link>
+                 <>
+                    <Link href="/bookings" onClick={() => setMobileMenuOpen(false)} style={{ padding: '0.8rem', fontWeight: '500', color: '#1f2937', borderBottom: '1px solid #f3f4f6' }}>
+                        My Bookings
+                    </Link>
+                    <button
+                        onClick={() => { setSettingsModalOpen(true); setMobileMenuOpen(false); }}
+                        style={{ padding: '0.8rem', fontWeight: '500', color: '#1f2937', background: 'transparent', border: 'none', textAlign: 'left', borderBottom: '1px solid #f3f4f6', cursor: 'pointer', fontSize: '1rem' }}
+                    >
+                        Settings
+                    </button>
+                    <button
+                        onClick={() => { logout(); setMobileMenuOpen(false); }}
+                        style={{ padding: '0.8rem', fontWeight: '600', color: '#dc2626', background: 'transparent', border: 'none', textAlign: 'left', fontSize: '1rem', cursor: 'pointer' }}
+                    >
+                        Logout
+                    </button>
+                 </>
              )}
         </div>
       )}

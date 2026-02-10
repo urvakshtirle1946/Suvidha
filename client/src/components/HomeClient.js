@@ -31,6 +31,32 @@ export default function HomeClient({ hospitals, popularServices }) {
     }
   };
 
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  useEffect(() => {
+    if (searchQuery.length > 1) {
+        const lowerQuery = searchQuery.toLowerCase();
+        
+        // Filter Categories
+        const matchedCategories = CATEGORIES.filter(cat => 
+            cat.name.toLowerCase().includes(lowerQuery)
+        ).map(cat => ({ type: 'category', ...cat }));
+
+        // Filter Hospitals
+        const matchedHospitals = hospitals.filter(hosp => 
+            hosp.name.toLowerCase().includes(lowerQuery) || 
+            hosp.location.toLowerCase().includes(lowerQuery)
+        ).map(hosp => ({ type: 'hospital', ...hosp }));
+
+        setSuggestions([...matchedCategories, ...matchedHospitals]);
+        setShowSuggestions(true);
+    } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+    }
+  }, [searchQuery, hospitals]);
+
   const OFFERS = [
       {
           id: 1,
@@ -115,33 +141,7 @@ export default function HomeClient({ hospitals, popularServices }) {
         
         {/* Search Bar - Pill Shape */}
 
-  const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
 
-  useEffect(() => {
-    if (searchQuery.length > 1) {
-        const lowerQuery = searchQuery.toLowerCase();
-        
-        // Filter Categories
-        const matchedCategories = CATEGORIES.filter(cat => 
-            cat.name.toLowerCase().includes(lowerQuery)
-        ).map(cat => ({ type: 'category', ...cat }));
-
-        // Filter Hospitals
-        const matchedHospitals = hospitals.filter(hosp => 
-            hosp.name.toLowerCase().includes(lowerQuery) || 
-            hosp.location.toLowerCase().includes(lowerQuery)
-        ).map(hosp => ({ type: 'hospital', ...hosp }));
-
-        setSuggestions([...matchedCategories, ...matchedHospitals]);
-        setShowSuggestions(true);
-    } else {
-        setSuggestions([]);
-        setShowSuggestions(false);
-    }
-  }, [searchQuery, hospitals]);
-
-  /* ... */
 
         <div style={{ 
             position: 'relative', 

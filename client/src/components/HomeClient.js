@@ -1,86 +1,54 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import BookingModal from '@/components/BookingModal';
 import HospitalProfileModal from '@/components/HospitalProfileModal';
 import AmbulanceRequest from '@/components/AmbulanceRequest';
 import { 
-  Activity, Heart, Search, MapPin, 
-  ChevronRight, Car, Building2, Pill, FlaskConical, Stethoscope,
-  Baby, Brain, Bone, Eye, Smile
+  Activity, Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin,
+  ChevronLeft, ChevronRight, TestTube
 } from 'lucide-react';
 import { getApiUrl, getImageUrl } from '@/utils/api';
-import { useAuth } from '@/context/AuthContext';
 
 export default function HomeClient({ hospitals, popularServices }) {
-  const { user } = useAuth();
   const { addToCart } = useCart();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedHospitalForProfile, setSelectedHospitalForProfile] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef(null);
 
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
-  const router = useRouter();
-
-  const handleSearch = (e) => {
-    if (e.key === 'Enter' && searchQuery.trim()) {
-      router.push(`/hospitals?search=${encodeURIComponent(searchQuery.trim())}`);
+  const scroll = (direction) => {
+    if (sliderRef.current) {
+      const scrollAmount = direction === 'left' ? -300 : 300;
+      sliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
-
-  const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-
-  useEffect(() => {
-    if (searchQuery.length > 1) {
-        const lowerQuery = searchQuery.toLowerCase();
-        
-        // Filter Categories
-        const matchedCategories = CATEGORIES.filter(cat => 
-            cat.name.toLowerCase().includes(lowerQuery)
-        ).map(cat => ({ type: 'category', ...cat }));
-
-        // Filter Hospitals
-        const matchedHospitals = hospitals.filter(hosp => 
-            hosp.name.toLowerCase().includes(lowerQuery) || 
-            hosp.location.toLowerCase().includes(lowerQuery)
-        ).map(hosp => ({ type: 'hospital', ...hosp }));
-
-        setSuggestions([...matchedCategories, ...matchedHospitals]);
-        setShowSuggestions(true);
-    } else {
-        setSuggestions([]);
-        setShowSuggestions(false);
-    }
-  }, [searchQuery, hospitals]);
 
   const OFFERS = [
       {
           id: 1,
-          title: "Healthcare, simplified.",
+          title: "Healthcare at your fingertips.",
           subtitle: "Lab Tests • Medicines • Nursing • Doctor Visits",
-          bg: "#111827", // Black for Uber look
+          bg: "linear-gradient(to right, #0c831f, #33b249)", // Green
           btnText: "Book Now",
-          btnColor: "#000"
+          btnColor: "#0c831f"
       },
       {
           id: 2,
-          title: "50% OFF Full Body Checkups",
+          title: "50% OFF on Full Body Checkups",
           subtitle: "Includes 80+ Tests. Home Collection Available.",
-          bg: "#166534", // Dark Green
+          bg: "linear-gradient(to right, #2563eb, #60a5fa)", // Blue
           btnText: "View Package",
-          btnColor: "#166534"
+          btnColor: "#2563eb"
       },
       {
           id: 3,
           title: "Pharmacy: Flat 20% OFF",
-          subtitle: "On all prescription medicines. Fast delivery.",
-          bg: "#9d174d", // Dark Pink
+          subtitle: "On all prescription medicines. fast delivery.",
+          bg: "linear-gradient(to right, #db2777, #f472b6)", // Pink
           btnText: "Order Now",
-          btnColor: "#9d174d"
+          btnColor: "#db2777"
       }
   ];
 
@@ -91,16 +59,10 @@ export default function HomeClient({ hospitals, popularServices }) {
       return () => clearInterval(timer);
   }, []);
 
-  const getGreeting = () => {
-      const hour = new Date().getHours();
-      if (hour < 12) return 'Good morning';
-      if (hour < 18) return 'Good afternoon';
-      return 'Good evening';
-  };
-
   const handleHospitalClick = async (hospital) => {
       try {
           const apiUrl = getApiUrl();
+          // Visual feedback
           document.body.style.cursor = 'wait';
           const res = await fetch(`${apiUrl}/api/hospitals/${hospital.id}`);
           if (!res.ok) throw new Error('Failed to fetch details');
@@ -108,170 +70,69 @@ export default function HomeClient({ hospitals, popularServices }) {
           setSelectedHospitalForProfile(fullData);
       } catch (err) {
           console.error("Error fetching hospital details:", err);
+          // Fallback to basic data if fetch fails, though services will be missing
           setSelectedHospitalForProfile(hospital);
       } finally {
           document.body.style.cursor = 'default';
       }
   };
 
+  // Categories with assigned colors to match the "Promo Card" aesthetic but smaller
   const CATEGORIES = [
-      { name: 'Cardiology', icon: <Heart size={32} />, bg: '#fef2f2', link: '/hospitals?specialty=Cardiologist' }, // Light red
-      { name: 'Orthopedic', icon: <Bone size={32} />, bg: '#f5f3ff', link: '/hospitals?specialty=Orthopedic' }, // Light violet
-      { name: 'Pediatric', icon: <Baby size={32} />, bg: '#fdf2f8', link: '/hospitals?specialty=Pediatrician' }, // Light pink
-      { name: 'Neurology', icon: <Brain size={32} />, bg: '#eff6ff', link: '/hospitals?specialty=Neurologist' }, // Light blue
-      { name: 'Eye Care', icon: <Eye size={32} />, bg: '#ecfdf5', link: '/hospitals?specialty=Ophthalmologist' }, // Light green
-      { name: 'Dermatology', icon: <Smile size={32} />, bg: '#ecfeff', link: '/hospitals?specialty=Dermatologist' }, // Light cyan
-      { name: 'Radiology', icon: <Activity size={32} />, bg: '#faf5ff', link: '/hospitals?category=Scan' }, // Light purple
-      { name: 'General', icon: <Stethoscope size={32} />, bg: '#f3f4f6', link: '/hospitals?specialty=General' }, // Gray
+      { name: 'Cardiology', desc: 'Heart Care', icon: <Heart size={50} color="rgba(255,255,255,0.3)" />, color: '#ff6b6b', href: '/hospitals?specialty=Cardiologist' },
+      { name: 'Radiology', desc: 'Scans & X-Rays', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#a55eea', href: '/hospitals?category=Scan' },
+      { name: 'Pathology', desc: 'Lab Tests', icon: <TestTube size={50} color="rgba(255,255,255,0.3)" />, color: '#fd9644', href: '/lab-tests' },
+      { name: 'Orthopedic', desc: 'Bone Health', icon: <Bone size={50} color="rgba(255,255,255,0.3)" />, color: '#5f27cd', href: '/hospitals?specialty=Orthopedic' },
+      { name: 'Pediatric', desc: 'Child Care', icon: <Baby size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9ff3', textColor: '#1f2937', href: '/hospitals?specialty=Pediatrician' },
+      { name: 'Neurology', desc: 'Brain Care', icon: <Brain size={50} color="rgba(255,255,255,0.3)" />, color: '#54a0ff', href: '/hospitals?specialty=Neurologist' },
+      { name: 'Eye Care', desc: 'Vision', icon: <Eye size={50} color="rgba(255,255,255,0.3)" />, color: '#1dd1a1', href: '/hospitals?specialty=Ophthalmologist' },
+      { name: 'Dermatology', desc: 'Skin & Hair', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#00d2d3', href: '/hospitals?specialty=Dermatologist' },
+      { name: 'Diabetes', desc: 'Sugar Levels', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ee5253', href: '/hospitals?specialty=Diabetes' },
+      { name: 'Surgeries', desc: 'Expert Operations', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9f43', href: '/hospitals?category=Surgery' },
+      { name: 'Physiotherapy', desc: 'Recovery', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#10ac84', href: '/hospitals?specialty=Physiotherapy' },
+      { name: 'Counseling', desc: 'Mental Health', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#f368e0', href: '/hospitals?specialty=Psychotherapy' },
   ];
 
   return (
-    <main style={{ paddingBottom: '100px', background: '#fff', minHeight: '100vh', fontFamily: 'var(--font-outfit)' }}>
+    <main style={{ paddingBottom: '100px', background: '#f4f6fb', minHeight: '100vh' }}>
       
-      <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 1.5rem)', maxWidth: '1000px' }}>
+      <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 2rem)' }}>
 
-
-        {/* Re-added Offers Slider - Moved to Top */}
-
-
-        {/* Uber-like Header */}
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#000' }}>
-            {getGreeting()}, {user?.name ? user.name.split(' ')[0] : 'Guest'}
-        </h1>
-        
-        {/* Search Bar - Pill Shape */}
-
-
-
-        <div style={{ 
-            position: 'relative', 
-            marginBottom: '2.5rem',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-            borderRadius: '50px',
-            background: '#ffffff',
-            border: '1px solid #e5e7eb',
-            zIndex: 50 // Ensure it sits above other content
-        }}>
-            <div style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)' }}>
-                <Search size={24} color="#000" />
-            </div>
-            <input 
-                type="text" 
-                placeholder="Where to? (Find hospitals, labs...)" 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={handleSearch}
-                onFocus={() => { if(searchQuery.length > 1) setShowSuggestions(true); }}
-                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} // Delay to allow click
-                autoComplete="off"
-                aria-label="Search hospitals and services"
-                style={{
-                    width: '100%',
-                    padding: '18px 20px 18px 60px',
-                    borderRadius: '50px',
-                    border: 'none',
-                    background: 'transparent',
-                    fontSize: '1.1rem',
-                    fontWeight: '500',
-                    outline: 'none',
-                    color: '#000'
-                }}
-            />
-            
-            {/* Suggestions Dropdown */}
-            {showSuggestions && suggestions.length > 0 && (
-                <div style={{
-                    position: 'absolute',
-                    top: '125%', // Increased spacing
-                    left: 0,
-                    right: 0,
-                    background: '#fff',
-                    borderRadius: '16px',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
-                    padding: '8px 0',
-                    overflow: 'hidden',
-                    zIndex: 100,
-                    border: '1px solid #f3f4f6'
-                }}>
-                    {suggestions.slice(0, 6).map((item, idx) => (
-                        <div 
-                            key={idx}
-                            onClick={() => {
-                                if (item.type === 'category') {
-                                    router.push(item.link);
-                                } else {
-                                    handleHospitalClick(item);
-                                }
-                                setShowSuggestions(false);
-                            }}
-                            onMouseDown={(e) => e.preventDefault()} // Prevent blur on click
-                            style={{
-                                padding: '14px 24px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '16px',
-                                cursor: 'pointer',
-                                borderBottom: idx !== suggestions.length - 1 ? '1px solid #f3f4f6' : 'none',
-                                transition: 'background 0.1s'
-                            }}
-                            onMouseOver={e => e.currentTarget.style.background = '#f9fafb'}
-                            onMouseOut={e => e.currentTarget.style.background = '#fff'}
-                        >
-                            <div style={{ 
-                                background: '#f3f4f6', 
-                                padding: '10px', 
-                                borderRadius: '50%', 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                justifyContent: 'center' 
-                            }}>
-                                {item.type === 'category' ? (
-                                    <div style={{ transform: 'scale(0.8)' }}>{item.icon}</div>
-                                ) : (
-                                    <MapPin size={20} color="#6b7280" />
-                                )}
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <span style={{ fontWeight: '600', color: '#1f2937', fontSize: '1rem' }}>{item.name}</span>
-                                <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-                                    {item.type === 'category' ? 'Category' : item.location}
-                                </span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
-
-        {/* Re-added Offers Slider - Moved after Search Bar */}
+        {/* Offers Slider */}
         <div style={{
             position: 'relative',
             borderRadius: '16px',
-            marginBottom: '2rem',
+            marginBottom: '3rem',
             overflow: 'hidden',
-            boxShadow: '0 4px 20px rgba(0,0,0, 0.08)',
-            height: '240px' 
+            boxShadow: '0 10px 30px rgba(0,0,0, 0.1)',
+            height: 'clamp(200px, 40vh, 300px)'
         }}>
             {OFFERS.map((offer, index) => (
                 <div key={offer.id} style={{
                     position: 'absolute',
                     top: 0, left: 0, width: '100%', height: '100%',
                     background: offer.bg,
-                    padding: '2rem',
+                    padding: 'clamp(1.5rem, 5vw, 3rem)', // Responsive padding
                     color: '#fff',
                     opacity: currentSlide === index ? 1 : 0,
-                    transition: 'opacity 0.6s ease-in-out',
+                    transition: 'opacity 0.8s ease-in-out',
                     zIndex: currentSlide === index ? 2 : 1,
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center'
                 }}>
-                    <h1 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', maxWidth: '600px', marginBottom: '0.5rem', color: '#fff', lineHeight: '1.2' }}>
+                    <h1 style={{ fontSize: 'clamp(1.5rem, 8vw, 3rem)', maxWidth: '600px', marginBottom: '0.5rem', color: '#fff', lineHeight: '1.2' }}>
                         {offer.title}
                     </h1>
-                    <p style={{ fontSize: 'clamp(0.9rem, 3vw, 1.1rem)', opacity: 0.9, marginBottom: '1.5rem', maxWidth: '500px' }}>
+                    <p style={{ fontSize: 'clamp(0.9rem, 4vw, 1.2rem)', opacity: 0.9, marginBottom: '1.5rem' }}>
                         {offer.subtitle}
                     </p>
+                    <button className="btn" style={{ background: '#fff', color: offer.btnColor, padding: '0.6rem 1.5rem', fontSize: '1rem', width: 'fit-content' }}>
+                        {offer.btnText}
+                    </button>
+                    {/* Decorative Circles */}
+                    <div style={{ position: 'absolute', right: '-50px', bottom: '-50px', width: '300px', height: '300px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}></div>
+                    <div style={{ position: 'absolute', right: '150px', top: '-50px', width: '150px', height: '150px', background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }}></div>
                 </div>
             ))}
 
@@ -279,9 +140,10 @@ export default function HomeClient({ hospitals, popularServices }) {
             <div style={{
                 position: 'absolute',
                 bottom: '20px',
-                left: '24px', 
+                left: '50%',
+                transform: 'translateX(-50%)',
                 display: 'flex',
-                gap: '8px',
+                gap: '10px',
                 zIndex: 10
             }}>
                 {OFFERS.map((_, index) => (
@@ -289,10 +151,10 @@ export default function HomeClient({ hospitals, popularServices }) {
                         key={index}
                         onClick={() => setCurrentSlide(index)}
                         style={{
-                            width: '8px',
-                            height: '8px',
+                            width: '10px',
+                            height: '10px',
                             borderRadius: '50%',
-                            background: currentSlide === index ? '#fff' : 'rgba(255,255,255,0.3)',
+                            background: currentSlide === index ? '#fff' : 'rgba(255,255,255,0.4)',
                             cursor: 'pointer',
                             transition: 'all 0.3s'
                         }}
@@ -301,115 +163,182 @@ export default function HomeClient({ hospitals, popularServices }) {
             </div>
         </div>
 
-        {/* Categories Grid (Uber Style) */}
+        {/* Categories Grid (Mini Promo Cards) */}
+        <h2 style={{ marginBottom: '1.5rem', fontSize: 'clamp(1.2rem, 5vw, 1.5rem)' }}>Shop by Category</h2>
         <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(4, 1fr)', // Force 4 columns for Uber look
-            gap: '12px', 
-            marginBottom: '3rem' 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', 
+            gap: '1rem', 
+            marginBottom: '4rem' 
         }}>
-            {CATEGORIES.map((cat, idx) => (
-                <Link key={idx} href={cat.link} style={{ textDecoration: 'none' }}>
+             {CATEGORIES.map((cat, index) => (
+                 <Link key={index} href={cat.href} style={{ textDecoration: 'none' }}>
                     <div style={{ 
-                        background: cat.bg, 
-                        borderRadius: '12px', 
-                        padding: '1.2rem 0.5rem', 
+                        background: `linear-gradient(135deg, ${cat.color}, ${cat.color}dd)`, 
+                        borderRadius: '20px', 
+                        padding: '1.5rem', 
                         display: 'flex', 
                         flexDirection: 'column', 
-                        alignItems: 'center', 
-                        justifyContent: 'center',
-                        gap: '10px',
+                        justifyContent: 'space-between',
+                        color: cat.textColor || '#fff',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        height: '180px', 
                         cursor: 'pointer',
-                        transition: 'transform 0.1s',
-                        height: '110px' // Fixed height for uniformity
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        boxShadow: '0 8px 15px rgba(0,0,0,0.1)',
+                        border: '1px solid rgba(255,255,255,0.1)'
                     }}
-                    onMouseOver={e => e.currentTarget.style.transform = 'scale(1.02)'}
-                    onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                    onMouseOver={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
+                        e.currentTarget.style.boxShadow = '0 15px 30px rgba(0,0,0,0.15)';
+                    }}
+                    onMouseOut={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                        e.currentTarget.style.boxShadow = '0 8px 15px rgba(0,0,0,0.1)';
+                    }}
                     >
-                        <div style={{ 
-                            color: '#000'
-                        }}>
-                             {cat.icon}
+                        <div style={{ zIndex: 1 }}>
+                            <h3 style={{ fontSize: '1.2rem', marginBottom: '0.4rem', lineHeight: '1.2', fontWeight: 'bold' }}>{cat.name}</h3>
+                            <p style={{ fontSize: '0.85rem', opacity: 0.9, marginBottom: '1rem' }}>{cat.desc}</p>
+                            
+                            <span style={{ 
+                                fontSize: '0.8rem', 
+                                background: 'rgba(255,255,255,0.25)', 
+                                backdropFilter: 'blur(4px)',
+                                padding: '6px 12px', 
+                                borderRadius: '10px',
+                                fontWeight: '600',
+                                border: '1px solid rgba(255,255,255,0.3)'
+                            }}>
+                                View More
+                            </span>
                         </div>
-                        <span style={{ fontWeight: '500', color: '#000', fontSize: '0.85rem', textAlign: 'center' }}>{cat.name}</span>
+                        
+                        {/* Decorative Icon */}
+                        <div style={{ position: 'absolute', right: '-10px', bottom: '-10px', transform: 'rotate(-10deg)' }}>
+                            {cat.icon}
+                        </div>
                     </div>
-                </Link>
-            ))}
+                 </Link>
+             ))}
         </div>
 
-
-
-
-        {/* Featured Section - More Minimal */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0, color: '#000' }}>Featured Hospitals</h2>
+        {/* Popular Section (Horizontal Scroll with Controls) */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h2 style={{ fontSize: 'clamp(1.2rem, 5vw, 1.5rem)', margin: 0 }}>Popular Lab Tests</h2>
+            <div style={{ display: 'flex', gap: '8px' }}>
+                <button 
+                    onClick={() => scroll('left')}
+                    style={{ 
+                        background: '#fff', border: '1px solid #e5e7eb', borderRadius: '50%', 
+                        width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        cursor: 'pointer', color: '#374151'
+                    }}
+                >
+                    <ChevronLeft size={20} />
+                </button>
+                <button 
+                    onClick={() => scroll('right')}
+                    style={{ 
+                        background: '#fff', border: '1px solid #e5e7eb', borderRadius: '50%', 
+                        width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        cursor: 'pointer', color: '#374151'
+                    }}
+                >
+                    <ChevronRight size={20} />
+                </button>
+            </div>
         </div>
 
-        <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', 
-            gap: '20px', 
-            marginBottom: '3rem' 
-        }}>
-            {hospitals.slice(0, 4).map((hospital) => (
-              <div 
-                key={hospital.id} 
-                onClick={() => handleHospitalClick(hospital)}
-                style={{ cursor: 'pointer' }}
-              >
-                  <div style={{ 
-                      height: '160px', borderRadius: '12px', overflow: 'hidden', marginBottom: '12px',
-                      background: '#f3f4f6'
-                  }}>
-                       <img 
-                          crossOrigin="anonymous"
-                          src={getImageUrl(hospital.image_url)} 
-                          alt={hospital.name} 
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                          onError={(e) => e.target.style.display = 'none'}
-                      />
-                  </div>
-                  <div>
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#000', margin: 0, marginBottom: '4px' }}>{hospital.name}</h3>
-                      <p style={{ fontSize: '0.9rem', color: '#6b7280', margin: 0 }}>{hospital.location}</p>
-                      {hospital.discount_percentage && (
-                          <span style={{ fontSize: '0.8rem', color: '#16a34a', fontWeight: '500', display: 'flex', gap: '4px', marginTop: '4px' }}>
-                             {hospital.discount_percentage}% Promo
-                          </span>
-                      )}
-                  </div>
-              </div>
-            ))}
-        </div>
-
-        {/* Popular Tests - Horizontal Minimal */}
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: '0 0 1.5rem 0', color: '#000' }}>Popular Tests</h2>
         <div 
             ref={sliderRef}
             style={{ 
                 display: 'flex', 
-                gap: '16px', 
+                gap: '1.5rem', 
                 overflowX: 'auto', 
                 paddingBottom: '1rem', 
-                scrollbarWidth: 'none'
+                scrollbarWidth: 'none',
+                scrollBehavior: 'smooth'
             }}
         >
             {popularServices.map((service) => (
-                <div key={service.id} style={{ minWidth: '200px', cursor: 'pointer' }} onClick={() => setSelectedProduct(service)}>
-                    <div style={{ height: '120px', background: '#f9fafb', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
-                         <img 
-                            src={getImageUrl(service.image_url || service.hospital_image)} 
-                            alt={service.name}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }}
-                            onError={(e) => e.target.style.display = 'none'}
-                        />
-                    </div>
-                    <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#000', margin: 0 }}>{service.name}</h3>
-                    <p style={{ fontSize: '0.9rem', color: '#6b7280', margin: '2px 0' }}>₹{service.discount_price || service.price}</p>
-                </div>
+                <ProductCard 
+                    key={service.id}
+                    title={service.name} 
+                    time="Reports in 24 hrs" 
+                    image={getImageUrl(service.image_url || service.hospital_image)}
+                    price={`₹${service.discount_price || service.price}`}
+                    oldPrice={service.discount_price ? `₹${service.price}` : `₹${Math.round(service.price * 1.5)}`}
+                    discount={service.discount_price ? `${Math.round(((service.price - service.discount_price) / service.price) * 100)}% OFF` : "Limited Offer"}
+                    onAdd={() => addToCart({ ...service, quantity: 1, hospital_name: service.hospital_name || 'Popular Service' })}
+                />
             ))}
         </div>
 
+        <BookingModal 
+             isOpen={!!selectedProduct}
+             onClose={() => setSelectedProduct(null)}
+             service={selectedProduct}
+        />
+
+        {/* Featured Hospitals Section */}
+        <h2 style={{ marginTop: '4rem', marginBottom: '1.5rem', fontSize: 'clamp(1.2rem, 5vw, 1.5rem)' }}>Featured Hospitals</h2>
+        <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
+            gap: '1.5rem', 
+            marginBottom: '4rem' 
+        }}>
+            {hospitals.map((hospital) => (
+              <div 
+                key={hospital.id} 
+                onClick={() => handleHospitalClick(hospital)}
+                style={{ 
+                  background: '#fff', 
+                  borderRadius: '16px', 
+                  overflow: 'hidden', 
+                  cursor: 'pointer',
+                  border: '1px solid #e5e7eb',
+                  transition: 'transform 0.2s, box-shadow 0.2s'
+                }}
+                onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.05)' }}
+                onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
+              >
+                  <div style={{ height: '180px', background: '#f3f4f6', overflow: 'hidden' }}>
+                       <img 
+                          crossOrigin="anonymous"
+                          src={getImageUrl(hospital.image_url) || "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80"} 
+                          alt={hospital.name} 
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                          onError={(e) => e.target.src = "https://images.unsplash.com/photo-1586773860418-d3b97898c75c?auto=format&fit=crop&w=800&q=80"}
+                      />
+                  </div>
+                <div style={{ padding: '1.5rem' }}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#111827', margin: 0 }}>{hospital.name}</h3>
+                      <div style={{ background: '#f0fdf4', color: '#166534', padding: '2px 8px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Star size={12} fill="#166534" /> {hospital.rating || '4.5'}
+                      </div>
+                   </div>
+                   <p 
+                      onClick={(e) => {
+                         e.stopPropagation();
+                         window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hospital.location)}`, '_blank');
+                      }}
+                      style={{ fontSize: '0.9rem', color: '#6b7280', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}
+                      title="View on Google Maps"
+                   >
+                      <MapPin size={14} /> {hospital.location} (Get Directions)
+                   </p>
+                   <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.85rem', color: '#db2777', fontWeight: '600' }}>Up to {hospital.discount_percentage || '10'}% OFF</span>
+                      <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#111827' }}>View Services &gt;</span>
+                   </div>
+                </div>
+              </div>
+            ))}
+        </div>
 
         <HospitalProfileModal 
            isOpen={!!selectedHospitalForProfile} 
@@ -421,15 +350,7 @@ export default function HomeClient({ hospitals, popularServices }) {
            }}
         />
 
-        <BookingModal 
-             isOpen={!!selectedProduct}
-             onClose={() => setSelectedProduct(null)}
-             service={selectedProduct}
-        />
-
       </div>
-      
-      {/* Keeping Ambulance Request Floating Button but ensuring it matches theme */}
       <AmbulanceRequest />
     </main>
   );

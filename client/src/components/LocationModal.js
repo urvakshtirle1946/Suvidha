@@ -39,29 +39,13 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
         {/* Close Button */}
         <button 
           onClick={onClose}
-          style={{
-            position: 'absolute',
-            right: '20px',
-            top: '20px',
-            background: '#f3f4f6',
-            border: 'none',
-            borderRadius: '50%',
-            width: '36px',
-            height: '36px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            zIndex: 10
-          }}
+          className="modal-close"
         >
-          <X size={20} color="#000" />
+          <X size={20} color="#6b7280" />
         </button>
 
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem', marginTop: '1rem' }}>Select Location</h2>
-
         {/* Search Bar */}
-        <div className="search-container" style={{ marginTop: '1rem' }}>
+        <div className="search-container">
           <Search className="search-icon" size={20} />
           <input
             type="text"
@@ -110,7 +94,7 @@ export default function LocationModal({ isOpen, onClose, onSelectLocation, onDet
               >
                 {/* Icon Placeholder */}
                 <div className="city-icon-box">
-                   {/* Lock Icon Removed */}
+                   {city.name !== 'Indore' && <div style={{ position: 'absolute', top: 5, right: 5 }}><Lock size={12} color="#9ca3af"/></div>}
                    <Building2 className="city-icon" size={24} color={city.name === 'Indore' ? '#0c831f' : "#9ca3af"} />
                 </div>
                 <span className="city-name" style={{ fontWeight: city.name === 'Indore' ? 'bold' : 'normal', color: city.name === 'Indore' ? '#0c831f' : 'inherit' }}>

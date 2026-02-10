@@ -25,95 +25,101 @@ export default function Navbar() {
     <>
       <nav style={{ 
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000, 
-        height: 'var(--header-height)', background: '#fff', 
-        borderBottom: '1px solid #f3f4f6', // Very subtle border
+        height: 'var(--header-height)', background: '#fff', borderBottom: '1px solid #e5e7eb',
         display: 'flex', alignItems: 'center'
       }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '100%', maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
+        <div className="container nav-content">
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }}>
-              {/* Mobile Menu Button */}
-              <button 
-                className="show-on-mobile"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#000', padding: 0 }}
-              >
-                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
+          {/* Mobile Menu Button */}
+          <button 
+            className="show-on-mobile"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            style={{ background: 'transparent', border: 'none', marginRight: '1rem', cursor: 'pointer', color: '#374151' }}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
 
-              {/* Logo */}
+          {/* Logo & Location */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1 }}>
               <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
                   <span style={{ 
                       fontSize: '1.8rem', fontWeight: '800', color: '#000', 
-                      letterSpacing: '-1px', fontFamily: 'var(--font-outfit), sans-serif', lineHeight: 1
+                      letterSpacing: '-1.5px', fontFamily: 'var(--font-outfit), sans-serif', lineHeight: 1
                   }}>
                       Zelp
                   </span>
               </Link>
-
-               {/* Location Pill - Desktop */}
-               <div className="hide-on-mobile" style={{ position: 'relative' }}>
+              
+              <div className="hide-on-mobile" style={{ position: 'relative' }}>
                    <div 
                       onClick={() => setLocationModalOpen(true)}
                       style={{ 
-                          display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer',
-                          padding: '10px 20px', borderRadius: '50px', background: '#f3f4f6', 
-                          transition: 'background 0.2s'
+                          display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer',
+                          padding: '0.5rem', borderRadius: '8px', background: 'transparent', transition: 'background 0.2s'
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = '#e5e7eb'}
-                      onMouseLeave={(e) => e.currentTarget.style.background = '#f3f4f6'}
+                      onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                    >
-                        <MapPin size={18} color="#000" />
-                        <span style={{ fontWeight: '500', fontSize: '0.95rem', color: '#000', maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <MapPin size={18} color="#0c831f" />
+                        <span style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#1f2937', maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {location || 'Select Location'}
                         </span>
-                        <ChevronDown size={14} color="#000" />
+                        <ChevronDown size={16} color="#1f2937" />
                    </div>
               </div>
           </div>
 
-
+          {/* Nav Links - Desktop */}
+          <div className="hide-on-mobile" style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginRight: '2rem' }}>
+             <Link href="/" style={{ fontWeight: '500', color: '#1f2937' }}>Home</Link>
+             <Link href="/hospitals" style={{ fontWeight: '500', color: '#1f2937' }}>Services</Link>
+          </div>
+          
           {/* Right Actions */}
-          <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-              
-              {/* Desktop Nav Links (Minimal) */}
-              <div className="hide-on-mobile" style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginRight: '1rem' }}>
-                   {!user ? (
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <div className="hide-on-mobile" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                  {!user ? (
                       <button 
                           onClick={() => setAuthModalOpen(true)}
-                          style={{ 
-                              background: '#000', color: '#fff', border: 'none', 
-                              fontWeight: '500', fontSize: '0.95rem', cursor: 'pointer',
-                              padding: '10px 24px', borderRadius: '50px'
-                          }}
+                          style={{ background: 'transparent', border: 'none', fontWeight: '500', fontSize: '1.1rem', cursor: 'pointer', color: '#374151' }}
                       >
-                          Log in
+                          Login
                       </button>
-                   ) : (
-                      <ProfileDropdown onOpenSettings={() => setSettingsModalOpen(true)} />
-                   )}
+                  ) : (
+                     <ProfileDropdown onOpenSettings={() => setSettingsModalOpen(true)} />
+                  )}
               </div>
               
-              {/* Cart Button - Black Pill */}
+              {/* Cart is always visible but smaller on mobile */}
               <button 
+                  className="btn btn-primary" 
                   onClick={() => setIsCartOpen(true)}
-                  style={{ 
-                      borderRadius: '50px', display: 'flex', alignItems: 'center', gap: '8px', 
-                      padding: '10px 20px', background: '#000', color: '#fff', border: 'none', cursor: 'pointer'
-                  }}
+                  style={{ borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem' }}
               >
-                  <ShoppingCart size={20} /> 
-                  <span className="hide-on-mobile" style={{ fontSize: '0.95rem', fontWeight: '500' }}>Cart</span>
+                  <ShoppingCart size={18} /> 
+                  <span className="hide-on-mobile">My Cart</span>
                   {cartCount > 0 && (
                       <span style={{ 
-                          background: '#fff', color: '#000', borderRadius: '50%', 
+                          background: '#fff', color: '#ff6f61', borderRadius: '50%', 
                           width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: '0.8rem', fontWeight: 'bold'
+                          fontSize: '0.75rem', fontWeight: 'bold'
                       }}>
                           {cartCount}
                       </span>
                   )}
               </button>
+              
+              {/* Mobile User Section - Keep initial or user icon */}
+               <div className="show-on-mobile">
+                  {user && (
+                      <div 
+                        onClick={() => setMobileMenuOpen(true)}
+                        style={{ fontSize: '0.9rem', color: '#0c831f', fontWeight: '500', cursor: 'pointer' }}
+                      >
+                          {user.name.charAt(0).toUpperCase()}
+                      </div>
+                  )}
+               </div>
           </div>
         </div>
       </nav>

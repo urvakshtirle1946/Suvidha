@@ -1,17 +1,23 @@
-'use client';
-import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import { useCart } from '@/context/CartContext';
-import BookingModal from '@/components/BookingModal';
-import HospitalProfileModal from '@/components/HospitalProfileModal';
-import AmbulanceRequest from '@/components/AmbulanceRequest';
-import { 
-  Activity, Heart, Baby, Brain, Bone, Eye, Smile, Star, MapPin,
-  ChevronLeft, ChevronRight, TestTube
-} from 'lucide-react';
-import { getApiUrl, getImageUrl } from '@/utils/api';
+import PaymentReminder from '@/components/PaymentReminder';
+
+// ... (existing imports)
 
 export default function HomeClient({ hospitals, popularServices }) {
+  // ... (existing code)
+
+  return (
+    <main style={{ paddingBottom: '100px', background: '#f4f6fb', minHeight: '100vh' }}>
+      
+      {/* ... (existing JSX) ... */}
+
+      <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 2rem)' }}>
+            {/* ... */}
+      </div>
+      <AmbulanceRequest />
+      <PaymentReminder />
+    </main>
+  );
+}
   const { addToCart } = useCart();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedHospitalForProfile, setSelectedHospitalForProfile] = useState(null);
@@ -352,6 +358,7 @@ export default function HomeClient({ hospitals, popularServices }) {
 
       </div>
       <AmbulanceRequest />
+      <PaymentReminder />
     </main>
   );
 }

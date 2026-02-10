@@ -18,31 +18,6 @@ export const metadata = {
   },
 };
 
-import AdminSessionManager from "@/components/AdminSessionManager";
-import CartDrawer from "@/components/CartDrawer";
-import PaymentReminder from "@/components/PaymentReminder";
-
-import { GoogleOAuthProvider } from '@react-oauth/google';
-
-export default function RootLayout({ children }) {
-  return (
-    <>
-      <html lang="en" suppressHydrationWarning>
-        <body className={outfit.className}>
-          <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
-            <AuthProvider>
-              <LocationProvider>
-                <CartProvider>
-                  <AdminSessionManager />
                   <CartDrawer />
-                  <PaymentReminder />
                   {children}
                 </CartProvider>
-              </LocationProvider>
-            </AuthProvider>
-          </GoogleOAuthProvider>
-        </body>
-      </html>
-    </>
-  );
-}

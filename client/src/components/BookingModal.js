@@ -19,6 +19,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
   const [paymentMode, setPaymentMode] = useState(null); // 'online' or 'hospital'
   const [labs, setLabs] = useState([]);
   const [fetchingLabs, setFetchingLabs] = useState(false);
+  const [bookingId, setBookingId] = useState(null);
 
   useEffect(() => {
      if (isOpen && service) {
@@ -104,33 +105,45 @@ export default function BookingModal({ isOpen, onClose, service }) {
 
         setLoading(true);
         try {
-            const bookingData = {
-                name: user.name || 'User',
-                userPhone: user.phone || '',
-                age: 0,
-                gender: 'Not Specified',
-                date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-                time: selectedTime,
-                address: location || 'India',
-                serviceName: currentService.name,
-                price: displayPrice,
-                hospitalId: currentService.hospital_id || currentService.id,
-                transactionId: currentTxnId
-            };
-
             const apiUrl = getApiUrl();
-            const res = await fetch(`${apiUrl}/api/bookings`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(bookingData)
-            });
+            let res;
+            
+            if (bookingId && paymentMethod === 'online') {
+                // Scenario: User confirmed "Pay at Hospital" first, then clicked "Pay Online Now"
+                res = await fetch(`${apiUrl}/api/bookings/${bookingId}/pay`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ transactionId: currentTxnId })
+                });
+            } else {
+                // Standard new booking flow
+                const bookingData = {
+                    name: user.name || 'User',
+                    userPhone: user.phone || '',
+                    age: 0,
+                    gender: 'Not Specified',
+                    date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+                    time: selectedTime,
+                    address: location || 'India',
+                    serviceName: currentService.name,
+                    price: displayPrice,
+                    hospitalId: currentService.hospital_id || currentService.id,
+                    transactionId: currentTxnId
+                };
+
+                res = await fetch(`${apiUrl}/api/bookings`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bookingData)
+                });
+            }
 
             if (res.ok) {
-                if (paymentMethod === 'hospital') {
-                    onClose();
-                } else {
-                    setStep(3); // Success immediately
+                const data = await res.json();
+                if (data.bookingId) {
+                    setBookingId(data.bookingId);
                 }
+                setStep(3); // Always show success step now
             } else {
                 alert('Booking Failed: ' + (await res.text() || 'Unknown Error'));
             }
@@ -369,9 +382,25 @@ export default function BookingModal({ isOpen, onClose, service }) {
                     <p style={{ color: '#64748b', lineHeight: '1.6', fontSize: '1rem' }}>
                         Your appointment at <b>{selectedLab?.hospital_name}</b> is scheduled for {selectedTime}, tomorrow.
                     </p>
-                    <p style={{ marginTop: '1rem', fontSize: '0.85rem', color: '#9ca3af' }}>
-                        Transaction ID: {transactionId}
-                    </p>
+                    
+                    {paymentMode === 'hospital' && transactionId !== 'PAY_AT_HOSPITAL' ? (
+                        <div style={{ marginTop: '1.5rem', background: '#f8fafc', padding: '1rem', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                            <p style={{ fontSize: '0.9rem', color: '#475569', marginBottom: '12px' }}>
+                                Would you like to complete your payment online now?
+                            </p>
+                            <button 
+                                onClick={() => setStep(2)}
+                                style={{ background: '#0c831f', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer', fontSize: '0.9rem' }}
+                            >
+                                Pay Online Now
+                            </button>
+                        </div>
+                    ) : (
+                        <p style={{ marginTop: '1rem', fontSize: '0.85rem', color: '#9ca3af' }}>
+                            Transaction ID: {transactionId || 'PAY_AT_HOSPITAL'}
+                        </p>
+                    )}
+
                     <button 
                         onClick={onClose}
                         style={{ marginTop: '2.5rem', width: '100%', background: '#111827', color: '#fff', border: 'none', padding: '1rem', borderRadius: '14px', fontWeight: '700', cursor: 'pointer' }}

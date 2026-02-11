@@ -25,6 +25,11 @@ exports.getAllServices = async (req, res) => {
       queryText += ` AND s.hospital_id = $${placeholderIndex++}`;
       values.push(hospital_id);
     }
+
+    if (req.query.search) {
+      queryText += ` AND s.name ILIKE $${placeholderIndex++}`;
+      values.push(`%${req.query.search}%`);
+    }
     
     // If pagination is requested (page is present), we need count and offset
     if (page && limit) {

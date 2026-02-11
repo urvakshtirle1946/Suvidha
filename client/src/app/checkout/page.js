@@ -115,7 +115,7 @@ export default function Checkout() {
   const [transactionId, setTransactionId] = useState('');
   const [showPayment, setShowPayment] = useState(false);
   const [paymentMode, setPaymentMode] = useState('hospital'); // 'hospital' or 'online'
-  /* Removed showCompletionDialog state */
+  const [bookingIds, setBookingIds] = useState([]);
 
   const updateCartWithProvider = (index, newItem) => {
     updateCartItem(index, newItem);
@@ -161,53 +161,76 @@ export default function Checkout() {
     setLoading(true);
     setError(null);
 
-    // Simulate Payment Delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
     try {
-        // Create an array of booking promises
-        const bookingPromises = cart.flatMap(item => {
-            // Repeat for quantity
-            const quantity = item.quantity || 1;
-            const requests = [];
-            for (let i = 0; i < quantity; i++) {
-                if (!item.hospitalId) {
-                    throw new Error(`Please select a provider for ${item.name}`);
-                }
-
-                const bookingData = {
-                    name: user.name || 'User',
-                    userPhone: user.phone || '', 
-                    age: 0, 
-                    gender: 'Not Specified',
-                    date: selectedDate,
-                    time: selectedTime,
-                    address: location || 'New Delhi, India',
-                    serviceName: item.name,
-                    price: item.price,
-                    hospitalId: item.hospitalId,
-                    transactionId: currentTxnId
-                };
-
-                requests.push(
-                    fetch(`${getApiUrl()}/api/bookings`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(bookingData)
-                    })
-                );
-            }
-            return requests;
-        });
-
-        await Promise.all(bookingPromises);
+        const apiUrl = getApiUrl();
         
-        setSuccess(true);
-        clearCart();
-        setTimeout(() => {
-            router.push('/bookings');
-        }, 3000);
+        if (bookingIds.length > 0 && paymentMode === 'online') {
+            // Bulk update payments for existing bookings
+            const updatePromises = bookingIds.map(id => 
+                fetch(`${apiUrl}/api/bookings/${id}/pay`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ transactionId: currentTxnId })
+                })
+            );
+            await Promise.all(updatePromises);
+            setSuccess(true);
+            setTimeout(() => {
+                router.push('/bookings');
+            }, 3000);
+        } else {
+            // Simulate Payment Delay for new bookings
+            await new Promise(resolve => setTimeout(resolve, 1500));
 
+            // Create an array of booking promises
+            const createdIds = [];
+            const bookingPromises = cart.flatMap(item => {
+                const quantity = item.quantity || 1;
+                const requests = [];
+                for (let i = 0; i < quantity; i++) {
+                    const bookingData = {
+                        name: user.name || 'User',
+                        userPhone: user.phone || '', 
+                        age: 0, 
+                        gender: 'Not Specified',
+                        date: selectedDate,
+                        time: selectedTime,
+                        address: location || 'New Delhi, India',
+                        serviceName: item.name,
+                        price: item.price,
+                        hospitalId: item.hospitalId,
+                        transactionId: currentTxnId
+                    };
+
+                    requests.push(
+                        fetch(`${apiUrl}/api/bookings`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bookingData)
+                        }).then(async res => {
+                            if (res.ok) {
+                                const data = await res.json();
+                                if (data.bookingId) createdIds.push(data.bookingId);
+                            }
+                            return res;
+                        })
+                    );
+                }
+                return requests;
+            });
+
+            await Promise.all(bookingPromises);
+            setBookingIds(createdIds);
+            setSuccess(true);
+            clearCart();
+            
+            // If they paid online immediately, redirect after 3s
+            if (!isHospitalPay) {
+                setTimeout(() => {
+                    router.push('/bookings');
+                }, 3000);
+            }
+        }
     } catch (err) {
         console.error(err);
         setError("Failed to process some items. Please try again.");
@@ -217,13 +240,47 @@ export default function Checkout() {
   };
 
   if (success) {
+      const isHospitalUpdate = bookingIds.length > 0 && paymentMode === 'hospital' && transactionId === '';
+
       return (
         <main style={{ minHeight: '100vh', background: '#f4f6fb' }}>
             <Navbar />
-            <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 4rem)', textAlign: 'center' }}>
+            <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 4rem)', textAlign: 'center', maxWidth: '600px' }}>
                 <CheckCircle size={64} color="#059669" style={{ margin: '0 auto 1.5rem' }} />
-                <h1 style={{ marginBottom: '1rem' }}>Order Placed Successfully!</h1>
-                <p>Redirecting you to your bookings...</p>
+                <h1 style={{ marginBottom: '1rem', fontWeight: '900' }}>Order Placed!</h1>
+                
+                <div style={{ background: '#fff', padding: '2rem', borderRadius: '24px', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', marginBottom: '2rem' }}>
+                    <p style={{ color: '#4b5563', fontSize: '1.1rem', marginBottom: '1.5rem' }}>
+                        Your services have been scheduled for <b>{selectedDate}</b>.
+                    </p>
+
+                    {isHospitalUpdate ? (
+                        <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: '1.5rem' }}>
+                            <p style={{ fontSize: '0.95rem', color: '#64748b', marginBottom: '1.5rem' }}>
+                                Would you like to complete your payment online now using QR?
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    setSuccess(false);
+                                    setPaymentMode('online');
+                                    setShowPayment(true);
+                                }}
+                                style={{ background: '#0c831f', color: '#fff', border: 'none', padding: '12px 30px', borderRadius: '12px', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)' }}
+                            >
+                                Pay Online Now
+                            </button>
+                        </div>
+                    ) : (
+                         <p style={{ color: '#6b7280' }}>Redirecting you to view your bookings...</p>
+                    )}
+                </div>
+
+                <button 
+                   onClick={() => router.push('/bookings')}
+                   style={{ background: 'transparent', border: 'none', color: '#6b7280', fontSize: '0.9rem', cursor: 'pointer', textDecoration: 'underline' }}
+                >
+                    View All Bookings
+                </button>
             </div>
         </main>
       );

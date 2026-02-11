@@ -233,7 +233,7 @@ function HospitalsContent() {
                          <button 
                              onClick={() => {
                                  addToCart({ ...item, quantity: 1, hospitalId: item.hospital_id || item.id }); 
-                                 setSelectedHospital({ ...item, name: item.name, price: item.discount_price || item.price });
+                                 setSelectedHospital({ ...item, name: item.name, price: item.discount_price || item.price, directBooking: true });
                              }}
                              className="btn"
                              style={{ background: '#fff', border: '1px solid #ff6f61', color: '#ff6f61', padding: '0.6rem 1.5rem', borderRadius: '8px', fontWeight: '600', transition: 'all 0.2s' }}

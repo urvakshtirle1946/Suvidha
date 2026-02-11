@@ -126,7 +126,10 @@ function LabTestsContent() {
                                  fontWeight: '600',
                                  padding: '0.8rem'
                              }}
-                             onClick={() => addToCart(test)}
+                             onClick={() => {
+                                 addToCart(test);
+                                 setSelectedTest({ ...test, directBooking: true });
+                             }}
                              onMouseOver={(e) => { e.currentTarget.style.background = '#ff6f61'; e.currentTarget.style.color = '#fff'; }}
                              onMouseOut={(e) => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#ff6f61'; }}
                          >

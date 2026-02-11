@@ -126,7 +126,11 @@ export default function BookingModal({ isOpen, onClose, service }) {
             });
 
             if (res.ok) {
-                setStep(3); // Success immediately
+                if (paymentMethod === 'hospital') {
+                    onClose();
+                } else {
+                    setStep(3); // Success immediately
+                }
             } else {
                 alert('Booking Failed: ' + (await res.text() || 'Unknown Error'));
             }

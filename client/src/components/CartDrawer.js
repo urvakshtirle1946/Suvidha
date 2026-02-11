@@ -48,9 +48,9 @@ export default function CartDrawer() {
 
         {/* Saved Banner */}
         {cartDiscount > 0 && (
-            <div style={{ background: '#ecfdf5', padding: '10px', textAlign: 'center', borderBottom: '1px solid #d1fae5' }}>
-                 <p style={{ color: '#059669', fontSize: '0.9rem', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                    Yay! You saved <span style={{ color: '#047857' }}>₹{cartDiscount}</span> on this order <ChevronDown size={16} />
+            <div style={{ background: '#f0fdf4', padding: '12px', textAlign: 'center', borderBottom: '1px solid #dcfce7', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                 <p style={{ color: '#166534', fontSize: '1rem', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    Yay! You <span style={{ color: '#15803d' }}>saved ₹{cartDiscount}</span> on this order <ChevronDown size={18} color="#15803d" />
                  </p>
             </div>
         )}
@@ -153,16 +153,17 @@ export default function CartDrawer() {
                     </div>
                   ))}
 
-                  {/* Add More Items Button */}
-                  <div style={{ borderTop: '1px dashed #e5e7eb', paddingTop: '1.2rem', marginTop: '0.5rem' }}>
+                  {/* Missed something? / Add More Items */}
+                  <div style={{ borderTop: '1px dashed #e5e7eb', paddingTop: '1.2rem', marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '1.1rem', fontWeight: '700', color: '#111827' }}>Missed something?</span>
                       <button 
                          onClick={() => { setIsCartOpen(false); router.push('/hospitals'); }}
                          style={{ 
-                            width: '100%', background: '#000', color: '#fff', border: 'none', borderRadius: '12px', padding: '12px', fontWeight: '800', 
+                            background: '#000', color: '#fff', border: 'none', borderRadius: '12px', padding: '10px 18px', fontWeight: '800', 
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.95rem'
                          }}
                       >
-                         <Plus size={18} /> Add More Items
+                         <Plus size={16} strokeWidth={3} /> Add More Items
                       </button>
                   </div>
                 </div>

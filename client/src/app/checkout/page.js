@@ -99,7 +99,7 @@ function ProviderList({ serviceName, currentHospitalId, onSelect }) {
 }
 
 export default function Checkout() {
-  const { cart, clearCart, cartTotal, updateCartItem } = useCart();
+  const { cart, clearCart, cartTotal, cartMrpTotal, cartDiscount, updateCartItem } = useCart();
   const { user } = useAuth();
   const { location } = useLocation();
   const router = useRouter();
@@ -321,8 +321,10 @@ export default function Checkout() {
                                     </div>
                                     <div style={{ textAlign: 'right' }}>
                                         <div style={{ fontWeight: '800', fontSize: '1.1rem' }}>₹{item.price * (item.quantity || 1)}</div>
-                                        {item.discount_price && item.discount_price < item.price && (
-                                            <div style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 'bold' }}>-₹{(item.price - item.discount_price) * (item.quantity || 1)} OFF</div>
+                                        {item.mrp > item.price && (
+                                            <div style={{ fontSize: '0.85rem', textDecoration: 'line-through', color: '#9ca3af' }}>
+                                                ₹{item.mrp * (item.quantity || 1)}
+                                            </div>
                                         )}
                                     </div>
                                 </div>
@@ -339,7 +341,7 @@ export default function Checkout() {
                                                 hospitalId: newProvider.hospital_id || newProvider.id,
                                                 hospital_name: newProvider.hospital_name,
                                                 price: parseFloat(newProvider.discount_price || newProvider.price),
-                                                discount_price: parseFloat(newProvider.discount_price)
+                                                mrp: parseFloat(newProvider.price)
                                             };
                                             // We need a way to update specific item in cart
                                             updateCartWithProvider(idx, updatedItem);
@@ -407,16 +409,16 @@ export default function Checkout() {
                             <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '1.5rem' }}>Bill Summary</h3>
                             
                             <div className="bill-row">
-                                <span>Item Total</span>
-                                <span>₹{cartTotal}</span>
+                                <span>Item Total (MRP)</span>
+                                <span>₹{cartMrpTotal}</span>
                             </div>
                             <div className="bill-row">
                                 <span>Taxes & Fees</span>
                                 <span>₹50</span>
                             </div>
                             <div className="bill-row discount">
-                                <span>Discount</span>
-                                <span>-₹0</span>
+                                <span>Your Savings</span>
+                                <span>-₹{cartDiscount}</span>
                             </div>
                             
                             <div className="total-row">

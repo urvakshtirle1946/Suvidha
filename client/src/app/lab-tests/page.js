@@ -127,8 +127,10 @@ function LabTestsContent() {
                                  padding: '0.8rem'
                              }}
                              onClick={() => {
-                                 addToCart(test);
-                                 setSelectedTest({ ...test, directBooking: true });
+                                 const price = parseFloat(test.discount_price || test.price);
+                                 const mrp = parseFloat(test.price);
+                                 addToCart({ ...test, price, mrp });
+                                 setSelectedTest({ ...test, price, mrp, directBooking: true });
                              }}
                              onMouseOver={(e) => { e.currentTarget.style.background = '#ff6f61'; e.currentTarget.style.color = '#fff'; }}
                              onMouseOut={(e) => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#ff6f61'; }}

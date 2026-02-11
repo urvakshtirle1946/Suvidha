@@ -65,6 +65,8 @@ export function CartProvider({ children }) {
   };
 
   const cartTotal = cart.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
+  const cartMrpTotal = cart.reduce((total, item) => total + ((item.mrp || item.price) * (item.quantity || 1)), 0);
+  const cartDiscount = cartMrpTotal - cartTotal;
   const cartCount = cart.reduce((count, item) => count + (item.quantity || 1), 0);
 
   return (
@@ -78,6 +80,8 @@ export function CartProvider({ children }) {
       isCartOpen, 
       setIsCartOpen,
       cartTotal,
+      cartMrpTotal,
+      cartDiscount,
       cartCount
     }}>
       {children}

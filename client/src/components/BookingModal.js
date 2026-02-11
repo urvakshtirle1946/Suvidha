@@ -66,7 +66,11 @@ export default function BookingModal({ isOpen, onClose, service }) {
                       uniqueLabs.push(item);
                   }
               }
-              setLabs(uniqueLabs);
+              setLabs(uniqueLabs.map(l => ({
+                  ...l,
+                  price: parseFloat(l.discount_price || l.price),
+                  mrp: parseFloat(l.price)
+              })));
               
               if (preselectedId) {
                   const found = uniqueLabs.find(l => 
@@ -74,7 +78,13 @@ export default function BookingModal({ isOpen, onClose, service }) {
                       (l.hospitalId && l.hospitalId == preselectedId) ||
                       (l.id && l.id == preselectedId)
                   );
-                  if (found) setSelectedLab(found);
+                  if (found) {
+                      setSelectedLab({
+                          ...found,
+                          price: parseFloat(found.discount_price || found.price),
+                          mrp: parseFloat(found.price)
+                      });
+                  }
               }
           }
       } catch (err) {
@@ -87,8 +97,8 @@ export default function BookingModal({ isOpen, onClose, service }) {
   if (!isOpen || !service) return null;
 
   const currentService = selectedLab;
-  const displayPrice = currentService ? (currentService.discount_price || currentService.price) : 0; 
-  const displayMrp = currentService ? currentService.price : 0; 
+  const displayPrice = currentService ? (currentService.price) : 0; 
+  const displayMrp = currentService ? (currentService.mrp || currentService.price) : 0; 
   
   const TIME_SLOTS = [
       "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
@@ -244,7 +254,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                     {labs.map(lab => {
                                         const isSelected = selectedLab?.id === lab.id || selectedLab?.hospital_id === lab.hospital_id;
-                                        const discountPercent = Math.round(((lab.price - lab.discount_price) / lab.price) * 100);
+                                        const discountPercent = Math.round(((lab.mrp - lab.price) / lab.mrp) * 100);
                                         
                                         return (
                                             <div 
@@ -279,9 +289,9 @@ export default function BookingModal({ isOpen, onClose, service }) {
                                                     )}
                                                 </div>
                                                 <div style={{ textAlign: 'right' }}>
-                                                    <div style={{ fontSize: '1.2rem', fontWeight: '800', color: isSelected ? '#ff6f61' : '#111827' }}>₹{lab.discount_price || lab.price}</div>
-                                                    {lab.discount_price < lab.price && (
-                                                        <div style={{ fontSize: '0.85rem', textDecoration: 'line-through', color: '#9ca3af' }}>₹{lab.price}</div>
+                                                    <div style={{ fontSize: '1.2rem', fontWeight: '800', color: isSelected ? '#ff6f61' : '#111827' }}>₹{lab.price}</div>
+                                                    {lab.mrp > lab.price && (
+                                                        <div style={{ fontSize: '0.85rem', textDecoration: 'line-through', color: '#9ca3af' }}>₹{lab.mrp}</div>
                                                     )}
                                                 </div>
                                             </div>

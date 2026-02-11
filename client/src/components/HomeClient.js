@@ -1,6 +1,26 @@
-import PaymentReminder from '@/components/PaymentReminder';
-
-// ... (existing imports)
+'use client';
+import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
+import { 
+  Heart, 
+  Activity, 
+  TestTube, 
+  Bone, 
+  Baby, 
+  Brain, 
+  Eye, 
+  Smile, 
+  ChevronLeft, 
+  ChevronRight, 
+  MapPin, 
+  Star 
+} from 'lucide-react';
+import { useCart } from '@/context/CartContext';
+import { getApiUrl, getImageUrl } from '@/utils/api';
+import BookingModal from './BookingModal';
+import HospitalProfileModal from './HospitalProfileModal';
+import AmbulanceRequest from './AmbulanceRequest';
+import PaymentReminder from './PaymentReminder';
 
 export default function HomeClient({ hospitals, popularServices }) {
   const { addToCart } = useCart();

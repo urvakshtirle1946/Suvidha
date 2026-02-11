@@ -79,7 +79,6 @@ export default function Bookings() {
           });
 
           if (res.ok) {
-              alert("Payment Recorded Successfully");
               setPaymentModalOpen(false);
               fetchBookings(); // Refresh list
           } else {

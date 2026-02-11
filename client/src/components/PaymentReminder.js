@@ -57,7 +57,7 @@ export default function PaymentReminder() {
             });
 
             if (res.ok) {
-                alert("Payment Recorded Successfully");
+                // alert("Payment Recorded Successfully"); // Removed per request
                 setTxnId('');
                 setViewLink(null);
                 fetchPending(); // Refresh list

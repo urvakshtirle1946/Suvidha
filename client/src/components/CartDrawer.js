@@ -59,8 +59,8 @@ export default function CartDrawer() {
         <div style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
           
           {/* Benefits Card */}
-          <div style={{ background: '#fff', borderRadius: '16px', padding: '1.5rem', marginBottom: '1rem', display: 'flex', gap: '1.5rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-              <div style={{ background: '#f5f3ff', width: '80px', height: '80px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', color: '#7c3aed', fontWeight: '900' }}>
+          <div style={{ background: 'linear-gradient(135deg, #fff, #f9fafb)', borderRadius: '20px', padding: '1.5rem', marginBottom: '1.2rem', display: 'flex', gap: '1.5rem', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', border: '1px solid #f3f4f6' }}>
+              <div style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)', width: '80px', height: '80px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', color: '#7c3aed', fontWeight: '900', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)' }}>
                   ₹0
               </div>
               <div>

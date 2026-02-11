@@ -5,6 +5,7 @@ import { Ambulance, X, MapPin, Search, ChevronRight, AlertTriangle, Building2, P
 import { useLocation } from '@/context/LocationContext';
 import { useAuth } from '@/context/AuthContext';
 import { getApiUrl } from '@/utils/api';
+import { useCart } from '@/context/CartContext';
 
 const LeafletMap = dynamic(() => import('./LeafletMap'), {
     ssr: false,
@@ -34,6 +35,7 @@ const AMBULANCE_TYPES = [
 export default function AmbulanceRequest() {
     const { location, latitude, longitude } = useLocation();
     const { user } = useAuth();
+    const { isCartOpen } = useCart();
     const [isOpen, setIsOpen] = useState(false);
     
     // Default flow starts at 'vehicle' now
@@ -115,6 +117,7 @@ export default function AmbulanceRequest() {
     };
 
     if (!isOpen) {
+        if (isCartOpen) return null;
         return (
             <button
                 onClick={() => setIsOpen(true)}

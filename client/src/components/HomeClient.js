@@ -282,7 +282,11 @@ export default function HomeClient({ hospitals, popularServices }) {
                     price={`₹${service.discount_price || service.price}`}
                     oldPrice={service.discount_price ? `₹${service.price}` : `₹${Math.round(service.price * 1.5)}`}
                     discount={service.discount_price ? `${Math.round(((service.price - service.discount_price) / service.price) * 100)}% OFF` : "Limited Offer"}
-                    onAdd={() => addToCart({ ...service, quantity: 1, hospital_name: service.hospital_name || 'Popular Service' })}
+                    onAdd={() => {
+                        const price = parseFloat(service.discount_price || service.price);
+                        const mrp = parseFloat(service.price);
+                        addToCart({ ...service, quantity: 1, hospital_name: service.hospital_name || 'Popular Service', price, mrp });
+                    }}
                 />
             ))}
         </div>

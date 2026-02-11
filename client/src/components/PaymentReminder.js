@@ -14,8 +14,16 @@ export default function PaymentReminder() {
     const [viewLink, setViewLink] = useState(null); // 'pay' | 'details' | null
     const [txnId, setTxnId] = useState('');
     const [paying, setPaying] = useState(false);
-    const [isVisible, setIsVisible] = useState(true);
+    const [isVisible, setIsVisible] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+        // Persistent dismissal check
+        const isDismissed = sessionStorage.getItem('payment_reminder_dismissed');
+        if (!isDismissed) {
+            setIsVisible(true);
+        }
+    }, []);
 
     useEffect(() => {
         if (!isLoaded || !user) return;
@@ -118,7 +126,10 @@ export default function PaymentReminder() {
                                 </div>
                             )}
                             <button 
-                                onClick={() => setIsVisible(false)} 
+                                onClick={() => {
+                                    setIsVisible(false);
+                                    sessionStorage.setItem('payment_reminder_dismissed', 'true');
+                                }} 
                                 style={{ background: 'rgba(255,255,255,0.1)', border: 'none', cursor: 'pointer', width: '24px', height: '24px', borderRadius: '50%', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                 title="Close"
                             >
@@ -212,7 +223,7 @@ export default function PaymentReminder() {
                                         Scan QR to pay <b>₹{currentBooking.price}</b>
                                     </p>
                                     <div style={{ width: '200px', height: '200px', margin: '0 auto', background: '#fff', border: '1px solid #f3f4f6', borderRadius: '16px', padding: '10px' }}>
-                                         <img src="https://suvidha-server-4u66.onrender.com/uploads/Qr.jpg" alt="QR" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={(e) => e.target.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=upi://pay?pa=suvidha@okaxis&pn=Suvidha&cu=INR"} />
+                                         <img src={`${getApiUrl()}/uploads/Qr.jpg`} alt="QR" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={(e) => e.target.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=upi://pay?pa=suvidha@okaxis&pn=Suvidha&cu=INR"} />
                                     </div>
                                 </div>
 

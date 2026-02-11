@@ -132,7 +132,7 @@ export default function AmbulanceRequest() {
                     border: 'none',
                     boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)',
                     cursor: 'pointer',
-                    zIndex: 9999,
+                    zIndex: 5000,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',

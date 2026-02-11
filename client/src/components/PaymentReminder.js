@@ -4,9 +4,11 @@ import { useAuth } from '@/context/AuthContext';
 import { getApiUrl } from '@/utils/api';
 import { X, ChevronLeft, ChevronRight, Info, CreditCard } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useCart } from '@/context/CartContext';
 
 export default function PaymentReminder() {
     const { user, isLoaded } = useAuth();
+    const { isCartOpen } = useCart();
     const [pendingBookings, setPendingBookings] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [viewLink, setViewLink] = useState(null); // 'pay' | 'details' | null
@@ -82,7 +84,7 @@ export default function PaymentReminder() {
         setCurrentIndex((prev) => (prev - 1 + pendingBookings.length) % pendingBookings.length);
     };
 
-    if (pendingBookings.length === 0 || !isVisible) return null;
+    if (pendingBookings.length === 0 || !isVisible || isCartOpen) return null;
 
     const currentBooking = pendingBookings[currentIndex];
 
@@ -91,59 +93,73 @@ export default function PaymentReminder() {
             {/* Floating Widget Card */}
             {!viewLink && (
                 <div style={{
-                    position: 'fixed', bottom: '90px', right: '24px', zIndex: 20000,
-                    background: '#fff', width: '300px', borderRadius: '16px',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.15)', border: '1px solid #e5e7eb',
-                    overflow: 'hidden'
+                    position: 'fixed', bottom: '100px', right: '24px', zIndex: 20000,
+                    background: '#fff', width: '320px', borderRadius: '24px',
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.12)', border: '1px solid #f3f4f6',
+                    overflow: 'hidden', animation: 'slideUp 0.5s ease'
                 }}>
                     {/* Header */}
-                    <div style={{ background: '#0c831f', padding: '12px 16px', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ fontWeight: 'bold', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <CreditCard size={16} /> Pending Payments ({pendingBookings.length})
+                    <div style={{ 
+                        background: '#0c831f', padding: '14px 18px', color: '#fff', 
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)'
+                    }}>
+                        <div style={{ fontWeight: '800', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ background: 'rgba(255,255,255,0.2)', padding: '5px', borderRadius: '8px' }}>
+                                <CreditCard size={14} />
+                            </div>
+                            Pending Due ({pendingBookings.length})
                         </div>
-                        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                             {pendingBookings.length > 1 && (
-                                <div style={{ display: 'flex', gap: '8px' }}>
-                                    <button onClick={prevSlide} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '2px', color: '#fff' }}><ChevronLeft size={16} /></button>
-                                    <button onClick={nextSlide} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '2px', color: '#fff' }}><ChevronRight size={16} /></button>
+                                <div style={{ display: 'flex', gap: '6px' }}>
+                                    <button onClick={prevSlide} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '50%', cursor: 'pointer', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}><ChevronLeft size={14} /></button>
+                                    <button onClick={nextSlide} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '50%', cursor: 'pointer', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}><ChevronRight size={14} /></button>
                                 </div>
                             )}
                             <button 
                                 onClick={() => setIsVisible(false)} 
-                                style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '2px', color: '#fff', display: 'flex', opacity: 0.8 }}
-                                onMouseOver={(e) => e.currentTarget.style.opacity = 1}
-                                onMouseOut={(e) => e.currentTarget.style.opacity = 0.8}
+                                style={{ background: 'rgba(255,255,255,0.1)', border: 'none', cursor: 'pointer', width: '24px', height: '24px', borderRadius: '50%', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                 title="Close"
                             >
-                                <X size={18} />
+                                <X size={16} />
                             </button>
                         </div>
                     </div>
 
                     {/* Content */}
-                    <div style={{ padding: '16px' }}>
-                        <h4 style={{ margin: '0 0 4px 0', fontSize: '1rem', fontWeight: 'bold', color: '#111827', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {currentBooking.service_name}
-                        </h4>
-                        <p style={{ margin: 0, fontSize: '0.85rem', color: '#6b7280', marginBottom: '12px' }}>
-                            {new Date(currentBooking.booking_date).toLocaleDateString()}
-                        </p>
+                    <div style={{ padding: '20px' }}>
+                        <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+                            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#f3f4f6', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>
+                                🏥
+                            </div>
+                            <div style={{ overflow: 'hidden' }}>
+                                <h4 style={{ margin: '0 0 2px 0', fontSize: '1rem', fontWeight: '800', color: '#111827', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {currentBooking.service_name}
+                                </h4>
+                                <p style={{ margin: 0, fontSize: '0.8rem', color: '#6b7280', fontWeight: '600' }}>
+                                    {new Date(currentBooking.booking_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                </p>
+                            </div>
+                        </div>
                         
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', background: '#f3f4f6', padding: '8px 12px', borderRadius: '8px' }}>
-                            <span style={{ fontSize: '0.85rem', color: '#4b5563' }}>Amount Due:</span>
-                            <span style={{ fontSize: '1rem', fontWeight: 'bold', color: '#0c831f' }}>₹{currentBooking.price}</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', background: '#f8fafc', padding: '12px 16px', borderRadius: '16px', border: '1px solid #f1f5f9' }}>
+                            <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '700' }}>Amount to Pay</span>
+                            <span style={{ fontSize: '1.1rem', fontWeight: '900', color: '#111827' }}>₹{currentBooking.price}</span>
                         </div>
 
                         <div style={{ display: 'flex', gap: '10px' }}>
                             <button 
                                 onClick={() => setViewLink('details')}
-                                style={{ flex: 1, padding: '8px', border: '1px solid #e5e7eb', background: '#fff', borderRadius: '8px', fontWeight: '600', color: '#374151', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', fontSize: '0.85rem' }}
+                                style={{ flex: 1, padding: '12px', border: '1.5px solid #e2e8f0', background: '#fff', borderRadius: '14px', fontWeight: '800', color: '#334155', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '0.85rem', transition: 'all 0.2s' }}
+                                onMouseOver={(e) => e.currentTarget.style.background = '#f8fafc'}
+                                onMouseOut={(e) => e.currentTarget.style.background = '#fff'}
                             >
-                                <Info size={14} /> Details
+                                <Info size={14} /> View Details
                             </button>
                             <button 
                                 onClick={() => setViewLink('pay')}
-                                style={{ flex: 1, padding: '8px', border: 'none', background: '#0c831f', borderRadius: '8px', fontWeight: '600', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', fontSize: '0.85rem' }}
+                                style={{ flex: 1, padding: '12px', border: 'none', background: '#000', borderRadius: '14px', fontWeight: '800', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                             >
                                 Pay Now
                             </button>

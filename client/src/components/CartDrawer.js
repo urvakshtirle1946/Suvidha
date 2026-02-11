@@ -17,7 +17,7 @@ export default function CartDrawer() {
       <div 
         onClick={() => setIsCartOpen(false)}
         style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 3000,
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 40000,
           animation: 'fadeIn 0.2s'
         }}
       />
@@ -27,15 +27,15 @@ export default function CartDrawer() {
         position: 'fixed', top: 0, right: 0, bottom: 0, 
         width: '100%', 
         maxWidth: '440px',
-        background: '#f4f6fb', zIndex: 3001, boxShadow: '-5px 0 25px rgba(0,0,0,0.15)',
+        background: '#f4f6fb', zIndex: 40001, boxShadow: '-5px 0 25px rgba(0,0,0,0.15)',
         display: 'flex', flexDirection: 'column',
         animation: 'slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
       }}>
         
         {/* Header */}
         <div style={{
-          padding: '1rem 1.5rem', background: '#fff', borderBottom: '1px solid #f3f4f6',
-          display: 'flex', alignItems: 'center', gap: '1rem'
+          padding: '1.2rem 1.5rem', background: '#fff', borderBottom: '1px solid #f3f4f6',
+          display: 'flex', alignItems: 'center', gap: '1rem', position: 'sticky', top: 0, zIndex: 10
         }}>
           <button 
             onClick={() => setIsCartOpen(false)}
@@ -48,7 +48,7 @@ export default function CartDrawer() {
 
         {/* Saved Banner */}
         {cartDiscount > 0 && (
-            <div style={{ background: '#f0fdf4', padding: '12px', textAlign: 'center', borderBottom: '1px solid #dcfce7', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+            <div style={{ background: '#f0fdf4', padding: '12px', textAlign: 'center', borderBottom: '1px solid #dcfce7', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', position: 'sticky', top: '73px', zIndex: 10 }}>
                  <p style={{ color: '#166534', fontSize: '1rem', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
                     Yay! You <span style={{ color: '#15803d' }}>saved ₹{cartDiscount}</span> on this order <ChevronDown size={18} color="#15803d" />
                  </p>
@@ -175,21 +175,28 @@ export default function CartDrawer() {
 
         {/* Sticky Footer */}
         {cart.length > 0 && (
-          <div style={{ padding: '1.2rem', background: '#fff', borderTop: '1px solid #f3f4f6', boxShadow: '0 -4px 20px rgba(0,0,0,0.05)' }}>
+          <div style={{ padding: '1.2rem', background: '#fff', borderTop: '1px solid #f3f4f6', boxShadow: '0 -10px 30px rgba(0,0,0,0.06)' }}>
             <button 
               onClick={() => {
                 setIsCartOpen(false);
                 router.push('/checkout');
               }}
               style={{
-                width: '100%', padding: '1.2rem', background: '#0c831f', color: '#fff',
-                border: 'none', borderRadius: '16px', fontWeight: '900', fontSize: '1.1rem',
+                width: '100%', padding: '1.2rem 1.5rem', background: '#0c831f', color: '#fff',
+                border: 'none', borderRadius: '18px', fontWeight: '900', fontSize: '1.2rem',
                 cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                boxShadow: '0 8px 16px rgba(12, 131, 31, 0.2)'
+                boxShadow: '0 8px 24px rgba(12, 131, 31, 0.25)',
+                transition: 'all 0.2s'
               }}
             >
-              <span>{cart.length} Item{cart.length > 1 ? 's' : ''} • Proceed</span>
-              <span>₹{cartTotal + 50} &gt;</span>
+              <div style={{ textAlign: 'left' }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: '800' }}>{cart.length} Item{cart.length > 1 ? 's' : ''}</div>
+                  <div style={{ fontSize: '0.85rem', opacity: 0.9 }}>Proceed to checkout</div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ fontSize: '1.3rem' }}>₹{cartTotal + 50}</span>
+                  <ChevronRight size={22} strokeWidth={3} />
+              </div>
             </button>
           </div>
         )}

@@ -12,6 +12,7 @@ export default function PaymentReminder() {
     const [viewLink, setViewLink] = useState(null); // 'pay' | 'details' | null
     const [txnId, setTxnId] = useState('');
     const [paying, setPaying] = useState(false);
+    const [isVisible, setIsVisible] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
@@ -81,7 +82,7 @@ export default function PaymentReminder() {
         setCurrentIndex((prev) => (prev - 1 + pendingBookings.length) % pendingBookings.length);
     };
 
-    if (pendingBookings.length === 0) return null;
+    if (pendingBookings.length === 0 || !isVisible) return null;
 
     const currentBooking = pendingBookings[currentIndex];
 
@@ -100,12 +101,23 @@ export default function PaymentReminder() {
                         <div style={{ fontWeight: 'bold', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <CreditCard size={16} /> Pending Payments ({pendingBookings.length})
                         </div>
-                        {pendingBookings.length > 1 && (
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                                <button onClick={prevSlide} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '2px', color: '#fff' }}><ChevronLeft size={16} /></button>
-                                <button onClick={nextSlide} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '2px', color: '#fff' }}><ChevronRight size={16} /></button>
-                            </div>
-                        )}
+                        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                            {pendingBookings.length > 1 && (
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                    <button onClick={prevSlide} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '2px', color: '#fff' }}><ChevronLeft size={16} /></button>
+                                    <button onClick={nextSlide} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '2px', color: '#fff' }}><ChevronRight size={16} /></button>
+                                </div>
+                            )}
+                            <button 
+                                onClick={() => setIsVisible(false)} 
+                                style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '2px', color: '#fff', display: 'flex', opacity: 0.8 }}
+                                onMouseOver={(e) => e.currentTarget.style.opacity = 1}
+                                onMouseOut={(e) => e.currentTarget.style.opacity = 0.8}
+                                title="Close"
+                            >
+                                <X size={18} />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Content */}

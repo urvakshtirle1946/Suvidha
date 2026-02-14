@@ -1,0 +1,20 @@
+{
+  "/[adminPath]/bookings/page": "app/[adminPath]/bookings/page.js",
+  "/[adminPath]/hospitals/page": "app/[adminPath]/hospitals/page.js",
+  "/[adminPath]/login/page": "app/[adminPath]/login/page.js",
+  "/[adminPath]/offers/page": "app/[adminPath]/offers/page.js",
+  "/[adminPath]/page": "app/[adminPath]/page.js",
+  "/[adminPath]/profile/page": "app/[adminPath]/profile/page.js",
+  "/[adminPath]/services/page": "app/[adminPath]/services/page.js",
+  "/[adminPath]/users/page": "app/[adminPath]/users/page.js",
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/bookings/page": "app/bookings/page.js",
+  "/checkout/page": "app/checkout/page.js",
+  "/hospitals/page": "app/hospitals/page.js",
+  "/icon.png/route": "app/icon.png/route.js",
+  "/lab-tests/page": "app/lab-tests/page.js",
+  "/offers/page": "app/offers/page.js",
+  "/page": "app/page.js",
+  "/profile/page": "app/profile/page.js"
+}

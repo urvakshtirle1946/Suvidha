@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Test User",
+    "email": "testuser@example.com",
+    "phone": "1234567890",
+    "password": "$2b$10$2re3LxRwCCE/6wFVFwaChO0MGIfxnEfiUY4FScQe4ZgcNrBVmQ1yS",
+    "role": "admin",
+    "id": 1771066005743
+  },
+  {
+    "name": "Final Test",
+    "email": "final@zelp.com",
+    "phone": "9119119119",
+    "password": "$2b$10$w2uw6p..JGJsteJ/E5RJeuwmPZNoyRa9oy5t0fYboJIAa2qlo3OQC",
+    "role": "user",
+    "id": 1771066966753
+  }
+]

@@ -20,6 +20,8 @@ export default function BookingModal({ isOpen, onClose, service }) {
   const [labs, setLabs] = useState([]);
   const [fetchingLabs, setFetchingLabs] = useState(false);
   const [bookingId, setBookingId] = useState(null);
+  const [guestName, setGuestName] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
 
   useEffect(() => {
      if (isOpen && service) {
@@ -128,8 +130,8 @@ export default function BookingModal({ isOpen, onClose, service }) {
             } else {
                 // Standard new booking flow
                 const bookingData = {
-                    name: user.name || 'User',
-                    userPhone: user.phone || '',
+                    name: user?.name || guestName || 'Guest User',
+                    userPhone: user?.phone || guestPhone || '',
                     age: 0,
                     gender: 'Not Specified',
                     date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
@@ -166,14 +168,20 @@ export default function BookingModal({ isOpen, onClose, service }) {
   };
 
   const handlePayOnline = () => {
-        if (!user) { setAuthModalOpen(true); return; }
+        if (!user && (!guestName || !guestPhone)) { 
+            alert('Please enter your details first'); 
+            return; 
+        }
         if (!selectedLab || !selectedTime) return;
         setPaymentMode('online');
         setStep(2); 
   };
   
   const handlePayAtHospital = () => {
-        if (!user) { setAuthModalOpen(true); return; }
+        if (!user && (!guestName || !guestPhone)) { 
+             alert('Please enter your details first'); 
+             return; 
+        }
         if (!selectedLab || !selectedTime) return;
         setPaymentMode('hospital');
         finalizeBooking('hospital');
@@ -209,6 +217,32 @@ export default function BookingModal({ isOpen, onClose, service }) {
 
             {step === 1 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                    
+                    {/* Guest Information */}
+                    {!user && (
+                        <div style={{ background: '#f9fafb', padding: '1rem', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                                 <User size={18} color="#ff6f61" />
+                                 <span style={{ fontWeight: '700', color: '#374151' }}>Your Details</span>
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                                <input 
+                                    type="text" 
+                                    placeholder="Full Name" 
+                                    value={guestName}
+                                    onChange={(e) => setGuestName(e.target.value)}
+                                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none' }}
+                                />
+                                <input 
+                                    type="tel" 
+                                    placeholder="Phone Number" 
+                                    value={guestPhone}
+                                    onChange={(e) => setGuestPhone(e.target.value)}
+                                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none' }}
+                                />
+                            </div>
+                        </div>
+                    )}
                     
                     {/* Date Picker */}
                     <div>
@@ -429,7 +463,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                         <button 
                             onClick={handlePayAtHospital}
-                            disabled={loading || !selectedTime || !selectedLab}
+                            disabled={loading || !selectedTime || !selectedLab || (!user && (!guestName || !guestPhone))}
                             style={{ 
                                 flex: 1,
                                 background: '#fff',
@@ -447,7 +481,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                         </button>
                         <button 
                             onClick={handlePayOnline}
-                            disabled={loading || !selectedTime || !selectedLab}
+                            disabled={loading || !selectedTime || !selectedLab || (!user && (!guestName || !guestPhone))}
                             style={{ 
                                 flex: 1,
                                 background: (selectedTime && selectedLab) ? '#ff6f61' : '#e5e7eb', 

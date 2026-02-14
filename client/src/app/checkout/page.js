@@ -116,14 +116,16 @@ export default function Checkout() {
   const [showPayment, setShowPayment] = useState(false);
   const [paymentMode, setPaymentMode] = useState('hospital'); // 'hospital' or 'online'
   const [bookingIds, setBookingIds] = useState([]);
+  const [guestName, setGuestName] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
 
   const updateCartWithProvider = (index, newItem) => {
     updateCartItem(index, newItem);
   };
 
   const handleCheckoutCallback = async () => {
-    if (!user) {
-        setAuthModalOpen(true);
+    if (!user && (!guestName || !guestPhone)) {
+        setError('Please enter your name and phone number to proceed.');
         return;
     }
 
@@ -189,8 +191,8 @@ export default function Checkout() {
                 const requests = [];
                 for (let i = 0; i < quantity; i++) {
                     const bookingData = {
-                        name: user.name || 'User',
-                        userPhone: user.phone || '', 
+                        name: user?.name || guestName || 'Guest User',
+                        userPhone: user?.phone || guestPhone || '', 
                         age: 0, 
                         gender: 'Not Specified',
                         date: selectedDate,
@@ -469,8 +471,24 @@ export default function Checkout() {
 
                         <div className="hide-on-mobile" style={{ padding: '0 1.5rem 1.5rem' }}>
                             {!user && (
-                                <div style={{ background: '#fef2f2', color: '#991b1b', padding: '0.8rem 1rem', borderRadius: '10px', marginBottom: '1.5rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #fee2e2' }}>
-                                    <AlertCircle size={18} /> Login required to place order
+                                <div style={{ marginBottom: '1.5rem', background: '#f9fafb', padding: '1rem', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+                                    <h4 style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '10px', color: '#374151' }}>Guest Details</h4>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                        <input 
+                                            type="text" 
+                                            placeholder="Full Name" 
+                                            value={guestName}
+                                            onChange={(e) => setGuestName(e.target.value)}
+                                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none' }}
+                                        />
+                                        <input 
+                                            type="tel" 
+                                            placeholder="Phone Number" 
+                                            value={guestPhone}
+                                            onChange={(e) => setGuestPhone(e.target.value)}
+                                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none' }}
+                                        />
+                                    </div>
                                 </div>
                             )}
                             
@@ -491,7 +509,7 @@ export default function Checkout() {
                                     boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)'
                                 }}
                             >
-                                <span>{loading ? 'Processing...' : user ? `Place Order` : 'Login to Continue'}</span>
+                                <span>{loading ? 'Processing...' : (user || (guestName && guestPhone)) ? `Place Order` : 'Enter Details'}</span>
                                 {!loading && user && <span>₹{cartTotal + 50} &gt;</span>}
                             </button>
                         </div>
@@ -517,7 +535,7 @@ export default function Checkout() {
                     disabled={loading}
                     className="cta-button"
                   >
-                      {loading ? '...' : user ? 'Place Order' : 'Login'}
+                      {loading ? '...' : (user || (guestName && guestPhone)) ? 'Place Order' : 'Enter Details'}
                   </button>
               </div>
           </div>

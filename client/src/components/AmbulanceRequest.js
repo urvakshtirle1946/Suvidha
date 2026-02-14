@@ -46,6 +46,8 @@ export default function AmbulanceRequest() {
     const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
     
     const [pickupAddress, setPickupAddress] = useState(location || '');
+    const [guestName, setGuestName] = useState('');
+    const [guestPhone, setGuestPhone] = useState('');
     
     useEffect(() => {
         if (latitude && longitude) {
@@ -78,8 +80,8 @@ export default function AmbulanceRequest() {
     };
 
     const handleRequest = async () => {
-        if (!user) {
-            alert('Please login to request an ambulance.');
+        if (!user && (!guestName || !guestPhone)) {
+            alert('Please enter your name and phone number.');
             return;
         }
 
@@ -89,7 +91,8 @@ export default function AmbulanceRequest() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    userPhone: user.phone,
+                    userPhone: user?.phone || guestPhone,
+                    userName: user?.name || guestName,
                     pickupLat: latitude || 0,
                     pickupLng: longitude || 0,
                     pickupAddress: pickupAddress || location || 'Unknown Location',
@@ -368,6 +371,25 @@ export default function AmbulanceRequest() {
                                     <span style={{ fontWeight: '700', color: '#ef4444' }}>Warning:</span> Fake or non-emergency timepass bookings will be charged a penalty of <span style={{ fontWeight: '700' }}>₹600</span>.
                                 </div>
                              </div>
+
+                             {!user && (
+                                <div style={{ marginBottom: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Name" 
+                                        value={guestName}
+                                        onChange={e => setGuestName(e.target.value)}
+                                        style={{ padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db' }}
+                                    />
+                                    <input 
+                                        type="tel" 
+                                        placeholder="Phone" 
+                                        value={guestPhone}
+                                        onChange={e => setGuestPhone(e.target.value)}
+                                        style={{ padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db' }}
+                                    />
+                                </div>
+                             )}
 
                              <button 
                                 onClick={handleRequest}

@@ -78,16 +78,10 @@ export default function Navbar() {
           {/* Right Actions */}
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
               <div className="hide-on-mobile" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-                  {!user ? (
-                      <button 
-                          onClick={() => setAuthModalOpen(true)}
-                          style={{ background: 'transparent', border: 'none', fontWeight: '500', fontSize: '1.1rem', cursor: 'pointer', color: '#374151' }}
-                      >
-                          Login
-                      </button>
-                  ) : (
-                     <ProfileDropdown onOpenSettings={() => setSettingsModalOpen(true)} />
-                  )}
+              <div className="hide-on-mobile" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                  {/* Auth removed for Guest Mode */}
+                  {user && <ProfileDropdown onOpenSettings={() => setSettingsModalOpen(true)} />}
+              </div>
               </div>
               
               {/* Cart is always visible but smaller on mobile */}
@@ -180,12 +174,9 @@ export default function Navbar() {
              </Link>
              
              {!user ? (
-                 <button 
-                     onClick={() => { setAuthModalOpen(true); setMobileMenuOpen(false); }}
-                     style={{ padding: '0.8rem', fontWeight: '600', color: '#ff6f61', background: 'transparent', border: 'none', textAlign: 'left', fontSize: '1rem', cursor: 'pointer' }}
-                 >
-                    Login / Sign Up
-                 </button>
+                 <div style={{ padding: '0.8rem', fontSize: '0.9rem', color: '#6b7280', fontStyle: 'italic' }}>
+                    Welcome Guest
+                 </div>
              ) : (
                  <>
                     <Link href="/bookings" onClick={() => setMobileMenuOpen(false)} style={{ padding: '0.8rem', fontWeight: '500', color: '#1f2937', borderBottom: '1px solid #f3f4f6' }}>

@@ -1,20 +1,23 @@
 export const getApiUrl = () => {
-    // Priority 1: Environment variable
+    // 1. Manual override via URL (e.g., localhost:3000/?backend=remote)
+    if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('backend') === 'remote') {
+            return 'https://suvidha-server-4u66.onrender.com';
+        }
+    }
+
+    // 2. Environment variable (Priority)
     if (process.env.NEXT_PUBLIC_API_URL) {
         return process.env.NEXT_PUBLIC_API_URL;
     }
 
-    // Priority 2: Use localhost if we are running in browser on localhost
+    // 3. Local Development override
     if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
         return 'http://localhost:5000';
     }
 
-    // Priority 3: Development mode default
-    if (process.env.NODE_ENV === 'development') {
-        return 'http://localhost:5000';
-    }
-
-    // Priority 4: Production fallback
+    // 4. Default Production Fallback
     return 'https://suvidha-server-4u66.onrender.com';
 };
 

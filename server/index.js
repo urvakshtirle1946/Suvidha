@@ -19,10 +19,24 @@ const ambulanceRoutes = require('./routes/ambulanceRoutes');
 // Middleware
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
 })); // Security Headers
 app.use(morgan('dev')); // HTTP Request Logger
-app.use(cors());
+
+// CORS Configuration
+const allowedOrigins = ['https://tryzelp.app', 'http://localhost:3000', 'http://localhost:5173'];
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
+      callback(null, true);
+    } else {
+      console.log("Blocked by CORS:", origin);
+      callback(null, true); // Temporarily allow all for debugging, or strict: callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json()); // Built-in middleware replaces body-parser
 const staticOptions = {
   setHeaders: (res) => {

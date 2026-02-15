@@ -11,6 +11,7 @@ import LocationModal from './LocationModal';
 import SettingsModal from './SettingsModal';
 import ProfileDropdown from './ProfileDropdown';
 import AuthModal from './AuthModal';
+import SterlingGateKineticNavigation from './ui/SterlingGateKineticNavigation';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -30,14 +31,14 @@ export default function Navbar() {
       }}>
         <div className="container nav-content">
           
-          {/* Mobile Menu Button */}
-          <button 
+          {/* Mobile Menu Button - REPLACED by Kinetic Nav's own button */}
+          {/* <button 
             className="show-on-mobile"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             style={{ background: 'transparent', border: 'none', marginRight: '1rem', cursor: 'pointer', color: '#374151' }}
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          </button> */}
 
           {/* Logo & Location */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1 }}>
@@ -152,74 +153,15 @@ export default function Navbar() {
         onClose={() => setSettingsModalOpen(false)}
       />
 
-      {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <div style={{
-            position: 'fixed',
-            top: 'var(--header-height)',
-            left: 0,
-            right: 0,
-            background: '#fff',
-            borderBottom: '1px solid #e5e7eb',
-            padding: '1rem',
-            zIndex: 999,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-        }}>
-             {/* Mobile Location */}
-             <div 
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setLocationModalOpen(true);
-                }}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.5rem', background: '#f3f4f6', borderRadius: '8px', cursor: 'pointer' }}
-             >
-                <MapPin size={16} color="#0c831f" />
-                <span style={{ fontSize: '0.9rem', color: '#374151' }}>{location || 'Select Location'}</span>
-             </div>
-
-             <Link href="/" onClick={() => setMobileMenuOpen(false)} style={{ padding: '0.8rem', borderBottom: '1px solid #f3f4f6', fontWeight: '500', color: '#1f2937' }}>
-                Home
-             </Link>
-             <Link href="/hospitals" onClick={() => setMobileMenuOpen(false)} style={{ padding: '0.8rem', borderBottom: '1px solid #f3f4f6', fontWeight: '500', color: '#1f2937' }}>
-                Services
-             </Link>
-             
-             {!user ? (
-                 <div style={{ padding: '0.8rem', borderBottom: '1px solid #f3f4f6' }}>
-                     <button
-                        onClick={() => { setAuthModalOpen(true); setMobileMenuOpen(false); }}
-                        style={{ 
-                            width: '100%', padding: '10px', background: '#0c831f', color: '#fff', 
-                            border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '0.95rem' 
-                        }}
-                     >
-                        Login / Sign Up
-                     </button>
-                 </div>
-             ) : (
-                 <>
-                    <Link href="/bookings" onClick={() => setMobileMenuOpen(false)} style={{ padding: '0.8rem', fontWeight: '500', color: '#1f2937', borderBottom: '1px solid #f3f4f6' }}>
-                        My Bookings
-                    </Link>
-                    <button
-                        onClick={() => { setSettingsModalOpen(true); setMobileMenuOpen(false); }}
-                        style={{ padding: '0.8rem', fontWeight: '500', color: '#1f2937', background: 'transparent', border: 'none', textAlign: 'left', borderBottom: '1px solid #f3f4f6', cursor: 'pointer', fontSize: '1rem' }}
-                    >
-                        Settings
-                    </button>
-                    <button
-                        onClick={() => { logout(); setMobileMenuOpen(false); }}
-                        style={{ padding: '0.8rem', fontWeight: '600', color: '#dc2626', background: 'transparent', border: 'none', textAlign: 'left', fontSize: '1rem', cursor: 'pointer' }}
-                    >
-                        Logout
-                    </button>
-                 </>
-             )}
-        </div>
-      )}
+      {/* Mobile Menu Overlay - REPLACED by Kinetic Nav */}
+      {/* {mobileMenuOpen && (
+        <div style={{ ... }}> ... </div>
+      )} */}
+      
+      {/* Kinetic Navigation for Mobile */}
+      <div className="show-on-mobile">
+        <SterlingGateKineticNavigation />
+      </div>
     </>
   );
 }

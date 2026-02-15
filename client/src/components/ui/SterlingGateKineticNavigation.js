@@ -61,10 +61,9 @@ export default function SterlingGateKineticNavigation() {
               .fromTo(menu, { xPercent: 100 }, { xPercent: 0, duration: 0.5, ease: "power3.out" })
               .fromTo(menuButtonIcon, { rotate: 0 }, { rotate: 90 }, "<")
               
-              .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1 }, "<")
+              .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1 }, "<");
               
-              // Links fade in nicely
-              .fromTo(menuLinks, { autoAlpha: 0, x: 20 }, { autoAlpha: 1, x: 0, stagger: 0.08, ease: "power2.out" }, "-=0.3");
+              // Removed link animation to guarantee visibility
               
             if (fadeTargets.length) {
                 tl.fromTo(fadeTargets, { autoAlpha: 0, yPercent: 50 }, { autoAlpha: 1, yPercent: 0, stagger: 0.04, clearProps: "all" }, "<+=0.2");
@@ -288,11 +287,11 @@ export default function SterlingGateKineticNavigation() {
         .nav-link {
             display: block;
             text-decoration: none;
-            color: #111827;
+            color: #000000; /* Force Black */
             font-size: 2.5rem;
             font-weight: 800;
             line-height: 1.1;
-            /* Removed initial transform to rely on GSAP .fromTo */
+            opacity: 1 !important; /* Force Visibility */
         }
 
         .nav-link-text {

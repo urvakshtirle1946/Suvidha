@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS hospitals (
   discount_percentage INT,
   discount_description VARCHAR(255),
   image_url VARCHAR(255),
+  phone_number VARCHAR(20),
+  map_url TEXT,
   latitude DECIMAL(10, 8),
   longitude DECIMAL(11, 8),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

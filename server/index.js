@@ -25,14 +25,18 @@ app.use(helmet({
 app.use(morgan('dev')); // HTTP Request Logger
 
 // CORS Configuration
-const allowedOrigins = ['https://tryzelp.app', 'http://localhost:3000', 'http://localhost:5173'];
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://suvidha-client.vercel.app',
+  'https://suvidha-client-git-main-suvidha.vercel.app',
+  'https://tryzelp.app'
+];
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
       callback(null, true);
     } else {
-      console.log("Blocked by CORS:", origin);
-      callback(null, true); // Temporarily allow all for debugging, or strict: callback(new Error('Not allowed by CORS'));
+      callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true

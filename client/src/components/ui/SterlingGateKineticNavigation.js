@@ -42,12 +42,11 @@ export default function SterlingGateKineticNavigation() {
         const navWrap = containerRef.current.querySelector(".nav-overlay-wrapper");
         const menu = containerRef.current.querySelector(".menu-content");
         const overlay = containerRef.current.querySelector(".overlay");
-        const bgPanels = containerRef.current.querySelectorAll(".backdrop-layer");
+        // Removed bgPanels
         const menuLinks = containerRef.current.querySelectorAll(".nav-link");
         const fadeTargets = containerRef.current.querySelectorAll("[data-menu-fade]");
         
         const menuButton = containerRef.current.querySelector(".nav-close-btn");
-        const menuButtonTexts = menuButton?.querySelectorAll("p");
         const menuButtonIcon = menuButton?.querySelector(".menu-button-icon");
 
       const tl = gsap.timeline();
@@ -58,12 +57,14 @@ export default function SterlingGateKineticNavigation() {
             document.body.style.overflow = 'hidden';
             
             tl.set(navWrap, { display: "block" })
-              .set(menu, { xPercent: 0 }, "<")
-              .fromTo(menuButtonIcon, { rotate: 0 }, { rotate: 90 }, "<") // Rotate 90 for hamburger
+              // Animate main container slide-in (White Background)
+              .fromTo(menu, { xPercent: 100 }, { xPercent: 0, duration: 0.5, ease: "power3.out" })
+              .fromTo(menuButtonIcon, { rotate: 0 }, { rotate: 90 }, "<")
               
               .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1 }, "<")
-              .fromTo(bgPanels, { xPercent: 101 }, { xPercent: 0, stagger: 0.12, duration: 0.575 }, "<")
-              .fromTo(menuLinks, { autoAlpha: 0, x: -20 }, { autoAlpha: 1, x: 0, stagger: 0.05 }, "<+=0.35");
+              
+              // Links fade in nicely
+              .fromTo(menuLinks, { autoAlpha: 0, x: 20 }, { autoAlpha: 1, x: 0, stagger: 0.08, ease: "power2.out" }, "-=0.3");
               
             if (fadeTargets.length) {
                 tl.fromTo(fadeTargets, { autoAlpha: 0, yPercent: 50 }, { autoAlpha: 1, yPercent: 0, stagger: 0.04, clearProps: "all" }, "<+=0.2");
@@ -75,7 +76,7 @@ export default function SterlingGateKineticNavigation() {
             document.body.style.overflow = '';
 
             tl.to(overlay, { autoAlpha: 0 })
-              .to(menu, { xPercent: 120 }, "<")
+              .to(menu, { xPercent: 100, ease: "power3.in" }, "<")
               .to(menuButtonIcon, { rotate: 0 }, "<")
               .set(navWrap, { display: "none" });
         }
@@ -130,19 +131,13 @@ export default function SterlingGateKineticNavigation() {
         <div data-nav="closed" className="nav-overlay-wrapper" style={{ display: 'none' }}>
           <div className="overlay" onClick={closeMenu}></div>
           <nav className="menu-content">
-            <div className="menu-bg">
-              <div className="backdrop-layer first"></div>
-              <div className="backdrop-layer second"></div>
-              <div className="backdrop-layer"></div>
-
-              {/* Abstract shapes container */}
-              <div className="ambient-background-shapes">
-                <svg className="bg-shape bg-shape-1 active" viewBox="0 0 400 400" fill="none">
-                  <circle className="shape-element" cx="80" cy="120" r="40" fill="rgba(99,102,241,0.15)" />
-                  <circle className="shape-element" cx="300" cy="80" r="60" fill="rgba(139,92,246,0.12)" />
-                  <circle className="shape-element" cx="200" cy="300" r="80" fill="rgba(236,72,153,0.1)" />
-                </svg>
-              </div>
+            {/* Abstract shapes inside the white panel */}
+            <div className="ambient-background-shapes">
+              <svg className="bg-shape bg-shape-1 active" viewBox="0 0 400 400" fill="none">
+                <circle className="shape-element" cx="80" cy="120" r="40" fill="rgba(99,102,241,0.15)" />
+                <circle className="shape-element" cx="300" cy="80" r="60" fill="rgba(139,92,246,0.12)" />
+                <circle className="shape-element" cx="200" cy="300" r="80" fill="rgba(236,72,153,0.1)" />
+              </svg>
             </div>
 
             <div className="menu-content-wrapper" style={{ zIndex: 50, position: 'relative' }}>
@@ -254,32 +249,19 @@ export default function SterlingGateKineticNavigation() {
             width: 100%;
             max-width: 500px;
             height: 100%;
-            background: transparent;
-            transform: translateX(120%);
-        }
-
-        .menu-bg {
-            position: absolute;
-            inset: 0;
-            overflow: hidden;
-        }
-
-        .backdrop-layer {
-            position: absolute;
-            inset: 0;
             background: #fff;
-            transform: translateX(101%);
+            transform: translateX(100%);
+            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+            z-index: 1000;
         }
 
-        .backdrop-layer.first { background: #e0e7ff; z-index: 1; }
-        .backdrop-layer.second { background: #f3f4f6; z-index: 2; }
-        .backdrop-layer:last-child { background: #ffffff; z-index: 3; }
-
+        /* Abstract shapes container */
         .ambient-background-shapes {
             position: absolute;
             inset: 0;
-            z-index: 4;
+            z-index: 0;
             pointer-events: none;
+            overflow: hidden;
         }
 
         .menu-content-wrapper {

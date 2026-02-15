@@ -20,13 +20,16 @@ export function LocationProvider({ children }) {
         setLongitude(lng);
 
         try {
-          // Temporarily use Nominatim directly if API is slow, or stick to backend proxy if reliable.
-          // Let's assume backend proxy is fine but we must update coordinates FIRST to unlock UI.
-          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+          // Use our backend proxy to avoid CORS issues
+          const apiUrl = getApiUrl();
+          const res = await fetch(`${apiUrl}/api/location/reverse?lat=${lat}&lon=${lng}`);
           
           if (!res.ok) throw new Error('Fetch failed');
 
           const data = await res.json();
+          // Nominatim returns address object directly in top level for some formats, 
+          // or inside address property. Our controller returns what Nominatim returns.
+          // Standard Nominatim JSON has `address` object.
           const address = data.address || {};
           const detectedCity = address.city || address.town || address.state_district || 'Indore';
           const detectedArea = address.suburb || address.neighbourhood || address.road || '';

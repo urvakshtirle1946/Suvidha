@@ -145,23 +145,23 @@ export default function SterlingGateKineticNavigation() {
               </div>
             </div>
 
-            <div className="menu-content-wrapper" style={{ zIndex: 100 }}> {/* Increased Z-Index */}
-              <ul className="menu-list">
+            <div className="menu-content-wrapper" style={{ zIndex: 50, position: 'relative' }}>
+              <ul className="menu-list" style={{ pointerEvents: 'auto' }}>
                 <li className="menu-list-item">
                   <Link href="/" className="nav-link w-inline-block" onClick={closeMenu}>
-                    <p className="nav-link-text">Home</p>
+                    <p className="nav-link-text" style={{ color: '#000' }}>Home</p>
                   </Link>
                 </li>
                 <li className="menu-list-item">
                   <Link href="/hospitals" className="nav-link w-inline-block" onClick={closeMenu}>
-                    <p className="nav-link-text">Services</p>
+                    <p className="nav-link-text" style={{ color: '#000' }}>Services</p>
                   </Link>
                 </li>
                 {user ? (
                    <>
                     <li className="menu-list-item">
                         <Link href="/bookings" className="nav-link w-inline-block" onClick={closeMenu}>
-                            <p className="nav-link-text">My Bookings</p>
+                            <p className="nav-link-text" style={{ color: '#000' }}>My Bookings</p>
                         </Link>
                     </li>
                     <li className="menu-list-item">
@@ -172,15 +172,8 @@ export default function SterlingGateKineticNavigation() {
                    </>
                 ) : (
                     <li className="menu-list-item">
-                         {/* This will trigger the auth modal from parent if we pass a handler, but for now we link to a login page or just use the button */}
-                         {/* Since AuthModal is in Navbar, we might need a way to trigger it. 
-                             For simplicity in this component, I'll assume we can pass a prop or use a hash to trigger it, 
-                             but here I'll just put a placeholder or link to home/login if available. 
-                             Actually, let's just emit an event or rely on the user finding the login button on the main nav.
-                             Better yet, let's replicate the Login button.
-                         */}
                          <div className="nav-link w-inline-block" style={{ opacity: 0.5 }}>
-                            <p className="nav-link-text">Guest User</p>
+                            <p className="nav-link-text" style={{ color: '#000' }}>Guest User</p>
                          </div>
                     </li>
                 )}

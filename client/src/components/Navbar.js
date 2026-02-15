@@ -31,14 +31,10 @@ export default function Navbar() {
       }}>
         <div className="container nav-content">
           
-          {/* Mobile Menu Button - REPLACED by Kinetic Nav's own button */}
-          {/* <button 
-            className="show-on-mobile"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            style={{ background: 'transparent', border: 'none', marginRight: '1rem', cursor: 'pointer', color: '#374151' }}
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button> */}
+          {/* Kinetic Navigation Trigger (Mobile) */}
+          <div className="show-on-mobile" style={{ marginRight: '1rem' }}>
+            <SterlingGateKineticNavigation />
+          </div>
 
           {/* Logo & Location */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1 }}>
@@ -157,11 +153,7 @@ export default function Navbar() {
       {/* {mobileMenuOpen && (
         <div style={{ ... }}> ... </div>
       )} */}
-      
-      {/* Kinetic Navigation for Mobile */}
-      <div className="show-on-mobile">
-        <SterlingGateKineticNavigation />
-      </div>
+      {/* Kinetic Navigation is now inside .nav-content */}
     </>
   );
 }

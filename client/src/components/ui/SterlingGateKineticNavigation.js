@@ -63,7 +63,7 @@ export default function SterlingGateKineticNavigation() {
               
               .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1 }, "<")
               .fromTo(bgPanels, { xPercent: 101 }, { xPercent: 0, stagger: 0.12, duration: 0.575 }, "<")
-              .fromTo(menuLinks, { yPercent: 140, rotate: 10 }, { yPercent: 0, rotate: 0, stagger: 0.05 }, "<+=0.35");
+              .fromTo(menuLinks, { autoAlpha: 0, x: -20 }, { autoAlpha: 1, x: 0, stagger: 0.05 }, "<+=0.35");
               
             if (fadeTargets.length) {
                 tl.fromTo(fadeTargets, { autoAlpha: 0, yPercent: 50 }, { autoAlpha: 1, yPercent: 0, stagger: 0.04, clearProps: "all" }, "<+=0.2");
@@ -317,8 +317,7 @@ export default function SterlingGateKineticNavigation() {
             font-size: 2.5rem;
             font-weight: 800;
             line-height: 1.1;
-            transform: translateY(140%) rotate(10deg);
-            transform-origin: left center;
+            /* Removed initial transform to rely on GSAP .fromTo */
         }
 
         .nav-link-text {

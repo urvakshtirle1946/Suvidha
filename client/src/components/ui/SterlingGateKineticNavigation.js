@@ -50,7 +50,7 @@ export default function SterlingGateKineticNavigation() {
         const menuButtonTexts = menuButton?.querySelectorAll("p");
         const menuButtonIcon = menuButton?.querySelector(".menu-button-icon");
 
-        const tl = gsap.timeline();
+      const tl = gsap.timeline();
         
         if (isMenuOpen) {
             // OPEN
@@ -59,8 +59,7 @@ export default function SterlingGateKineticNavigation() {
             
             tl.set(navWrap, { display: "block" })
               .set(menu, { xPercent: 0 }, "<")
-              .fromTo(menuButtonTexts, { yPercent: 0 }, { yPercent: -100, stagger: 0.2 })
-              .fromTo(menuButtonIcon, { rotate: 0 }, { rotate: 315 }, "<")
+              .fromTo(menuButtonIcon, { rotate: 0 }, { rotate: 90 }, "<") // Rotate 90 for hamburger
               
               .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1 }, "<")
               .fromTo(bgPanels, { xPercent: 101 }, { xPercent: 0, stagger: 0.12, duration: 0.575 }, "<")
@@ -77,7 +76,6 @@ export default function SterlingGateKineticNavigation() {
 
             tl.to(overlay, { autoAlpha: 0 })
               .to(menu, { xPercent: 120 }, "<")
-              .to(menuButtonTexts, { yPercent: 0 }, "<")
               .to(menuButtonIcon, { rotate: 0 }, "<")
               .set(navWrap, { display: "none" });
         }
@@ -106,18 +104,22 @@ export default function SterlingGateKineticNavigation() {
         {/* Toggle Button (Visible on Mobile) */}
         <div className="nav-toggle-wrapper show-on-mobile">
             <button role="button" className="nav-close-btn" onClick={toggleMenu} style={{ pointerEvents: 'auto', background: 'transparent', border:'none', cursor:'pointer' }}>
-                <div className="menu-button-text">
-                    <p className="p-large" style={{ margin:0 }}>Menu</p>
-                    <p className="p-large" style={{ margin:0 }}>Close</p>
-                </div>
                 <div className="icon-wrap">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 16" fill="none" className="menu-button-icon">
-                    <path d="M7.33333 16L7.33333 -3.2055e-07L8.66667 -3.78832e-07L8.66667 16L7.33333 16Z" fill="currentColor"></path>
-                    <path d="M16 8.66667L-2.62269e-07 8.66667L-3.78832e-07 7.33333L16 7.33333L16 8.66667Z" fill="currentColor"></path>
-                    <path d="M6 7.33333L7.33333 7.33333L7.33333 6C7.33333 6.73637 6.73638 7.33333 6 7.33333Z" fill="currentColor"></path>
-                    <path d="M10 7.33333L8.66667 7.33333L8.66667 6C8.66667 6.73638 9.26362 7.33333 10 7.33333Z" fill="currentColor"></path>
-                    <path d="M6 8.66667L7.33333 8.66667L7.33333 10C7.33333 9.26362 6.73638 8.66667 6 8.66667Z" fill="currentColor"></path>
-                    <path d="M10 8.66667L8.66667 8.66667L8.66667 10C8.66667 9.26362 9.26362 8.66667 10 8.66667Z" fill="currentColor"></path>
+                    {/* Replaced complex SVG with simple 3-lines (Menu) icon */}
+                    <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        width="24" height="24" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                        className="menu-button-icon"
+                    >
+                        <line x1="4" x2="20" y1="12" y2="12" />
+                        <line x1="4" x2="20" y1="6" y2="6" />
+                        <line x1="4" x2="20" y1="18" y2="18" />
                     </svg>
                 </div>
             </button>
@@ -143,7 +145,7 @@ export default function SterlingGateKineticNavigation() {
               </div>
             </div>
 
-            <div className="menu-content-wrapper">
+            <div className="menu-content-wrapper" style={{ zIndex: 100 }}> {/* Increased Z-Index */}
               <ul className="menu-list">
                 <li className="menu-list-item">
                   <Link href="/" className="nav-link w-inline-block" onClick={closeMenu}>

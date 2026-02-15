@@ -79,8 +79,22 @@ export default function Navbar() {
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
               <div className="hide-on-mobile" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
               <div className="hide-on-mobile" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-                  {/* Auth removed for Guest Mode */}
-                  {user && <ProfileDropdown onOpenSettings={() => setSettingsModalOpen(true)} />}
+                  {user ? (
+                      <ProfileDropdown onOpenSettings={() => setSettingsModalOpen(true)} />
+                  ) : (
+                      <button 
+                          onClick={() => setAuthModalOpen(true)}
+                          style={{ 
+                              background: 'transparent', border: '1px solid #0c831f', color: '#0c831f', 
+                              padding: '8px 20px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer',
+                              transition: 'all 0.2s'
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = '#0c831f'; e.currentTarget.style.color = '#fff'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#0c831f'; }}
+                      >
+                          Login / Sign Up
+                      </button>
+                  )}
               </div>
               </div>
               
@@ -174,8 +188,16 @@ export default function Navbar() {
              </Link>
              
              {!user ? (
-                 <div style={{ padding: '0.8rem', fontSize: '0.9rem', color: '#6b7280', fontStyle: 'italic' }}>
-                    Welcome Guest
+                 <div style={{ padding: '0.8rem', borderBottom: '1px solid #f3f4f6' }}>
+                     <button
+                        onClick={() => { setAuthModalOpen(true); setMobileMenuOpen(false); }}
+                        style={{ 
+                            width: '100%', padding: '10px', background: '#0c831f', color: '#fff', 
+                            border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '0.95rem' 
+                        }}
+                     >
+                        Login / Sign Up
+                     </button>
                  </div>
              ) : (
                  <>

@@ -472,7 +472,15 @@ export default function Checkout() {
                         <div className="hide-on-mobile" style={{ padding: '0 1.5rem 1.5rem' }}>
                             {!user && (
                                 <div style={{ marginBottom: '1.5rem', background: '#f9fafb', padding: '1rem', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
-                                    <h4 style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '10px', color: '#374151' }}>Guest Details</h4>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                        <h4 style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#374151', margin: 0 }}>Guest Details</h4>
+                                        <span 
+                                            onClick={() => setAuthModalOpen(true)}
+                                            style={{ fontSize: '0.8rem', color: '#0c831f', fontWeight: '600', cursor: 'pointer', textDecoration: 'underline' }}
+                                        >
+                                            Already have an account? Login
+                                        </span>
+                                    </div>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                         <input 
                                             type="text" 

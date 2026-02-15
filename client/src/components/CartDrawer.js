@@ -74,18 +74,7 @@ export default function CartDrawer() {
           </div>
 
           {/* Coupon Section */}
-          <div style={{ background: '#fff', borderRadius: '16px', padding: '1.2rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', cursor: 'pointer' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '12px' }}>
-                      <Percent size={20} color="#059669" />
-                  </div>
-                  <div>
-                      <div style={{ fontWeight: '800', fontSize: '1rem' }}>You have unlocked <span style={{ color: '#7c3aed' }}>1 new coupon</span></div>
-                      <div style={{ fontSize: '0.85rem', color: '#6b7280' }}>Explore Now</div>
-                  </div>
-              </div>
-              <ChevronRight size={20} color="#374151" />
-          </div>
+
 
           {/* ETA Section */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem', padding: '0 8px' }}>

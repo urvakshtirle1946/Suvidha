@@ -51,13 +51,15 @@ export function CartProvider({ children }) {
   };
 
   const updateQuantity = (itemId, delta) => {
-    setCart((prev) => prev.map((item) => {
-      if (item.id === itemId) {
-        const newQty = (item.quantity || 1) + delta;
-        return newQty > 0 ? { ...item, quantity: newQty } : item;
-      }
-      return item;
-    }));
+    setCart((prev) => {
+      return prev.map((item) => {
+        if (item.id === itemId) {
+          const newQty = (item.quantity || 1) + delta;
+          return { ...item, quantity: newQty };
+        }
+        return item;
+      }).filter(item => item.quantity > 0);
+    });
   };
 
   const clearCart = () => {

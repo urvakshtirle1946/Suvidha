@@ -112,21 +112,35 @@ export default function CartDrawer() {
                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             {/* Quantity Selector */}
                             <div style={{ 
-                                display: 'flex', alignItems: 'center', gap: '12px', background: '#fff', border: '1px solid #fee2e2', borderRadius: '10px', padding: '4px 10px',
-                                boxShadow: '0 2px 4px rgba(239, 68, 68, 0.05)'
+                                display: 'flex', alignItems: 'center', gap: '8px'
                             }}>
-                                <button 
-                                    onClick={() => updateQuantity(item.id, -1)}
-                                    style={{ background: 'transparent', border: 'none', color: '#ff6f61', cursor: 'pointer', padding: '4px' }}
+                                <div style={{ 
+                                    display: 'flex', alignItems: 'center', gap: '12px', background: '#fff', border: '1px solid #fee2e2', borderRadius: '10px', padding: '4px 10px',
+                                    boxShadow: '0 2px 4px rgba(239, 68, 68, 0.05)'
+                                }}>
+                                    <button 
+                                        onClick={() => updateQuantity(item.id, -1)}
+                                        style={{ background: 'transparent', border: 'none', color: '#ff6f61', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}
+                                    >
+                                        <Minus size={14} strokeWidth={3} />
+                                    </button>
+                                    <span style={{ fontSize: '0.95rem', fontWeight: '800', color: '#111827', minWidth: '12px', textAlign: 'center' }}>{item.quantity || 1}</span>
+                                    <button 
+                                        onClick={() => updateQuantity(item.id, 1)}
+                                        style={{ background: 'transparent', border: 'none', color: '#ff6f61', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}
+                                    >
+                                        <Plus size={14} strokeWidth={3} />
+                                    </button>
+                                </div>
+                                <button
+                                    onClick={() => removeFromCart(item.id)}
+                                    style={{
+                                        background: '#fee2e2', border: 'none', borderRadius: '8px', padding: '8px',
+                                        color: '#ef4444', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                    }}
+                                    title="Remove Item"
                                 >
-                                    <Minus size={14} strokeWidth={3} />
-                                </button>
-                                <span style={{ fontSize: '0.95rem', fontWeight: '800', color: '#111827', minWidth: '12px', textAlign: 'center' }}>{item.quantity || 1}</span>
-                                <button 
-                                    onClick={() => updateQuantity(item.id, 1)}
-                                    style={{ background: 'transparent', border: 'none', color: '#ff6f61', cursor: 'pointer', padding: '4px' }}
-                                >
-                                    <Plus size={14} strokeWidth={3} />
+                                    <Trash2 size={16} />
                                 </button>
                             </div>
 

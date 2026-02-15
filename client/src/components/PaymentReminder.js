@@ -100,7 +100,9 @@ export default function PaymentReminder() {
         <>
             {/* Floating Widget Card */}
             {!viewLink && (
-                <div style={{
+                <div 
+                    className="payment-reminder-float"
+                    style={{
                     position: 'fixed', bottom: '100px', right: '24px', zIndex: 20000,
                     background: '#fff', width: '320px', borderRadius: '24px',
                     boxShadow: '0 12px 40px rgba(0,0,0,0.12)', border: '1px solid #f3f4f6',

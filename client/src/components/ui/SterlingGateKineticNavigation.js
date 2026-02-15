@@ -55,6 +55,9 @@ export default function SterlingGateKineticNavigation() {
             // OPEN
             if (navWrap) navWrap.setAttribute("data-nav", "open");
             document.body.style.overflow = 'hidden';
+
+            // Hide floating elements for cleaner UX
+            gsap.to(".ambulance-float-btn, .payment-reminder-float", { autoAlpha: 0, duration: 0.3 });
             
             tl.set(navWrap, { display: "block" })
               // Animate main container slide-in (White Background)
@@ -73,6 +76,9 @@ export default function SterlingGateKineticNavigation() {
             // CLOSE
             if (navWrap) navWrap.setAttribute("data-nav", "closed");
             document.body.style.overflow = '';
+
+            // Show floating elements again
+            gsap.to(".ambulance-float-btn, .payment-reminder-float", { autoAlpha: 1, duration: 0.3, delay: 0.3 });
 
             tl.to(overlay, { autoAlpha: 0 })
               .to(menu, { xPercent: 100, ease: "power3.in" }, "<")
@@ -225,7 +231,7 @@ export default function SterlingGateKineticNavigation() {
             width: 100vw;
             height: 100vh;
             pointer-events: none;
-            z-index: 9999;
+            z-index: 99999;
         }
 
         .nav-overlay-wrapper {

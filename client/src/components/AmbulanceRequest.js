@@ -148,6 +148,7 @@ export default function AmbulanceRequest() {
                     transition: 'all 0.2s',
                     animation: 'pulse 2s infinite'
                 }}
+                className="ambulance-float-btn"
                 onMouseOver={e => {
                     e.currentTarget.style.transform = 'scale(1.05)';
                     e.currentTarget.style.padding = '0 20px';

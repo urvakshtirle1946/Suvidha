@@ -50,7 +50,7 @@ export default function CartDrawer() {
         {cartDiscount > 0 && (
             <div style={{ background: '#f0fdf4', padding: '12px', textAlign: 'center', borderBottom: '1px solid #dcfce7', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', position: 'sticky', top: '73px', zIndex: 10 }}>
                  <p style={{ color: '#166534', fontSize: '1rem', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                    Yay! You <span style={{ color: '#15803d' }}>saved ₹{cartDiscount}</span> on this order <ChevronDown size={18} color="#15803d" />
+                    Yay! You <span style={{ color: '#15803d' }}>saved ₹{cartDiscount}</span> on this order
                  </p>
             </div>
         )}

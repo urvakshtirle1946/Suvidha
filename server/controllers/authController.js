@@ -245,6 +245,13 @@ exports.googleLogin = async (req, res) => {
         res.status(401).json({ success: false, message: 'Invalid Google Token', error: error.message });
     }
 };
+exports.getMsg91Config = (req, res) => {
+    res.json({
+        success: true,
+        widgetId: "36627469635a363034323734",
+        tokenAuth: process.env.MSG91_AUTHKEY
+    });
+};
 
 exports.msg91Login = async (req, res) => {
     const { token } = req.body;

@@ -58,46 +58,61 @@ export default function AuthModal({ isOpen, onClose }) {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleOTPLogin = () => {
+    const handleOTPLogin = async () => {
         if (typeof window !== 'undefined' && window.initSendOTP) {
-            const configuration = {
-                widgetId: "36627469635a363034323734",
-                tokenAuth: "", // provided empty as per typical frontend configuration
-                identifier: "", 
-                success: async (data) => {
-                    try {
-                        setLoading(true);
-                        const apiUrl = getApiUrl();
-                        
-                        // Extract token from message if it's there
-                        const token = data.message || data;
-
-                        const res = await fetch(`${apiUrl}/api/auth/msg91-login`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ token })
-                        });
-                        
-                        const resData = await res.json();
-                        
-                        if (res.ok && resData.success) {
-                            login({ ...resData.user, token: resData.token });
-                            onClose();
-                        } else {
-                            alert(resData.message || 'OTP Login Failed');
-                        }
-                    } catch (err) {
-                        console.error('OTP Login Error:', err);
-                        alert('OTP Login Failed');
-                    } finally {
-                        setLoading(false);
-                    }
-                },
-                failure: (error) => {
-                    console.error('OTP failure reason', error);
+            try {
+                setLoading(true);
+                const apiUrl = getApiUrl();
+                const configRes = await fetch(`${apiUrl}/api/auth/msg91-config`);
+                const configData = await configRes.json();
+                
+                if (!configData.success || !configData.tokenAuth) {
+                    throw new Error("Could not retrieve OTP widget configuration");
                 }
-            };
-            window.initSendOTP(configuration);
+
+                setLoading(false); // Widget will show its own UI
+
+                const configuration = {
+                    widgetId: configData.widgetId || "36627469635a363034323734",
+                    tokenAuth: configData.tokenAuth,
+                    identifier: "", 
+                    success: async (data) => {
+                        try {
+                            setLoading(true);
+                            const token = data.message || data;
+
+                            const res = await fetch(`${apiUrl}/api/auth/msg91-login`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ token })
+                            });
+                            
+                            const resData = await res.json();
+                            
+                            if (res.ok && resData.success) {
+                                login({ ...resData.user, token: resData.token });
+                                onClose();
+                            } else {
+                                alert(resData.message || 'OTP Login Failed');
+                            }
+                        } catch (err) {
+                            console.error('OTP Login Error:', err);
+                            alert('OTP Login Failed');
+                        } finally {
+                            setLoading(false);
+                        }
+                    },
+                    failure: (error) => {
+                        console.error('OTP failure reason', error);
+                    }
+                };
+                window.initSendOTP(configuration);
+
+            } catch (error) {
+                console.error("Config fetch error:", error);
+                alert("Failed to initialize OTP service");
+                setLoading(false);
+            }
         } else {
             alert('OTP Service is still loading. Please try again in a moment.');
         }

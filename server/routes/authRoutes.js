@@ -27,6 +27,7 @@ router.get('/verify-token', (req, res) => {
 
 router.post('/phone-login', authController.phoneLogin);
 router.post('/google-login', authController.googleLogin);
+router.post('/msg91-login', authController.msg91Login);
 router.put('/profile', authController.updateProfile);
 router.get('/users', authController.getAllUsers);
 

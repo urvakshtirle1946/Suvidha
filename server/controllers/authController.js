@@ -246,6 +246,86 @@ exports.googleLogin = async (req, res) => {
     }
 };
 
+exports.msg91Login = async (req, res) => {
+    const { token } = req.body;
+    if (!token) {
+        return res.status(400).json({ success: false, message: 'OTP Token is required' });
+    }
+
+    try {
+        const url = new URL('https://control.msg91.com/api/v5/widget/verifyAccessToken');
+        const headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        };
+        const body = {
+            "authkey": process.env.MSG91_AUTHKEY,
+            "access-token": token
+        };
+
+        const response = await fetch(url.toString(), {
+            method: 'POST',
+            headers: headers,
+            body:  JSON.stringify(body)
+        });
+
+        const data = await response.json();
+
+        if (data.type === 'success' || data.message) {
+            // MSG91 returns the mobile number upon successful verification
+            let phone = data.message;
+            if (phone.startsWith('91') && phone.length === 12) {
+                phone = phone.substring(2);
+            }
+
+            let user;
+            try {
+                const checkUser = await db.query('SELECT * FROM users WHERE phone = $1', [phone]);
+                if (checkUser.rows.length > 0) {
+                    user = checkUser.rows[0];
+                } else {
+                    const insertRes = await db.query(
+                        'INSERT INTO users (name, phone, role) VALUES ($1, $2, $3) RETURNING *',
+                        ['User', phone, 'user']
+                    );
+                    user = insertRes.rows[0];
+                }
+            } catch (dbError) {
+                console.error('DB Error during MSG91 Login fallback:', dbError);
+                const mockUsers = getMockUsers();
+                user = mockUsers.find(u => u.phone === phone);
+                if (!user) {
+                    user = saveMockUser({ name: 'User', phone, role: 'user' });
+                }
+            }
+
+            const jwtToken = jwt.sign(
+                { id: user.id || 0, phone: user.phone, role: user.role, name: user.name, email: user.email },
+                process.env.JWT_SECRET || 'zelp_secret_key_2024',
+                { expiresIn: '30d' }
+            );
+
+            return res.status(200).json({
+                success: true,
+                token: jwtToken,
+                user: {
+                    id: user.phone,
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone,
+                    role: user.role
+                },
+                message: 'OTP Login Successful'
+            });
+        } else {
+             return res.status(401).json({ success: false, message: 'Invalid OTP Token', error: data });
+        }
+    } catch (error) {
+        console.error("MSG91 Auth Error:", error);
+        res.status(500).json({ success: false, message: 'Server Error during OTP verification' });
+    }
+};
+
 exports.updateProfile = async (req, res) => {
     const { name, email, phone, password } = req.body;
 

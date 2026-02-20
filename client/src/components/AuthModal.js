@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { X, Phone, Mail, Lock, User, ArrowRight } from 'lucide-react';
 import { getApiUrl } from '@/utils/api';
@@ -24,6 +24,83 @@ export default function AuthModal({ isOpen, onClose }) {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    // Load MSG91 script on mount
+    useEffect(() => {
+        let scriptLoaded = false;
+        const loadOtpScript = (urls) => {
+            let i = 0;
+            const attempt = () => {
+                if (scriptLoaded) return;
+                const s = document.createElement('script');
+                s.src = urls[i];
+                s.async = true;
+                s.onload = () => {
+                    scriptLoaded = true;
+                };
+                s.onerror = () => {
+                    i++;
+                    if (i < urls.length) {
+                        attempt();
+                    }
+                };
+                document.head.appendChild(s);
+            };
+            attempt();
+        };
+
+        if (typeof window !== 'undefined' && !window.initSendOTP) {
+            loadOtpScript([
+                'https://verify.msg91.com/otp-provider.js',
+                'https://verify.phone91.com/otp-provider.js'
+            ]);
+        }
+    }, []);
+
+    const handleOTPLogin = () => {
+        if (typeof window !== 'undefined' && window.initSendOTP) {
+            const configuration = {
+                widgetId: "36627469635a363034323734",
+                tokenAuth: "", // provided empty as per typical frontend configuration
+                identifier: "", 
+                success: async (data) => {
+                    try {
+                        setLoading(true);
+                        const apiUrl = getApiUrl();
+                        
+                        // Extract token from message if it's there
+                        const token = data.message || data;
+
+                        const res = await fetch(`${apiUrl}/api/auth/msg91-login`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ token })
+                        });
+                        
+                        const resData = await res.json();
+                        
+                        if (res.ok && resData.success) {
+                            login({ ...resData.user, token: resData.token });
+                            onClose();
+                        } else {
+                            alert(resData.message || 'OTP Login Failed');
+                        }
+                    } catch (err) {
+                        console.error('OTP Login Error:', err);
+                        alert('OTP Login Failed');
+                    } finally {
+                        setLoading(false);
+                    }
+                },
+                failure: (error) => {
+                    console.error('OTP failure reason', error);
+                }
+            };
+            window.initSendOTP(configuration);
+        } else {
+            alert('OTP Service is still loading. Please try again in a moment.');
+        }
     };
 
     const handleGoogleSuccess = async (credentialResponse) => {
@@ -199,7 +276,32 @@ export default function AuthModal({ isOpen, onClose }) {
 
                 {/* Google Login Button - Hide when asking for phone */}
                 {activeTab !== 'google-phone' && (
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center', marginBottom: '1.5rem' }}>
+                        <button
+                            type="button"
+                            onClick={handleOTPLogin}
+                            disabled={loading}
+                            style={{
+                                width: '100%',
+                                padding: '12px',
+                                borderRadius: '12px',
+                                border: '1px solid #e5e7eb',
+                                background: '#fff',
+                                color: '#111827',
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                fontSize: '0.95rem'
+                            }}
+                        >
+                            <Phone size={18} />
+                            Login with OTP
+                        </button>
+                        
                         <GoogleLogin
                             onSuccess={handleGoogleSuccess}
                             onError={() => {

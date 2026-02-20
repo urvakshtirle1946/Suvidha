@@ -103,7 +103,8 @@ export default function AuthModal({ isOpen, onClose }) {
                         }
                     },
                     failure: (error) => {
-                        console.error('OTP failure reason', error);
+                        console.error('OTP failure reason', JSON.stringify(error));
+                        alert('OTP Widget Failed to Initialize: ' + (error.message || JSON.stringify(error)));
                     }
                 };
                 window.initSendOTP(configuration);

@@ -1,5 +1,4 @@
-const fetch = require('node-fetch');
-
+// using Global fetch available in Node.js >= 18
 exports.reverseGeocode = async (req, res) => {
   const { lat, lon } = req.query;
 

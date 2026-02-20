@@ -20,12 +20,6 @@ export default function AuthModal({ isOpen, onClose }) {
 
     const [googlePendingToken, setGooglePendingToken] = useState(null);
 
-    if (!isOpen) return null;
-
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
     // Load MSG91 script on mount
     useEffect(() => {
         let scriptLoaded = false;
@@ -57,6 +51,12 @@ export default function AuthModal({ isOpen, onClose }) {
             ]);
         }
     }, []);
+
+    if (!isOpen) return null;
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
     const handleOTPLogin = () => {
         if (typeof window !== 'undefined' && window.initSendOTP) {

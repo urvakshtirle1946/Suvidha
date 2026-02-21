@@ -13,6 +13,62 @@ exports.verifyOtp = async (req, res) => {
     res.status(200).json({ message: 'OTP Service Disabled' });
 };
 
+// Strict Admin Login Endpoint
+exports.adminLogin = async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ success: false, message: 'Email and Password are required' });
+    }
+
+    try {
+        const checkUser = await db.query("SELECT * FROM users WHERE email = $1 AND role IN ('admin', 'super_admin')", [email]);
+        
+        if (checkUser.rows.length === 0) {
+            // Check fallback for default admin
+            if (email === 'admin@zelp.com' && password === 'demo123') {
+                const token = jwt.sign(
+                    { id: 0, email: 'admin@zelp.com', name: 'Demo Admin', phone: '9999999999', role: 'admin' },
+                    process.env.JWT_SECRET || 'zelp_secret_key_2024',
+                    { expiresIn: '1d' }
+                );
+                return res.status(200).json({ success: true, token, user: { email, role: 'admin' } });
+            }
+            return res.status(401).json({ success: false, message: 'Invalid Admin Credentials' });
+        }
+
+        const user = checkUser.rows[0];
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ success: false, message: 'Invalid Admin Credentials' });
+        }
+
+        const token = jwt.sign(
+            { id: user.id, phone: user.phone, role: user.role, name: user.name, email: user.email },
+            process.env.JWT_SECRET || 'zelp_secret_key_2024',
+            { expiresIn: '1d' } // Admin token expires quicker
+        );
+
+        return res.status(200).json({
+            success: true,
+            token,
+            user: {
+                id: user.phone,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                role: user.role
+            },
+            message: 'Admin Login Successful'
+        });
+
+    } catch (e) {
+        console.error("Admin Auth Error", e);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
 // Hardcoded Credentials for Beta Phase
 const BETA_USERS = ['9876543210', '9999999999', '8888888888'];
 const ADMIN_USERS = ['1234567890', '7777777777'];

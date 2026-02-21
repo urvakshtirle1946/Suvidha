@@ -91,16 +91,24 @@ exports.getBookings = async (req, res) => {
         LEFT JOIN hospitals h ON b.hospital_id = h.id
       `;
       let values = [];
+      const isAdmin = ['admin', 'super_admin'].includes(req.user.role);
       
-      if (phone && email) {
-        query += ' WHERE b.user_phone = $1 OR b.user_email = $2';
-        values.push(phone, email);
-      } else if (phone) {
-        query += ' WHERE b.user_phone = $1';
-        values.push(phone);
-      } else if (email) {
-        query += ' WHERE b.user_email = $1';
-        values.push(email);
+      if (!isAdmin) {
+          // Force role-based row-level security
+          query += ' WHERE b.user_phone = $1 OR b.user_email = $2';
+          values.push(req.user.phone, req.user.email);
+      } else {
+          // For admins, allow optional filtering logic
+          if (phone && email) {
+            query += ' WHERE b.user_phone = $1 OR b.user_email = $2';
+            values.push(phone, email);
+          } else if (phone) {
+            query += ' WHERE b.user_phone = $1';
+            values.push(phone);
+          } else if (email) {
+            query += ' WHERE b.user_email = $1';
+            values.push(email);
+          }
       }
       
       query += ' ORDER BY b.created_at DESC';

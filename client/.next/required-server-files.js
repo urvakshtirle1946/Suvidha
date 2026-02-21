@@ -100,7 +100,7 @@ self.__SERVER_FILES_MANIFEST={
         "transform": "lodash/{{member}}"
       }
     },
-    "outputFileTracingRoot": "E:\\Projects\\Zelp",
+    "outputFileTracingRoot": "D:\\Urvaksh Tirle\\SYSTEM\\PROJECTS\\Suvidha",
     "cacheComponents": false,
     "cacheLife": {
       "default": {
@@ -157,7 +157,7 @@ self.__SERVER_FILES_MANIFEST={
       "proxyPrefetch": "flexible",
       "optimisticClientCache": true,
       "manualClientBasePath": false,
-      "cpus": 7,
+      "cpus": 11,
       "memoryBasedWorkersCount": false,
       "imgOptConcurrency": null,
       "imgOptTimeoutInSeconds": 7,
@@ -293,12 +293,12 @@ self.__SERVER_FILES_MANIFEST={
     "bundlePagesRouterDependencies": false,
     "configFileName": "next.config.mjs",
     "turbopack": {
-      "root": "E:\\Projects\\Zelp"
+      "root": "D:\\Urvaksh Tirle\\SYSTEM\\PROJECTS\\Suvidha"
     },
     "distDirRoot": ".next"
   },
-  "appDir": "E:\\Projects\\Zelp\\Suvidha\\client",
-  "relativeAppDir": "Suvidha\\client",
+  "appDir": "D:\\Urvaksh Tirle\\SYSTEM\\PROJECTS\\Suvidha\\client",
+  "relativeAppDir": "client",
   "files": [
     ".next\\routes-manifest.json",
     ".next\\server\\pages-manifest.json",

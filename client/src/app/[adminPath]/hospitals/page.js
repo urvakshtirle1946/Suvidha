@@ -78,7 +78,11 @@ export default function HospitalManagement() {
 
   const fetchHospitals = async () => {
     try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`, { cache: 'no-store' });
+      const token = localStorage.getItem('admin_token');
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`, { 
+        cache: 'no-store',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       if (res.ok) {
         const data = await res.json();
         setHospitals(data);
@@ -118,7 +122,10 @@ export default function HospitalManagement() {
       
       // Fetch Services
       try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${hospital.id}`);
+          const token = localStorage.getItem('admin_token');
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${hospital.id}`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+          });
           if (res.ok) {
               const fullData = await res.json();
               if (fullData.services && fullData.services.length > 0) {
@@ -135,8 +142,10 @@ export default function HospitalManagement() {
   const handleDelete = async (id) => {
       if(!confirm('Are you sure you want to delete this hospital?')) return;
       try {
+          const token = localStorage.getItem('admin_token');
           const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${id}`, {
-              method: 'DELETE'
+              method: 'DELETE',
+              headers: { 'Authorization': `Bearer ${token}` }
           });
           if(res.ok) {
               fetchHospitals();
@@ -176,8 +185,10 @@ export default function HospitalManagement() {
         data.append('image_url', formData.image_url); // Keep existing URL if no new file
     }
 
+    const token = localStorage.getItem('admin_token');
     const res = await fetch(url, {
         method: method,
+        headers: { 'Authorization': `Bearer ${token}` },
         // headers: { 'Content-Type': 'multipart/form-data' }, // Do NOT set manually
         body: data
     });

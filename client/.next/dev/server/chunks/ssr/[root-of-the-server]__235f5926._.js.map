@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":["turbopack:///[next]/internal/font/google/outfit_21940f47.module.css [app-ssr] (css module)"],"sourcesContent":["__turbopack_context__.v({\n  \"className\": \"outfit_21940f47-module__B-V10W__className\",\n});\n"],"names":[],"mappings":"AAAA;AACA;AACA","ignoreList":[0]}},
-    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["turbopack:///[next]/internal/font/google/outfit_21940f47.js"],"sourcesContent":["import cssModule from \"@vercel/turbopack-next/internal/font/google/cssmodule.module.css?{%22path%22:%22layout.js%22,%22import%22:%22Outfit%22,%22arguments%22:[{%22subsets%22:[%22latin%22]}],%22variableName%22:%22outfit%22}\";\nconst fontData = {\n    className: cssModule.className,\n    style: {\n        fontFamily: \"'Outfit', 'Outfit Fallback'\",\n        fontStyle: \"normal\",\n\n    },\n};\n\nif (cssModule.variable != null) {\n    fontData.variable = cssModule.variable;\n}\n\nexport default fontData;\n"],"names":[],"mappings":";;;;AAAA;;AACA,MAAM,WAAW;IACb,WAAW,iKAAS,CAAC,SAAS;IAC9B,OAAO;QACH,YAAY;QACZ,WAAW;IAEf;AACJ;AAEA,IAAI,iKAAS,CAAC,QAAQ,IAAI,MAAM;IAC5B,SAAS,QAAQ,GAAG,iKAAS,CAAC,QAAQ;AAC1C;uCAEe","ignoreList":[0]}}]
-}

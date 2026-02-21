@@ -3,6 +3,7 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 
 const rateLimit = require('express-rate-limit');
+const { verifyJWT, requireRole } = require('../middleware/authMiddleware');
 
 // Rate Limiter: Max 5 OTPs per 10 minutes
 const otpLimiter = rateLimit({
@@ -13,8 +14,19 @@ const otpLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Rate Limiter: Max 5 Admin Logins per 15 minutes
+const adminLoginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 5, 
+  message: { success: false, message: 'Too many login attempts from this IP, please try again later.' },
+  standardHeaders: true, 
+  legacyHeaders: false,
+});
+
 router.post('/send-otp', otpLimiter, authController.sendOtp);
 router.post('/verify-otp', authController.verifyOtp);
+
+router.post('/admin-login', adminLoginLimiter, authController.adminLogin);
 
 
 // Token Endpoints
@@ -30,6 +42,6 @@ router.post('/google-login', authController.googleLogin);
 router.get('/msg91-config', authController.getMsg91Config);
 router.post('/msg91-login', authController.msg91Login);
 router.put('/profile', authController.updateProfile);
-router.get('/users', authController.getAllUsers);
+router.get('/users', verifyJWT, requireRole(['admin', 'super_admin']), authController.getAllUsers);
 
 module.exports = router;

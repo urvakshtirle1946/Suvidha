@@ -24,15 +24,34 @@ export default function AdminLogin() {
     }
   }, [router, adminPath]);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (username === 'admin' && password === 'admin123') { 
-      // Set a cookie or localStorage to persist admin session
-      localStorage.setItem('admin_auth', 'true');
-      document.cookie = "admin_auth=true; path=/";
-      router.push(`/${adminPath}`);
-    } else {
-      setError('Invalid Username or Password');
+    setError('');
+    
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000'; // Assuming this standard
+      const res = await fetch(`${backendUrl}/api/auth/admin-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: username, password })
+      });
+      
+      const data = await res.json();
+      
+      if (data.success && data.token) {
+        // Set persistence for Admin layout checks and API auth
+        localStorage.setItem('admin_auth', 'true');
+        localStorage.setItem('admin_token', data.token);
+        
+        // Expiry of 1 day to match backend
+        document.cookie = `admin_auth=true; path=/; max-age=86400; SameSite=Strict`;
+        router.push(`/${adminPath}`);
+      } else {
+        setError(data.message || 'Invalid Credentials');
+      }
+    } catch (err) {
+      console.error('Login Error:', err);
+      setError('Connection to server failed. Please try again.');
     }
   };
 
@@ -66,8 +85,8 @@ export default function AdminLogin() {
           <form onSubmit={handleLogin}>
             <div style={{ marginBottom: '1.5rem', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                 <input 
-                  type="text" 
-                  placeholder="Username" 
+                  type="email" 
+                  placeholder="Email Address" 
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   style={{ 

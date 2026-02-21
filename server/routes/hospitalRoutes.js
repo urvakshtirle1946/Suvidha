@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const hospitalController = require('../controllers/hospitalController');
+const { verifyJWT, requireRole } = require('../middleware/authMiddleware');
+const { auditLog } = require('../middleware/auditMiddleware');
 
 const multer = require('multer');
 const path = require('path');
@@ -14,8 +16,8 @@ const upload = multer({
 
 router.get('/', hospitalController.getAllHospitals);
 router.get('/:id', hospitalController.getHospitalById);
-router.post('/', upload.single('image'), hospitalController.createHospital);
-router.put('/:id', upload.single('image'), hospitalController.updateHospital);
-router.delete('/:id', hospitalController.deleteHospital);
+router.post('/', verifyJWT, requireRole(['admin', 'super_admin']), auditLog('CREATE_HOSPITAL'), upload.single('image'), hospitalController.createHospital);
+router.put('/:id', verifyJWT, requireRole(['admin', 'super_admin']), auditLog(req => `UPDATE_HOSPITAL_${req.params.id}`), upload.single('image'), hospitalController.updateHospital);
+router.delete('/:id', verifyJWT, requireRole(['admin', 'super_admin']), auditLog(req => `DELETE_HOSPITAL_${req.params.id}`), hospitalController.deleteHospital);
 
 module.exports = router;

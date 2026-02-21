@@ -12,7 +12,7 @@ export default function SterlingGateKineticNavigation() {
 
   // Handle Overflow and Floating Elements
   useEffect(() => {
-     const floatingGroups = document.querySelectorAll(".ambulance-float-btn, .payment-reminder-float");
+     const floatingGroups = document.querySelectorAll(".payment-reminder-float");
      
      if (isMenuOpen) {
          document.body.style.overflow = 'hidden';

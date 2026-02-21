@@ -1,8 +1,9 @@
 {
   "pages": {},
   "app": {
-    "[project]/src/app/checkout/page": [
-      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2"
+    "[project]/client/src/app/checkout/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2",
+      "static/media/01e4147cff8141ee-s.p.7787e134.woff2"
     ]
   },
   "appUsingSizeAdjust": true,

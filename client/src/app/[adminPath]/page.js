@@ -22,9 +22,12 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     // setLoading(true); // Don't set loading on poll to avoid flicker
     try {
+      const token = localStorage.getItem('admin_token');
+      const fetchOpts = { headers: { 'Authorization': `Bearer ${token}` } };
+      
       const [resBookings, resHospitals] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/bookings`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`)
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/bookings`, fetchOpts),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`, fetchOpts)
       ]);
 
       if (resBookings.ok) {

@@ -1,23 +1,11 @@
 export const getApiUrl = () => {
-    // 1. Manual override via URL (e.g., localhost:3000/?backend=remote)
-    if (typeof window !== 'undefined') {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('backend') === 'remote') {
-            return 'https://suvidha-server-4u66.onrender.com';
-        }
-    }
-
-    // 2. Environment variable (Priority)
+    // 1. Environment variable (Priority) - Next.js will inject this on both server and client
     if (process.env.NEXT_PUBLIC_API_URL) {
         return process.env.NEXT_PUBLIC_API_URL;
     }
 
-    // 3. Local Development override
-    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-        return 'http://localhost:5000';
-    }
-
-    // 4. Default Production Fallback
+    // 2. Default Fallback
+    // For stable hydration, we assume the remote server unless the env var dictates otherwise
     return 'https://suvidha-server-4u66.onrender.com';
 };
 

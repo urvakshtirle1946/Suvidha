@@ -1,0 +1,34 @@
+[00:00:03.202] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[00:00:03.721] Server  LOG     ✓ Ready in 2.5s
+[00:00:06.947] Server  ERROR   Failed to fetch services: TypeError: fetch failed
+[00:00:06.954] Server  ERROR   Failed to fetch hospitals: TypeError: fetch failed
+[00:00:09.248] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:14.374] Browser ERROR   Location reverse geocode failed {}
+[00:02:25.197] Server  LOG       Reload env: .env.local
+[00:02:26.055] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./client/src/utils/api.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:02:26.066] Server  LOG     ✓ Compiled in 494ms
+[00:02:29.246] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:07:38.004] Server  ERROR   ⨯ ReferenceError: GoogleOAuthProvider is not defined
+[00:07:38.040] Server  LOG     ✓ Compiled in 2.6s
+[00:07:38.238] Server  ERROR   ⨯ ReferenceError: GoogleOAuthProvider is not defined
+[00:07:38.933] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:07:38.978] Server  LOG     ✓ Compiled in 37ms
+[00:07:38.991] Browser ERROR   uncaughtError: ReferenceError: GoogleOAuthProvider is not defined
+[00:07:39.237] Server  ERROR   ⨯ ReferenceError: GoogleOAuthProvider is not defined
+[00:07:39.648] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:07:40.637] Browser ERROR   uncaughtError: ReferenceError: GoogleOAuthProvider is not defined
+[00:08:03.331] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:08:03.716] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:08:05.908] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:08:25.365] Server  LOG     ✓ Compiled in 33ms
+[00:16:15.112] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:17:45.470] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:17:51.901] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:17:53.503] Browser WARN    Geocoding fetch aborted / failed {}
+[00:18:09.736] Server  LOG     ○ Compiling /checkout ...
+[00:19:31.026] Server  LOG     ✓ Compiled in 194ms
+[00:19:33.367] Browser ERROR   uncaughtError: TypeError: Cannot read properties of undefined (reading 'appendChild')
+[00:19:33.367] Browser ERROR   uncaughtError: Error: Map container is being reused by another instance
+[00:21:49.119] Server  LOG     ✓ Compiled in 620ms
+[00:21:49.128] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:21:54.141] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold

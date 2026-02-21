@@ -48,7 +48,11 @@ export default function PaymentReminder() {
                 }
             }
         } catch (err) {
-            console.error(err);
+            // Mute expected fetch errors from the console if backend is asleep/offline
+            if (err.message === 'Failed to fetch') {
+                return;
+            }
+            console.error('Payment Reminder fetch error:', err);
         }
     };
 

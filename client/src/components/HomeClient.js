@@ -13,14 +13,15 @@ import {
   ChevronLeft, 
   ChevronRight, 
   MapPin, 
-  Star 
+  Star,
+  Ambulance 
 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { getApiUrl, getImageUrl } from '@/utils/api';
 import BookingModal from './BookingModal';
 import HospitalProfileModal from './HospitalProfileModal';
-import AmbulanceRequest from './AmbulanceRequest';
 import PaymentReminder from './PaymentReminder';
+import AmbulanceRequest from './AmbulanceRequest';
 
 export default function HomeClient({ hospitals, popularServices }) {
   const { addToCart } = useCart();
@@ -366,8 +367,9 @@ export default function HomeClient({ hospitals, popularServices }) {
         />
 
       </div>
-      <AmbulanceRequest />
       <PaymentReminder />
+      <AmbulanceRequest />
+
     </main>
   );
 }

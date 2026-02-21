@@ -67,7 +67,20 @@ function AdminLayoutContent({ children }) {
      if (!isAuthorized) return;
      const fetchNotifications = async () => {
          try {
-             const res = await fetch('http://localhost:5000/api/bookings');
+             const token = localStorage.getItem('admin_token');
+             const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+             
+             const res = await fetch(`${backendUrl}/api/bookings`, {
+                 headers: {
+                     'Authorization': `Bearer ${token}`
+                 }
+             });
+             
+             if (res.status === 401 || res.status === 403) {
+                 handleLogout();
+                 return;
+             }
+             
              const data = await res.json();
              if(Array.isArray(data)) {
                  setNotifications(data.slice(0, 5)); // Top 5 recent
@@ -82,6 +95,7 @@ function AdminLayoutContent({ children }) {
   const handleLogout = () => {
       setIsAuthorized(false);
       localStorage.removeItem('admin_auth');
+      localStorage.removeItem('admin_token');
       document.cookie = "admin_auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       router.replace(`${basePath}/login`);
   };

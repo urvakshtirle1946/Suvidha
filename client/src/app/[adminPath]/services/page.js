@@ -34,7 +34,10 @@ export default function ServiceManagement() {
   const fetchServices = async (currentPage = 1) => {
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/services?page=${currentPage}&limit=${LIMIT}`);
+      const token = localStorage.getItem('admin_token');
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/services?page=${currentPage}&limit=${LIMIT}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       if (res.ok) {
         const result = await res.json();
         // Handle both new paginated response and old array response (fallback)
@@ -55,7 +58,10 @@ export default function ServiceManagement() {
 
   const fetchHospitals = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`);
+        const token = localStorage.getItem('admin_token');
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
         if (res.ok) {
           const data = await res.json();
           setHospitals(data);
@@ -68,9 +74,13 @@ export default function ServiceManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+        const token = localStorage.getItem('admin_token');
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/services`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify(formData)
         });
 

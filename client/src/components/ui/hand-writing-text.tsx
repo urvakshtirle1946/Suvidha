@@ -27,10 +27,10 @@ function HandWrittenTitle({
 
     return (
         <div className={`relative flex items-center justify-center ${className}`}>
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none scale-90">
                 <motion.svg
-                    width="120%" // Scale SVG slighly larger than text container
-                    height="120%"
+                    width="100%" // Scale SVG to fit closer
+                    height="100%"
                     viewBox="0 0 1200 600"
                     initial="hidden"
                     animate="visible"

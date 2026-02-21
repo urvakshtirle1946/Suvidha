@@ -41,7 +41,7 @@ export default function Navbar() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1 }}>
               <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
                   <HandWrittenTitle 
-                      className="w-[80px] h-[40px] flex items-center justify-center p-2"
+                      className="w-fit h-[40px] flex items-center justify-center p-2"
                       title={
                           <span style={{ 
                               fontSize: '1.8rem', fontWeight: '800', color: '#000', 

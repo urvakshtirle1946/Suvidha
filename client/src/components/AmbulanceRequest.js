@@ -18,6 +18,11 @@ export default function AmbulanceRequest() {
     const [isExpanded, setIsExpanded] = useState(false);
     const [address, setAddress] = useState('Fetching location...');
     const [rideStatus, setRideStatus] = useState('selecting'); // 'selecting', 'active', 'arrived'
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Reverse geocode the coordinate into a real street name
     useEffect(() => {
@@ -69,6 +74,7 @@ export default function AmbulanceRequest() {
 
     const toggleWidget = () => setIsOpen((prev) => !prev);
 
+    if (!mounted) return null;
     if (isCartOpen) return null;
 
     return (

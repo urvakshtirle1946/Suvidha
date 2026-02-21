@@ -27,14 +27,14 @@ function HandWrittenTitle({
 
     return (
         <div className={`relative flex items-center justify-center ${className}`}>
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none scale-90">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full flex items-center justify-center pointer-events-none scale-[1.2]">
                 <motion.svg
-                    width="100%" // Scale SVG to fit closer
+                    width="100%"
                     height="100%"
                     viewBox="0 0 1200 600"
                     initial="hidden"
                     animate="visible"
-                    className="absolute"
+                    className="absolute overflow-visible"
                     style={{ overflow: 'visible' }}
                 >
                     <title>KokonutUI</title>
@@ -64,16 +64,6 @@ function HandWrittenTitle({
                     {title}
                 </motion.div>
 
-                {subtitle && (
-                    <motion.p
-                        className="text-sm text-black/80 dark:text-white/80"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1, duration: 0.8 }}
-                    >
-                        {subtitle}
-                    </motion.p>
-                )}
             </div>
         </div>
     );

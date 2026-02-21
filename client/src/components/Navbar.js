@@ -12,6 +12,7 @@ import SettingsModal from './SettingsModal';
 import ProfileDropdown from './ProfileDropdown';
 import AuthModal from './AuthModal';
 import SterlingGateKineticNavigation from './ui/SterlingGateKineticNavigation';
+import { HandWrittenTitle } from './ui/hand-writing-text';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -39,12 +40,18 @@ export default function Navbar() {
           {/* Logo & Location */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1 }}>
               <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-                  <span style={{ 
-                      fontSize: '1.8rem', fontWeight: '800', color: '#000', 
-                      letterSpacing: '-1.5px', fontFamily: 'var(--font-outfit), sans-serif', lineHeight: 1
-                  }}>
-                      Zelp
-                  </span>
+                  <HandWrittenTitle 
+                      className="w-[80px] h-[40px] flex items-center justify-center p-2"
+                      title={
+                          <span style={{ 
+                              fontSize: '1.8rem', fontWeight: '800', color: '#000', 
+                              letterSpacing: '-1.5px', fontFamily: 'var(--font-outfit), sans-serif', lineHeight: 1
+                          }}>
+                              Zelp
+                          </span>
+                      } 
+                      subtitle="" 
+                  />
               </Link>
               
               <div className="hide-on-mobile" style={{ position: 'relative' }}>

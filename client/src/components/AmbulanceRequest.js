@@ -54,9 +54,9 @@ export default function AmbulanceRequest() {
     const handleExpandToggle = (e) => {
         e.stopPropagation();
         if (isExpanded) {
-            sheetControls.start({ y: 0 });
+            sheetControls.start({ y: 300 }); // "Very down"
         } else {
-            sheetControls.start({ y: -150 });
+            sheetControls.start({ y: 0 }); // Expanded
         }
         setIsExpanded(!isExpanded);
     };
@@ -298,10 +298,15 @@ export default function AmbulanceRequest() {
                                     animate={sheetControls}
                                     dragControls={dragControls}
                                     dragListener={false}
-                                    dragConstraints={{ top: -150, bottom: 350 }}
+                                    dragConstraints={{ top: 0, bottom: 350 }}
                                     onDragEnd={(event, info) => {
-                                        if (info.offset.y < -50) Object.assign(info, { isExpanded: setIsExpanded(true) });
-                                        if (info.offset.y > 50 && info.point.y > 0) Object.assign(info, { isExpanded: setIsExpanded(false) });
+                                        if (info.offset.y < -50 || (info.offset.y < 0 && info.velocity.y < -100)) {
+                                            sheetControls.start({ y: 0 }); // Snap open
+                                            setIsExpanded(true);
+                                        } else if (info.offset.y > 50 || (info.offset.y > 0 && info.velocity.y > 100)) {
+                                            sheetControls.start({ y: 300 }); // Snap down
+                                            setIsExpanded(false);
+                                        }
                                     }}
                                     dragElastic={0.1}
                                     style={{ 
@@ -325,12 +330,6 @@ export default function AmbulanceRequest() {
                                     onPointerDown={(e) => dragControls.start(e)}
                                 >
                                     <div style={{ width: '40px', height: '4px', background: '#e5e7eb', borderRadius: '2px' }}></div>
-                                </div>
-                                <div 
-                                    onClick={handleExpandToggle}
-                                    style={{ background: '#f5f5f5', borderRadius: '50%', padding: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
-                                >
-                                    {isExpanded ? <ChevronDown size={14} color="#666" strokeWidth={3} /> : <ChevronUp size={14} color="#666" strokeWidth={3} />}
                                 </div>
                             </div>
                             
@@ -360,6 +359,31 @@ export default function AmbulanceRequest() {
                                 <GridCard onClick={() => setRideStatus('active')} title="Ambulance" subtitle="Fastest" imgUrl="/ambulance.svg" scale="0.9" shiftRight={true} />
                             </div>
                         </motion.div>
+                        
+                        {/* FLOATING ACTION BUTTON (Toggle Arrow) */}
+                        {rideStatus === 'selecting' && (
+                            <div 
+                                onClick={handleExpandToggle}
+                                style={{ 
+                                    position: 'absolute', 
+                                    bottom: '30px', 
+                                    right: '25px', 
+                                    background: '#fff', 
+                                    borderRadius: '50%', 
+                                    width: '45px', 
+                                    height: '45px', 
+                                    cursor: 'pointer', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center', 
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                                    zIndex: 60,
+                                    border: '1px solid #f3f4f6'
+                                }}
+                            >
+                                {isExpanded ? <ChevronDown size={24} color="#000" strokeWidth={2.5} /> : <ChevronUp size={24} color="#000" strokeWidth={2.5} />}
+                            </div>
+                        )}
                     </div>
                     </>
                     )}

@@ -1,7 +1,6 @@
 'use client';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import authgear from '@authgear/web';
 
 export default function AuthCallback() {
   const router = useRouter();
@@ -9,6 +8,9 @@ export default function AuthCallback() {
   useEffect(() => {
     async function finishAuth() {
       try {
+        const authgearModule = await import('@authgear/web');
+        const authgear = authgearModule.default;
+
         // Ensure authgear is configured before finishing auth
         if (authgear.sessionState === 'UNKNOWN') {
           await authgear.configure({

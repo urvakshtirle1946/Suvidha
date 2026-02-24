@@ -2,9 +2,10 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { X, Phone, ArrowRight, Loader2 } from 'lucide-react';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 export default function AuthModal({ isOpen, onClose }) {
-    const { user, login } = useAuth();
+    const { user, login, customGoogleLogin } = useAuth();
     const [loading, setLoading] = useState(false);
     const [step, setStep] = useState('initial');
 
@@ -16,24 +17,11 @@ export default function AuthModal({ isOpen, onClose }) {
 
     if (!isOpen) return null;
 
-    const handleAuthgearLogin = async (social = false) => {
+    const handleAuthgearLogin = async () => {
         try {
             setLoading(true);
-            if (social) {
-                // Manually construct the authorization URL to guarantee direct OAuth routing
-                const clientId = process.env.NEXT_PUBLIC_AUTHGEAR_CLIENT_ID;
-                const endpoint = process.env.NEXT_PUBLIC_AUTHGEAR_ENDPOINT;
-                if (!clientId || !endpoint) throw new Error("Missing Authgear config");
-
-                const redirectUri = encodeURIComponent(window.location.origin + "/auth/callback");
-                const authUrl = `${endpoint}/oauth2/authorize?client_id=${clientId}&response_type=code&scope=openid+offline_access+https://authgear.com/scopes/full-access&redirect_uri=${redirectUri}&x_oauth_provider_alias=google`;
-                
-                window.location.href = authUrl;
-                return;
-            } else {
-                await login();
-                onClose();
-            }
+            await login();
+            onClose();
         } catch (err) {
             console.error('Authgear Login Error:', err);
             alert('Login Failed');
@@ -42,6 +30,18 @@ export default function AuthModal({ isOpen, onClose }) {
         }
     };
 
+    const handleGoogleSuccess = async (credentialResponse) => {
+        try {
+            setLoading(true);
+            await customGoogleLogin(credentialResponse.credential);
+            onClose();
+        } catch (err) {
+            console.error('Native Google Login Error:', err);
+            alert('Google Sign-In Failed');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const renderContent = () => {
         switch (step) {
@@ -58,7 +58,7 @@ export default function AuthModal({ isOpen, onClose }) {
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
                             <button
-                                onClick={() => handleAuthgearLogin(false)}
+                                onClick={handleAuthgearLogin}
                                 disabled={loading}
                                 style={{
                                     width: '100%', padding: '16px', borderRadius: '16px', border: 'none',
@@ -70,19 +70,21 @@ export default function AuthModal({ isOpen, onClose }) {
                                 <Phone size={20} />
                                 <span>Continue with Mobile OTP</span>
                             </button>
-                            <button
-                                onClick={() => handleAuthgearLogin(true)}
-                                disabled={loading}
-                                style={{
-                                    width: '100%', padding: '16px', borderRadius: '16px', border: '1px solid #e5e7eb',
-                                    background: '#fff', color: '#111827', fontWeight: 'bold', size: '1.1rem',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
-                                    cursor: 'pointer', transition: 'all 0.2s'
-                                }}
-                            >
-                                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style={{ width: '20px' }} />
-                                <span>Continue with Google</span>
-                            </button>
+
+                            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '0.5rem' }}>
+                                <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '343152469164-pafau4u4nbkljrqi5ia3shb8qb84p1bn.apps.googleusercontent.com'}>
+                                    <GoogleLogin
+                                        onSuccess={handleGoogleSuccess}
+                                        onError={() => alert('Google Sign-In Failed')}
+                                        useOneTap
+                                        theme="outline"
+                                        size="large"
+                                        text="continue_with"
+                                        shape="pill"
+                                        width="100%"
+                                    />
+                                </GoogleOAuthProvider>
+                            </div>
                         </div>
                     </>
                 );

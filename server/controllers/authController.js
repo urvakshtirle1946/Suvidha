@@ -192,7 +192,63 @@ exports.getAllUsers = async (req, res) => {
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// googleLogin removed - using Authgear
+exports.googleLogin = async (req, res) => {
+    const { token } = req.body;
+    if (!token) return res.status(400).json({ success: false, message: 'Token is required' });
+
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID
+        });
+        
+        const payload = ticket.getPayload();
+        const { email, name, sub: googleId } = payload;
+        
+        let user;
+        const checkUser = await db.query('SELECT * FROM users WHERE email = $1 OR authgear_id = $2', [email, googleId]);
+        
+        if (checkUser.rows.length > 0) {
+            const existingUser = checkUser.rows[0];
+            await db.query(
+                'UPDATE users SET authgear_id = COALESCE(authgear_id, $1), name = COALESCE(name, $2) WHERE id = $3',
+                [googleId, name, existingUser.id]
+            );
+            const updated = await db.query('SELECT * FROM users WHERE id = $1', [existingUser.id]);
+            user = updated.rows[0];
+        } else {
+            const insertRes = await db.query(
+                'INSERT INTO users (name, email, role, authgear_id, phone_verified) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+                [name, email, 'user', googleId, false]
+            );
+            user = insertRes.rows[0];
+        }
+
+        const jwtToken = jwt.sign(
+            { id: user.id || user.phone, phone: user.phone, role: user.role, name: user.name, email: user.email },
+            process.env.JWT_SECRET || 'zelp_secret_key_2024',
+            { expiresIn: '30d' }
+        );
+
+        return res.status(200).json({
+            success: true,
+            token: jwtToken,
+            user: {
+                id: user.phone || user.id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                role: user.role,
+                phone_verified: user.phone_verified
+            },
+            message: 'Google Login Successful'
+        });
+        
+    } catch (error) {
+        console.error('Google Auth Error:', error);
+        res.status(500).json({ success: false, message: 'Invalid Google Token', error: error.message });
+    }
+};
 // msg91Login removed - using Authgear
 
 exports.updateProfile = async (req, res) => {

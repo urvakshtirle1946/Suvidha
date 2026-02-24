@@ -79,7 +79,25 @@ export function AuthProvider({ children }) {
           setUser(userInfo);
         }
       } else {
-        setUser(null);
+        // Fallback: Check if there is a custom Google JWT token instead
+        const customToken = localStorage.getItem('zelp_custom_token');
+        if (customToken) {
+           try {
+               // Decode JWT to get user object on frontend (minimal trust since backend validates)
+               const payloadUrl = customToken.split('.')[1];
+               const base64 = payloadUrl.replace(/-/g, '+').replace(/_/g, '/');
+               const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                   return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+               }).join(''));
+               setUser(JSON.parse(jsonPayload));
+           } catch(e) {
+               console.error("Failed to parse custom token", e);
+               localStorage.removeItem('zelp_custom_token');
+               setUser(null);
+           }
+        } else {
+           setUser(null);
+        }
       }
     } catch (error) {
       console.error("Failed to configure Authgear", error);
@@ -109,23 +127,58 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const customGoogleLogin = async (credential) => {
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+      const res = await fetch(`${backendUrl}/api/auth/google-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: credential })
+      });
+      const data = await res.json();
+      if (data.success && data.token) {
+          localStorage.setItem('zelp_custom_token', data.token);
+          setUser(data.user);
+          return true;
+      } else {
+          throw new Error(data.message || "Google Verification failed");
+      }
+    } catch (err) {
+      console.error("Custom Google Login error", err);
+      throw err;
+    }
+  };
+
   const logout = async () => {
     try {
+      if (typeof window !== "undefined") {
+          localStorage.removeItem('zelp_custom_token');
+      }
+
       const authgear = await getAuthgear();
       if (!authgear || typeof window === "undefined") {
+        setUser(null);
         return;
       }
 
-      await authgear.logout({
-        redirectURI: window.location.origin + "/",
-      });
+      if (authgear.sessionState === "AUTHENTICATED") {
+          await authgear.logout({
+            redirectURI: window.location.origin + "/",
+          });
+      }
       setUser(null);
     } catch (err) {
       console.error("Logout error", err);
+      setUser(null);
     }
   };
 
   const getToken = async () => {
+    if (typeof window !== "undefined") {
+        const customToken = localStorage.getItem('zelp_custom_token');
+        if (customToken) return customToken;
+    }
+
     const authgear = await getAuthgear();
     if (!authgear) {
       return null;
@@ -144,7 +197,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoaded, getToken, updateUser }}>
+    <AuthContext.Provider value={{ user, login, customGoogleLogin, logout, isLoaded, getToken, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -34,7 +34,8 @@ router.post('/verify-phone', verifyJWT, authController.verifyPhone);
 
 
 // router.post('/phone-login', authController.phoneLogin); // Removed
-// router.post('/google-login', authController.googleLogin); // Removed
+router.post('/google-login', authController.googleLogin);
+
 // router.get('/msg91-config', authController.getMsg91Config); // Removed
 // router.post('/msg91-login', authController.msg91Login); // Removed
 router.put('/profile', verifyJWT, authController.updateProfile);

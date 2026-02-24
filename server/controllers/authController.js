@@ -22,6 +22,7 @@ exports.authgearSync = async (req, res) => {
         }
 
         const displayName = authgearName || authgearUser.preferred_username || (email && typeof email === 'string' ? email.split('@')[0] : 'User');
+        const finalPhoneVerified = phone ? true : (phone_number_verified === true ? true : null);
 
         let linkedEmail = null;
         let linkedGoogleId = null;
@@ -49,14 +50,14 @@ exports.authgearSync = async (req, res) => {
             const existingUser = checkUser.rows[0];
             await db.query(
                 'UPDATE users SET authgear_id = $1, email = COALESCE($2, email), phone = COALESCE($3, phone), name = COALESCE(name, $5), phone_verified = COALESCE($6, phone_verified) WHERE id = $4',
-                [sub, email, phone, existingUser.id, displayName, !!phone_number_verified]
+                [sub, email, phone, existingUser.id, displayName, finalPhoneVerified]
             );
             const updated = await db.query('SELECT * FROM users WHERE id = $1', [existingUser.id]);
             user = updated.rows[0];
         } else {
             const insertRes = await db.query(
-                'INSERT INTO users (name, email, phone, role, authgear_id, phone_verified) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-                [displayName, email, phone, 'user', sub, !!phone_number_verified]
+                'INSERT INTO users (name, email, phone, role, authgear_id, phone_verified) VALUES ($1, $2, $3, $4, $5, COALESCE($6, false)) RETURNING *',
+                [displayName, email, phone, 'user', sub, finalPhoneVerified]
             );
             user = insertRes.rows[0];
         }

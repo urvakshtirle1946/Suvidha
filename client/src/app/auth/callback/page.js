@@ -28,12 +28,19 @@ export default function AuthCallback() {
         const token = authgear.accessToken;
         if (token) {
           const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+          const headers = {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          };
+          
+          const customToken = localStorage.getItem('zelp_custom_token');
+          if (customToken) {
+              headers['X-Linked-Token'] = customToken;
+          }
+
           await fetch(`${backendUrl}/api/auth/sync`, {
             method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
+            headers
           });
         }
 

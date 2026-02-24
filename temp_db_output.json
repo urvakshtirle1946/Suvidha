@@ -1,0 +1,42 @@
+[
+  {
+    "id": 7,
+    "name": "Urvaksh Tirle",
+    "email": "urvakshtirle@gmail.com",
+    "phone": null,
+    "phone_verified": false,
+    "authgear_id": "106497358479814836146"
+  },
+  {
+    "id": 6,
+    "name": "Urvaksh Tirle_0832CI231090",
+    "email": "urvaksh.tirle@cdgi.edu.in",
+    "phone": null,
+    "phone_verified": false,
+    "authgear_id": "110945356732919835559"
+  },
+  {
+    "id": 5,
+    "name": "Anish Sarkar Professional",
+    "email": "anishsarkarprojects@gmail.com",
+    "phone": null,
+    "phone_verified": false,
+    "authgear_id": "118343164896937320976"
+  },
+  {
+    "id": 4,
+    "name": "User",
+    "email": null,
+    "phone": null,
+    "phone_verified": false,
+    "authgear_id": "57d6c6ca-7eed-4b0b-98ba-a4d317745821"
+  },
+  {
+    "id": 3,
+    "name": "User",
+    "email": null,
+    "phone": null,
+    "phone_verified": false,
+    "authgear_id": "e02eec0e-0ce1-4576-9899-79669ecce24d"
+  }
+]

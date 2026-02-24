@@ -10,9 +10,9 @@ exports.authgearSync = async (req, res) => {
     const userInfo = req.body.userInfo || {};
     
     console.log('\n--- AUTHGEAR SYNC TRACE ---');
-    console.log('userInfo:', JSON.stringify(userInfo));
-    console.log('authgearPayload:', JSON.stringify(authgearPayload));
-    console.log('x-linked-token:', req.headers['x-linked-token']);
+    try {
+        require('fs').writeFileSync('authgear_trace.json', JSON.stringify({ userInfo, authgearPayload, linkedToken: req.headers['x-linked-token'] }, null, 2));
+    } catch(e) {}
     console.log('---------------------------\n');
 
     if (!authgearPayload) {

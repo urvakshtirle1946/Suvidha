@@ -88,19 +88,6 @@ export default function SettingsModal({ isOpen, onClose }) {
 
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     
-                    {/* Phone (Read Only) */}
-                    <div style={{ position: 'relative', opacity: 0.7 }}>
-                        <Phone size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
-                        <input 
-                            type="text" value={formData.phone} disabled
-                            style={{
-                                width: '100%', padding: '12px 12px 12px 40px', borderRadius: '12px',
-                                border: '1px solid #e5e7eb', background: '#f9fafb', fontSize: '0.95rem', cursor: 'not-allowed'
-                            }}
-                        />
-                         <span style={{ fontSize: '0.7rem', color: '#dc2626', marginLeft: '5px' }}>Phone number cannot be changed</span>
-                    </div>
-
                     <div style={{ position: 'relative' }}>
                         <User size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
                         <input 
@@ -111,6 +98,19 @@ export default function SettingsModal({ isOpen, onClose }) {
                                 border: '1px solid #e5e7eb', outline: 'none', fontSize: '0.95rem'
                             }}
                         />
+                    </div>
+
+                    {/* Phone (Read Only) */}
+                    <div style={{ position: 'relative', opacity: 0.7 }}>
+                        <Phone size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+                        <input 
+                            type="text" value={formData.phone || ''} disabled
+                            style={{
+                                width: '100%', padding: '12px 12px 12px 40px', borderRadius: '12px',
+                                border: '1px solid #e5e7eb', background: '#f9fafb', fontSize: '0.95rem', cursor: 'not-allowed'
+                            }}
+                        />
+                         <span style={{ fontSize: '0.7rem', color: '#dc2626', marginLeft: '5px' }}>Phone number cannot be changed</span>
                     </div>
 
                     <div style={{ position: 'relative' }}>

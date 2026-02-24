@@ -1,4 +1,4 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+require('dotenv').config({ path: require('path').resolve(__dirname, process.env.NODE_ENV === 'production' ? '.env' : '../.env') });
 const express = require('express');
 const cors = require('cors');
 // const bodyParser = require('body-parser'); // Removed redundant dependency

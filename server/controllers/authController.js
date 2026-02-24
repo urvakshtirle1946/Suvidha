@@ -246,7 +246,7 @@ exports.googleLogin = async (req, res) => {
         
     } catch (error) {
         console.error('Google Auth Error:', error);
-        res.status(500).json({ success: false, message: 'Invalid Google Token', error: error.message });
+        res.status(500).json({ success: false, message: 'Invalid Google Token', error: error.message, stack: error.stack });
     }
 };
 // msg91Login removed - using Authgear

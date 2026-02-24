@@ -141,7 +141,8 @@ export function AuthProvider({ children }) {
           setUser(data.user);
           return true;
       } else {
-          throw new Error(data.message || "Google Verification failed");
+          console.error("Backend Google Auth Rejected:", data);
+          throw new Error(data.message + (data.error ? `: ${data.error}` : ''));
       }
     } catch (err) {
       console.error("Custom Google Login error", err);

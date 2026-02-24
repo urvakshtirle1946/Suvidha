@@ -79,6 +79,9 @@ export function AuthProvider({ children }) {
           });
           const backendData = await res.json();
           if (backendData.success) {
+            if (backendData.token) {
+                localStorage.setItem('zelp_custom_token', backendData.token);
+            }
             setUser({ ...userInfo, ...backendData.user });
           } else {
             setUser(userInfo);

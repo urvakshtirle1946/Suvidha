@@ -71,6 +71,15 @@ exports.authgearSync = async (req, res) => {
             user = insertRes.rows[0];
         }
 
+        let newToken = null;
+        if (linkedToken) {
+            newToken = jwt.sign(
+                { id: user.id || user.phone, phone: user.phone, role: user.role, name: user.name, email: user.email, phone_verified: user.phone_verified },
+                process.env.JWT_SECRET || 'zelp_secret_key_2024',
+                { expiresIn: '30d' }
+            );
+        }
+
         return res.status(200).json({
             success: true,
             user: {
@@ -81,6 +90,7 @@ exports.authgearSync = async (req, res) => {
                 role: user.role,
                 phone_verified: user.phone_verified
             },
+            token: newToken,
             message: 'User synced successfully'
         });
     } catch (error) {
@@ -258,7 +268,7 @@ exports.googleLogin = async (req, res) => {
         }
 
         const jwtToken = jwt.sign(
-            { id: user.id || user.phone, phone: user.phone, role: user.role, name: user.name, email: user.email },
+            { id: user.id || user.phone, phone: user.phone, role: user.role, name: user.name, email: user.email, phone_verified: user.phone_verified },
             process.env.JWT_SECRET || 'zelp_secret_key_2024',
             { expiresIn: '30d' }
         );
@@ -323,7 +333,7 @@ exports.updateProfile = async (req, res) => {
 
         // Generate new token with updated details
         const token = jwt.sign(
-            { id: updatedUser.id || updatedUser.phone, phone: updatedUser.phone, role: updatedUser.role, name: updatedUser.name, email: updatedUser.email },
+            { id: updatedUser.id || updatedUser.phone, phone: updatedUser.phone, role: updatedUser.role, name: updatedUser.name, email: updatedUser.email, phone_verified: updatedUser.phone_verified },
             process.env.JWT_SECRET || 'secret',
             { expiresIn: '30d' }
         );

@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
 import Navbar from '@/components/Navbar';
 import AuthModal from '@/components/AuthModal';
+import CompleteProfileModal from '@/components/CompleteProfileModal';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, CheckCircle, AlertCircle, Calendar as CalendarIcon, Clock, MapPin, X } from 'lucide-react';
 import Link from 'next/link';
@@ -116,16 +117,21 @@ export default function Checkout() {
   const [showPayment, setShowPayment] = useState(false);
   const [paymentMode, setPaymentMode] = useState('hospital'); // 'hospital' or 'online'
   const [bookingIds, setBookingIds] = useState([]);
-  const [guestName, setGuestName] = useState('');
-  const [guestPhone, setGuestPhone] = useState('');
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
 
   const updateCartWithProvider = (index, newItem) => {
     updateCartItem(index, newItem);
   };
 
   const handleCheckoutCallback = async () => {
-    if (!user && (!guestName || !guestPhone)) {
-        setError('Please enter your name and phone number to proceed.');
+    if (!user) {
+        setError('Please login to continue with your order.');
+        setAuthModalOpen(true);
+        return;
+    }
+    
+    if (!user.phone_verified || !user.name) {
+        setProfileModalOpen(true);
         return;
     }
 
@@ -191,8 +197,8 @@ export default function Checkout() {
                 const requests = [];
                 for (let i = 0; i < quantity; i++) {
                     const bookingData = {
-                        name: user?.name || guestName || 'Guest User',
-                        userPhone: user?.phone || guestPhone || '', 
+                        name: user?.name,
+                        userPhone: user?.phone, 
                         age: 0, 
                         gender: 'Not Specified',
                         date: selectedDate,
@@ -471,32 +477,17 @@ export default function Checkout() {
 
                         <div className="hide-on-mobile" style={{ padding: '0 1.5rem 1.5rem' }}>
                             {!user && (
-                                <div style={{ marginBottom: '1.5rem', background: '#f9fafb', padding: '1rem', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                                        <h4 style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#374151', margin: 0 }}>Guest Details</h4>
-                                        <span 
-                                            onClick={() => setAuthModalOpen(true)}
-                                            style={{ fontSize: '0.8rem', color: '#0c831f', fontWeight: '600', cursor: 'pointer', textDecoration: 'underline' }}
-                                        >
-                                            Already have an account? Login
-                                        </span>
-                                    </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                        <input 
-                                            type="text" 
-                                            placeholder="Full Name" 
-                                            value={guestName}
-                                            onChange={(e) => setGuestName(e.target.value)}
-                                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none' }}
-                                        />
-                                        <input 
-                                            type="tel" 
-                                            placeholder="Phone Number" 
-                                            value={guestPhone}
-                                            onChange={(e) => setGuestPhone(e.target.value)}
-                                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none' }}
-                                        />
-                                    </div>
+                                <div style={{ marginBottom: '1.5rem', background: '#fef2f2', padding: '1rem', borderRadius: '12px', border: '1px solid #fca5a5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                         <AlertCircle size={18} color="#dc2626" />
+                                         <span style={{ fontWeight: '600', color: '#991b1b', fontSize: '0.9rem' }}>Login required to checkout</span>
+                                     </div>
+                                     <button 
+                                        onClick={() => setAuthModalOpen(true)}
+                                        style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '6px 16px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '0.9rem' }}
+                                     >
+                                        Login
+                                     </button>
                                 </div>
                             )}
                             
@@ -517,7 +508,7 @@ export default function Checkout() {
                                     boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)'
                                 }}
                             >
-                                <span>{loading ? 'Processing...' : (user || (guestName && guestPhone)) ? `Place Order` : 'Enter Details'}</span>
+                                <span>{loading ? 'Processing...' : user ? `Place Order` : 'Login required'}</span>
                                 {!loading && user && <span>₹{cartTotal + 50} &gt;</span>}
                             </button>
                         </div>
@@ -543,7 +534,7 @@ export default function Checkout() {
                     disabled={loading}
                     className="cta-button"
                   >
-                      {loading ? '...' : (user || (guestName && guestPhone)) ? 'Place Order' : 'Enter Details'}
+                      {loading ? '...' : user ? 'Place Order' : 'Login required'}
                   </button>
               </div>
           </div>
@@ -601,6 +592,7 @@ export default function Checkout() {
       )}
 
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+      <CompleteProfileModal isOpen={profileModalOpen} onClose={() => setProfileModalOpen(false)} />
 
       <style jsx>{`
         .checkout-grid {

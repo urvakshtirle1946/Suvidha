@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Loader2, Phone, Mail, User, ArrowRight } from 'lucide-react';
 
 export default function CompleteProfileModal() {
-    const { user, getToken, updateUser } = useAuth();
+    const { user, isLoaded, getToken, updateUser } = useAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     
@@ -22,7 +22,7 @@ export default function CompleteProfileModal() {
         }
     }, [user]);
 
-    if (!user) return null;
+    if (!isLoaded || !user) return null;
 
     const needsPhone = !user.phone || !user.phone_verified;
     const needsDetails = (!user.name || !user.email);

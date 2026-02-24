@@ -46,6 +46,8 @@ exports.authgearSync = async (req, res) => {
 
         const searchEmail = email || linkedEmail;
 
+        const forcedPhoneVerified = phone ? true : false; 
+
         // Upsert user based on Authgear sub, email or phone (and also check google ID if linked)
         let user;
         const checkUser = await db.query(
@@ -56,15 +58,15 @@ exports.authgearSync = async (req, res) => {
         if (checkUser.rows.length > 0) {
             const existingUser = checkUser.rows[0];
             await db.query(
-                'UPDATE users SET authgear_id = $1, email = COALESCE($2, email), phone = COALESCE($3, phone), name = COALESCE(name, $5), phone_verified = COALESCE($6, phone_verified) WHERE id = $4',
-                [sub, email, phone, existingUser.id, displayName, finalPhoneVerified]
+                'UPDATE users SET authgear_id = $1, email = COALESCE($2, email), phone = COALESCE($3, phone), name = COALESCE(name, $5), phone_verified = $6 WHERE id = $4',
+                [sub, email, phone, existingUser.id, displayName, forcedPhoneVerified]
             );
             const updated = await db.query('SELECT * FROM users WHERE id = $1', [existingUser.id]);
             user = updated.rows[0];
         } else {
             const insertRes = await db.query(
-                'INSERT INTO users (name, email, phone, role, authgear_id, phone_verified) VALUES ($1, $2, $3, $4, $5, COALESCE($6, false)) RETURNING *',
-                [displayName, email, phone, 'user', sub, finalPhoneVerified]
+                'INSERT INTO users (name, email, phone, role, authgear_id, phone_verified) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+                [displayName, email, phone, 'user', sub, forcedPhoneVerified]
             );
             user = insertRes.rows[0];
         }

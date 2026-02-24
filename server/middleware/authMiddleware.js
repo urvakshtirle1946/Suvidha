@@ -23,6 +23,7 @@ const verifyJWT = async (req, res, next) => {
       const { payload } = await jwtVerify(token, JWKS, {
         issuer: process.env.NEXT_PUBLIC_AUTHGEAR_ENDPOINT,
       });
+      // Standardize payload if necessary (Authgear sub -> id etc is handled in controller)
       req.user = payload;
       return next();
     }

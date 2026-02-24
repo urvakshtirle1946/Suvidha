@@ -1,220 +1,223 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { X, Phone, Mail, Lock, User, ArrowRight } from 'lucide-react';
-import { getApiUrl } from '@/utils/api';
+import { X, Phone, ArrowRight, Loader2 } from 'lucide-react';
 
-import { GoogleLogin } from '@react-oauth/google';
-
-export default function AuthModal({ isOpen, onClose }) {
-    const { login } = useAuth();
-    // ... existing state ...
-    const [activeTab, setActiveTab] = useState('login'); // 'login' or 'register'
+export default function AuthModal({ isOpen, onClose, mode = 'auth' }) { // mode can be 'auth' or 'verify'
+    const { user, login, getToken, updateUser } = useAuth();
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        password: ''
-    });
+    const [step, setStep] = useState(mode === 'verify' ? 'phone' : 'initial');
+    const [phone, setPhone] = useState('');
+    const [otp, setOtp] = useState('');
 
-    const [googlePendingToken, setGooglePendingToken] = useState(null);
-
-    // Load MSG91 script on mount
     useEffect(() => {
-        let scriptLoaded = false;
-        const loadOtpScript = (urls) => {
-            let i = 0;
-            const attempt = () => {
-                if (scriptLoaded) return;
-                const s = document.createElement('script');
-                s.src = urls[i];
-                s.async = true;
-                s.onload = () => {
-                    scriptLoaded = true;
-                };
-                s.onerror = () => {
-                    i++;
-                    if (i < urls.length) {
-                        attempt();
-                    }
-                };
-                document.head.appendChild(s);
-            };
-            attempt();
-        };
-
-        if (typeof window !== 'undefined' && !window.initSendOTP) {
-            loadOtpScript([
-                'https://verify.msg91.com/otp-provider.js',
-                'https://verify.phone91.com/otp-provider.js'
-            ]);
+        if (isOpen) {
+            if (mode === 'verify') {
+                setStep('phone');
+            } else {
+                setStep('initial');
+            }
         }
-    }, []);
+    }, [isOpen, mode]);
 
     if (!isOpen) return null;
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const handleOTPLogin = async () => {
-        if (typeof window !== 'undefined' && window.initSendOTP) {
-            try {
-                setLoading(true);
-                const apiUrl = getApiUrl();
-                const configRes = await fetch(`${apiUrl}/api/auth/msg91-config`);
-                const configData = await configRes.json();
-                
-                if (!configData.success || !configData.tokenAuth) {
-                    throw new Error("Could not retrieve OTP widget configuration");
-                }
-
-                setLoading(false); // Widget will show its own UI
-
-                const configuration = {
-                    widgetId: configData.widgetId || "36627469635a363034323734",
-                    tokenAuth: configData.tokenAuth,
-                    identifier: "", 
-                    success: async (data) => {
-                        try {
-                            setLoading(true);
-                            const token = data.message || data;
-
-                            const res = await fetch(`${apiUrl}/api/auth/msg91-login`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ token })
-                            });
-                            
-                            const resData = await res.json();
-                            
-                            if (res.ok && resData.success) {
-                                login({ ...resData.user, token: resData.token });
-                                onClose();
-                            } else {
-                                alert(resData.message || 'OTP Login Failed');
-                            }
-                        } catch (err) {
-                            console.error('OTP Login Error:', err);
-                            alert('OTP Login Failed');
-                        } finally {
-                            setLoading(false);
-                        }
-                    },
-                    failure: (error) => {
-                        console.error('OTP failure reason', JSON.stringify(error));
-                        alert('OTP Widget Failed to Initialize: ' + (error.message || JSON.stringify(error)));
-                    }
-                };
-                window.initSendOTP(configuration);
-
-            } catch (error) {
-                console.error("Config fetch error:", error);
-                alert("Failed to initialize OTP service");
-                setLoading(false);
-            }
-        } else {
-            alert('OTP Service is still loading. Please try again in a moment.');
-        }
-    };
-
-    const handleGoogleSuccess = async (credentialResponse) => {
+    const handleAuthgearLogin = async (social = false) => {
         try {
             setLoading(true);
-            const apiUrl = getApiUrl();
-            const res = await fetch(`${apiUrl}/api/auth/google-login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token: credentialResponse.credential })
-            });
-            const data = await res.json();
+            const authgearModule = await import("@authgear/web");
+            const authgear = authgearModule.default;
             
-            if (res.ok && data.success) {
-                login({ ...data.user, token: data.token });
-                onClose();
-            } else if (data.requiresPhone) {
-                // User is new and needs to provide phone number
-                setGooglePendingToken(credentialResponse.credential);
-                setActiveTab('google-phone');
-                setFormData({ ...formData, phone: '' }); // Reset phone field
-                // alert(data.message); // REMOVED ALERT for seamless transition
-            } else {
-                alert(data.message || 'Google Login Failed');
-            }
+            await authgear.startAuthentication({
+                redirectURI: window.location.origin + "/auth/callback",
+                ...(social ? { prompt: 'login' } : {}) // Example if social needs prompt
+            });
+            onClose();
         } catch (err) {
-            console.error('Google Auth Error:', err);
-            alert('Google Login Failed');
+            console.error('Authgear Login Error:', err);
+            alert('Login Failed');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleGooglePhoneSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        const apiUrl = getApiUrl();
-        
+    const handleRequestOtp = async () => {
+        if (!phone || phone.length < 10) {
+            alert('Please enter a valid phone number');
+            return;
+        }
         try {
-            const res = await fetch(`${apiUrl}/api/auth/google-login`, {
+            setLoading(true);
+            const token = await getToken();
+            const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+            const res = await fetch(`${backendUrl}/api/auth/request-verification-otp`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    token: googlePendingToken, 
-                    phone: formData.phone 
-                })
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ phone })
             });
             const data = await res.json();
-
-            if (res.ok && data.success) {
-                login({ ...data.user, token: data.token });
-                onClose();
+            if (data.success) {
+                setStep('otp');
             } else {
-                alert(data.message || 'Registration Failed');
+                alert(data.message || 'Failed to send OTP');
             }
         } catch (err) {
-            console.error('Google Phone Submit Error:', err);
-            alert('Failed to complete registration');
+            console.error('OTP Request Error:', err);
+            alert('Failed to send OTP');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        const apiUrl = getApiUrl();
-
+    const handleVerifyOtp = async () => {
+        if (!otp || otp.length < 6) {
+            alert('Please enter the 6-digit OTP');
+            return;
+        }
         try {
-            const res = await fetch(`${apiUrl}/api/auth/phone-login`, {
+            setLoading(true);
+            const token = await getToken();
+            const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+            const res = await fetch(`${backendUrl}/api/auth/verify-phone`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...formData,
-                    is_login: activeTab === 'login'
-                })
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ phone, otp })
             });
-
-            let data;
-            const contentType = res.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") !== -1) {
-                data = await res.json();
+            const data = await res.json();
+            if (data.success) {
+                updateUser({ phone_verified: true, phone });
+                onClose();
             } else {
-                const text = await res.text();
-                throw new Error(`Server error: ${res.status}`);
-            }
-
-            if (res.ok && data.success) {
-                login({ ...data.user, token: data.token });
-                onClose(); // Close modal on success
-            } else {
-                alert(data.message || "Authentication Failed");
+                alert(data.message || 'Verification failed');
             }
         } catch (err) {
-            console.error("Auth Error:", err);
-            alert(`Error: ${err.message}`);
+            console.error('OTP Verification Error:', err);
+            alert('Verification failed');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const renderContent = () => {
+        switch (step) {
+            case 'initial':
+                return (
+                    <>
+                        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+                            <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.75rem' }}>
+                                Welcome to Zelp
+                            </h2>
+                            <p style={{ color: '#6b7280', fontSize: '1rem', lineHeight: '1.5' }}>
+                                Experience premium healthcare simplified.<br/>Sign in securely.
+                            </p>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
+                            <button
+                                onClick={() => handleAuthgearLogin(false)}
+                                disabled={loading}
+                                style={{
+                                    width: '100%', padding: '16px', borderRadius: '16px', border: 'none',
+                                    background: '#0c831f', color: '#fff', fontWeight: 'bold', size: '1.1rem',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
+                                    cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)'
+                                }}
+                            >
+                                <Phone size={20} />
+                                <span>Continue with Mobile OTP</span>
+                            </button>
+                            <button
+                                onClick={() => handleAuthgearLogin(true)}
+                                disabled={loading}
+                                style={{
+                                    width: '100%', padding: '16px', borderRadius: '16px', border: '1px solid #e5e7eb',
+                                    background: '#fff', color: '#111827', fontWeight: 'bold', size: '1.1rem',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
+                                    cursor: 'pointer', transition: 'all 0.2s'
+                                }}
+                            >
+                                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style={{ width: '20px' }} />
+                                <span>Continue with Google</span>
+                            </button>
+                        </div>
+                    </>
+                );
+            case 'phone':
+                return (
+                    <>
+                        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>Verify Mobile Number</h2>
+                            <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>Please provide your mobile number for verification.</p>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', width: '100%' }}>
+                            <div style={{ position: 'relative' }}>
+                                <Phone size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+                                <input 
+                                    type="tel" 
+                                    placeholder="Mobile Number" 
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '14px', border: '1px solid #e5e7eb', fontSize: '1rem', outline: 'none' }}
+                                />
+                            </div>
+                            <button
+                                onClick={handleRequestOtp}
+                                disabled={loading}
+                                style={{
+                                    width: '100%', padding: '16px', borderRadius: '14px', border: 'none',
+                                    background: '#0c831f', color: '#fff', fontWeight: 'bold', fontSize: '1rem',
+                                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+                                }}
+                            >
+                                {loading && <Loader2 className="animate-spin" size={20} />}
+                                <span>{loading ? 'Sending OTP...' : 'Send OTP'}</span>
+                                {!loading && <ArrowRight size={18} />}
+                            </button>
+                        </div>
+                    </>
+                );
+            case 'otp':
+                return (
+                    <>
+                        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>Enter OTP</h2>
+                            <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>Verification code sent to {phone}</p>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', width: '100%' }}>
+                            <input 
+                                type="text" 
+                                placeholder="6-digit OTP" 
+                                value={otp}
+                                onChange={(e) => setOtp(e.target.value)}
+                                maxLength={6}
+                                style={{ width: '100%', padding: '16px', borderRadius: '14px', border: '1px solid #e5e7eb', fontSize: '1.5rem', textAlign: 'center', letterSpacing: '0.5rem', outline: 'none' }}
+                            />
+                            <button
+                                onClick={handleVerifyOtp}
+                                disabled={loading}
+                                style={{
+                                    width: '100%', padding: '16px', borderRadius: '14px', border: 'none',
+                                    background: '#0c831f', color: '#fff', fontWeight: 'bold', fontSize: '1rem',
+                                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+                                }}
+                            >
+                                {loading && <Loader2 className="animate-spin" size={20} />}
+                                <span>{loading ? 'Verifying...' : 'Verify & Continue'}</span>
+                            </button>
+                            <button 
+                                onClick={() => setStep('phone')}
+                                style={{ background: 'none', border: 'none', color: '#0c831f', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem' }}
+                            >
+                                Change Number
+                            </button>
+                        </div>
+                    </>
+                );
         }
     };
 
@@ -230,213 +233,31 @@ export default function AuthModal({ isOpen, onClose }) {
                 style={{
                     width: '100%', maxWidth: '400px',
                     background: '#fff', borderRadius: '24px',
-                    padding: '2rem', position: 'relative',
+                    padding: '2.5rem', position: 'relative',
                     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
                     animation: 'modalSlideUp 0.3s ease-out'
                 }} 
                 onClick={(e) => e.stopPropagation()}
             >
-                <button 
-                    onClick={onClose}
-                    style={{
-                        position: 'absolute', top: '1.5rem', right: '1.5rem',
-                        background: '#f3f4f6', border: 'none', borderRadius: '50%',
-                        width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        cursor: 'pointer', color: '#6b7280'
-                    }}
-                >
-                    <X size={18} />
-                </button>
-
-                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                    <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>
-                        {activeTab === 'login' ? 'Welcome Back' : activeTab === 'register' ? 'Create Account' : 'Complete Profile'}
-                    </h2>
-                    <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>
-                        {activeTab === 'login' ? 'Sign in to access your bookings' : 
-                         activeTab === 'register' ? 'Join Zelp for premium healthcare' : 
-                         'Please enter your phone number to continue'}
-                    </p>
-                </div>
-
-                {activeTab !== 'google-phone' && (
-                    <div style={{ 
-                        display: 'flex', background: '#f3f4f6', padding: '4px', borderRadius: '12px', marginBottom: '1.5rem' 
-                    }}>
-                        <button 
-                            onClick={() => setActiveTab('login')}
-                            style={{
-                                flex: 1, padding: '8px', border: 'none', borderRadius: '8px',
-                                background: activeTab === 'login' ? '#fff' : 'transparent',
-                                color: activeTab === 'login' ? '#111827' : '#6b7280',
-                                fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s',
-                                boxShadow: activeTab === 'login' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'
-                            }}
-                        >
-                            Login
-                        </button>
-                        <button 
-                            onClick={() => setActiveTab('register')}
-                            style={{
-                                flex: 1, padding: '8px', border: 'none', borderRadius: '8px',
-                                background: activeTab === 'register' ? '#fff' : 'transparent',
-                                color: activeTab === 'register' ? '#111827' : '#6b7280',
-                                fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s',
-                                boxShadow: activeTab === 'register' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'
-                            }}
-                        >
-                            Register
-                        </button>
-                    </div>
-                )}
-
-                {/* Google Login Button - Hide when asking for phone */}
-                {activeTab !== 'google-phone' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center', marginBottom: '1.5rem' }}>
-                        <button
-                            type="button"
-                            onClick={handleOTPLogin}
-                            disabled={loading}
-                            style={{
-                                width: '100%',
-                                padding: '12px',
-                                borderRadius: '12px',
-                                border: '1px solid #e5e7eb',
-                                background: '#fff',
-                                color: '#111827',
-                                fontWeight: '600',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '8px',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s',
-                                fontSize: '0.95rem'
-                            }}
-                        >
-                            <Phone size={18} />
-                            Login with OTP
-                        </button>
-                        
-                        <GoogleLogin
-                            onSuccess={handleGoogleSuccess}
-                            onError={() => {
-                                console.log('Login Failed');
-                                alert('Google Login Failed');
-                            }}
-                            theme="filled_blue"
-                            shape="pill"
-                            text={activeTab === 'login' ? "signin_with" : "signup_with"}
-                        />
-                    </div>
-                )}
-
-                {activeTab !== 'google-phone' && (
-                    <div style={{ display: 'flex', alignItems: 'center', margin: '0 0 1.5rem 0', color: '#9ca3af', fontSize: '0.8rem' }}>
-                        <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
-                        <span style={{ padding: '0 10px' }}>OR</span>
-                        <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
-                    </div>
-                )}
-
-                <form onSubmit={activeTab === 'google-phone' ? handleGooglePhoneSubmit : handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    
-                    {/* Normal Register Fields */}
-                    {activeTab === 'register' && (
-                        <div style={{ position: 'relative' }}>
-                            <User size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
-                            <input 
-                                type="text" name="name" placeholder="Full Name" required
-                                value={formData.name} onChange={handleChange}
-                                style={{
-                                    width: '100%', padding: '12px 12px 12px 40px', borderRadius: '12px',
-                                    border: '1px solid #e5e7eb', outline: 'none', fontSize: '0.95rem'
-                                }}
-                            />
-                        </div>
-                    )}
-
-                    {activeTab !== 'google-phone' && (
-                        <div style={{ position: 'relative' }}>
-                            <Mail size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
-                            <input 
-                                type="email" name="email" placeholder="Email Address" required
-                                value={formData.email} onChange={handleChange}
-                                style={{
-                                    width: '100%', padding: '12px 12px 12px 40px', borderRadius: '12px',
-                                    border: '1px solid #e5e7eb', outline: 'none', fontSize: '0.95rem'
-                                }}
-                            />
-                        </div>
-                    )}
-
-                    {/* Phone Field - Show for Register OR Google Phone Step */}
-                    {(activeTab === 'register' || activeTab === 'google-phone') && (
-                        <div style={{ position: 'relative' }}>
-                            <Phone size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
-                            <input 
-                                type="tel" name="phone" placeholder="Phone Number" required
-                                value={formData.phone} onChange={handleChange}
-                                style={{
-                                    width: '100%', padding: '12px 12px 12px 40px', borderRadius: '12px',
-                                    border: '1px solid #e5e7eb', outline: 'none', fontSize: '0.95rem'
-                                }}
-                            />
-                        </div>
-                    )}
-
-                    {activeTab !== 'google-phone' && (
-                        <div style={{ position: 'relative' }}>
-                            <Lock size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
-                            <input 
-                                type="password" name="password" placeholder="Password" required
-                                value={formData.password} onChange={handleChange}
-                                style={{
-                                    width: '100%', padding: '12px 12px 12px 40px', borderRadius: '12px',
-                                    border: '1px solid #e5e7eb', outline: 'none', fontSize: '0.95rem'
-                                }}
-                            />
-                        </div>
-                    )}
-
+                {mode !== 'verify' && (
                     <button 
-                        type="submit" disabled={loading}
+                        onClick={onClose}
                         style={{
-                            width: '100%', padding: '12px', borderRadius: '12px', border: 'none',
-                            background: '#0c831f', color: '#fff', fontWeight: 'bold', fontSize: '1rem',
-                            cursor: 'pointer', marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+                            position: 'absolute', top: '1.5rem', right: '1.5rem',
+                            background: '#f3f4f6', border: 'none', borderRadius: '50%',
+                            width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            cursor: 'pointer', color: '#6b7280'
                         }}
                     >
-                        {loading ? 'Processing...' : (activeTab === 'login' ? 'Sign In' : activeTab === 'register' ? 'Create Account' : 'Complete Registration')}
-                        {!loading && <ArrowRight size={18} />}
+                        <X size={18} />
                     </button>
-                </form>
+                )}
 
-                {activeTab !== 'google-phone' && (
-                    <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem', color: '#6b7280' }}>
-                        {activeTab === 'login' ? "Don't have an account? " : "Already have an account? "}
-                        <span 
-                            onClick={() => setActiveTab(activeTab === 'login' ? 'register' : 'login')}
-                            style={{ color: '#0c831f', fontWeight: '600', cursor: 'pointer' }}
-                        >
-                            {activeTab === 'login' ? 'Register Now' : 'Login'}
-                        </span>
-                    </p>
-                )}
-                
-                {activeTab === 'google-phone' && (
-                     <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem', color: '#6b7280' }}>
-                        <span 
-                            onClick={() => {
-                                setActiveTab('login');
-                                setGooglePendingToken(null);
-                            }}
-                            style={{ color: '#6b7280', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}
-                        >
-                           <X size={14}/> Cancel
-                        </span>
-                    </p>
-                )}
+                {renderContent()}
+
+                <p style={{ fontSize: '0.8rem', color: '#9ca3af', textAlign: 'center', marginTop: '2rem' }}>
+                    Securely powered by Authgear
+                </p>
             </div>
             <style jsx>{`
                 @keyframes modalSlideUp {

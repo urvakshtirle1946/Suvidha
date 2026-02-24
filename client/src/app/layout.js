@@ -5,7 +5,7 @@ import { LocationProvider } from "@/context/LocationContext";
 import { CartProvider } from "@/context/CartContext";
 import AdminSessionManager from "@/components/AdminSessionManager";
 import CartDrawer from "@/components/CartDrawer";
-import { GoogleOAuthProvider } from '@react-oauth/google';
+// Google removed
 
 
 const outfit = Outfit({
@@ -34,17 +34,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${outfit.variable} ${cormorantGaramond.variable} font-sans`}>
-        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
-          <AuthProvider>
-            <LocationProvider>
-              <CartProvider>
-                <AdminSessionManager />
-                <CartDrawer />
-                {children}
-              </CartProvider>
-            </LocationProvider>
-          </AuthProvider>
-        </GoogleOAuthProvider>
+        <AuthProvider>
+          <LocationProvider>
+            <CartProvider>
+              <AdminSessionManager />
+              <CartDrawer />
+              {children}
+            </CartProvider>
+          </LocationProvider>
+        </AuthProvider>
       </body>
     </html>
   );

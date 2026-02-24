@@ -49,7 +49,28 @@ export function AuthProvider({ children }) {
       const sessionState = authgear.sessionState;
       if (sessionState === "AUTHENTICATED") {
         const userInfo = await authgear.fetchUserInfo();
-        setUser(userInfo);
+        
+        // Fetch additional data from backend
+        try {
+          const token = authgear.accessToken;
+          const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+          const res = await fetch(`${backendUrl}/api/auth/sync`, {
+              method: 'POST',
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+              }
+          });
+          const backendData = await res.json();
+          if (backendData.success) {
+            setUser({ ...userInfo, ...backendData.user });
+          } else {
+            setUser(userInfo);
+          }
+        } catch (err) {
+          console.error("Backend sync failed", err);
+          setUser(userInfo);
+        }
       } else {
         setUser(null);
       }
@@ -110,8 +131,12 @@ export function AuthProvider({ children }) {
     return null;
   };
 
+  const updateUser = (data) => {
+    setUser(prev => prev ? { ...prev, ...data } : data);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoaded, getToken }}>
+    <AuthContext.Provider value={{ user, login, logout, isLoaded, getToken, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

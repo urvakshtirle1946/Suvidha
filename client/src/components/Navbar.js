@@ -21,6 +21,20 @@ export default function Navbar() {
   const [locationModalOpen, setLocationModalOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState('auth');
+
+  // Enforce mobile verification if logged in but not verified
+  useEffect(() => {
+    if (user && !user.phone_verified) {
+      setAuthMode('verify');
+      setAuthModalOpen(true);
+    }
+  }, [user]);
+
+  const handleOpenAuth = () => {
+    setAuthMode('auth');
+    setAuthModalOpen(true);
+  };
 
   return (
     <>
@@ -80,7 +94,7 @@ export default function Navbar() {
                       <ProfileDropdown onOpenSettings={() => setSettingsModalOpen(true)} />
                   ) : (
                       <button 
-                          onClick={() => setAuthModalOpen(true)}
+                          onClick={handleOpenAuth}
                           style={{ 
                               background: 'transparent', border: '1px solid #0c831f', color: '#0c831f', 
                               padding: '8px 20px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer',
@@ -141,6 +155,7 @@ export default function Navbar() {
       <AuthModal 
         isOpen={authModalOpen} 
         onClose={() => setAuthModalOpen(false)} 
+        mode={authMode}
       />
 
       {/* Settings Modal */}

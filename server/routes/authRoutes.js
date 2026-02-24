@@ -23,10 +23,13 @@ const adminLoginLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-router.post('/send-otp', otpLimiter, authController.sendOtp);
-router.post('/verify-otp', authController.verifyOtp);
+// router.post('/send-otp', otpLimiter, authController.sendOtp); // Removed
+// router.post('/verify-otp', authController.verifyOtp); // Removed
 
 router.post('/admin-login', adminLoginLimiter, authController.adminLogin);
+router.post('/sync', verifyJWT, authController.authgearSync);
+router.post('/request-verification-otp', verifyJWT, authController.requestVerificationOtp);
+router.post('/verify-phone', verifyJWT, authController.verifyPhone);
 
 
 // Token Endpoints
@@ -37,11 +40,11 @@ router.get('/verify-token', (req, res) => {
     res.json({ message: 'Token verification endpoint ready.' });
 });
 
-router.post('/phone-login', authController.phoneLogin);
-router.post('/google-login', authController.googleLogin);
-router.get('/msg91-config', authController.getMsg91Config);
-router.post('/msg91-login', authController.msg91Login);
-router.put('/profile', authController.updateProfile);
+// router.post('/phone-login', authController.phoneLogin); // Removed
+// router.post('/google-login', authController.googleLogin); // Removed
+// router.get('/msg91-config', authController.getMsg91Config); // Removed
+// router.post('/msg91-login', authController.msg91Login); // Removed
+router.put('/profile', verifyJWT, authController.updateProfile);
 router.get('/users', verifyJWT, requireRole(['admin', 'super_admin']), authController.getAllUsers);
 
 module.exports = router;

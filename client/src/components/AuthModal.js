@@ -19,10 +19,21 @@ export default function AuthModal({ isOpen, onClose }) {
     const handleAuthgearLogin = async (social = false) => {
         try {
             setLoading(true);
-            await login({
-                ...(social ? { prompt: 'login', colorScheme: 'light', oauthProviderAlias: 'google' } : {})
-            });
-            onClose();
+            if (social) {
+                // Manually construct the authorization URL to guarantee direct OAuth routing
+                const clientId = process.env.NEXT_PUBLIC_AUTHGEAR_CLIENT_ID;
+                const endpoint = process.env.NEXT_PUBLIC_AUTHGEAR_ENDPOINT;
+                if (!clientId || !endpoint) throw new Error("Missing Authgear config");
+
+                const redirectUri = encodeURIComponent(window.location.origin + "/auth/callback");
+                const authUrl = `${endpoint}/oauth2/authorize?client_id=${clientId}&response_type=code&scope=openid+offline_access+https://authgear.com/scopes/full-access&redirect_uri=${redirectUri}&x_oauth_provider_alias=google`;
+                
+                window.location.href = authUrl;
+                return;
+            } else {
+                await login();
+                onClose();
+            }
         } catch (err) {
             console.error('Authgear Login Error:', err);
             alert('Login Failed');

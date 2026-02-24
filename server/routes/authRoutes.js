@@ -32,13 +32,6 @@ router.post('/request-verification-otp', verifyJWT, authController.requestVerifi
 router.post('/verify-phone', verifyJWT, authController.verifyPhone);
 
 
-// Token Endpoints
-router.post('/token', authController.phoneLogin); // Alias for token generation
-router.get('/verify-token', (req, res) => {
-    // Simple verification middleware/handler (stub)
-    // In real app, verify header Authorization: Bearer <token>
-    res.json({ message: 'Token verification endpoint ready.' });
-});
 
 // router.post('/phone-login', authController.phoneLogin); // Removed
 // router.post('/google-login', authController.googleLogin); // Removed

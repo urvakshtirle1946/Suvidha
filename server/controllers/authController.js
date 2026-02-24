@@ -13,32 +13,35 @@ exports.authgearSync = async (req, res) => {
     }
 
     try {
-        const { sub, email, phone_number, phone_number_verified } = authgearUser;
-        let phone = phone_number;
+        const { sub, email, phone_number, phone_number_verified, name: authgearName } = authgearUser;
+        let phone = phone_number || null;
         if (phone && phone.startsWith('+91')) {
             phone = phone.substring(3);
         } else if (phone && phone.startsWith('91') && phone.length === 12) {
             phone = phone.substring(2);
         }
 
-        // Upsert user based on Authgear sub or phone
+        const displayName = authgearName || authgearUser.preferred_username || (email ? email.split('@')[0] : 'User');
+
+        // Upsert user based on Authgear sub, email or phone
         let user;
-        const checkUser = await db.query('SELECT * FROM users WHERE authgear_id = $1 OR phone = $2', [sub, phone]);
+        const checkUser = await db.query(
+            'SELECT * FROM users WHERE authgear_id = $1 OR (email IS NOT NULL AND email = $2) OR (phone IS NOT NULL AND phone = $3)', 
+            [sub, email, phone]
+        );
 
         if (checkUser.rows.length > 0) {
             const existingUser = checkUser.rows[0];
-            // Update authgear_id, email, and synchronization fields
-            // We trust Authgear's phone_number_verified status
             await db.query(
-                'UPDATE users SET authgear_id = $1, email = COALESCE($2, email), phone = COALESCE($3, phone), phone_verified = COALESCE($5, phone_verified) WHERE id = $4',
-                [sub, email, phone, existingUser.id, !!phone_number_verified]
+                'UPDATE users SET authgear_id = $1, email = COALESCE($2, email), phone = COALESCE($3, phone), name = COALESCE(name, $5), phone_verified = COALESCE($6, phone_verified) WHERE id = $4',
+                [sub, email, phone, existingUser.id, displayName, !!phone_number_verified]
             );
             const updated = await db.query('SELECT * FROM users WHERE id = $1', [existingUser.id]);
             user = updated.rows[0];
         } else {
             const insertRes = await db.query(
                 'INSERT INTO users (name, email, phone, role, authgear_id, phone_verified) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-                ['User', email, phone, 'user', sub, !!phone_number_verified]
+                [displayName, email, phone, 'user', sub, !!phone_number_verified]
             );
             user = insertRes.rows[0];
         }

@@ -40,7 +40,7 @@ export default function ProfileDropdown({ onOpenSettings }) {
                     width: '32px', height: '32px', borderRadius: '50%', background: '#0c831f', color: '#fff',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '14px'
                 }}>
-                    {user.name.charAt(0).toUpperCase()}
+                    {(user.name || 'User').charAt(0).toUpperCase()}
                 </div>
                 <div className="hide-on-mobile" style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
                     <span style={{ fontWeight: '600', fontSize: '0.9rem', color: '#1f2937' }}>

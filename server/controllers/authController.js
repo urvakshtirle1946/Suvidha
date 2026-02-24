@@ -84,30 +84,41 @@ exports.authgearSync = async (req, res) => {
         // Upsert user based on Authgear sub, email or phone (and also check google ID if linked)
         let user;
         const checkUser = await db.query(
-            'SELECT * FROM users WHERE authgear_id = $1 OR (email IS NOT NULL AND email = $2) OR (phone IS NOT NULL AND phone = $3) OR (authgear_id = $4 AND $4 IS NOT NULL)', 
-            [sub, searchEmail, finalPhone, linkedGoogleId]
+            'SELECT * FROM users WHERE authgear_id = $1 OR (email IS NOT NULL AND email = $2) OR (phone IS NOT NULL AND phone = $3) OR (authgear_id = $4 AND $4 IS NOT NULL) ORDER BY id DESC LIMIT 1', 
+            [sub || null, searchEmail || null, finalPhone || null, linkedGoogleId || null]
         );
 
         if (checkUser.rows.length > 0) {
             const existingUser = checkUser.rows[0];
-            await db.query(
-                `UPDATE users 
-                 SET authgear_id = $1, 
-                     email = COALESCE(email, $2), 
-                     phone = COALESCE(phone, $3), 
-                     name = CASE WHEN name = 'User' OR name IS NULL THEN $5 ELSE name END, 
-                     phone_verified = $6 
-                 WHERE id = $4`,
-                [sub, searchEmail, finalPhone, existingUser.id, finalDisplayName, forcedPhoneVerified]
-            );
+            try {
+                await db.query(
+                    `UPDATE users 
+                     SET authgear_id = COALESCE(authgear_id, $1), 
+                         email = COALESCE(email, $2), 
+                         phone = COALESCE(phone, $3), 
+                         name = CASE WHEN name = 'User' OR name IS NULL THEN $5 ELSE name END, 
+                         phone_verified = $6 
+                     WHERE id = $4`,
+                    [sub || null, searchEmail || null, finalPhone || null, existingUser.id, finalDisplayName || 'User', forcedPhoneVerified]
+                );
+            } catch (updateErr) {
+                console.warn("🚨 Handled User Merge Conflict gracefully:", updateErr.message);
+            }
             const updated = await db.query('SELECT * FROM users WHERE id = $1', [existingUser.id]);
             user = updated.rows[0];
         } else {
-            const insertRes = await db.query(
-                'INSERT INTO users (name, email, phone, role, authgear_id, phone_verified) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-                [finalDisplayName, searchEmail, finalPhone, 'user', sub, forcedPhoneVerified]
-            );
-            user = insertRes.rows[0];
+            try {
+                const insertRes = await db.query(
+                    'INSERT INTO users (name, email, phone, role, authgear_id, phone_verified) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+                    [finalDisplayName || 'User', searchEmail || null, finalPhone || null, 'user', sub || null, forcedPhoneVerified]
+                );
+                user = insertRes.rows[0];
+            } catch (insertErr) {
+                console.warn("🚨 Handled Insert Conflict gracefully by falling back to fetch:", insertErr.message);
+                const fallbackFetch = await db.query('SELECT * FROM users WHERE phone = $1 OR email = $2 OR authgear_id = $3', [finalPhone || null, searchEmail || null, sub || null]);
+                if (fallbackFetch.rows.length === 0) throw new Error("Database insertion completely rejected the payload: " + insertErr.message);
+                user = fallbackFetch.rows[0];
+            }
         }
 
         let newToken = null;

@@ -6,14 +6,21 @@ const bcrypt = require('bcryptjs');
 const { getMockUsers, saveMockUser } = require('../mock_persistence');
 
 exports.authgearSync = async (req, res) => {
-    const { user: authgearUser } = req; // Payload from authMiddleware
+    const { user: authgearPayload } = req; // Payload from authMiddleware
+    const userInfo = req.body.userInfo || {};
     
-    if (!authgearUser) {
+    if (!authgearPayload) {
         return res.status(401).json({ success: false, message: 'No Authgear user data' });
     }
 
     try {
-        const { sub, email, phone_number, phone_number_verified, name: authgearName } = authgearUser;
+        const sub = authgearPayload.sub;
+        const email = userInfo.email || authgearPayload.email || null;
+        const phone_number = userInfo.phone_number || authgearPayload.phone_number || null;
+        let phone_number_verified = userInfo.phone_number_verified;
+        if (phone_number_verified === undefined) phone_number_verified = authgearPayload.phone_number_verified;
+        const authgearName = userInfo.name || authgearPayload.name || userInfo.preferred_username || authgearPayload.preferred_username || null;
+
         let phone = phone_number || null;
         if (phone && phone.startsWith('+91')) {
             phone = phone.substring(3);
@@ -21,7 +28,7 @@ exports.authgearSync = async (req, res) => {
             phone = phone.substring(2);
         }
 
-        const displayName = authgearName || authgearUser.preferred_username || (email && typeof email === 'string' ? email.split('@')[0] : 'User');
+        const displayName = authgearName || (email && typeof email === 'string' ? email.split('@')[0] : 'User');
         const finalPhoneVerified = phone ? true : (phone_number_verified === true ? true : null);
 
         let linkedEmail = null;
@@ -76,7 +83,7 @@ exports.authgearSync = async (req, res) => {
         });
     } catch (error) {
         console.error('Authgear Sync Error:', error);
-        console.error('Authgear User Context:', JSON.stringify(authgearUser, null, 2));
+        console.error('Authgear User Context:', JSON.stringify(authgearPayload, null, 2));
         res.status(500).json({ success: false, message: 'Server Error during sync', error: error.message });
     }
 };

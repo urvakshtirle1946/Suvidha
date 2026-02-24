@@ -74,7 +74,8 @@ export function AuthProvider({ children }) {
 
           const res = await fetch(`${backendUrl}/api/auth/sync`, {
               method: 'POST',
-              headers
+              headers,
+              body: JSON.stringify({ userInfo })
           });
           const backendData = await res.json();
           if (backendData.success) {

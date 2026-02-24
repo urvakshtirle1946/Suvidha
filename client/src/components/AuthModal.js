@@ -3,22 +3,16 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { X, Phone, ArrowRight, Loader2 } from 'lucide-react';
 
-export default function AuthModal({ isOpen, onClose, mode = 'auth' }) { // mode can be 'auth' or 'verify'
-    const { user, login, getToken, updateUser } = useAuth();
+export default function AuthModal({ isOpen, onClose }) {
+    const { user, login } = useAuth();
     const [loading, setLoading] = useState(false);
-    const [step, setStep] = useState(mode === 'verify' ? 'phone' : 'initial');
-    const [phone, setPhone] = useState('');
-    const [otp, setOtp] = useState('');
+    const [step, setStep] = useState('initial');
 
     useEffect(() => {
         if (isOpen) {
-            if (mode === 'verify') {
-                setStep('phone');
-            } else {
-                setStep('initial');
-            }
+            setStep('initial');
         }
-    }, [isOpen, mode]);
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
@@ -37,68 +31,6 @@ export default function AuthModal({ isOpen, onClose, mode = 'auth' }) { // mode 
         }
     };
 
-    const handleRequestOtp = async () => {
-        if (!phone || phone.length < 10) {
-            alert('Please enter a valid phone number');
-            return;
-        }
-        try {
-            setLoading(true);
-            const token = await getToken();
-            const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
-            const res = await fetch(`${backendUrl}/api/auth/request-verification-otp`, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ phone })
-            });
-            const data = await res.json();
-            if (data.success) {
-                setStep('otp');
-            } else {
-                alert(data.message || 'Failed to send OTP');
-            }
-        } catch (err) {
-            console.error('OTP Request Error:', err);
-            alert('Failed to send OTP');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleVerifyOtp = async () => {
-        if (!otp || otp.length < 6) {
-            alert('Please enter the 6-digit OTP');
-            return;
-        }
-        try {
-            setLoading(true);
-            const token = await getToken();
-            const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
-            const res = await fetch(`${backendUrl}/api/auth/verify-phone`, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ phone, otp })
-            });
-            const data = await res.json();
-            if (data.success) {
-                updateUser({ phone_verified: true, phone });
-                onClose();
-            } else {
-                alert(data.message || 'Verification failed');
-            }
-        } catch (err) {
-            console.error('OTP Verification Error:', err);
-            alert('Verification failed');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const renderContent = () => {
         switch (step) {
@@ -143,77 +75,7 @@ export default function AuthModal({ isOpen, onClose, mode = 'auth' }) { // mode 
                         </div>
                     </>
                 );
-            case 'phone':
-                return (
-                    <>
-                        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>Verify Mobile Number</h2>
-                            <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>Please provide your mobile number for verification.</p>
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', width: '100%' }}>
-                            <div style={{ position: 'relative' }}>
-                                <Phone size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
-                                <input 
-                                    type="tel" 
-                                    placeholder="Mobile Number" 
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
-                                    style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '14px', border: '1px solid #e5e7eb', fontSize: '1rem', outline: 'none' }}
-                                />
-                            </div>
-                            <button
-                                onClick={handleRequestOtp}
-                                disabled={loading}
-                                style={{
-                                    width: '100%', padding: '16px', borderRadius: '14px', border: 'none',
-                                    background: '#0c831f', color: '#fff', fontWeight: 'bold', fontSize: '1rem',
-                                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
-                                }}
-                            >
-                                {loading && <Loader2 className="animate-spin" size={20} />}
-                                <span>{loading ? 'Sending OTP...' : 'Send OTP'}</span>
-                                {!loading && <ArrowRight size={18} />}
-                            </button>
-                        </div>
-                    </>
-                );
-            case 'otp':
-                return (
-                    <>
-                        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>Enter OTP</h2>
-                            <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>Verification code sent to {phone}</p>
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', width: '100%' }}>
-                            <input 
-                                type="text" 
-                                placeholder="6-digit OTP" 
-                                value={otp}
-                                onChange={(e) => setOtp(e.target.value)}
-                                maxLength={6}
-                                style={{ width: '100%', padding: '16px', borderRadius: '14px', border: '1px solid #e5e7eb', fontSize: '1.5rem', textAlign: 'center', letterSpacing: '0.5rem', outline: 'none' }}
-                            />
-                            <button
-                                onClick={handleVerifyOtp}
-                                disabled={loading}
-                                style={{
-                                    width: '100%', padding: '16px', borderRadius: '14px', border: 'none',
-                                    background: '#0c831f', color: '#fff', fontWeight: 'bold', fontSize: '1rem',
-                                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
-                                }}
-                            >
-                                {loading && <Loader2 className="animate-spin" size={20} />}
-                                <span>{loading ? 'Verifying...' : 'Verify & Continue'}</span>
-                            </button>
-                            <button 
-                                onClick={() => setStep('phone')}
-                                style={{ background: 'none', border: 'none', color: '#0c831f', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem' }}
-                            >
-                                Change Number
-                            </button>
-                        </div>
-                    </>
-                );
+
         }
     };
 
@@ -235,19 +97,18 @@ export default function AuthModal({ isOpen, onClose, mode = 'auth' }) { // mode 
                 }} 
                 onClick={(e) => e.stopPropagation()}
             >
-                {mode !== 'verify' && (
-                    <button 
-                        onClick={onClose}
-                        style={{
-                            position: 'absolute', top: '1.5rem', right: '1.5rem',
-                            background: '#f3f4f6', border: 'none', borderRadius: '50%',
-                            width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            cursor: 'pointer', color: '#6b7280'
-                        }}
-                    >
-                        <X size={18} />
-                    </button>
-                )}
+                <button 
+                    onClick={onClose}
+                    style={{
+                        position: 'absolute', top: '1.5rem', right: '1.5rem',
+                        background: '#f3f4f6', border: 'none', borderRadius: '50%',
+                        width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        cursor: 'pointer', color: '#6b7280'
+                    }}
+                >
+                    <X size={18} />
+                </button>
+
 
                 {renderContent()}
 

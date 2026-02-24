@@ -23,13 +23,7 @@ export default function Navbar() {
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState('auth');
 
-  // Enforce mobile verification if logged in but not verified
-  useEffect(() => {
-    if (user && !user.phone_verified) {
-      setAuthMode('verify');
-      setAuthModalOpen(true);
-    }
-  }, [user]);
+
 
   const handleOpenAuth = () => {
     setAuthMode('auth');

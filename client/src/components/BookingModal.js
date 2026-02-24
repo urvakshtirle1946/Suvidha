@@ -41,7 +41,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
       setFetchingLabs(true);
       try {
           const apiUrl = getApiUrl();
-          const cleanName = serviceName.split(' at ')[0]; 
+          const cleanName = (serviceName || '').split(' at ')[0]; 
           const res = await fetch(`${apiUrl}/api/services?search=${encodeURIComponent(cleanName)}`);
           if (res.ok) {
               const data = await res.json();
@@ -134,7 +134,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                     userPhone: user?.phone || guestPhone || '',
                     age: 0,
                     gender: 'Not Specified',
-                    date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+                    date: (new Date(Date.now() + 86400000).toISOString() || '').split('T')[0],
                     time: selectedTime,
                     address: location || 'India',
                     serviceName: currentService.name,

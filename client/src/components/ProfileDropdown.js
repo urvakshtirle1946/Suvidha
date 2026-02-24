@@ -44,7 +44,7 @@ export default function ProfileDropdown({ onOpenSettings }) {
                 </div>
                 <div className="hide-on-mobile" style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
                     <span style={{ fontWeight: '600', fontSize: '0.9rem', color: '#1f2937' }}>
-                        Hi, {user.name.split(' ')[0]}
+                        Hi, {(user.name || 'User').split(' ')[0]}
                     </span>
                 </div>
                 <ChevronDown size={14} color="#6b7280" />

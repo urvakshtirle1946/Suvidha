@@ -60,7 +60,8 @@ exports.authgearSync = async (req, res) => {
         });
     } catch (error) {
         console.error('Authgear Sync Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error during sync' });
+        console.error('Authgear User Context:', JSON.stringify(authgearUser, null, 2));
+        res.status(500).json({ success: false, message: 'Server Error during sync', error: error.message });
     }
 };
 

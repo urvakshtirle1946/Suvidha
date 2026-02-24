@@ -19,7 +19,7 @@ function ProviderList({ serviceName, currentHospitalId, onSelect }) {
         const fetchProviders = async () => {
             try {
                 const apiUrl = getApiUrl();
-                const cleanName = serviceName.split(' at ')[0];
+                const cleanName = (serviceName || '').split(' at ')[0];
                 const res = await fetch(`${apiUrl}/api/services?search=${encodeURIComponent(cleanName)}`);
                 if (res.ok) {
                     const data = await res.json();

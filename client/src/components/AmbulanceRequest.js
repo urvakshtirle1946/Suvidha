@@ -41,7 +41,7 @@ export default function AmbulanceRequest() {
                 const data = await res.json();
                 
                 if (data && data.display_name) {
-                    const shortAddress = data.display_name.split(',').slice(0, 2).join(', ').trim();
+                    const shortAddress = (data.display_name || '').split(',').slice(0, 2).join(', ').trim();
                     setAddress(shortAddress || 'Your Location');
                 } else if (data && data.address) {
                    // Fallback for different data structures

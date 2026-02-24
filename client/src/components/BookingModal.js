@@ -20,7 +20,6 @@ export default function BookingModal({ isOpen, onClose, service }) {
   const [labs, setLabs] = useState([]);
   const [fetchingLabs, setFetchingLabs] = useState(false);
   const [bookingId, setBookingId] = useState(null);
-  const [bookingId, setBookingId] = useState(null);
 
   useEffect(() => {
      if (isOpen && service) {

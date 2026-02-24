@@ -11,7 +11,6 @@ import LocationModal from './LocationModal';
 import SettingsModal from './SettingsModal';
 import ProfileDropdown from './ProfileDropdown';
 import AuthModal from './AuthModal';
-import CompleteProfileModal from './CompleteProfileModal';
 import SterlingGateKineticNavigation from './ui/SterlingGateKineticNavigation';
 
 export default function Navbar() {
@@ -153,8 +152,7 @@ export default function Navbar() {
         mode={authMode}
       />
 
-      {/* Profile Completion Modal (Auto-triggers if user is incomplete) */}
-      <CompleteProfileModal />
+      {/* Profile Completion Modal removed from global navbar - moved to checkout logic */}
 
       {/* Settings Modal */}
       <SettingsModal

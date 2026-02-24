@@ -1,9 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { Loader2, Phone, Mail, User, ArrowRight } from 'lucide-react';
+import { Loader2, Phone, Mail, User, ArrowRight, X } from 'lucide-react';
 
-export default function CompleteProfileModal() {
+export default function CompleteProfileModal({ isOpen, onClose }) {
     const { user, isLoaded, getToken, updateUser } = useAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -22,7 +22,7 @@ export default function CompleteProfileModal() {
         }
     }, [user]);
 
-    if (!isLoaded || !user) return null;
+    if (!isLoaded || !user || !isOpen) return null;
 
     const needsPhone = !user.phone || !user.phone_verified;
     const needsDetails = (!user.name);
@@ -61,6 +61,7 @@ export default function CompleteProfileModal() {
             const data = await res.json();
             if (data.success && data.user) {
                 updateUser(data.user);
+                if (onClose) onClose();
             } else {
                 setError(data.message || 'Failed to sync profile');
             }
@@ -87,6 +88,18 @@ export default function CompleteProfileModal() {
                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
                 animation: 'modalSlideUp 0.3s ease-out'
             }}>
+                <button 
+                    onClick={onClose}
+                    style={{
+                        position: 'absolute', top: '1.5rem', right: '1.5rem',
+                        background: '#f3f4f6', border: 'none', borderRadius: '50%',
+                        width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        cursor: 'pointer', color: '#6b7280'
+                    }}
+                >
+                    <X size={18} />
+                </button>
+
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                     <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>
                         Complete Your Profile

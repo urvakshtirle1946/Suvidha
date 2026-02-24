@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
 import { X, Calendar, User, MapPin, CheckCircle, Home, Plus, ArrowUpDown, Clock } from 'lucide-react';
 import AuthModal from './AuthModal';
+import CompleteProfileModal from './CompleteProfileModal';
 import { getApiUrl, getImageUrl } from '@/utils/api';
 
 export default function BookingModal({ isOpen, onClose, service }) {
@@ -15,6 +16,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
   const [selectedTime, setSelectedTime] = useState(null);
   const [transactionId, setTransactionId] = useState('');
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [paymentMode, setPaymentMode] = useState(null); // 'online' or 'hospital'
   const [labs, setLabs] = useState([]);
@@ -166,10 +168,14 @@ export default function BookingModal({ isOpen, onClose, service }) {
   };
 
   const handlePayOnline = () => {
-        if (!user || !user.phone_verified) { 
-            alert('Please login and verify your phone number first.'); 
+        if (!user) { 
+            alert('Please login to continue.'); 
             setAuthModalOpen(true);
             return; 
+        }
+        if (!user.phone_verified || !user.name) {
+            setProfileModalOpen(true);
+            return;
         }
         if (!selectedLab || !selectedTime) return;
         setPaymentMode('online');
@@ -177,10 +183,14 @@ export default function BookingModal({ isOpen, onClose, service }) {
   };
   
   const handlePayAtHospital = () => {
-        if (!user || !user.phone_verified) { 
-             alert('Please login and verify your phone number first.'); 
+        if (!user) { 
+             alert('Please login to continue.'); 
              setAuthModalOpen(true);
              return; 
+        }
+        if (!user.phone_verified || !user.name) {
+            setProfileModalOpen(true);
+            return;
         }
         if (!selectedLab || !selectedTime) return;
         setPaymentMode('hospital');
@@ -519,6 +529,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
       </div>
     </div>
     <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+    <CompleteProfileModal isOpen={profileModalOpen} onClose={() => setProfileModalOpen(false)} />
     </>
   );
 }

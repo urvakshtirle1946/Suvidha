@@ -23,11 +23,26 @@ exports.authgearSync = async (req, res) => {
 
         const displayName = authgearName || authgearUser.preferred_username || (email && typeof email === 'string' ? email.split('@')[0] : 'User');
 
-        // Upsert user based on Authgear sub, email or phone
+        let linkedEmail = null;
+        let linkedGoogleId = null;
+        const linkedToken = req.headers['x-linked-token'];
+        if (linkedToken) {
+            try {
+                const decoded = jwt.verify(linkedToken, process.env.JWT_SECRET || 'zelp_secret_key_2024');
+                linkedEmail = decoded.email || null;
+                linkedGoogleId = decoded.authgear_id || decoded.id || null;
+            } catch (e) {
+                console.error('Invalid linked token', e);
+            }
+        }
+
+        const searchEmail = email || linkedEmail;
+
+        // Upsert user based on Authgear sub, email or phone (and also check google ID if linked)
         let user;
         const checkUser = await db.query(
-            'SELECT * FROM users WHERE authgear_id = $1 OR (email IS NOT NULL AND email = $2) OR (phone IS NOT NULL AND phone = $3)', 
-            [sub, email, phone]
+            'SELECT * FROM users WHERE authgear_id = $1 OR (email IS NOT NULL AND email = $2) OR (phone IS NOT NULL AND phone = $3) OR (authgear_id = $4 AND $4 IS NOT NULL)', 
+            [sub, searchEmail, phone, linkedGoogleId]
         );
 
         if (checkUser.rows.length > 0) {

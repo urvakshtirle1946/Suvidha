@@ -61,12 +61,20 @@ export function AuthProvider({ children }) {
         try {
           const token = authgear.accessToken;
           const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+          
+          const headers = {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+          };
+          
+          const customToken = localStorage.getItem('zelp_custom_token');
+          if (customToken) {
+              headers['X-Linked-Token'] = customToken;
+          }
+
           const res = await fetch(`${backendUrl}/api/auth/sync`, {
               method: 'POST',
-              headers: {
-                  'Authorization': `Bearer ${token}`,
-                  'Content-Type': 'application/json'
-              }
+              headers
           });
           const backendData = await res.json();
           if (backendData.success) {

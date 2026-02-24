@@ -8,10 +8,8 @@ export default function CompleteProfileModal() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     
-    // OTP Flow
-    const [phone, setPhone] = useState('');
-    const [otp, setOtp] = useState('');
-    const [otpSent, setOtpSent] = useState(false);
+    // OTP Flow (Replaced by Authgear Redirect)
+    const { login } = useAuth();
 
     // Profile Flow
     const [name, setName] = useState('');
@@ -34,57 +32,13 @@ export default function CompleteProfileModal() {
 
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
 
-    const handleSendOtp = async () => {
-        if (!phone || phone.length < 10) return setError('Enter a valid 10-digit mobile number');
-        setError('');
+    const handleAuthgearRedirect = async () => {
         try {
             setLoading(true);
-            const token = await getToken();
-            const res = await fetch(`${backendUrl}/api/auth/request-verification-otp`, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ phone })
-            });
-            const data = await res.json();
-            if (data.success) {
-                setOtpSent(true);
-            } else {
-                setError(data.message || 'Failed to send OTP');
-            }
+            await login(); // Triggers authgear.startAuthentication()
         } catch (err) {
-            console.error('OTP Request Error:', err);
-            setError('Network error');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleVerifyOtp = async () => {
-        if (!otp || otp.length < 4) return setError('Enter a valid OTP');
-        setError('');
-        try {
-            setLoading(true);
-            const token = await getToken();
-            const res = await fetch(`${backendUrl}/api/auth/verify-phone`, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ phone, otp })
-            });
-            const data = await res.json();
-            if (data.success) {
-                updateUser({ phone, phone_verified: true });
-            } else {
-                setError(data.message || 'Verification failed');
-            }
-        } catch (err) {
-            console.error('OTP Verify Error:', err);
-            setError('Network error');
+            console.error('Authgear Redirect Error:', err);
+            setError('Failed to redirect to mobile authentication.');
         } finally {
             setLoading(false);
         }
@@ -150,72 +104,22 @@ export default function CompleteProfileModal() {
 
                 {needsPhone ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        {!otpSent ? (
-                            <>
-                                <div style={{ position: 'relative' }}>
-                                    <Phone size={20} color="#9ca3af" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
-                                    <input
-                                        type="tel"
-                                        placeholder="Mobile Number"
-                                        value={phone}
-                                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                                        style={{
-                                            width: '100%', padding: '16px 16px 16px 48px',
-                                            borderRadius: '12px', border: '1px solid #e5e7eb',
-                                            fontSize: '1rem', background: '#f9fafb'
-                                        }}
-                                        maxLength={10}
-                                    />
-                                </div>
-                                <button
-                                    onClick={handleSendOtp}
-                                    disabled={loading || phone.length < 10}
-                                    style={{
-                                        width: '100%', padding: '16px', borderRadius: '12px', border: 'none',
-                                        background: phone.length === 10 ? '#0c831f' : '#9ca3af', 
-                                        color: '#fff', fontWeight: 'bold', fontSize: '1rem',
-                                        cursor: phone.length === 10 ? 'pointer' : 'not-allowed',
-                                        display: 'flex', justifyContent: 'center', alignItems: 'center'
-                                    }}
-                                >
-                                    {loading ? <Loader2 size={20} className="spin" /> : 'Send OTP'}
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <input
-                                    type="text"
-                                    placeholder="Enter OTP"
-                                    value={otp}
-                                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                                    style={{
-                                        width: '100%', padding: '16px', textAlign: 'center', letterSpacing: '8px',
-                                        borderRadius: '12px', border: '1px solid #e5e7eb',
-                                        fontSize: '1.25rem', background: '#f9fafb', fontWeight: 'bold'
-                                    }}
-                                    maxLength={6}
-                                />
-                                <button
-                                    onClick={handleVerifyOtp}
-                                    disabled={loading || otp.length < 4}
-                                    style={{
-                                        width: '100%', padding: '16px', borderRadius: '12px', border: 'none',
-                                        background: otp.length >= 4 ? '#0c831f' : '#9ca3af', 
-                                        color: '#fff', fontWeight: 'bold', fontSize: '1rem',
-                                        cursor: otp.length >= 4 ? 'pointer' : 'not-allowed',
-                                        display: 'flex', justifyContent: 'center', alignItems: 'center'
-                                    }}
-                                >
-                                    {loading ? <Loader2 size={20} className="spin" /> : 'Verify & Link'}
-                                </button>
-                                <button
-                                    onClick={() => setOtpSent(false)}
-                                    style={{ background: 'transparent', border: 'none', color: '#6b7280', marginTop: '0.5rem', cursor: 'pointer', fontSize: '0.9rem' }}
-                                >
-                                    Change Mobile Number
-                                </button>
-                            </>
-                        )}
+                        <p style={{ color: '#4b5563', fontSize: '0.95rem', marginBottom: '1rem', textAlign: 'center' }}>
+                            We need to securely verify your mobile number before you can continue using Zelp.
+                        </p>
+                        <button
+                            onClick={handleAuthgearRedirect}
+                            disabled={loading}
+                            style={{
+                                width: '100%', padding: '16px', borderRadius: '12px', border: 'none',
+                                background: '#0c831f', color: '#fff', fontWeight: 'bold', fontSize: '1rem',
+                                cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px'
+                            }}
+                        >
+                            {loading ? <Loader2 size={20} className="spin" /> : (
+                                <><span>Verify Mobile Number</span><ArrowRight size={18} /></>
+                            )}
+                        </button>
                     </div>
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

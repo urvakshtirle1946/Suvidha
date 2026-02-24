@@ -21,12 +21,31 @@ exports.authgearSync = async (req, res) => {
     try {
         const sub = authgearPayload.sub;
         const email = userInfo.email || authgearPayload.email || null;
-        const phone_number = userInfo.phone_number || authgearPayload.phone_number || null;
+        
+        // Robust Phone Number Extraction
+        const rawPhone = 
+            userInfo.phone_number || 
+            authgearPayload.phone_number || 
+            authgearPayload?.identities?.[0]?.claims?.phone_number ||
+            userInfo?.custom_attributes?.phone_number ||
+            authgearPayload?.custom_attributes?.phone_number ||
+            null;
+            
+        if (!rawPhone) {
+            console.log("🚨 Phone missing from Authgear payload!", { userInfo, authgearPayload });
+        }
+
         let phone_number_verified = userInfo.phone_number_verified;
         if (phone_number_verified === undefined) phone_number_verified = authgearPayload.phone_number_verified;
+        
+        // Deep verification check
+        if (phone_number_verified === undefined) {
+             phone_number_verified = authgearPayload?.identities?.[0]?.claims?.phone_number_verified || false;
+        }
+
         const authgearName = userInfo.name || authgearPayload.name || userInfo.preferred_username || authgearPayload.preferred_username || null;
 
-        let phone = phone_number || null;
+        let phone = rawPhone || null;
         if (phone && phone.startsWith('+91')) {
             phone = phone.substring(3);
         } else if (phone && phone.startsWith('91') && phone.length === 12) {

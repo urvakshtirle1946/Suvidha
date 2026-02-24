@@ -81,7 +81,7 @@ export default function AuthModal({ isOpen, onClose }) {
                                         size="large"
                                         text="continue_with"
                                         shape="pill"
-                                        width="100%"
+                                        width={300}
                                     />
                                 </GoogleOAuthProvider>
                             </div>

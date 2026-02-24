@@ -26,7 +26,7 @@ export default function AuthModal({ isOpen, onClose, mode = 'auth' }) { // mode 
         try {
             setLoading(true);
             await login({
-                ...(social ? { prompt: 'login' } : {})
+                ...(social ? { prompt: 'login', colorScheme: 'light', x_oauth_provider_alias: 'google' } : {})
             });
             onClose();
         } catch (err) {

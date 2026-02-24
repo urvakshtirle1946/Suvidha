@@ -13,7 +13,7 @@ exports.authgearSync = async (req, res) => {
     }
 
     try {
-        const { sub, email, phone_number } = authgearUser;
+        const { sub, email, phone_number, phone_number_verified } = authgearUser;
         let phone = phone_number;
         if (phone && phone.startsWith('+91')) {
             phone = phone.substring(3);
@@ -27,16 +27,18 @@ exports.authgearSync = async (req, res) => {
 
         if (checkUser.rows.length > 0) {
             const existingUser = checkUser.rows[0];
+            // Update authgear_id, email, and synchronization fields
+            // We trust Authgear's phone_number_verified status
             await db.query(
-                'UPDATE users SET authgear_id = $1, email = COALESCE($2, email), phone = COALESCE($3, phone) WHERE id = $4',
-                [sub, email, phone, existingUser.id]
+                'UPDATE users SET authgear_id = $1, email = COALESCE($2, email), phone = COALESCE($3, phone), phone_verified = COALESCE($5, phone_verified) WHERE id = $4',
+                [sub, email, phone, existingUser.id, !!phone_number_verified]
             );
             const updated = await db.query('SELECT * FROM users WHERE id = $1', [existingUser.id]);
             user = updated.rows[0];
         } else {
             const insertRes = await db.query(
-                'INSERT INTO users (name, email, phone, role, authgear_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-                ['User', email, phone, 'user', sub]
+                'INSERT INTO users (name, email, phone, role, authgear_id, phone_verified) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+                ['User', email, phone, 'user', sub, !!phone_number_verified]
             );
             user = insertRes.rows[0];
         }

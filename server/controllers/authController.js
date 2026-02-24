@@ -287,7 +287,7 @@ exports.googleLogin = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     const { name, email, phone, password } = req.body;
 
-    const userEmail = req.user?.email || email || null;
+    const userEmail = req.user?.email || (email ? email : null);
     const userSub = req.user?.sub || null;
     const userPhone = req.user?.phone_number || req.user?.phone || phone || null;
 
@@ -310,9 +310,11 @@ exports.updateProfile = async (req, res) => {
 
         const targetId = checkUser.rows[0].id;
 
+        const targetEmail = email ? email : checkUser.rows[0].email; // Keep existing if new is empty
+
         await db.query(
             'UPDATE users SET name = $1, email = $2, password = $3, phone = COALESCE(phone, $4) WHERE id = $5',
-            [name, email, hashedPassword, phone, targetId]
+            [name, targetEmail, hashedPassword, phone, targetId]
         );
 
         // Fetch updated user to return

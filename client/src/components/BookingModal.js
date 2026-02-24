@@ -20,8 +20,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
   const [labs, setLabs] = useState([]);
   const [fetchingLabs, setFetchingLabs] = useState(false);
   const [bookingId, setBookingId] = useState(null);
-  const [guestName, setGuestName] = useState('');
-  const [guestPhone, setGuestPhone] = useState('');
+  const [bookingId, setBookingId] = useState(null);
 
   useEffect(() => {
      if (isOpen && service) {
@@ -130,8 +129,8 @@ export default function BookingModal({ isOpen, onClose, service }) {
             } else {
                 // Standard new booking flow
                 const bookingData = {
-                    name: user?.name || guestName || 'Guest User',
-                    userPhone: user?.phone || guestPhone || '',
+                    name: user?.name,
+                    userPhone: user?.phone,
                     age: 0,
                     gender: 'Not Specified',
                     date: (new Date(Date.now() + 86400000).toISOString() || '').split('T')[0],
@@ -168,8 +167,9 @@ export default function BookingModal({ isOpen, onClose, service }) {
   };
 
   const handlePayOnline = () => {
-        if (!user && (!guestName || !guestPhone)) { 
-            alert('Please enter your details first'); 
+        if (!user || !user.phone_verified) { 
+            alert('Please login and verify your phone number first.'); 
+            setAuthModalOpen(true);
             return; 
         }
         if (!selectedLab || !selectedTime) return;
@@ -178,8 +178,9 @@ export default function BookingModal({ isOpen, onClose, service }) {
   };
   
   const handlePayAtHospital = () => {
-        if (!user && (!guestName || !guestPhone)) { 
-             alert('Please enter your details first'); 
+        if (!user || !user.phone_verified) { 
+             alert('Please login and verify your phone number first.'); 
+             setAuthModalOpen(true);
              return; 
         }
         if (!selectedLab || !selectedTime) return;
@@ -218,29 +219,19 @@ export default function BookingModal({ isOpen, onClose, service }) {
             {step === 1 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                     
-                    {/* Guest Information */}
+                    {/* Authentication Requirement */}
                     {!user && (
-                        <div style={{ background: '#f9fafb', padding: '1rem', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
-                                 <User size={18} color="#ff6f61" />
-                                 <span style={{ fontWeight: '700', color: '#374151' }}>Your Details</span>
-                            </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                                <input 
-                                    type="text" 
-                                    placeholder="Full Name" 
-                                    value={guestName}
-                                    onChange={(e) => setGuestName(e.target.value)}
-                                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none' }}
-                                />
-                                <input 
-                                    type="tel" 
-                                    placeholder="Phone Number" 
-                                    value={guestPhone}
-                                    onChange={(e) => setGuestPhone(e.target.value)}
-                                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none' }}
-                                />
-                            </div>
+                        <div style={{ background: '#fef2f2', padding: '1rem', borderRadius: '12px', border: '1px solid #fca5a5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                 <User size={18} color="#dc2626" />
+                                 <span style={{ fontWeight: '600', color: '#991b1b', fontSize: '0.9rem' }}>Login required to book</span>
+                             </div>
+                             <button 
+                                onClick={() => setAuthModalOpen(true)}
+                                style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '0.8rem' }}
+                             >
+                                Login
+                             </button>
                         </div>
                     )}
                     
@@ -463,7 +454,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                         <button 
                             onClick={handlePayAtHospital}
-                            disabled={loading || !selectedTime || !selectedLab || (!user && (!guestName || !guestPhone))}
+                            disabled={loading || !selectedTime || !selectedLab || !user}
                             style={{ 
                                 flex: 1,
                                 background: '#fff',
@@ -481,7 +472,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                         </button>
                         <button 
                             onClick={handlePayOnline}
-                            disabled={loading || !selectedTime || !selectedLab || (!user && (!guestName || !guestPhone))}
+                            disabled={loading || !selectedTime || !selectedLab || !user}
                             style={{ 
                                 flex: 1,
                                 background: (selectedTime && selectedLab) ? '#ff6f61' : '#e5e7eb', 

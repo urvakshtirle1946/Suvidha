@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { createRemoteJWKSet, jwtVerify } = require('jose');
+const db = require('../db');
 require('dotenv').config();
 
 const JWKS = process.env.NEXT_PUBLIC_AUTHGEAR_ENDPOINT 
@@ -63,8 +64,45 @@ const requireRole = (allowedRoles) => {
   };
 };
 
+// Middleware to enforce Phone Verification Application Rule
+const requireVerifiedPhone = async (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized: User not authenticated' });
+  }
+
+  // Check roles - Admins bypass this phone rule if necessary, or enforce globally. Enforcing globally based on user prompt.
+  const userSub = req.user.sub || req.user.id || null;
+  const userEmail = req.user.email || null;
+  const userPhone = req.user.phone_number || req.user.phone || null;
+
+  try {
+    const checkUser = await db.query(
+      'SELECT phone_verified FROM users WHERE authgear_id = $1 OR email = $2 OR phone = $3', 
+      [userSub, userEmail, userPhone]
+    );
+
+    if (checkUser.rows.length === 0) {
+       return res.status(403).json({ success: false, message: 'Forbidden: User identity not found in database.' });
+    }
+
+    if (checkUser.rows[0].phone_verified !== true) {
+       return res.status(403).json({ 
+           success: false, 
+           message: 'Forbidden: Phone verification is strictly required to access this resource.',
+           requires_verification: true 
+       });
+    }
+
+    next();
+  } catch (error) {
+    console.error("RequireVerifiedPhone Middleware Error:", error);
+    return res.status(500).json({ success: false, message: 'Internal Server Error during verification check' });
+  }
+};
+
 module.exports = {
   verifyJWT,
-  requireRole
+  requireRole,
+  requireVerifiedPhone
 };
 

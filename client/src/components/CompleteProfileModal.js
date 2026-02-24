@@ -25,7 +25,7 @@ export default function CompleteProfileModal() {
     if (!isLoaded || !user) return null;
 
     const needsPhone = !user.phone || !user.phone_verified;
-    const needsDetails = (!user.name || !user.email);
+    const needsDetails = (!user.name);
 
     // If both are satisfied, don't show modal
     if (!needsPhone && !needsDetails) return null;
@@ -45,7 +45,7 @@ export default function CompleteProfileModal() {
     };
 
     const handleUpdateProfile = async () => {
-        if (!name || !email) return setError('Name and email are required');
+        if (!name) return setError('Full Name is required');
         setError('');
         try {
             setLoading(true);
@@ -141,7 +141,7 @@ export default function CompleteProfileModal() {
                             <Mail size={20} color="#9ca3af" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
                             <input
                                 type="email"
-                                placeholder="Email Address"
+                                placeholder="Email Address (Optional)"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 style={{
@@ -153,12 +153,12 @@ export default function CompleteProfileModal() {
                         </div>
                         <button
                             onClick={handleUpdateProfile}
-                            disabled={loading || !name || !email}
+                            disabled={loading || !name}
                             style={{
                                 width: '100%', padding: '16px', borderRadius: '12px', border: 'none',
-                                background: name && email ? '#0c831f' : '#9ca3af', 
+                                background: name ? '#0c831f' : '#9ca3af', 
                                 color: '#fff', fontWeight: 'bold', fontSize: '1rem',
-                                cursor: name && email ? 'pointer' : 'not-allowed',
+                                cursor: name ? 'pointer' : 'not-allowed',
                                 display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginTop: '0.5rem'
                             }}
                         >

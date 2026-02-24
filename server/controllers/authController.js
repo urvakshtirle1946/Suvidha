@@ -98,7 +98,15 @@ exports.verifyPhone = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
         }
 
-        await db.query('UPDATE users SET phone_verified = true, phone = $1 WHERE phone = $1 OR authgear_id = $2', [phone, req.user?.sub]);
+        const userEmail = req.user?.email || null;
+        const userSub = req.user?.sub || null;
+        
+        if (userEmail || userSub) {
+            await db.query('UPDATE users SET phone_verified = true, phone = $1 WHERE phone = $1 OR email = $2 OR authgear_id = $3', [phone, userEmail, userSub]);
+        } else {
+            await db.query('UPDATE users SET phone_verified = true, phone = $1 WHERE phone = $1', [phone]);
+        }
+
         await db.query('DELETE FROM otp_codes WHERE phone = $1', [phone]);
 
         res.json({ success: true, message: 'Phone verified successfully' });
@@ -254,8 +262,16 @@ exports.googleLogin = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     const { name, email, phone, password } = req.body;
 
+    const userEmail = req.user?.email || email || null;
+    const userSub = req.user?.sub || null;
+    const userPhone = req.user?.phone_number || req.user?.phone || phone || null;
+
     // Check if user exists
-    const checkUser = await db.query('SELECT * FROM users WHERE phone = $1', [phone]);
+    const checkUser = await db.query(
+        'SELECT * FROM users WHERE authgear_id = $1 OR email = $2 OR phone = $3', 
+        [userSub, userEmail, userPhone]
+    );
+
     if (checkUser.rows.length === 0) {
         return res.status(404).json({ success: false, message: 'User not found' });
     }
@@ -267,18 +283,20 @@ exports.updateProfile = async (req, res) => {
             hashedPassword = await bcrypt.hash(password, salt);
         }
 
+        const targetId = checkUser.rows[0].id;
+
         await db.query(
-            'UPDATE users SET name = $1, email = $2, password = $3 WHERE phone = $4',
-            [name, email, hashedPassword, phone]
+            'UPDATE users SET name = $1, email = $2, password = $3, phone = COALESCE(phone, $4) WHERE id = $5',
+            [name, email, hashedPassword, phone, targetId]
         );
 
         // Fetch updated user to return
-        const updatedUserRaw = await db.query('SELECT * FROM users WHERE phone = $1', [phone]);
+        const updatedUserRaw = await db.query('SELECT * FROM users WHERE id = $1', [targetId]);
         const updatedUser = updatedUserRaw.rows[0];
 
         // Generate new token with updated details
         const token = jwt.sign(
-            { phone: updatedUser.phone, role: updatedUser.role, name: updatedUser.name, email: updatedUser.email },
+            { id: updatedUser.id || updatedUser.phone, phone: updatedUser.phone, role: updatedUser.role, name: updatedUser.name, email: updatedUser.email },
             process.env.JWT_SECRET || 'secret',
             { expiresIn: '30d' }
         );
@@ -288,11 +306,12 @@ exports.updateProfile = async (req, res) => {
             message: 'Profile updated successfully',
             token,
             user: {
-                id: updatedUser.phone,
+                id: updatedUser.phone || updatedUser.id,
                 name: updatedUser.name,
                 email: updatedUser.email,
                 phone: updatedUser.phone,
-                role: updatedUser.role
+                role: updatedUser.role,
+                phone_verified: updatedUser.phone_verified
             }
         });
 

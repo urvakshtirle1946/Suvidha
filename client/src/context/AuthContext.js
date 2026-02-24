@@ -86,6 +86,10 @@ export function AuthProvider({ children }) {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
           };
+          
+          if (customToken) {
+              headers['X-Linked-Token'] = customToken;
+          }
 
           const res = await fetch(`${backendUrl}/api/auth/sync`, {
               method: 'POST',

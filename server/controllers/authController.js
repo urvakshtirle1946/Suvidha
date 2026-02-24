@@ -33,40 +33,55 @@ exports.authgearSync = async (req, res) => {
 
         let linkedEmail = null;
         let linkedGoogleId = null;
+        let linkedName = null;
+        let linkedPhone = null;
         const linkedToken = req.headers['x-linked-token'];
         if (linkedToken) {
             try {
                 const decoded = jwt.verify(linkedToken, process.env.JWT_SECRET || 'zelp_secret_key_2024');
                 linkedEmail = decoded.email || null;
                 linkedGoogleId = decoded.authgear_id || decoded.id || null;
+                linkedName = decoded.name || null;
+                linkedPhone = decoded.phone || null;
             } catch (e) {
                 console.error('Invalid linked token', e);
             }
         }
 
         const searchEmail = email || linkedEmail;
+        const finalPhone = phone || linkedPhone;
+        
+        // Emphasize Google account names over blank placeholders
+        let finalDisplayName = authgearName || linkedName || (searchEmail && typeof searchEmail === 'string' ? searchEmail.split('@')[0] : 'User');
+        if (finalDisplayName === 'User' && linkedName && linkedName !== 'User') finalDisplayName = linkedName;
 
-        const forcedPhoneVerified = phone ? true : false; 
+        const forcedPhoneVerified = finalPhone ? true : false; 
 
         // Upsert user based on Authgear sub, email or phone (and also check google ID if linked)
         let user;
         const checkUser = await db.query(
             'SELECT * FROM users WHERE authgear_id = $1 OR (email IS NOT NULL AND email = $2) OR (phone IS NOT NULL AND phone = $3) OR (authgear_id = $4 AND $4 IS NOT NULL)', 
-            [sub, searchEmail, phone, linkedGoogleId]
+            [sub, searchEmail, finalPhone, linkedGoogleId]
         );
 
         if (checkUser.rows.length > 0) {
             const existingUser = checkUser.rows[0];
             await db.query(
-                'UPDATE users SET authgear_id = $1, email = COALESCE($2, email), phone = COALESCE($3, phone), name = COALESCE(name, $5), phone_verified = $6 WHERE id = $4',
-                [sub, email, phone, existingUser.id, displayName, forcedPhoneVerified]
+                `UPDATE users 
+                 SET authgear_id = $1, 
+                     email = COALESCE(email, $2), 
+                     phone = COALESCE(phone, $3), 
+                     name = CASE WHEN name = 'User' OR name IS NULL THEN $5 ELSE name END, 
+                     phone_verified = $6 
+                 WHERE id = $4`,
+                [sub, searchEmail, finalPhone, existingUser.id, finalDisplayName, forcedPhoneVerified]
             );
             const updated = await db.query('SELECT * FROM users WHERE id = $1', [existingUser.id]);
             user = updated.rows[0];
         } else {
             const insertRes = await db.query(
                 'INSERT INTO users (name, email, phone, role, authgear_id, phone_verified) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-                [displayName, email, phone, 'user', sub, forcedPhoneVerified]
+                [finalDisplayName, searchEmail, finalPhone, 'user', sub, forcedPhoneVerified]
             );
             user = insertRes.rows[0];
         }

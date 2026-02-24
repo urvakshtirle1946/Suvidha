@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Menu, ArrowRight, User, Ambulance, X, ChevronUp, ChevronDown, CheckCircle2, Star, Clock, MapPin, Navigation } from 'lucide-react';
 import { motion, useDragControls, useAnimation } from 'framer-motion';
 import { useCart } from '@/context/CartContext';
+import { getApiUrl } from '@/utils/api';
 import dynamic from 'next/dynamic';
 
 const LiveMap = dynamic(() => import('./LiveMap'), {
@@ -33,15 +34,21 @@ export default function AmbulanceRequest() {
                 return;
             }
             try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.lat}&lon=${location.lng}`, {
-                    headers: { 'Accept-Language': 'en' },
-                    cache: 'force-cache'
-                });
+                const apiUrl = getApiUrl();
+                const res = await fetch(`${apiUrl}/api/location/reverse?lat=${location.lat}&lon=${location.lng}`);
+                
                 if (!res.ok) throw new Error('Geocoding rate limit');
                 const data = await res.json();
+                
                 if (data && data.display_name) {
                     const shortAddress = data.display_name.split(',').slice(0, 2).join(', ').trim();
                     setAddress(shortAddress || 'Your Location');
+                } else if (data && data.address) {
+                   // Fallback for different data structures
+                   const addressObj = data.address;
+                   const street = addressObj.road || addressObj.suburb || addressObj.neighbourhood || '';
+                   const city = addressObj.city || addressObj.town || '';
+                   setAddress(street ? `${street}, ${city}` : city || 'Your Location');
                 }
             } catch (err) {
                 console.warn('Geocoding fetch aborted / failed', err);

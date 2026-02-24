@@ -38,11 +38,18 @@ export function AuthProvider({ children }) {
         return;
       }
 
+      const clientID = process.env.NEXT_PUBLIC_AUTHGEAR_CLIENT_ID;
+      const endpoint = process.env.NEXT_PUBLIC_AUTHGEAR_ENDPOINT;
+
+      if (!clientID || !endpoint || endpoint === 'missing_endpoint' || clientID === 'missing_client_id') {
+        console.error("Authgear Configuration Error: NEXT_PUBLIC_AUTHGEAR_CLIENT_ID or NEXT_PUBLIC_AUTHGEAR_ENDPOINT is missing.");
+        setIsLoaded(true);
+        return;
+      }
+
       await authgear.configure({
-        clientID:
-          process.env.NEXT_PUBLIC_AUTHGEAR_CLIENT_ID || "missing_client_id",
-        endpoint:
-          process.env.NEXT_PUBLIC_AUTHGEAR_ENDPOINT || "missing_endpoint",
+        clientID,
+        endpoint,
         sessionType: "refresh_token",
       });
 

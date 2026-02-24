@@ -20,7 +20,7 @@ export default function AuthModal({ isOpen, onClose }) {
         try {
             setLoading(true);
             await login({
-                ...(social ? { prompt: 'login', colorScheme: 'light', x_oauth_provider_alias: 'google' } : {})
+                ...(social ? { prompt: 'login', colorScheme: 'light', oauthProviderAlias: 'google' } : {})
             });
             onClose();
         } catch (err) {

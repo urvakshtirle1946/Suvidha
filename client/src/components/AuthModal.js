@@ -25,12 +25,8 @@ export default function AuthModal({ isOpen, onClose, mode = 'auth' }) { // mode 
     const handleAuthgearLogin = async (social = false) => {
         try {
             setLoading(true);
-            const authgearModule = await import("@authgear/web");
-            const authgear = authgearModule.default;
-            
-            await authgear.startAuthentication({
-                redirectURI: window.location.origin + "/auth/callback",
-                ...(social ? { prompt: 'login' } : {}) // Example if social needs prompt
+            await login({
+                ...(social ? { prompt: 'login' } : {})
             });
             onClose();
         } catch (err) {

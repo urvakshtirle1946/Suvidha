@@ -86,7 +86,7 @@ export function AuthProvider({ children }) {
     initAuthgear();
   }, [initAuthgear]);
 
-  const login = async () => {
+  const login = async (options = {}) => {
     try {
       const authgear = await getAuthgear();
       if (!authgear || typeof window === "undefined") {
@@ -95,6 +95,7 @@ export function AuthProvider({ children }) {
 
       await authgear.startAuthentication({
         redirectURI: window.location.origin + "/auth/callback",
+        ...options
       });
     } catch (err) {
       console.error("Login error", err);

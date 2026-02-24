@@ -38,9 +38,12 @@ export default function AuthCallback() {
               headers['X-Linked-Token'] = customToken;
           }
 
+          const userInfo = await authgear.fetchUserInfo();
+
           await fetch(`${backendUrl}/api/auth/sync`, {
             method: 'POST',
-            headers
+            headers,
+            body: JSON.stringify({ userInfo })
           });
         }
 

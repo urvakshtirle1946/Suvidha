@@ -45,7 +45,7 @@ exports.authgearSync = async (req, res) => {
 
         const authgearName = userInfo.name || authgearPayload.name || userInfo.preferred_username || authgearPayload.preferred_username || null;
 
-        let phone = rawPhone || null;
+        let phone = rawPhone ? String(rawPhone) : null;
         if (phone && phone.startsWith('+91')) {
             phone = phone.substring(3);
         } else if (phone && phone.startsWith('91') && phone.length === 12) {

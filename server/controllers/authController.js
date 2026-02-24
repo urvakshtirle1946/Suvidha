@@ -254,8 +254,12 @@ exports.googleLogin = async (req, res) => {
         if (checkUser.rows.length > 0) {
             const existingUser = checkUser.rows[0];
             await db.query(
-                'UPDATE users SET authgear_id = COALESCE(authgear_id, $1), name = COALESCE(name, $2) WHERE id = $3',
-                [googleId, name, existingUser.id]
+                `UPDATE users 
+                 SET authgear_id = COALESCE(authgear_id, $1), 
+                     name = CASE WHEN name = 'User' OR name IS NULL THEN $2 ELSE name END, 
+                     email = COALESCE(email, $4) 
+                 WHERE id = $3`,
+                [googleId, name, existingUser.id, email]
             );
             const updated = await db.query('SELECT * FROM users WHERE id = $1', [existingUser.id]);
             user = updated.rows[0];

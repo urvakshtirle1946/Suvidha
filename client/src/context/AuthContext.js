@@ -47,6 +47,26 @@ export function AuthProvider({ children }) {
         return;
       }
 
+      let initialUser = null;
+      const customToken = localStorage.getItem('zelp_custom_token');
+      if (customToken) {
+          try {
+              const payloadUrl = customToken.split('.')[1];
+              const base64 = payloadUrl.replace(/-/g, '+').replace(/_/g, '/');
+              const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                  return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+              }).join(''));
+              initialUser = JSON.parse(jsonPayload);
+              setUser(initialUser);
+              setIsLoaded(true);
+              // We render UI instantly but allow Authgear to configure in background
+          } catch(e) {
+              console.error("Failed to parse custom token on load", e);
+              localStorage.removeItem('zelp_custom_token');
+              // Fallback to authgear check
+          }
+      }
+
       await authgear.configure({
         clientID,
         endpoint,
@@ -66,11 +86,6 @@ export function AuthProvider({ children }) {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
           };
-          
-          const customToken = localStorage.getItem('zelp_custom_token');
-          if (customToken) {
-              headers['X-Linked-Token'] = customToken;
-          }
 
           const res = await fetch(`${backendUrl}/api/auth/sync`, {
               method: 'POST',
@@ -79,9 +94,6 @@ export function AuthProvider({ children }) {
           });
           const backendData = await res.json();
           if (backendData.success) {
-            if (backendData.token) {
-                localStorage.setItem('zelp_custom_token', backendData.token);
-            }
             setUser({ ...userInfo, ...backendData.user });
           } else {
             setUser(userInfo);
@@ -91,25 +103,9 @@ export function AuthProvider({ children }) {
           setUser(userInfo);
         }
       } else {
-        // Fallback: Check if there is a custom Google JWT token instead
-        const customToken = localStorage.getItem('zelp_custom_token');
-        if (customToken) {
-           try {
-               // Decode JWT to get user object on frontend (minimal trust since backend validates)
-               const payloadUrl = customToken.split('.')[1];
-               const base64 = payloadUrl.replace(/-/g, '+').replace(/_/g, '/');
-               const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-                   return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-               }).join(''));
-               setUser(JSON.parse(jsonPayload));
-           } catch(e) {
-               console.error("Failed to parse custom token", e);
-               localStorage.removeItem('zelp_custom_token');
-               setUser(null);
-           }
-        } else {
-           setUser(null);
-        }
+         if (!initialUser) {
+             setUser(null);
+         }
       }
     } catch (error) {
       console.error("Failed to configure Authgear", error);

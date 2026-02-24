@@ -21,7 +21,7 @@ exports.authgearSync = async (req, res) => {
             phone = phone.substring(2);
         }
 
-        const displayName = authgearName || authgearUser.preferred_username || (email ? email.split('@')[0] : 'User');
+        const displayName = authgearName || authgearUser.preferred_username || (email && typeof email === 'string' ? email.split('@')[0] : 'User');
 
         // Upsert user based on Authgear sub, email or phone
         let user;

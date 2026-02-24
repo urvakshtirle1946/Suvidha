@@ -79,7 +79,7 @@ export default function AdminProfile() {
                       boxShadow: '0 10px 25px rgba(255, 154, 158, 0.4)',
                       border: '4px solid #fff'
                   }}>
-                      {profile.name.charAt(0)}
+                      {(profile.name || 'A').charAt(0)}
                   </div>
                   <div>
                       <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '4px' }}>{profile.name}</h2>
@@ -185,7 +185,7 @@ export default function AdminProfile() {
                           <div key={member.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '1rem', borderBottom: '1px solid var(--border)' }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                   <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '600' }}>
-                                      {member.name.charAt(0)}
+                                      {(member.name || 'A').charAt(0)}
                                   </div>
                                   <div>
                                       <div style={{ fontWeight: '600', fontSize: '0.9rem', color: 'var(--text-primary)' }}>{member.name}</div>

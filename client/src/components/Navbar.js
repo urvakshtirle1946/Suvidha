@@ -135,7 +135,7 @@ export default function Navbar() {
                         onClick={() => setMobileMenuOpen(true)}
                         style={{ fontSize: '0.9rem', color: '#0c831f', fontWeight: '500', cursor: 'pointer' }}
                       >
-                          {user.name.charAt(0).toUpperCase()}
+                          {(user.name || 'User').charAt(0).toUpperCase()}
                       </div>
                   )}
                </div>

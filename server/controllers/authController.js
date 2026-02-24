@@ -9,6 +9,12 @@ exports.authgearSync = async (req, res) => {
     const { user: authgearPayload } = req; // Payload from authMiddleware
     const userInfo = req.body.userInfo || {};
     
+    console.log('\n--- AUTHGEAR SYNC TRACE ---');
+    console.log('userInfo:', JSON.stringify(userInfo));
+    console.log('authgearPayload:', JSON.stringify(authgearPayload));
+    console.log('x-linked-token:', req.headers['x-linked-token']);
+    console.log('---------------------------\n');
+
     if (!authgearPayload) {
         return res.status(401).json({ success: false, message: 'No Authgear user data' });
     }

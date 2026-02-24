@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { X, Menu } from 'lucide-react'; // Using Lucide icons for standard look
 
-export default function SterlingGateKineticNavigation() {
+export default function SterlingGateKineticNavigation(props) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const router = useRouter();
@@ -74,13 +74,35 @@ export default function SterlingGateKineticNavigation() {
                     </button>
                    </>
                 ) : (
-                    <div className="nav-link guest">Guest User</div>
+                    <button 
+                        className="nav-link login-btn" 
+                        onClick={() => { 
+                            if (typeof props.onOpenAuth === 'function') {
+                                props.onOpenAuth();
+                            } else {
+                                // Fallback if prop is missing for some reason
+                                window.dispatchEvent(new CustomEvent('open-auth-modal'));
+                            }
+                            closeMenu(); 
+                        }}
+                    >
+                        Login / Sign Up
+                    </button>
                 )}
             </div>
         </nav>
       </div>
 
       <style jsx>{`
+        .login-btn {
+            text-align: left;
+            color: #0c831f;
+            background: none;
+            border: none;
+            border-bottom: 1px solid #f3f4f6;
+            font-family: inherit;
+            cursor: pointer;
+        }
         .nav-toggle-wrapper {
              z-index: 1001;
              position: relative;

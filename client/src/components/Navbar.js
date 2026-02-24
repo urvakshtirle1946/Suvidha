@@ -47,7 +47,7 @@ export default function Navbar() {
           
           {/* Kinetic Navigation Trigger (Mobile) */}
           <div className="show-on-mobile" style={{ marginRight: '1rem' }}>
-            <SterlingGateKineticNavigation />
+            <SterlingGateKineticNavigation onOpenAuth={handleOpenAuth} />
           </div>
 
           {/* Logo & Location */}

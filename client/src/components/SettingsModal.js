@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { X, User, Mail, Lock, Phone, Save } from 'lucide-react';
 import { getApiUrl } from '@/utils/api';
@@ -13,6 +13,17 @@ export default function SettingsModal({ isOpen, onClose }) {
         phone: user?.phone || '',
         password: ''
     });
+
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                name: user.name || '',
+                email: user.email || '',
+                phone: user.phone || '',
+                password: ''
+            });
+        }
+    }, [user, isOpen]);
 
     if (!isOpen || !user) return null;
 

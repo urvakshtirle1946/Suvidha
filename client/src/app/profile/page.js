@@ -42,6 +42,43 @@ export default function Profile() {
       <Navbar />
       
       <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 2rem)' }}>
+        {user && (
+          <div style={{
+            background: '#fff', borderRadius: '16px', padding: '2rem', marginBottom: '2rem',
+            border: '1px solid #e5e7eb', boxShadow: '0 4px 6px rgba(0,0,0,0.02)',
+            display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap'
+          }}>
+            <div style={{
+              width: '80px', height: '80px', borderRadius: '50%', background: '#0c831f', color: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 'bold'
+            }}>
+              {(user.name || 'U').charAt(0).toUpperCase()}
+            </div>
+            <div style={{ flex: 1 }}>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>
+                {user.name || 'User Profile'}
+              </h2>
+              <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', color: '#4b5563' }}>
+                {user.phone && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ background: '#f3f4f6', padding: '6px', borderRadius: '50%' }}><Lock size={16} color="#0c831f" /></div>
+                    <span style={{ fontWeight: '500' }}>+91 {user.phone}</span>
+                    {user.phone_verified && <CheckCircle size={16} color="#0c831f" />}
+                  </div>
+                )}
+                {user.email && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ background: '#f3f4f6', padding: '6px', borderRadius: '50%' }}>
+                      <User size={16} color="#0c831f" />
+                    </div>
+                    <span>{user.email}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         <h1 style={{ marginBottom: '2rem', fontSize: '1.8rem', fontWeight: 'bold' }}>My Bookings</h1>
         
         {!user ? (

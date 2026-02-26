@@ -35,7 +35,7 @@ export default function CompleteProfileModal({ isOpen, onClose }) {
     const handleAuthgearRedirect = async () => {
         try {
             setLoading(true);
-            await login(); // Triggers authgear.startAuthentication()
+            await login({ prompt: 'login' }); // Forces Authgear to show login screen for phone verification
         } catch (err) {
             console.error('Authgear Redirect Error:', err);
             setError('Failed to redirect to mobile authentication.');

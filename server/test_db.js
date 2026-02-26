@@ -1,28 +1,25 @@
-const db = require('./db');
-const fs = require('fs');
+require('dotenv').config({ path: '../.env' });
+const { Pool } = require('pg');
 
-async function testConnection() {
-  let log = 'Testing connection...\n';
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
+
+async function testDB() {
   try {
-    const res = await db.query('SELECT NOW()');
-    log += `Connection successful: ${JSON.stringify(res.rows[0])}\n`;
-
-    const hCount = await db.query('SELECT COUNT(*) FROM hospitals');
-    log += `Hospitals Count: ${hCount.rows[0].count}\n`;
-
-    const sCount = await db.query('SELECT COUNT(*) FROM services');
-    log += `Services Count: ${sCount.rows[0].count}\n`;
-
-    // List hospital names
-    const hNames = await db.query('SELECT name FROM hospitals');
-    log += `Hospital Names: ${hNames.rows.map(h => h.name).join(', ')}\n`;
-
+    const res = await pool.query(`SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name = 'users';`);
+    console.table(res.rows);
+    
+    // Also fetch a few users
+    const users = await pool.query(`SELECT id, name, email, phone, authgear_id, phone_verified FROM users ORDER BY id DESC LIMIT 5`);
+    console.log("Recent users:", users.rows);
+    
   } catch (err) {
-    log += `Database Error: ${err.message}\nStack: ${err.stack}\nFull Error: ${JSON.stringify(err, null, 2)}\n`;
+    console.error(err);
   } finally {
-    fs.writeFileSync('db_test_output.txt', log);
-    process.exit();
+    pool.end();
   }
 }
 
-testConnection();
+testDB();

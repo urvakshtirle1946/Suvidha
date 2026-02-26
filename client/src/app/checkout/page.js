@@ -194,6 +194,7 @@ export default function Checkout() {
                     const bookingData = {
                         name: user?.name,
                         userPhone: user?.phone, 
+                        userEmail: user?.email,
                         age: 0, 
                         gender: 'Not Specified',
                         date: selectedDate,

@@ -13,7 +13,7 @@ export default function Profile() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   useEffect(() => {
-    if (user?.phone) {
+    if (user) {
       fetchBookings();
     } else if (isLoaded) {
       setLoading(false);
@@ -24,7 +24,7 @@ export default function Profile() {
     try {
       const apiUrl = getApiUrl();
       const token = getToken();
-      const res = await fetch(`${apiUrl}/api/bookings?phone=${user.phone}`, {
+      const res = await fetch(`${apiUrl}/api/bookings`, {
           headers: {
               'Authorization': `Bearer ${token}`
           }

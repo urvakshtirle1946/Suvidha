@@ -27,13 +27,11 @@ export default function Bookings() {
         return;
     }
     
-    if (user?.phone) {
+    if (user) {
         fetchBookings();
 
         const interval = setInterval(fetchBookings, 15000); // Poll every 15s
         return () => clearInterval(interval);
-    } else if (isLoaded) {
-        setLoading(false);
     }
   }, [user, isLoaded]);
 
@@ -41,7 +39,7 @@ export default function Bookings() {
       try {
           const apiUrl = getApiUrl();
           const token = getToken();
-          const res = await fetch(`${apiUrl}/api/bookings?phone=${encodeURIComponent(user.phone)}`, {
+          const res = await fetch(`${apiUrl}/api/bookings`, {
               headers: {
                   'Authorization': `Bearer ${token}`
               }

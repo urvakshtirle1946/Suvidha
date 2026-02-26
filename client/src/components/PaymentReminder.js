@@ -36,7 +36,7 @@ export default function PaymentReminder() {
         try {
             const apiUrl = getApiUrl();
             const token = getToken();
-            const res = await fetch(`${apiUrl}/api/bookings?phone=${encodeURIComponent(user.phone)}`, {
+            const res = await fetch(`${apiUrl}/api/bookings`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

@@ -124,11 +124,35 @@ export function AuthProvider({ children }) {
     initAuthgear();
   }, [initAuthgear]);
 
+  const getToken = useCallback(async () => {
+    if (typeof window !== "undefined") {
+        const customToken = localStorage.getItem('zelp_custom_token');
+        if (customToken) return customToken;
+    }
+
+    const authgear = await getAuthgear();
+    if (!authgear) {
+      return null;
+    }
+
+    if (authgear.sessionState === "AUTHENTICATED") {
+      // Refresh the token if necessary and return it.
+      await authgear.refreshAccessTokenIfNeeded();
+      return authgear.accessToken;
+    }
+    return null;
+  }, [getAuthgear]);
+
+  const updateUser = useCallback((data) => {
+    setUser(prev => prev ? { ...prev, ...data } : data);
+  }, []);
+
   // Auto-sync phone after verification redirect loops
   useEffect(() => {
     const syncPhoneToBackend = async () => {
       try {
         const token = await getToken();
+        // ... (rest inside will run fine after)
         const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
         const res = await fetch(`${backendUrl}/api/auth/sync-phone`, {
           method: "POST",
@@ -215,29 +239,6 @@ export function AuthProvider({ children }) {
       console.error("Logout error", err);
       setUser(null);
     }
-  };
-
-  const getToken = async () => {
-    if (typeof window !== "undefined") {
-        const customToken = localStorage.getItem('zelp_custom_token');
-        if (customToken) return customToken;
-    }
-
-    const authgear = await getAuthgear();
-    if (!authgear) {
-      return null;
-    }
-
-    if (authgear.sessionState === "AUTHENTICATED") {
-      // Refresh the token if necessary and return it.
-      await authgear.refreshAccessTokenIfNeeded();
-      return authgear.accessToken;
-    }
-    return null;
-  };
-
-  const updateUser = (data) => {
-    setUser(prev => prev ? { ...prev, ...data } : data);
   };
 
   return (

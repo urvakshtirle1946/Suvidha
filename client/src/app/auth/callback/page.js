@@ -48,15 +48,17 @@ export default function AuthCallback() {
         }
 
         // Redirect to home after successful auth and sync
-        router.push("/");
+        // Using window.location.replace instead of router.push to force a hard reload
+        // This ensures the AuthContext completely resets and fetches the LATEST verified phone number
+        window.location.replace("/");
       } catch (err) {
         console.error("Failed to finish authentication", err);
-        router.push("/");
+        window.location.replace("/");
       }
     }
 
     finishAuth();
-  }, [router]);
+  }, []);
 
   return (
     <div className="flex h-screen w-full items-center justify-center bg-gray-50">

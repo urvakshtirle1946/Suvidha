@@ -102,7 +102,11 @@ exports.authgearSync = async (req, res) => {
                     [sub || null, searchEmail || null, finalPhone || null, existingUser.id, finalDisplayName || 'User', forcedPhoneVerified]
                 );
             } catch (updateErr) {
+                if (updateErr.code === '23505') {
+                    return res.status(409).json({ success: false, message: 'This phone number or email is already linked to another account.' });
+                }
                 console.warn("🚨 Handled User Merge Conflict gracefully:", updateErr.message);
+                return res.status(500).json({ success: false, message: 'Database merge conflict' });
             }
             const updated = await db.query('SELECT * FROM users WHERE id = $1', [existingUser.id]);
             user = updated.rows[0];
@@ -114,9 +118,12 @@ exports.authgearSync = async (req, res) => {
                 );
                 user = insertRes.rows[0];
             } catch (insertErr) {
+                if (insertErr.code === '23505') {
+                    return res.status(409).json({ success: false, message: 'This phone number or email is already linked to another account.' });
+                }
                 console.warn("🚨 Handled Insert Conflict gracefully by falling back to fetch:", insertErr.message);
                 const fallbackFetch = await db.query('SELECT * FROM users WHERE phone = $1 OR email = $2 OR authgear_id = $3', [finalPhone || null, searchEmail || null, sub || null]);
-                if (fallbackFetch.rows.length === 0) throw new Error("Database insertion completely rejected the payload: " + insertErr.message);
+                if (fallbackFetch.rows.length === 0) return res.status(500).json({ success: false, message: 'Database insertion rejected the payload.'});
                 user = fallbackFetch.rows[0];
             }
         }

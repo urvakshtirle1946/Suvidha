@@ -98,13 +98,14 @@ export function AuthProvider({ children }) {
           });
           const backendData = await res.json();
           if (backendData.success) {
-            setUser({ ...userInfo, ...backendData.user });
+            setUser({ ...userInfo, ...backendData.user, syncError: null });
           } else {
-            setUser(userInfo);
+            console.warn("Backend sync failed:", backendData.message);
+            setUser({ ...userInfo, syncError: backendData.message });
           }
         } catch (err) {
           console.error("Backend sync failed", err);
-          setUser(userInfo);
+          setUser({ ...userInfo, syncError: "Network error during profile sync." });
         }
       } else {
          if (!initialUser) {

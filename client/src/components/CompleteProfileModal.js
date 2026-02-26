@@ -4,12 +4,9 @@ import { useAuth } from '@/context/AuthContext';
 import { Loader2, Phone, Mail, User, ArrowRight, X } from 'lucide-react';
 
 export default function CompleteProfileModal({ isOpen, onClose }) {
-    const { user, isLoaded, getToken, updateUser } = useAuth();
+    const { user, isLoaded, getToken, updateUser, login, logout } = useAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    
-    // OTP Flow (Replaced by Authgear Redirect)
-    const { login } = useAuth();
 
     // Profile Flow
     const [name, setName] = useState('');
@@ -24,11 +21,15 @@ export default function CompleteProfileModal({ isOpen, onClose }) {
 
     if (!isLoaded || !user || !isOpen) return null;
 
-    const needsPhone = !user.phone || !user.phone_verified;
+    const hasSyncError = !!user.syncError;
+    const hasPhone = user.phone || user.phone_number;
+    const isPhoneVerified = user.phone_verified === true || user.phone_number_verified === true;
+
+    const needsPhone = !hasPhone || !isPhoneVerified;
     const needsDetails = (!user.name);
 
     // If both are satisfied, don't show modal
-    if (!needsPhone && !needsDetails) return null;
+    if (!needsPhone && !needsDetails && !hasSyncError) return null;
 
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
 
@@ -109,13 +110,25 @@ export default function CompleteProfileModal({ isOpen, onClose }) {
                     </p>
                 </div>
 
-                {error && (
+                {error && !user.syncError && (
                     <div style={{ background: '#fee2e2', color: '#dc2626', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.9rem', textAlign: 'center' }}>
                         {error}
                     </div>
                 )}
 
-                {needsPhone ? (
+                {user.syncError ? (
+                    <div style={{ background: '#fee2e2', color: '#dc2626', padding: '1.5rem', borderRadius: '12px', marginBottom: '1rem', fontSize: '0.9rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <strong style={{ fontSize: '1.1rem' }}>Account Conflict</strong>
+                        <p style={{ margin: 0, lineHeight: 1.5 }}>{user.syncError}</p>
+                        <p style={{ margin: 0, color: '#991b1b', fontSize: '0.85rem' }}>You cannot continue with this session. Please log out and sign in directly with your phone number.</p>
+                        <button 
+                            onClick={logout} 
+                            style={{ padding: '12px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', marginTop: '4px' }}
+                        >
+                            Logout 
+                        </button>
+                    </div>
+                ) : needsPhone ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <p style={{ color: '#4b5563', fontSize: '0.95rem', marginBottom: '1rem', textAlign: 'center' }}>
                             We need to securely verify your mobile number before you can continue using Zelp.

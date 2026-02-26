@@ -154,12 +154,19 @@ export function AuthProvider({ children }) {
         const token = await getToken();
         // ... (rest inside will run fine after)
         const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+        const phonePayload = user?.phone_number || user?.custom_attributes?.phone_number;
+        const phoneVerifiedPayload = user?.phone_number_verified;
+
         const res = await fetch(`${backendUrl}/api/auth/sync-phone`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
-          }
+          },
+          body: JSON.stringify({ 
+              phone_number: phonePayload, 
+              phone_number_verified: phoneVerifiedPayload 
+          })
         });
         const data = await res.json();
         if (data.success) {

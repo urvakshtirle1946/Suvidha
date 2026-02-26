@@ -140,7 +140,7 @@ exports.authgearSync = async (req, res) => {
         return res.status(200).json({
             success: true,
             user: {
-                id: user.phone,
+                id: user.phone || user.id,
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
@@ -177,11 +177,11 @@ exports.syncPhone = async (req, res) => {
     else if (phone.startsWith('91') && phone.length === 12) phone = phone.substring(2);
 
     try {
-        await db.query(
-            `UPDATE users SET phone = $1, phone_verified = $2 WHERE authgear_id = $3`,
+        const updateRes = await db.query(
+            `UPDATE users SET phone = $1, phone_verified = $2 WHERE authgear_id = $3 RETURNING *`,
             [phone, isVerified, authgearPayload.sub]
         );
-        res.json({ success: true, message: 'Phone synced successfully' });
+        res.json({ success: true, message: 'Phone synced successfully', user: updateRes.rows[0] });
     } catch (err) {
         if (err.code === '23505') {
             return res.status(409).json({ success: false, message: 'This phone number is already linked to another account.' });

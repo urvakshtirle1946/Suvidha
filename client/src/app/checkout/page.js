@@ -129,8 +129,13 @@ export default function Checkout() {
         setAuthModalOpen(true);
         return;
     }
-    
-    if (!user.phone_verified || !user.name) {
+
+    const hasPhone = user.phone || user.phone_number;
+    const isPhoneVerified = user.phone_verified === true || user.phone_number_verified === true;
+    const needsPhone = !hasPhone || !isPhoneVerified;
+    const needsDetails = !user.name;
+
+    if (needsPhone || needsDetails) {
         setProfileModalOpen(true);
         return;
     }

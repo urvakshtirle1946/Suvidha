@@ -157,6 +157,40 @@ exports.authgearSync = async (req, res) => {
     }
 };
 
+exports.syncPhone = async (req, res) => {
+    const { user: authgearPayload } = req;
+
+    if (!authgearPayload) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    // Extract from body or auth middleware payload
+    const rawPhone = req.body.phone_number || authgearPayload.phone_number || authgearPayload?.identities?.[0]?.claims?.phone_number;
+    const isVerified = req.body.phone_number_verified || authgearPayload.phone_number_verified || true;
+
+    if (!rawPhone) {
+        return res.status(400).json({ success: false, message: 'No phone number provided' });
+    }
+
+    let phone = String(rawPhone);
+    if (phone.startsWith('+91')) phone = phone.substring(3);
+    else if (phone.startsWith('91') && phone.length === 12) phone = phone.substring(2);
+
+    try {
+        await db.query(
+            `UPDATE users SET phone = $1, phone_verified = $2 WHERE authgear_id = $3`,
+            [phone, isVerified, authgearPayload.sub]
+        );
+        res.json({ success: true, message: 'Phone synced successfully' });
+    } catch (err) {
+        if (err.code === '23505') {
+            return res.status(409).json({ success: false, message: 'This phone number is already linked to another account.' });
+        }
+        console.error('Phone Sync Error:', err);
+        res.status(500).json({ success: false, message: 'Failed to sync phone' });
+    }
+};
+
 exports.requestVerificationOtp = async (req, res) => {
     const { phone } = req.body;
     if (!phone) return res.status(400).json({ success: false, message: 'Phone number required' });

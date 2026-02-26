@@ -124,6 +124,36 @@ export function AuthProvider({ children }) {
     initAuthgear();
   }, [initAuthgear]);
 
+  // Auto-sync phone after verification redirect loops
+  useEffect(() => {
+    const syncPhoneToBackend = async () => {
+      try {
+        const token = await getToken();
+        const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+        const res = await fetch(`${backendUrl}/api/auth/sync-phone`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        const data = await res.json();
+        if (data.success) {
+           setUser(prev => ({ ...prev, phone: prev.phone_number || prev.phone, phone_verified: true, syncError: null }));
+        } else if (data.message === 'This phone number is already linked to another account.') {
+           setUser(prev => ({ ...prev, syncError: data.message }));
+        }
+      } catch (err) {
+        console.error("Auto sync phone failed:", err);
+      }
+    };
+
+    // If Authgear identity has phone, but DB user object doesn't, force sync
+    if (user && user.phone_number && user.phone_number_verified && !user.phone) {
+      syncPhoneToBackend();
+    }
+  }, [user, getToken]);
+
   const login = async (options = {}) => {
     try {
       const authgear = await getAuthgear();

@@ -28,6 +28,7 @@ const adminLoginLimiter = rateLimit({
 
 router.post('/admin-login', adminLoginLimiter, authController.adminLogin);
 router.post('/sync', verifyJWT, authController.authgearSync);
+router.post('/sync-phone', verifyJWT, authController.syncPhone);
 router.post('/request-verification-otp', verifyJWT, authController.requestVerificationOtp);
 router.post('/verify-phone', verifyJWT, authController.verifyPhone);
 

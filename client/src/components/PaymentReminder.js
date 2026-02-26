@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 
 export default function PaymentReminder() {
-    const { user, isLoaded } = useAuth();
+    const { user, isLoaded, getToken } = useAuth();
     const { isCartOpen } = useCart();
     const [pendingBookings, setPendingBookings] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -35,7 +35,12 @@ export default function PaymentReminder() {
     const fetchPending = async () => {
         try {
             const apiUrl = getApiUrl();
-            const res = await fetch(`${apiUrl}/api/bookings?phone=${encodeURIComponent(user.phone)}`);
+            const token = getToken();
+            const res = await fetch(`${apiUrl}/api/bookings?phone=${encodeURIComponent(user.phone)}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             if (res.ok) {
                 const data = await res.json();
                 console.log("Fetched Bookings for Reminder:", data);
@@ -65,9 +70,13 @@ export default function PaymentReminder() {
         try {
             const apiUrl = getApiUrl();
             const currentBooking = pendingBookings[currentIndex];
+            const token = getToken();
             const res = await fetch(`${apiUrl}/api/bookings/${currentBooking.id}/pay`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({ transactionId: txnId })
             });
 

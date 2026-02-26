@@ -9,7 +9,7 @@ import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 
 export default function Bookings() {
-  const { user, isLoaded } = useAuth();
+  const { user, isLoaded, getToken } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -40,7 +40,12 @@ export default function Bookings() {
   const fetchBookings = async () => {
       try {
           const apiUrl = getApiUrl();
-          const res = await fetch(`${apiUrl}/api/bookings?phone=${encodeURIComponent(user.phone)}`);
+          const token = getToken();
+          const res = await fetch(`${apiUrl}/api/bookings?phone=${encodeURIComponent(user.phone)}`, {
+              headers: {
+                  'Authorization': `Bearer ${token}`
+              }
+          });
           if (res.ok) {
               const data = await res.json();
               setBookings(data);
@@ -72,9 +77,13 @@ export default function Bookings() {
       setPaying(true);
       try {
           const apiUrl = getApiUrl();
+          const token = getToken();
           const res = await fetch(`${apiUrl}/api/bookings/${paymentBooking.id}/pay`, {
               method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+              },
               body: JSON.stringify({ transactionId: txnId })
           });
 

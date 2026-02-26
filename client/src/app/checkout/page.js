@@ -101,7 +101,7 @@ function ProviderList({ serviceName, currentHospitalId, onSelect }) {
 
 export default function Checkout() {
   const { cart, clearCart, cartTotal, cartMrpTotal, cartDiscount, updateCartItem } = useCart();
-  const { user } = useAuth();
+  const { user, getToken } = useAuth();
   const { location } = useLocation();
   const router = useRouter();
   
@@ -208,7 +208,10 @@ export default function Checkout() {
                     requests.push(
                         fetch(`${apiUrl}/api/bookings`, {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${getToken()}` 
+                            },
                             body: JSON.stringify(bookingData)
                         }).then(async res => {
                             if (res.ok) {

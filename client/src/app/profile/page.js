@@ -7,7 +7,7 @@ import { Calendar, Clock, MapPin, User, CheckCircle, Lock } from 'lucide-react';
 import { getApiUrl } from '@/utils/api';
 
 export default function Profile() {
-  const { user, isLoaded } = useAuth();
+  const { user, isLoaded, getToken } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -23,7 +23,12 @@ export default function Profile() {
   const fetchBookings = async () => {
     try {
       const apiUrl = getApiUrl();
-      const res = await fetch(`${apiUrl}/api/bookings?phone=${user.phone}`);
+      const token = getToken();
+      const res = await fetch(`${apiUrl}/api/bookings?phone=${user.phone}`, {
+          headers: {
+              'Authorization': `Bearer ${token}`
+          }
+      });
       if (res.ok) {
         const data = await res.json();
         setBookings(data);

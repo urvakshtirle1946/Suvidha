@@ -38,11 +38,15 @@ export default function AuthCallback() {
 
           const userInfo = await authgear.fetchUserInfo();
 
-          await fetch(`${backendUrl}/api/auth/sync`, {
+          const syncRes = await fetch(`${backendUrl}/api/auth/sync`, {
             method: 'POST',
             headers,
             body: JSON.stringify({ userInfo })
           });
+          const syncData = await syncRes.json();
+          if (syncData.success && syncData.token) {
+              localStorage.setItem('zelp_custom_token', syncData.token);
+          }
         }
 
         // Redirect to home after successful auth and sync

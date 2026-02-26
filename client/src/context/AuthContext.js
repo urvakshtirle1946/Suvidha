@@ -49,6 +49,25 @@ export function AuthProvider({ children }) {
 
       let initialUser = null;
       const customToken = localStorage.getItem('zelp_custom_token');
+      
+      const fetchLatestUserData = async (token) => {
+          try {
+              const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+              const res = await fetch(`${backendUrl}/api/auth/me`, {
+                 headers: { 'Authorization': `Bearer ${token}` }
+              });
+              const data = await res.json();
+              if (data.success && data.user) {
+                  setUser((prev) => ({ ...prev, ...data.user }));
+                  if (data.token) {
+                      localStorage.setItem('zelp_custom_token', data.token);
+                  }
+              }
+          } catch (e) {
+              console.error("fetchLatestUserData error", e);
+          }
+      };
+
       if (customToken) {
           try {
               const payloadUrl = customToken.split('.')[1];
@@ -59,6 +78,7 @@ export function AuthProvider({ children }) {
               initialUser = JSON.parse(jsonPayload);
               setUser(initialUser);
               setIsLoaded(true);
+              fetchLatestUserData(customToken);
               // We render UI instantly but allow Authgear to configure in background
           } catch(e) {
               console.error("Failed to parse custom token on load", e);
@@ -99,6 +119,7 @@ export function AuthProvider({ children }) {
           const backendData = await res.json();
           if (backendData.success) {
             setUser({ ...userInfo, ...backendData.user, syncError: null });
+            if (backendData.token) localStorage.setItem('zelp_custom_token', backendData.token);
           } else {
             console.warn("Backend sync failed:", backendData.message);
             setUser({ ...userInfo, syncError: backendData.message });
@@ -170,6 +191,7 @@ export function AuthProvider({ children }) {
         });
         const data = await res.json();
         if (data.success) {
+           if (data.token) localStorage.setItem('zelp_custom_token', data.token);
            setUser(prev => ({ ...prev, phone: prev.phone_number || prev.phone, phone_verified: true, syncError: null }));
         } else if (data.message === 'This phone number is already linked to another account.') {
            setUser(prev => ({ ...prev, syncError: data.message }));

@@ -41,5 +41,6 @@ router.post('/google-login', authController.googleLogin);
 // router.post('/msg91-login', authController.msg91Login); // Removed
 router.put('/profile', verifyJWT, authController.updateProfile);
 router.get('/users', verifyJWT, requireRole(['admin', 'super_admin']), authController.getAllUsers);
+router.get('/me', verifyJWT, authController.getMe);
 
 module.exports = router;

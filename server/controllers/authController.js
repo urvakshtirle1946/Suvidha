@@ -177,11 +177,13 @@ exports.syncPhone = async (req, res) => {
     else if (phone.startsWith('91') && phone.length === 12) phone = phone.substring(2);
 
     try {
-        const updateRes = await db.query(
-            `UPDATE users SET phone = $1, phone_verified = $2 WHERE authgear_id = $3 RETURNING *`,
-            [phone, isVerified, authgearPayload.sub]
+        const updatedUser = updateRes.rows[0];
+        const newToken = jwt.sign(
+            { id: updatedUser.id || updatedUser.phone, phone: updatedUser.phone, role: updatedUser.role, name: updatedUser.name, email: updatedUser.email, phone_verified: updatedUser.phone_verified },
+            process.env.JWT_SECRET || 'zelp_secret_key_2024',
+            { expiresIn: '30d' }
         );
-        res.json({ success: true, message: 'Phone synced successfully', user: updateRes.rows[0] });
+        res.json({ success: true, message: 'Phone synced successfully', user: updatedUser, token: newToken });
     } catch (err) {
         if (err.code === '23505') {
             return res.status(409).json({ success: false, message: 'This phone number is already linked to another account.' });
@@ -450,5 +452,40 @@ exports.updateProfile = async (req, res) => {
     } catch (err) {
         console.error("Update Profile Error:", err);
         res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
+exports.getMe = async (req, res) => {
+    if (!req.user) return res.status(401).json({ success: false });
+
+    try {
+        const searchEmail = req.user.email || null;
+        const searchPhone = req.user.phone || req.user.phone_number || null;
+        const searchSub = req.user.sub || null;
+
+        const checkUser = await db.query(
+            'SELECT * FROM users WHERE (email = $1 AND $1 IS NOT NULL) OR (phone = $2 AND $2 IS NOT NULL) OR (authgear_id = $3 AND $3 IS NOT NULL) ORDER BY id DESC LIMIT 1', 
+            [searchEmail, searchPhone, searchSub]
+        );
+
+        if (checkUser.rows.length === 0) {
+             return res.status(404).json({ success: false, message: 'User not found in DB' });
+        }
+
+        const user = checkUser.rows[0];
+        const token = jwt.sign(
+            { id: user.id || user.phone, phone: user.phone, role: user.role, name: user.name, email: user.email, phone_verified: user.phone_verified },
+            process.env.JWT_SECRET || 'zelp_secret_key_2024',
+            { expiresIn: '30d' }
+        );
+
+        res.json({
+            success: true,
+            user,
+            token
+        });
+    } catch (err) {
+        console.error("GetMe Error:", err);
+        res.status(500).json({ success: false });
     }
 };

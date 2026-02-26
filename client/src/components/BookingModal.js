@@ -173,15 +173,6 @@ export default function BookingModal({ isOpen, onClose, service }) {
             setAuthModalOpen(true);
             return; 
         }
-        const hasPhone = user.phone || user.phone_number;
-        const isPhoneVerified = user.phone_verified === true || user.phone_number_verified === true;
-        const needsPhone = !hasPhone || !isPhoneVerified;
-        const needsDetails = !user.name;
-
-        if (needsPhone || needsDetails) {
-            setProfileModalOpen(true);
-            return;
-        }
         if (!selectedLab || !selectedTime) return;
         setPaymentMode('online');
         setStep(2); 
@@ -192,15 +183,6 @@ export default function BookingModal({ isOpen, onClose, service }) {
              alert('Please login to continue.'); 
              setAuthModalOpen(true);
              return; 
-        }
-        const hasPhone = user.phone || user.phone_number;
-        const isPhoneVerified = user.phone_verified === true || user.phone_number_verified === true;
-        const needsPhone = !hasPhone || !isPhoneVerified;
-        const needsDetails = !user.name;
-
-        if (needsPhone || needsDetails) {
-            setProfileModalOpen(true);
-            return;
         }
         if (!selectedLab || !selectedTime) return;
         setPaymentMode('hospital');

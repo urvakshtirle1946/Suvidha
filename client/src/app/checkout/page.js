@@ -130,16 +130,6 @@ export default function Checkout() {
         return;
     }
 
-    const hasPhone = user.phone || user.phone_number;
-    const isPhoneVerified = user.phone_verified === true || user.phone_number_verified === true;
-    const needsPhone = !hasPhone || !isPhoneVerified;
-    const needsDetails = !user.name;
-
-    if (needsPhone || needsDetails) {
-        setProfileModalOpen(true);
-        return;
-    }
-
     if (!selectedDate || !selectedTime) {
         setError("Please select a date and time slot for your appointment.");
         return;

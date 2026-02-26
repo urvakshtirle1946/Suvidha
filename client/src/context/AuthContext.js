@@ -5,7 +5,6 @@ import {
   useState,
   useEffect,
   useCallback,
-  useRef,
 } from "react";
 import { useRouter } from "next/navigation";
 
@@ -15,213 +14,75 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const router = useRouter();
-  const authgearRef = useRef(null);
 
-  const getAuthgear = useCallback(async () => {
-    if (typeof window === "undefined") {
-      return null;
+  const initLocalAuth = useCallback(() => {
+    let initialUser = null;
+    const customToken = localStorage.getItem('zelp_custom_token');
+    
+    const fetchLatestUserData = async (token) => {
+        try {
+            const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+            const res = await fetch(`${backendUrl}/api/auth/me`, {
+               headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (data.success && data.user) {
+                setUser((prev) => ({ ...prev, ...data.user }));
+                if (data.token) {
+                    localStorage.setItem('zelp_custom_token', data.token);
+                }
+            } else {
+                setUser(null);
+                localStorage.removeItem('zelp_custom_token');
+            }
+        } catch (e) {
+            console.error("fetchLatestUserData error", e);
+            setUser(null);
+        } finally {
+            setIsLoaded(true);
+        }
+    };
+
+    if (customToken) {
+        try {
+            const payloadUrl = customToken.split('.')[1];
+            const base64 = payloadUrl.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            initialUser = JSON.parse(jsonPayload);
+            setUser(initialUser);
+            setIsLoaded(true);
+            fetchLatestUserData(customToken);
+        } catch(e) {
+            console.error("Failed to parse custom token on load", e);
+            localStorage.removeItem('zelp_custom_token');
+            setUser(null);
+            setIsLoaded(true);
+        }
+    } else {
+        setUser(null);
+        setIsLoaded(true);
     }
-
-    if (!authgearRef.current) {
-      const authgearModule = await import("@authgear/web");
-      authgearRef.current = authgearModule.default;
-    }
-
-    return authgearRef.current;
   }, []);
 
-  const initAuthgear = useCallback(async () => {
-    try {
-      const authgear = await getAuthgear();
-      if (!authgear) {
-        setUser(null);
-        return;
-      }
-
-      const clientID = process.env.NEXT_PUBLIC_AUTHGEAR_CLIENT_ID;
-      const endpoint = process.env.NEXT_PUBLIC_AUTHGEAR_ENDPOINT;
-
-      if (!clientID || !endpoint || endpoint === 'missing_endpoint' || clientID === 'missing_client_id') {
-        console.error("Authgear Configuration Error: NEXT_PUBLIC_AUTHGEAR_CLIENT_ID or NEXT_PUBLIC_AUTHGEAR_ENDPOINT is missing.");
-        setIsLoaded(true);
-        return;
-      }
-
-      let initialUser = null;
-      const customToken = localStorage.getItem('zelp_custom_token');
-      
-      const fetchLatestUserData = async (token) => {
-          try {
-              const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
-              const res = await fetch(`${backendUrl}/api/auth/me`, {
-                 headers: { 'Authorization': `Bearer ${token}` }
-              });
-              const data = await res.json();
-              if (data.success && data.user) {
-                  setUser((prev) => ({ ...prev, ...data.user }));
-                  if (data.token) {
-                      localStorage.setItem('zelp_custom_token', data.token);
-                  }
-              }
-          } catch (e) {
-              console.error("fetchLatestUserData error", e);
-          }
-      };
-
-      if (customToken) {
-          try {
-              const payloadUrl = customToken.split('.')[1];
-              const base64 = payloadUrl.replace(/-/g, '+').replace(/_/g, '/');
-              const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-                  return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-              }).join(''));
-              initialUser = JSON.parse(jsonPayload);
-              setUser(initialUser);
-              setIsLoaded(true);
-              fetchLatestUserData(customToken);
-              // We render UI instantly but allow Authgear to configure in background
-          } catch(e) {
-              console.error("Failed to parse custom token on load", e);
-              localStorage.removeItem('zelp_custom_token');
-              // Fallback to authgear check
-          }
-      }
-
-      await authgear.configure({
-        clientID,
-        endpoint,
-        sessionType: "refresh_token",
-      });
-
-      const sessionState = authgear.sessionState;
-      if (sessionState === "AUTHENTICATED") {
-        const userInfo = await authgear.fetchUserInfo();
-        
-        // Fetch additional data from backend
-        try {
-          const token = authgear.accessToken;
-          const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
-          
-          const headers = {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-          };
-          
-          if (customToken) {
-              headers['X-Linked-Token'] = customToken;
-          }
-
-          const res = await fetch(`${backendUrl}/api/auth/sync`, {
-              method: 'POST',
-              headers,
-              body: JSON.stringify({ userInfo })
-          });
-          const backendData = await res.json();
-          if (backendData.success) {
-            setUser({ ...userInfo, ...backendData.user, syncError: null });
-            if (backendData.token) localStorage.setItem('zelp_custom_token', backendData.token);
-          } else {
-            console.warn("Backend sync failed:", backendData.message);
-            setUser({ ...userInfo, syncError: backendData.message });
-          }
-        } catch (err) {
-          console.error("Backend sync failed", err);
-          setUser({ ...userInfo, syncError: "Network error during profile sync." });
-        }
-      } else {
-         if (!initialUser) {
-             setUser(null);
-         }
-      }
-    } catch (error) {
-      console.error("Failed to configure Authgear", error);
-      setUser(null);
-    } finally {
-      setIsLoaded(true);
-    }
-  }, [getAuthgear]);
-
   useEffect(() => {
-    initAuthgear();
-  }, [initAuthgear]);
+    initLocalAuth();
+  }, [initLocalAuth]);
 
-  const getToken = useCallback(async () => {
+  const getToken = useCallback(() => {
     if (typeof window !== "undefined") {
         const customToken = localStorage.getItem('zelp_custom_token');
         if (customToken) return customToken;
     }
-
-    const authgear = await getAuthgear();
-    if (!authgear) {
-      return null;
-    }
-
-    if (authgear.sessionState === "AUTHENTICATED") {
-      // Refresh the token if necessary and return it.
-      await authgear.refreshAccessTokenIfNeeded();
-      return authgear.accessToken;
-    }
     return null;
-  }, [getAuthgear]);
+  }, []);
 
   const updateUser = useCallback((data) => {
     setUser(prev => prev ? { ...prev, ...data } : data);
   }, []);
 
-  // Auto-sync phone after verification redirect loops
-  useEffect(() => {
-    const syncPhoneToBackend = async () => {
-      try {
-        const token = await getToken();
-        // ... (rest inside will run fine after)
-        const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
-        const phonePayload = user?.phone_number || user?.custom_attributes?.phone_number;
-        const phoneVerifiedPayload = user?.phone_number_verified;
 
-        const res = await fetch(`${backendUrl}/api/auth/sync-phone`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({ 
-              phone_number: phonePayload, 
-              phone_number_verified: phoneVerifiedPayload 
-          })
-        });
-        const data = await res.json();
-        if (data.success) {
-           if (data.token) localStorage.setItem('zelp_custom_token', data.token);
-           setUser(prev => ({ ...prev, phone: prev.phone_number || prev.phone, phone_verified: true, syncError: null }));
-        } else if (data.message === 'This phone number is already linked to another account.') {
-           setUser(prev => ({ ...prev, syncError: data.message }));
-        }
-      } catch (err) {
-        console.error("Auto sync phone failed:", err);
-      }
-    };
-
-    // If Authgear identity has phone, but DB user object doesn't, force sync
-    if (user && user.phone_number && user.phone_number_verified && !user.phone) {
-      syncPhoneToBackend();
-    }
-  }, [user, getToken]);
-
-  const login = async (options = {}) => {
-    try {
-      const authgear = await getAuthgear();
-      if (!authgear || typeof window === "undefined") {
-        return;
-      }
-
-      await authgear.startAuthentication({
-        redirectURI: window.location.origin + "/auth/callback",
-        ...options
-      });
-    } catch (err) {
-      console.error("Login error", err);
-    }
-  };
 
   const customGoogleLogin = async (credential) => {
     try {
@@ -246,24 +107,13 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const logout = async () => {
+  const logout = () => {
     try {
       if (typeof window !== "undefined") {
           localStorage.removeItem('zelp_custom_token');
       }
-
-      const authgear = await getAuthgear();
-      if (!authgear || typeof window === "undefined") {
-        setUser(null);
-        return;
-      }
-
-      if (authgear.sessionState === "AUTHENTICATED") {
-          await authgear.logout({
-            redirectURI: window.location.origin + "/",
-          });
-      }
       setUser(null);
+      router.push("/");
     } catch (err) {
       console.error("Logout error", err);
       setUser(null);
@@ -271,7 +121,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, customGoogleLogin, logout, isLoaded, getToken, updateUser }}>
+    <AuthContext.Provider value={{ user, customGoogleLogin, logout, isLoaded, getToken, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

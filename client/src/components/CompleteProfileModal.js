@@ -4,13 +4,14 @@ import { useAuth } from '@/context/AuthContext';
 import { Loader2, Phone, Mail, User, ArrowRight, X } from 'lucide-react';
 
 export default function CompleteProfileModal({ isOpen, onClose }) {
-    const { user, isLoaded, getToken, updateUser, login, logout } = useAuth();
+    const { user, isLoaded, getToken, updateUser, logout } = useAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
     // Profile Flow
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
 
     useEffect(() => {
         if (user) {
@@ -22,8 +23,8 @@ export default function CompleteProfileModal({ isOpen, onClose }) {
     if (!isLoaded || !user || !isOpen) return null;
 
     const hasSyncError = !!user.syncError;
-    const hasPhone = user.phone || user.phone_number;
-    const isPhoneVerified = user.phone_verified === true || user.phone_number_verified === true;
+    const hasPhone = user.phone;
+    const isPhoneVerified = user.phone_verified === true;
 
     const needsPhone = !hasPhone || !isPhoneVerified;
     const needsDetails = (!user.name);
@@ -33,17 +34,6 @@ export default function CompleteProfileModal({ isOpen, onClose }) {
 
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
 
-    const handleAuthgearRedirect = async () => {
-        try {
-            setLoading(true);
-            await login({ prompt: 'login' }); // Forces Authgear to show login screen for phone verification
-        } catch (err) {
-            console.error('Authgear Redirect Error:', err);
-            setError('Failed to redirect to mobile authentication.');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleUpdateProfile = async () => {
         if (!name) return setError('Full Name is required');
@@ -57,7 +47,7 @@ export default function CompleteProfileModal({ isOpen, onClose }) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ name, email })
+                body: JSON.stringify({ name, email, phone })
             });
             const data = await res.json();
             if (data.success && data.user) {
@@ -131,19 +121,33 @@ export default function CompleteProfileModal({ isOpen, onClose }) {
                 ) : needsPhone ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <p style={{ color: '#4b5563', fontSize: '0.95rem', marginBottom: '1rem', textAlign: 'center' }}>
-                            We need to securely verify your mobile number before you can continue using Zelp.
+                            We need your mobile number before you can continue using Zelp.
                         </p>
+                        <div style={{ position: 'relative' }}>
+                            <Phone size={20} color="#9ca3af" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
+                            <input
+                                type="tel"
+                                placeholder="Phone Number"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                style={{
+                                    width: '100%', padding: '16px 16px 16px 48px',
+                                    borderRadius: '12px', border: '1px solid #e5e7eb',
+                                    fontSize: '1rem', background: '#f9fafb'
+                                }}
+                            />
+                        </div>
                         <button
-                            onClick={handleAuthgearRedirect}
-                            disabled={loading}
+                            onClick={handleUpdateProfile}
+                            disabled={loading || !phone}
                             style={{
                                 width: '100%', padding: '16px', borderRadius: '12px', border: 'none',
-                                background: '#0c831f', color: '#fff', fontWeight: 'bold', fontSize: '1rem',
-                                cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px'
+                                background: phone ? '#0c831f' : '#9ca3af', color: '#fff', fontWeight: 'bold', fontSize: '1rem',
+                                cursor: phone ? 'pointer' : 'not-allowed', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px'
                             }}
                         >
                             {loading ? <Loader2 size={20} className="spin" /> : (
-                                <><span>Verify Mobile Number</span><ArrowRight size={18} /></>
+                                <><span>Save Mobile Number</span><ArrowRight size={18} /></>
                             )}
                         </button>
                     </div>

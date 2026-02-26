@@ -5,7 +5,7 @@ import { X, Phone, ArrowRight, Loader2 } from 'lucide-react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 export default function AuthModal({ isOpen, onClose }) {
-    const { user, login, customGoogleLogin } = useAuth();
+    const { user, customGoogleLogin } = useAuth();
     const [loading, setLoading] = useState(false);
     const [step, setStep] = useState('initial');
 
@@ -17,18 +17,6 @@ export default function AuthModal({ isOpen, onClose }) {
 
     if (!isOpen) return null;
 
-    const handleAuthgearLogin = async () => {
-        try {
-            setLoading(true);
-            await login();
-            onClose();
-        } catch (err) {
-            console.error('Authgear Login Error:', err);
-            alert('Login Failed');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleGoogleSuccess = async (credentialResponse) => {
         try {
@@ -56,21 +44,7 @@ export default function AuthModal({ isOpen, onClose }) {
                                 Experience premium healthcare simplified.<br/>Sign in securely.
                             </p>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
-                            <button
-                                onClick={handleAuthgearLogin}
-                                disabled={loading}
-                                style={{
-                                    width: '100%', padding: '16px', borderRadius: '16px', border: 'none',
-                                    background: '#0c831f', color: '#fff', fontWeight: 'bold', size: '1.1rem',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
-                                    cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)'
-                                }}
-                            >
-                                <Phone size={20} />
-                                <span>Continue with Mobile OTP</span>
-                            </button>
-
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', alignItems: 'center' }}>
                             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '0.5rem' }}>
                                 <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '343152469164-pafau4u4nbkljrqi5ia3shb8qb84p1bn.apps.googleusercontent.com'}>
                                     <GoogleLogin
@@ -124,10 +98,6 @@ export default function AuthModal({ isOpen, onClose }) {
 
 
                 {renderContent()}
-
-                <p style={{ fontSize: '0.8rem', color: '#9ca3af', textAlign: 'center', marginTop: '2rem' }}>
-                    Securely powered by Authgear
-                </p>
             </div>
             <style jsx>{`
                 @keyframes modalSlideUp {

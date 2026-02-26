@@ -5,193 +5,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { getMockUsers, saveMockUser } = require('../mock_persistence');
 
-exports.authgearSync = async (req, res) => {
-    const { user: authgearPayload } = req; // Payload from authMiddleware
-    const userInfo = req.body.userInfo || {};
-    
-    console.log('\n--- AUTHGEAR SYNC TRACE ---');
-    console.log('TRACE_AUTHGEAR_USERINFO:', JSON.stringify(userInfo));
-    console.log('TRACE_AUTHGEAR_PAYLOAD:', JSON.stringify(authgearPayload));
-    console.log('---------------------------\n');
-
-    if (!authgearPayload) {
-        return res.status(401).json({ success: false, message: 'No Authgear user data' });
-    }
-
-    try {
-        const sub = authgearPayload.sub;
-        const email = userInfo.email || authgearPayload.email || null;
-        
-        // Robust Phone Number Extraction
-        const rawPhone = 
-            userInfo.phone_number || 
-            authgearPayload.phone_number || 
-            authgearPayload?.identities?.[0]?.claims?.phone_number ||
-            userInfo?.custom_attributes?.phone_number ||
-            authgearPayload?.custom_attributes?.phone_number ||
-            null;
-            
-        if (!rawPhone) {
-            console.log("🚨 Phone missing from Authgear payload!", { userInfo, authgearPayload });
-        }
-
-        let phone_number_verified = userInfo.phone_number_verified;
-        if (phone_number_verified === undefined) phone_number_verified = authgearPayload.phone_number_verified;
-        
-        // Deep verification check
-        if (phone_number_verified === undefined) {
-             phone_number_verified = authgearPayload?.identities?.[0]?.claims?.phone_number_verified || false;
-        }
-
-        const authgearName = userInfo.name || authgearPayload.name || userInfo.preferred_username || authgearPayload.preferred_username || null;
-
-        let phone = rawPhone ? String(rawPhone) : null;
-        if (phone && phone.startsWith('+91')) {
-            phone = phone.substring(3);
-        } else if (phone && phone.startsWith('91') && phone.length === 12) {
-            phone = phone.substring(2);
-        }
-
-        const displayName = authgearName || (email && typeof email === 'string' ? email.split('@')[0] : 'User');
-        const finalPhoneVerified = phone ? true : (phone_number_verified === true ? true : null);
-
-        let linkedEmail = null;
-        let linkedGoogleId = null;
-        let linkedName = null;
-        let linkedPhone = null;
-        const linkedToken = req.headers['x-linked-token'];
-        if (linkedToken) {
-            try {
-                const decoded = jwt.verify(linkedToken, process.env.JWT_SECRET || 'zelp_secret_key_2024');
-                linkedEmail = decoded.email || null;
-                linkedGoogleId = decoded.authgear_id || decoded.id || null;
-                linkedName = decoded.name || null;
-                linkedPhone = decoded.phone || null;
-            } catch (e) {
-                console.error('Invalid linked token', e);
-            }
-        }
-
-        const searchEmail = email || linkedEmail;
-        const finalPhone = phone || linkedPhone;
-        
-        // Emphasize Google account names over blank placeholders
-        let finalDisplayName = authgearName || linkedName || (searchEmail && typeof searchEmail === 'string' ? searchEmail.split('@')[0] : 'User');
-        if (finalDisplayName === 'User' && linkedName && linkedName !== 'User') finalDisplayName = linkedName;
-
-        const forcedPhoneVerified = finalPhone ? true : false; 
-
-        // Upsert user based on Authgear sub, email or phone (and also check google ID if linked)
-        let user;
-        const checkUser = await db.query(
-            'SELECT * FROM users WHERE authgear_id = $1 OR (email IS NOT NULL AND email = $2) OR (phone IS NOT NULL AND phone = $3) OR (authgear_id = $4 AND $4 IS NOT NULL) ORDER BY id DESC LIMIT 1', 
-            [sub || null, searchEmail || null, finalPhone || null, linkedGoogleId || null]
-        );
-
-        if (checkUser.rows.length > 0) {
-            const existingUser = checkUser.rows[0];
-            try {
-                await db.query(
-                    `UPDATE users 
-                     SET authgear_id = COALESCE(authgear_id, $1), 
-                         email = COALESCE(email, $2), 
-                         phone = COALESCE(phone, $3), 
-                         name = CASE WHEN name = 'User' OR name IS NULL THEN $5 ELSE name END, 
-                         phone_verified = $6 
-                     WHERE id = $4`,
-                    [sub || null, searchEmail || null, finalPhone || null, existingUser.id, finalDisplayName || 'User', forcedPhoneVerified]
-                );
-            } catch (updateErr) {
-                if (updateErr.code === '23505') {
-                    return res.status(409).json({ success: false, message: 'This phone number or email is already linked to another account.' });
-                }
-                console.warn("🚨 Handled User Merge Conflict gracefully:", updateErr.message);
-                return res.status(500).json({ success: false, message: 'Database merge conflict' });
-            }
-            const updated = await db.query('SELECT * FROM users WHERE id = $1', [existingUser.id]);
-            user = updated.rows[0];
-        } else {
-            try {
-                const insertRes = await db.query(
-                    'INSERT INTO users (name, email, phone, role, authgear_id, phone_verified) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-                    [finalDisplayName || 'User', searchEmail || null, finalPhone || null, 'user', sub || null, forcedPhoneVerified]
-                );
-                user = insertRes.rows[0];
-            } catch (insertErr) {
-                if (insertErr.code === '23505') {
-                    return res.status(409).json({ success: false, message: 'This phone number or email is already linked to another account.' });
-                }
-                console.warn("🚨 Handled Insert Conflict gracefully by falling back to fetch:", insertErr.message);
-                const fallbackFetch = await db.query('SELECT * FROM users WHERE phone = $1 OR email = $2 OR authgear_id = $3', [finalPhone || null, searchEmail || null, sub || null]);
-                if (fallbackFetch.rows.length === 0) return res.status(500).json({ success: false, message: 'Database insertion rejected the payload.'});
-                user = fallbackFetch.rows[0];
-            }
-        }
-
-        let newToken = null;
-        if (linkedToken) {
-            newToken = jwt.sign(
-                { id: user.id || user.phone, phone: user.phone, role: user.role, name: user.name, email: user.email, phone_verified: user.phone_verified },
-                process.env.JWT_SECRET || 'zelp_secret_key_2024',
-                { expiresIn: '30d' }
-            );
-        }
-
-        return res.status(200).json({
-            success: true,
-            user: {
-                id: user.phone || user.id,
-                name: user.name,
-                email: user.email,
-                phone: user.phone,
-                role: user.role,
-                phone_verified: user.phone_verified
-            },
-            token: newToken,
-            message: 'User synced successfully'
-        });
-    } catch (error) {
-        console.error('Authgear Sync Error:', error);
-        console.error('Authgear User Context:', JSON.stringify(authgearPayload, null, 2));
-        res.status(500).json({ success: false, message: 'Server Error during sync', error: error.message });
-    }
-};
-
-exports.syncPhone = async (req, res) => {
-    const { user: authgearPayload } = req;
-
-    if (!authgearPayload) {
-        return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
-    // Extract from body or auth middleware payload
-    const rawPhone = req.body.phone_number || authgearPayload.phone_number || authgearPayload?.identities?.[0]?.claims?.phone_number;
-    const isVerified = req.body.phone_number_verified || authgearPayload.phone_number_verified || true;
-
-    if (!rawPhone) {
-        return res.status(400).json({ success: false, message: 'No phone number provided' });
-    }
-
-    let phone = String(rawPhone);
-    if (phone.startsWith('+91')) phone = phone.substring(3);
-    else if (phone.startsWith('91') && phone.length === 12) phone = phone.substring(2);
-
-    try {
-        const updatedUser = updateRes.rows[0];
-        const newToken = jwt.sign(
-            { id: updatedUser.id || updatedUser.phone, phone: updatedUser.phone, role: updatedUser.role, name: updatedUser.name, email: updatedUser.email, phone_verified: updatedUser.phone_verified },
-            process.env.JWT_SECRET || 'zelp_secret_key_2024',
-            { expiresIn: '30d' }
-        );
-        res.json({ success: true, message: 'Phone synced successfully', user: updatedUser, token: newToken });
-    } catch (err) {
-        if (err.code === '23505') {
-            return res.status(409).json({ success: false, message: 'This phone number is already linked to another account.' });
-        }
-        console.error('Phone Sync Error:', err);
-        res.status(500).json({ success: false, message: 'Failed to sync phone' });
-    }
-};
 
 exports.requestVerificationOtp = async (req, res) => {
     const { phone } = req.body;
@@ -227,10 +40,12 @@ exports.verifyPhone = async (req, res) => {
         }
 
         const userEmail = req.user?.email || null;
-        const userSub = req.user?.sub || null;
+        const userPhone = req.user?.phone || null;
         
-        if (userEmail || userSub) {
-            await db.query('UPDATE users SET phone_verified = true, phone = $1 WHERE phone = $1 OR email = $2 OR authgear_id = $3', [phone, userEmail, userSub]);
+        if (userEmail) {
+            await db.query('UPDATE users SET phone_verified = true, phone = $1 WHERE phone = $1 OR email = $2', [phone, userEmail]);
+        } else if (userPhone) {
+            await db.query('UPDATE users SET phone_verified = true, phone = $1 WHERE phone = $1 OR phone = $2', [phone, userPhone]);
         } else {
             await db.query('UPDATE users SET phone_verified = true, phone = $1 WHERE phone = $1', [phone]);
         }
@@ -395,13 +210,12 @@ exports.updateProfile = async (req, res) => {
     const { name, email, phone, password } = req.body;
 
     const userEmail = req.user?.email || (email ? email : null);
-    const userSub = req.user?.sub || null;
-    const userPhone = req.user?.phone_number || req.user?.phone || phone || null;
+    const userPhone = req.user?.phone || phone || null;
 
     // Check if user exists
     const checkUser = await db.query(
-        'SELECT * FROM users WHERE authgear_id = $1 OR email = $2 OR phone = $3', 
-        [userSub, userEmail, userPhone]
+        'SELECT * FROM users WHERE email = $1 OR phone = $2', 
+        [userEmail, userPhone]
     );
 
     if (checkUser.rows.length === 0) {
@@ -460,12 +274,11 @@ exports.getMe = async (req, res) => {
 
     try {
         const searchEmail = req.user.email || null;
-        const searchPhone = req.user.phone || req.user.phone_number || null;
-        const searchSub = req.user.sub || null;
+        const searchPhone = req.user.phone || null;
 
         const checkUser = await db.query(
-            'SELECT * FROM users WHERE (email = $1 AND $1 IS NOT NULL) OR (phone = $2 AND $2 IS NOT NULL) OR (authgear_id = $3 AND $3 IS NOT NULL) ORDER BY id DESC LIMIT 1', 
-            [searchEmail, searchPhone, searchSub]
+            'SELECT * FROM users WHERE (email = $1 AND $1 IS NOT NULL) OR (phone = $2 AND $2 IS NOT NULL) ORDER BY id DESC LIMIT 1', 
+            [searchEmail, searchPhone]
         );
 
         if (checkUser.rows.length === 0) {

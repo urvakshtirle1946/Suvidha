@@ -5,8 +5,9 @@ export const getApiUrl = () => {
     }
 
     // 2. Default Fallback
-    // For stable hydration, we assume the remote server unless the env var dictates otherwise
-    return 'https://suvidha-server-4u66.onrender.com';
+    // For stable hydration, we assume the remote server unless the env var dictates otherwise.
+    // However, we now use Next.js rewrites to proxy requests, so we just hit the relative path!
+    return ''; // Empty string so fetch('/api/...') hits the current origin natively and gets rewritten by next.config.mjs
 };
 
 export const getImageUrl = (url) => {

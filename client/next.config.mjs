@@ -19,6 +19,18 @@ const nextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://suvidha-server-4u66.onrender.com/api/:path*'
+      },
+      {
+        source: '/uploads/:path*',
+        destination: 'https://suvidha-server-4u66.onrender.com/uploads/:path*'
+      }
+    ];
+  }
 };
 
 export default nextConfig;

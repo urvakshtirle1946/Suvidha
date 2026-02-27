@@ -29,10 +29,13 @@ export function AuthProvider({ children }) {
         const data = await res.json();
         if (data.success && data.user) {
           setUser(data.user);
+        } else {
+          setUser(null);
         }
       }
     } catch (err) {
-      console.error("Auth hydration failed", err);
+      console.error("Auth hydration failed. Note: If backend isn't deployed yet, cookies will fail.", err);
+      setUser(null);
     } finally {
       setIsLoaded(true);
     }
@@ -58,6 +61,7 @@ export function AuthProvider({ children }) {
       const backendUrl = getApiUrl();
       const res = await fetch(`${backendUrl}/api/auth/google-login`, {
           method: 'POST',
+          credentials: 'include', // Ensure cookie isn't blocked on the very first Set-Cookie response
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ token: credential })
       });

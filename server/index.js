@@ -1,7 +1,7 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, process.env.NODE_ENV === 'production' ? '.env' : '../.env') });
 const express = require('express');
 const cors = require('cors');
-// const bodyParser = require('body-parser'); // Removed redundant dependency
+const cookieParser = require('cookie-parser');
 
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -46,6 +46,7 @@ app.use(cors({
   },
   credentials: true
 }));
+app.use(cookieParser());
 app.use(express.json()); // Built-in middleware replaces body-parser
 const staticOptions = {
   setHeaders: (res) => {

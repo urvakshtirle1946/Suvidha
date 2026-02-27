@@ -16,54 +16,25 @@ export function AuthProvider({ children }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const router = useRouter();
 
-  const initLocalAuth = useCallback(() => {
-    let initialUser = null;
-    const customToken = localStorage.getItem('zelp_custom_token');
-    
-    const fetchLatestUserData = async (token) => {
-        try {
-            const backendUrl = getApiUrl();
-            const res = await fetch(`${backendUrl}/api/auth/me`, {
-               headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await res.json();
-            if (data.success && data.user) {
-                setUser((prev) => ({ ...prev, ...data.user }));
-                if (data.token) {
-                    localStorage.setItem('zelp_custom_token', data.token);
-                }
-            } else {
-                setUser(null);
-                localStorage.removeItem('zelp_custom_token');
-            }
-        } catch (e) {
-            console.error("fetchLatestUserData error", e);
-            setUser(null);
-        } finally {
-            setIsLoaded(true);
-        }
-    };
+  const initLocalAuth = useCallback(async () => {
+    try {
+      const backendUrl = getApiUrl();
+      const res = await fetch(`${backendUrl}/api/auth/me`, {
+        credentials: "include"
+      });
 
-    if (customToken) {
-        try {
-            const payloadUrl = customToken.split('.')[1];
-            const base64 = payloadUrl.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            initialUser = JSON.parse(jsonPayload);
-            setUser(initialUser);
-            setIsLoaded(true);
-            fetchLatestUserData(customToken);
-        } catch(e) {
-            console.error("Failed to parse custom token on load", e);
-            localStorage.removeItem('zelp_custom_token');
-            setUser(null);
-            setIsLoaded(true);
-        }
-    } else {
+      if (res.status === 401 || res.status === 403) {
         setUser(null);
-        setIsLoaded(true);
+      } else {
+        const data = await res.json();
+        if (data.success && data.user) {
+          setUser(data.user);
+        }
+      }
+    } catch (err) {
+      console.error("Auth hydration failed", err);
+    } finally {
+      setIsLoaded(true);
     }
   }, []);
 
@@ -72,10 +43,7 @@ export function AuthProvider({ children }) {
   }, [initLocalAuth]);
 
   const getToken = useCallback(() => {
-    if (typeof window !== "undefined") {
-        const customToken = localStorage.getItem('zelp_custom_token');
-        if (customToken) return customToken;
-    }
+    // Legacy fallback, cookies are handled automatically
     return null;
   }, []);
 
@@ -94,8 +62,7 @@ export function AuthProvider({ children }) {
           body: JSON.stringify({ token: credential })
       });
       const data = await res.json();
-      if (data.success && data.token) {
-          localStorage.setItem('zelp_custom_token', data.token);
+      if (data.success) {
           setUser(data.user);
           return true;
       } else {
@@ -108,16 +75,19 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     try {
-      if (typeof window !== "undefined") {
-          localStorage.removeItem('zelp_custom_token');
-      }
+      const backendUrl = getApiUrl();
+      await fetch(`${backendUrl}/api/auth/logout`, {
+        method: "POST",
+        credentials: "include"
+      });
       setUser(null);
       router.push("/");
     } catch (err) {
       console.error("Logout error", err);
       setUser(null);
+      router.push("/");
     }
   };
 

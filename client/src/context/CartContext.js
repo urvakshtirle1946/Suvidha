@@ -1,5 +1,6 @@
 'use client';
 import { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
 
 const CartContext = createContext();
 
@@ -7,26 +8,34 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const { user, isLoaded: authLoaded } = useAuth();
+
+  const cartKey = user ? `zelp_cart_${user.id || user.phone}` : 'zelp_cart_guest';
 
   // Load cart from localStorage on mount
   useEffect(() => {
-    const savedCart = localStorage.getItem('zelp_cart');
+    if (!authLoaded) return;
+
+    const savedCart = localStorage.getItem(cartKey);
     if (savedCart) {
       try {
         setCart(JSON.parse(savedCart));
       } catch (e) {
         console.error("Failed to parse cart", e);
+        setCart([]);
       }
+    } else {
+        setCart([]);
     }
     setIsLoaded(true);
-  }, []);
+  }, [cartKey, authLoaded]);
 
   // Save cart to localStorage whenever it changes, but only after initial load
   useEffect(() => {
     if (isLoaded) {
-        localStorage.setItem('zelp_cart', JSON.stringify(cart));
+        localStorage.setItem(cartKey, JSON.stringify(cart));
     }
-  }, [cart, isLoaded]);
+  }, [cart, cartKey, isLoaded]);
 
   const addToCart = (item) => {
     setCart((prev) => {

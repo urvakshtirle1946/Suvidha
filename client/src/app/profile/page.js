@@ -25,9 +25,7 @@ export default function Profile() {
       const apiUrl = getApiUrl();
       const token = getToken();
       const res = await fetch(`${apiUrl}/api/bookings`, {
-          headers: {
-              'Authorization': `Bearer ${token}`
-          }
+          credentials: 'include'
       });
       if (res.ok) {
         const data = await res.json();

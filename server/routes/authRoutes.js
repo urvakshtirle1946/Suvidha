@@ -40,5 +40,6 @@ router.post('/google-login', authController.googleLogin);
 router.put('/profile', verifyJWT, authController.updateProfile);
 router.get('/users', verifyJWT, requireRole(['admin', 'super_admin']), authController.getAllUsers);
 router.get('/me', verifyJWT, authController.getMe);
+router.post('/logout', authController.logout);
 
 module.exports = router;

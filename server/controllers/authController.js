@@ -59,9 +59,15 @@ exports.verifyPhone = async (req, res) => {
     }
 };
 
-// Strict Admin Login Endpoint
 exports.adminLogin = async (req, res) => {
     const { email, password } = req.body;
+
+    const setCookieOpts = {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    };
 
     if (!email || !password) {
         return res.status(400).json({ success: false, message: 'Email and Password are required' });
@@ -78,7 +84,11 @@ exports.adminLogin = async (req, res) => {
                     process.env.JWT_SECRET || 'zelp_secret_key_2024',
                     { expiresIn: '1d' }
                 );
-                return res.status(200).json({ success: true, token, user: { email, role: 'admin' } });
+                return res
+                    .cookie("admin_token", token, setCookieOpts)
+                    .cookie("zelp_access_token", token, setCookieOpts)
+                    .status(200)
+                    .json({ success: true, user: { email, role: 'admin' } });
             }
             return res.status(401).json({ success: false, message: 'Invalid Admin Credentials' });
         }
@@ -96,18 +106,21 @@ exports.adminLogin = async (req, res) => {
             { expiresIn: '1d' } // Admin token expires quicker
         );
 
-        return res.status(200).json({
-            success: true,
-            token,
-            user: {
-                id: user.phone,
-                name: user.name,
-                email: user.email,
-                phone: user.phone,
-                role: user.role
-            },
-            message: 'Admin Login Successful'
-        });
+        return res
+            .cookie("admin_token", token, setCookieOpts)
+            .cookie("zelp_access_token", token, setCookieOpts)
+            .status(200)
+            .json({
+                success: true,
+                user: {
+                    id: user.phone,
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone,
+                    role: user.role
+                },
+                message: 'Admin Login Successful'
+            });
 
     } catch (e) {
         console.error("Admin Auth Error", e);
@@ -185,19 +198,28 @@ exports.googleLogin = async (req, res) => {
             { expiresIn: '30d' }
         );
 
-        return res.status(200).json({
-            success: true,
-            token: jwtToken,
-            user: {
-                id: user.phone || user.id,
-                name: user.name,
-                email: user.email,
-                phone: user.phone,
-                role: user.role,
-                phone_verified: user.phone_verified
-            },
-            message: 'Google Login Successful'
-        });
+        const setCookieOpts = {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+        };
+
+        return res
+            .cookie("zelp_access_token", jwtToken, setCookieOpts)
+            .status(200)
+            .json({
+                success: true,
+                user: {
+                    id: user.phone || user.id,
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone,
+                    role: user.role,
+                    phone_verified: user.phone_verified
+                },
+                message: 'Google Login Successful'
+            });
         
     } catch (error) {
         console.error('Google Auth Error:', error);
@@ -249,10 +271,18 @@ exports.updateProfile = async (req, res) => {
             { expiresIn: '30d' }
         );
 
-        res.json({
+        const setCookieOpts = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 30 * 24 * 60 * 60 * 1000
+        };
+
+        res
+          .cookie("zelp_access_token", token, setCookieOpts)
+          .json({
             success: true,
             message: 'Profile updated successfully',
-            token,
             user: {
                 id: updatedUser.phone || updatedUser.id,
                 name: updatedUser.name,
@@ -292,13 +322,27 @@ exports.getMe = async (req, res) => {
             { expiresIn: '30d' }
         );
 
-        res.json({
+        const setCookieOpts = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 30 * 24 * 60 * 60 * 1000
+        };
+
+        res
+          .cookie("zelp_access_token", token, setCookieOpts)
+          .json({
             success: true,
-            user,
-            token
+            user
         });
     } catch (err) {
         console.error("GetMe Error:", err);
         res.status(500).json({ success: false });
     }
+};
+
+exports.logout = (req, res) => {
+    res.clearCookie("zelp_access_token");
+    res.clearCookie("admin_token");
+    res.json({ success: true, message: 'Logged out successfully' });
 };

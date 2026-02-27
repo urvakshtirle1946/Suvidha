@@ -225,9 +225,9 @@ export default function Checkout() {
                     requests.push(
                         fetch(`${apiUrl}/api/bookings`, {
                             method: 'POST',
+                            credentials: 'include',
                             headers: { 
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${getToken()}` 
+                                'Content-Type': 'application/json'
                             },
                             body: JSON.stringify(bookingData)
                         }).then(async res => {

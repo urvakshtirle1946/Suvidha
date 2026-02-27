@@ -4,14 +4,19 @@ require('dotenv').config();
 
 // Middleware to verify JWT token
 const verifyJWT = async (req, res, next) => {
-  // Get token from Authorization header or cookies if implemented later
-  const authHeader = req.headers.authorization || req.headers.Authorization;
+  // Get token from cookies, fallback to Authorization header for legacy compatibility if needed
+  let token = req.cookies?.zelp_access_token || req.cookies?.admin_token;
   
-  if (!authHeader?.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'Unauthorized: No token provided' });
+  if (!token) {
+      const authHeader = req.headers.authorization || req.headers.Authorization;
+      if (authHeader?.startsWith('Bearer ')) {
+          token = authHeader.split(' ')[1];
+      }
   }
 
-  const token = authHeader.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized: No token provided' });
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'zelp_secret_key_2024');

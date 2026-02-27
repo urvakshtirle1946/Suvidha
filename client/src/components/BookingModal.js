@@ -4,7 +4,6 @@ import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
 import { X, Calendar, User, MapPin, CheckCircle, Home, Plus, ArrowUpDown, Clock } from 'lucide-react';
 import AuthModal from './AuthModal';
-import CompleteProfileModal from './CompleteProfileModal';
 import { getApiUrl, getImageUrl } from '@/utils/api';
 
 export default function BookingModal({ isOpen, onClose, service }) {
@@ -16,12 +15,24 @@ export default function BookingModal({ isOpen, onClose, service }) {
   const [selectedTime, setSelectedTime] = useState(null);
   const [transactionId, setTransactionId] = useState('');
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [paymentMode, setPaymentMode] = useState(null); // 'online' or 'hospital'
   const [labs, setLabs] = useState([]);
   const [fetchingLabs, setFetchingLabs] = useState(false);
   const [bookingId, setBookingId] = useState(null);
+
+  // Patient Details State
+  const [patientName, setPatientName] = useState('');
+  const [patientAge, setPatientAge] = useState('');
+  const [patientGender, setPatientGender] = useState('');
+  const [patientPhone, setPatientPhone] = useState('');
+
+  useEffect(() => {
+      if (user && isOpen && !patientName && !patientPhone) {
+          setPatientName(user.name || '');
+          setPatientPhone(user.phone || '');
+      }
+  }, [user, isOpen, patientName, patientPhone]);
 
   useEffect(() => {
      if (isOpen && service) {
@@ -130,10 +141,10 @@ export default function BookingModal({ isOpen, onClose, service }) {
             } else {
                 // Standard new booking flow
                 const bookingData = {
-                    name: user?.name,
-                    userPhone: user?.phone,
-                    age: 0,
-                    gender: 'Not Specified',
+                    name: patientName || user?.name || 'Unknown',
+                    userPhone: patientPhone || user?.phone || 'Unknown',
+                    age: parseInt(patientAge) || 0,
+                    gender: patientGender || 'Not Specified',
                     date: (new Date(Date.now() + 86400000).toISOString() || '').split('T')[0],
                     time: selectedTime,
                     address: location || 'India',
@@ -167,6 +178,14 @@ export default function BookingModal({ isOpen, onClose, service }) {
         }
   };
 
+  const validatePatientDetails = () => {
+        if (!patientName || !patientAge || !patientGender || !patientPhone || patientPhone.length < 10) {
+            alert('Please fill out all patient details correctly.');
+            return false;
+        }
+        return true;
+  };
+
   const handlePayOnline = () => {
         if (!user) { 
             alert('Please login to continue.'); 
@@ -174,6 +193,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
             return; 
         }
         if (!selectedLab || !selectedTime) return;
+        if (!validatePatientDetails()) return;
         setPaymentMode('online');
         setStep(2); 
   };
@@ -185,6 +205,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
              return; 
         }
         if (!selectedLab || !selectedTime) return;
+        if (!validatePatientDetails()) return;
         setPaymentMode('hospital');
         finalizeBooking('hospital');
   };
@@ -236,6 +257,27 @@ export default function BookingModal({ isOpen, onClose, service }) {
                         </div>
                     )}
                     
+                    {/* Patient Details */}
+                    <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                             <User size={18} color="#ff6f61" />
+                             <span style={{ fontWeight: '700', color: '#374151' }}>Patient Details</span>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '2rem' }}>
+                            <input type="text" placeholder="Patient Name" value={patientName} onChange={e => setPatientName(e.target.value)} style={{ padding: '12px', borderRadius: '10px', border: '1px solid #e5e7eb', outline: 'none', fontSize: '0.95rem' }} />
+                            <div style={{ display: 'flex', gap: '12px' }}>
+                                <input type="number" placeholder="Age" value={patientAge} onChange={e => setPatientAge(e.target.value)} style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #e5e7eb', outline: 'none', fontSize: '0.95rem' }} />
+                                <select value={patientGender} onChange={e => setPatientGender(e.target.value)} style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #e5e7eb', outline: 'none', background: '#fff', fontSize: '0.95rem' }}>
+                                    <option value="">Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <input type="tel" placeholder="Mobile Number" value={patientPhone} onChange={e => setPatientPhone(e.target.value)} style={{ padding: '12px', borderRadius: '10px', border: '1px solid #e5e7eb', outline: 'none', fontSize: '0.95rem' }} />
+                        </div>
+                    </div>
+
                     {/* Date Picker */}
                     <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
@@ -521,7 +563,6 @@ export default function BookingModal({ isOpen, onClose, service }) {
       </div>
     </div>
     <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
-    <CompleteProfileModal isOpen={profileModalOpen} onClose={() => setProfileModalOpen(false)} />
     </>
   );
 }

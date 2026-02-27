@@ -5,9 +5,8 @@ import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
 import Navbar from '@/components/Navbar';
 import AuthModal from '@/components/AuthModal';
-import CompleteProfileModal from '@/components/CompleteProfileModal';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, CheckCircle, AlertCircle, Calendar as CalendarIcon, Clock, MapPin, X } from 'lucide-react';
+import { ArrowLeft, CheckCircle, AlertCircle, Calendar as CalendarIcon, Clock, MapPin, X, User } from 'lucide-react';
 import Link from 'next/link';
 import { getApiUrl, getImageUrl } from '@/utils/api';
 import { useEffect } from 'react';
@@ -117,7 +116,19 @@ export default function Checkout() {
   const [showPayment, setShowPayment] = useState(false);
   const [paymentMode, setPaymentMode] = useState('hospital'); // 'hospital' or 'online'
   const [bookingIds, setBookingIds] = useState([]);
-  const [profileModalOpen, setProfileModalOpen] = useState(false);
+
+  // Patient Details State
+  const [patientName, setPatientName] = useState('');
+  const [patientAge, setPatientAge] = useState('');
+  const [patientGender, setPatientGender] = useState('');
+  const [patientPhone, setPatientPhone] = useState('');
+
+  useEffect(() => {
+    if (user) {
+        if (!patientName) setPatientName(user.name || '');
+        if (!patientPhone) setPatientPhone(user.phone || '');
+    }
+  }, [user, patientName, patientPhone]);
 
   const updateCartWithProvider = (index, newItem) => {
     updateCartItem(index, newItem);
@@ -132,6 +143,11 @@ export default function Checkout() {
 
     if (!selectedDate || !selectedTime) {
         setError("Please select a date and time slot for your appointment.");
+        return;
+    }
+
+    if (!patientName || !patientAge || !patientGender || !patientPhone || patientPhone.length < 10) {
+        setError("Please fill out all patient details correctly.");
         return;
     }
 
@@ -192,11 +208,11 @@ export default function Checkout() {
                 const requests = [];
                 for (let i = 0; i < quantity; i++) {
                     const bookingData = {
-                        name: user?.name,
-                        userPhone: user?.phone, 
+                        name: patientName || user?.name || 'Unknown',
+                        userPhone: patientPhone || user?.phone || 'Unknown', 
                         userEmail: user?.email,
-                        age: 0, 
-                        gender: 'Not Specified',
+                        age: parseInt(patientAge) || 0, 
+                        gender: patientGender || 'Not Specified',
                         date: selectedDate,
                         time: selectedTime,
                         address: location || 'New Delhi, India',
@@ -357,6 +373,38 @@ export default function Checkout() {
                                 </div>
                             </div>
                         ))}
+                    </div>
+
+                    {/* Patient Details Section */}
+                    <div className="card patient-card" style={{ background: '#fff', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', marginBottom: '1.5rem' }}>
+                        <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.2rem', color: '#111827' }}>
+                             <User size={18} color="#0c831f" /> Patient Details
+                        </h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 'bold', color: '#374151' }}>Patient Name</label>
+                                <input type="text" placeholder="Full Name" value={patientName} onChange={e => setPatientName(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none', background: '#f9fafb' }} />
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 'bold', color: '#374151' }}>Age</label>
+                                    <input type="number" placeholder="Age" value={patientAge} onChange={e => setPatientAge(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none', background: '#f9fafb' }} />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 'bold', color: '#374151' }}>Gender</label>
+                                    <select value={patientGender} onChange={e => setPatientGender(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none', background: '#f9fafb' }}>
+                                        <option value="">Select</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 'bold', color: '#374151' }}>Mobile Number</label>
+                                <input type="tel" placeholder="10-digit Mobile Number" value={patientPhone} onChange={e => setPatientPhone(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none', background: '#f9fafb' }} />
+                            </div>
+                        </div>
                     </div>
 
                     {/* Schedule Section */}
@@ -591,7 +639,6 @@ export default function Checkout() {
       )}
 
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
-      <CompleteProfileModal isOpen={profileModalOpen} onClose={() => setProfileModalOpen(false)} />
 
       <style jsx>{`
         .checkout-grid {

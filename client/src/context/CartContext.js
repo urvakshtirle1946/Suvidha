@@ -6,6 +6,7 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -17,12 +18,15 @@ export function CartProvider({ children }) {
         console.error("Failed to parse cart", e);
       }
     }
+    setIsLoaded(true);
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Save cart to localStorage whenever it changes, but only after initial load
   useEffect(() => {
-    localStorage.setItem('zelp_cart', JSON.stringify(cart));
-  }, [cart]);
+    if (isLoaded) {
+        localStorage.setItem('zelp_cart', JSON.stringify(cart));
+    }
+  }, [cart, isLoaded]);
 
   const addToCart = (item) => {
     setCart((prev) => {

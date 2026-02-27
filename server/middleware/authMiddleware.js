@@ -14,7 +14,7 @@ const verifyJWT = async (req, res, next) => {
   const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_super_secret_key_here');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'zelp_secret_key_2024');
     req.user = decoded; // Attach user payload to request
     next();
   } catch (err) {

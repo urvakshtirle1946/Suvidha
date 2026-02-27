@@ -19,7 +19,7 @@ const verifyJWT = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'zelp_secret_key_2024');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // Attach user payload to request
     next();
   } catch (err) {

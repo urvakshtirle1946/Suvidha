@@ -24,26 +24,14 @@ app.use(helmet({
 })); // Security Headers
 app.use(morgan('dev')); // HTTP Request Logger
 
-// CORS Configuration
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://suvidha-client.vercel.app',
-  'https://suvidha-client-git-main-suvidha.vercel.app',
-  'https://tryzelp.app'
-];
-
-if (process.env.FRONTEND_URL) {
-  allowedOrigins.push(process.env.FRONTEND_URL);
-}
-
+// Strict CORS Configuration for Cookies
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: [
+    "https://tryzelp.app",
+    "http://localhost:3000",
+    "https://suvidha-client.vercel.app",
+    "https://suvidha-client-git-main-suvidha.vercel.app"
+  ],
   credentials: true
 }));
 app.use(cookieParser());

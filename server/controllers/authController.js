@@ -62,10 +62,11 @@ exports.verifyPhone = async (req, res) => {
 exports.adminLogin = async (req, res) => {
     const { email, password } = req.body;
 
-    const setCookieOpts = {
+    const cookieOptions = {
         httpOnly: true,
         secure: true,
         sameSite: "none",
+        path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     };
 
@@ -81,12 +82,12 @@ exports.adminLogin = async (req, res) => {
             if (email === 'admin@zelp.com' && password === 'demo123') {
                 const token = jwt.sign(
                     { id: 0, email: 'admin@zelp.com', name: 'Demo Admin', phone: '9999999999', role: 'admin' },
-                    process.env.JWT_SECRET || 'zelp_secret_key_2024',
+                    process.env.JWT_SECRET,
                     { expiresIn: '1d' }
                 );
                 return res
-                    .cookie("admin_token", token, setCookieOpts)
-                    .cookie("zelp_access_token", token, setCookieOpts)
+                    .cookie("admin_token", token, cookieOptions)
+                    .cookie("zelp_access_token", token, cookieOptions)
                     .status(200)
                     .json({ success: true, user: { email, role: 'admin' } });
             }
@@ -107,8 +108,8 @@ exports.adminLogin = async (req, res) => {
         );
 
         return res
-            .cookie("admin_token", token, setCookieOpts)
-            .cookie("zelp_access_token", token, setCookieOpts)
+            .cookie("admin_token", token, cookieOptions)
+            .cookie("zelp_access_token", token, cookieOptions)
             .status(200)
             .json({
                 success: true,
@@ -198,15 +199,16 @@ exports.googleLogin = async (req, res) => {
             { expiresIn: '30d' }
         );
 
-        const setCookieOpts = {
+        const cookieOptions = {
             httpOnly: true,
             secure: true,
             sameSite: "none",
+            path: "/",
             maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
         };
 
         return res
-            .cookie("zelp_access_token", jwtToken, setCookieOpts)
+            .cookie("zelp_access_token", jwtToken, cookieOptions)
             .status(200)
             .json({
                 success: true,
@@ -267,19 +269,20 @@ exports.updateProfile = async (req, res) => {
         // Generate new token with updated details
         const token = jwt.sign(
             { id: updatedUser.id || updatedUser.phone, phone: updatedUser.phone, role: updatedUser.role, name: updatedUser.name, email: updatedUser.email, phone_verified: updatedUser.phone_verified },
-            process.env.JWT_SECRET || 'secret',
+            process.env.JWT_SECRET,
             { expiresIn: '30d' }
         );
 
-        const setCookieOpts = {
+        const cookieOptions = {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            secure: true,
+            sameSite: "none",
+            path: "/",
             maxAge: 30 * 24 * 60 * 60 * 1000
         };
 
         res
-          .cookie("zelp_access_token", token, setCookieOpts)
+          .cookie("zelp_access_token", token, cookieOptions)
           .json({
             success: true,
             message: 'Profile updated successfully',
@@ -318,19 +321,20 @@ exports.getMe = async (req, res) => {
         const user = checkUser.rows[0];
         const token = jwt.sign(
             { id: user.id || user.phone, phone: user.phone, role: user.role, name: user.name, email: user.email, phone_verified: user.phone_verified },
-            process.env.JWT_SECRET || 'zelp_secret_key_2024',
+            process.env.JWT_SECRET,
             { expiresIn: '30d' }
         );
 
-        const setCookieOpts = {
+        const cookieOptions = {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            secure: true,
+            sameSite: "none",
+            path: "/",
             maxAge: 30 * 24 * 60 * 60 * 1000
         };
 
         res
-          .cookie("zelp_access_token", token, setCookieOpts)
+          .cookie("zelp_access_token", token, cookieOptions)
           .json({
             success: true,
             user
@@ -342,7 +346,8 @@ exports.getMe = async (req, res) => {
 };
 
 exports.logout = (req, res) => {
-    res.clearCookie("zelp_access_token");
-    res.clearCookie("admin_token");
+    const clearOpts = { httpOnly: true, secure: true, sameSite: "none", path: "/" };
+    res.clearCookie("zelp_access_token", clearOpts);
+    res.clearCookie("admin_token", clearOpts);
     res.json({ success: true, message: 'Logged out successfully' });
 };

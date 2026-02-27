@@ -7,6 +7,7 @@ export const getApiUrl = () => {
 
 export const apiFetch = (endpoint, options = {}) => {
   const backendUrl = getApiUrl();
+
   return fetch(`${backendUrl}${endpoint}`, {
     credentials: "include",
     ...options,

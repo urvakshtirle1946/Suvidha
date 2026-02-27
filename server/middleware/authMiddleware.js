@@ -4,14 +4,19 @@ require('dotenv').config();
 
 // Middleware to verify JWT token
 const verifyJWT = async (req, res, next) => {
-  // Get token from cookies, fallback to Authorization header for legacy compatibility if needed
-  let token = req.cookies?.zelp_access_token || req.cookies?.admin_token;
-  
+  let token = null;
+
+  // ✅ FIRST: check cookie
+  if (req.cookies?.zelp_access_token) {
+    token = req.cookies.zelp_access_token;
+  }
+
+  // ✅ fallback for old mobile/admin clients
   if (!token) {
-      const authHeader = req.headers.authorization || req.headers.Authorization;
-      if (authHeader?.startsWith('Bearer ')) {
-          token = authHeader.split(' ')[1];
-      }
+    const authHeader = req.headers.authorization || req.headers.Authorization;
+    if (authHeader?.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    }
   }
 
   if (!token) {

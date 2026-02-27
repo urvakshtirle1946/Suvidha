@@ -98,7 +98,7 @@ function ProviderList({ serviceName, currentHospitalId, onSelect }) {
 
 export default function Checkout() {
   const { cart, clearCart, cartTotal, cartMrpTotal, cartDiscount, updateCartItem } = useCart();
-  const { user, getToken } = useAuth();
+  const { user } = useAuth();
   const { location } = useLocation();
   const router = useRouter();
   

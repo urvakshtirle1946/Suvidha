@@ -42,10 +42,7 @@ export function AuthProvider({ children }) {
     initLocalAuth();
   }, [initLocalAuth]);
 
-  const getToken = useCallback(() => {
-    // Legacy fallback, cookies are handled automatically
-    return null;
-  }, []);
+  // Removed legacy empty getToken because it is restored above.
 
   const updateUser = useCallback((data) => {
     setUser(prev => prev ? { ...prev, ...data } : data);
@@ -88,7 +85,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, customGoogleLogin, logout, isLoaded, getToken, updateUser }}>
+    <AuthContext.Provider value={{ user, customGoogleLogin, logout, isLoaded, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

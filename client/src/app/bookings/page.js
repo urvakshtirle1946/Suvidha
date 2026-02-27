@@ -9,7 +9,7 @@ import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 
 export default function Bookings() {
-  const { user, isLoaded, getToken } = useAuth();
+  const { user, isLoaded } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);

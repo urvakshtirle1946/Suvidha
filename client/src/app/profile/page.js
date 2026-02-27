@@ -7,7 +7,7 @@ import { Calendar, Clock, MapPin, User, CheckCircle, Lock } from 'lucide-react';
 import { getApiUrl, apiFetch } from '@/utils/api';
 
 export default function Profile() {
-  const { user, isLoaded, getToken } = useAuth();
+  const { user, isLoaded } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);

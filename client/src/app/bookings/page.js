@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import AuthModal from '@/components/AuthModal';
 import { Calendar, Clock, MapPin, CheckCircle, ChevronRight, Package, Lock, X, User as UserIcon, Phone, Hash } from 'lucide-react';
-import { getApiUrl } from '@/utils/api';
+import { getApiUrl, apiFetch } from '@/utils/api';
 
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
@@ -37,11 +37,7 @@ export default function Bookings() {
 
   const fetchBookings = async () => {
       try {
-          const apiUrl = getApiUrl();
-          const token = getToken();
-          const res = await fetch(`${apiUrl}/api/bookings`, {
-              credentials: 'include'
-          });
+          const res = await apiFetch(`/api/bookings`);
           if (res.ok) {
               const data = await res.json();
               setBookings(data);
@@ -72,14 +68,8 @@ export default function Bookings() {
       }
       setPaying(true);
       try {
-          const apiUrl = getApiUrl();
-          const token = getToken();
-          const res = await fetch(`${apiUrl}/api/bookings/${paymentBooking.id}/pay`, {
+          const res = await apiFetch(`/api/bookings/${paymentBooking.id}/pay`, {
               method: 'PATCH',
-              credentials: 'include',
-              headers: { 
-                  'Content-Type': 'application/json'
-              },
               body: JSON.stringify({ transactionId: txnId })
           });
 

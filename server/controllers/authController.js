@@ -64,8 +64,8 @@ exports.adminLogin = async (req, res) => {
 
     const cookieOptions = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax", // First-Party Request via Next.js Proxy!
+        secure: true,
+        sameSite: "none",
         path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     };
@@ -201,8 +201,8 @@ exports.googleLogin = async (req, res) => {
 
         const cookieOptions = {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            secure: true,
+            sameSite: "none",
             path: "/",
             maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
         };
@@ -275,8 +275,8 @@ exports.updateProfile = async (req, res) => {
 
         const cookieOptions = {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            secure: true,
+            sameSite: "none",
             path: "/",
             maxAge: 30 * 24 * 60 * 60 * 1000
         };
@@ -327,8 +327,8 @@ exports.getMe = async (req, res) => {
 
         const cookieOptions = {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            secure: true,
+            sameSite: "none",
             path: "/",
             maxAge: 30 * 24 * 60 * 60 * 1000
         };
@@ -348,8 +348,8 @@ exports.getMe = async (req, res) => {
 exports.logout = (req, res) => {
     const clearOpts = { 
         httpOnly: true, 
-        secure: process.env.NODE_ENV === "production", 
-        sameSite: "lax", 
+        secure: true, 
+        sameSite: "none", 
         path: "/" 
     };
     res.clearCookie("zelp_access_token", clearOpts);

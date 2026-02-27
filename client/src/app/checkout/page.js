@@ -8,7 +8,7 @@ import AuthModal from '@/components/AuthModal';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, CheckCircle, AlertCircle, Calendar as CalendarIcon, Clock, MapPin, X, User } from 'lucide-react';
 import Link from 'next/link';
-import { getApiUrl, getImageUrl } from '@/utils/api';
+import { getApiUrl, getImageUrl, apiFetch } from '@/utils/api';
 import { useEffect } from 'react';
 
 function ProviderList({ serviceName, currentHospitalId, onSelect }) {
@@ -18,9 +18,7 @@ function ProviderList({ serviceName, currentHospitalId, onSelect }) {
     useEffect(() => {
         const fetchProviders = async () => {
             try {
-                const apiUrl = getApiUrl();
-                const cleanName = (serviceName || '').split(' at ')[0];
-                const res = await fetch(`${apiUrl}/api/services?search=${encodeURIComponent(cleanName)}`);
+                const res = await apiFetch(`/api/services?search=${encodeURIComponent(cleanName)}`);
                 if (res.ok) {
                     const data = await res.json();
                     const list = Array.isArray(data) ? data : (data.data || []);
@@ -185,13 +183,10 @@ export default function Checkout() {
         
         if (bookingIds.length > 0 && paymentMode === 'online') {
             // Bulk update payments for existing bookings
-            const updatePromises = bookingIds.map(id => 
-                fetch(`${apiUrl}/api/bookings/${id}/pay`, {
+                apiFetch(`/api/bookings/${id}/pay`, {
                     method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ transactionId: currentTxnId })
                 })
-            );
             await Promise.all(updatePromises);
             setSuccess(true);
             setTimeout(() => {
@@ -223,12 +218,8 @@ export default function Checkout() {
                     };
 
                     requests.push(
-                        fetch(`${apiUrl}/api/bookings`, {
+                        apiFetch(`/api/bookings`, {
                             method: 'POST',
-                            credentials: 'include',
-                            headers: { 
-                                'Content-Type': 'application/json'
-                            },
                             body: JSON.stringify(bookingData)
                         }).then(async res => {
                             if (res.ok) {

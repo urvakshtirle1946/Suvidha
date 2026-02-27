@@ -7,7 +7,7 @@ import {
   useCallback,
 } from "react";
 import { useRouter } from "next/navigation";
-import { getApiUrl } from "@/utils/api";
+import { getApiUrl, apiFetch } from "@/utils/api";
 
 const AuthContext = createContext();
 
@@ -18,10 +18,7 @@ export function AuthProvider({ children }) {
 
   const initLocalAuth = useCallback(async () => {
     try {
-      const backendUrl = getApiUrl();
-      const res = await fetch(`${backendUrl}/api/auth/me`, {
-        credentials: "include"
-      });
+      const res = await apiFetch("/api/auth/me");
 
       if (res.status === 401 || res.status === 403) {
         setUser(null);
@@ -58,11 +55,8 @@ export function AuthProvider({ children }) {
 
   const customGoogleLogin = async (credential) => {
     try {
-      const backendUrl = getApiUrl();
-      const res = await fetch(`${backendUrl}/api/auth/google-login`, {
+      const res = await apiFetch("/api/auth/google-login", {
           method: 'POST',
-          credentials: 'include', // Ensure cookie isn't blocked on the very first Set-Cookie response
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ token: credential })
       });
       const data = await res.json();
@@ -81,10 +75,8 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     try {
-      const backendUrl = getApiUrl();
-      await fetch(`${backendUrl}/api/auth/logout`, {
-        method: "POST",
-        credentials: "include"
+      await apiFetch("/api/auth/logout", {
+        method: "POST"
       });
       setUser(null);
       router.push("/");

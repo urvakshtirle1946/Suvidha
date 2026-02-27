@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 
 const app = express();
+app.set("trust proxy", 1); // Required for secure cookies on Render
 const PORT = process.env.PORT || 5000;
 
 const authRoutes = require('./routes/authRoutes');

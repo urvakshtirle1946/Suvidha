@@ -1,13 +1,20 @@
 export const getApiUrl = () => {
-    // 1. Environment variable (Priority) - Next.js will inject this on both server and client
     if (process.env.NEXT_PUBLIC_API_URL) {
         return process.env.NEXT_PUBLIC_API_URL;
     }
+    return 'https://suvidha-server-4u66.onrender.com';
+};
 
-    // 2. Default Fallback
-    // For stable hydration, we assume the remote server unless the env var dictates otherwise.
-    // However, we now use Next.js rewrites to proxy requests, so we just hit the relative path!
-    return ''; // Empty string so fetch('/api/...') hits the current origin natively and gets rewritten by next.config.mjs
+export const apiFetch = (endpoint, options = {}) => {
+  const backendUrl = getApiUrl();
+  return fetch(`${backendUrl}${endpoint}`, {
+    credentials: "include",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {})
+    }
+  });
 };
 
 export const getImageUrl = (url) => {

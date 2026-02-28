@@ -1,8 +1,23 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { Lock } from 'lucide-react';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
 export default function WaitlistPage() {
+  const router = useRouter();
+  const [showOTP, setShowOTP] = useState(false);
+  const [otpValue, setOtpValue] = useState("");
+
+  const handleOTPChange = (val) => {
+    setOtpValue(val);
+    if (val === "Zelp26") {
+      router.push('/home');
+    }
+  };
+
   return (
     <div style={{
       height: '100vh',
@@ -35,9 +50,30 @@ export default function WaitlistPage() {
           flexDirection: 'column',
           alignItems: 'center',
           textAlign: 'center',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          position: 'relative'
         }}>
         
+        {/* Secret Developer Access Button */}
+        <button 
+          onClick={() => setShowOTP(true)}
+          style={{ 
+            position: 'absolute', 
+            top: '1.5rem', 
+            right: '1.5rem', 
+            border: 'none', 
+            background: 'transparent', 
+            color: '#e5e7eb', 
+            cursor: 'pointer',
+            transition: 'color 0.2s'
+          }}
+          onMouseOver={(e) => e.currentTarget.style.color = '#9ca3af'}
+          onMouseOut={(e) => e.currentTarget.style.color = '#e5e7eb'}
+          title="Developer Access"
+        >
+          <Lock size={18} />
+        </button>
+
         <h1 style={{
           fontSize: 'clamp(2rem, 5vw, 3rem)',
           fontWeight: '500',
@@ -139,6 +175,61 @@ export default function WaitlistPage() {
           title="LaunchList Leaderboard"
         />
       </div>
+
+      {/* Developer OTP Modal Overlay */}
+      {showOTP && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(0,0,0,0.4)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+        }}>
+          <div style={{
+            background: '#fff',
+            padding: '2.5rem',
+            borderRadius: '16px',
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+            textAlign: 'center',
+            position: 'relative',
+            fontFamily: 'var(--font-outfit), sans-serif'
+          }}>
+            <button 
+              onClick={() => { setShowOTP(false); setOtpValue(""); }}
+              style={{ 
+                position: 'absolute', 
+                top: '12px', 
+                right: '16px', 
+                background: 'transparent', 
+                border: 'none', 
+                cursor: 'pointer', 
+                fontSize: '1.5rem',
+                color: '#9ca3af'
+              }}
+            >
+              &times;
+            </button>
+            <h2 style={{ marginBottom: '0.5rem', fontWeight: 600, color: '#111827' }}>Developer Access</h2>
+            <p style={{ color: '#6b7280', fontSize: '0.85rem', marginBottom: '1.5rem' }}>Enter the access code to bypass the waitlist.</p>
+            
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <InputOTP maxLength={6} value={otpValue} onChange={handleOTPChange}>
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

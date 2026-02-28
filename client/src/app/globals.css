@@ -708,6 +708,20 @@ body:not(:has(.admin-root)) h6 {
   }
 }
 
+@keyframes caret-blink {
+
+  0%,
+  70%,
+  100% {
+    opacity: 1;
+  }
+
+  20%,
+  50% {
+    opacity: 0;
+  }
+}
+
 .leaderboard-container {
   display: block;
 }
@@ -719,6 +733,8 @@ body:not(:has(.admin-root)) h6 {
 }
 
 @theme inline {
+  --animate-caret-blink: caret-blink 1.25s ease-out infinite;
+
   --font-helvetica: "Helvetica", "Arial", sans-serif;
   --font-apple-garamond: "Apple Garamond", "EB Garamond", "Garamond", serif;
   --font-cormorant: var(--font-cormorant-garamond), "Cormorant Garamond", serif;

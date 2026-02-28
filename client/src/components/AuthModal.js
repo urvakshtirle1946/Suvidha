@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
-  const { login, register } = useAuth();
+  const { user, login, register } = useAuth();
   const [tab, setTab] = useState(mode === 'register' ? 'register' : 'login');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -26,6 +26,12 @@ export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
       setForm({ name: '', email: '', password: '', confirmPassword: '' });
     }
   }, [isOpen, mode]);
+
+  useEffect(() => {
+    if (isOpen && user) {
+      onClose();
+    }
+  }, [isOpen, user, onClose]);
 
   const title = useMemo(() => {
     return tab === 'register' ? 'Create Account' : 'Login to Continue';
@@ -88,7 +94,7 @@ export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
         setSuccess('Login successful.');
       }
 
-      setTimeout(() => onClose(), 400);
+      onClose();
     } catch (err) {
       setError(err.message || 'Authentication failed.');
     } finally {

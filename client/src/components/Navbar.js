@@ -23,6 +23,12 @@ export default function Navbar() {
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login');
 
+  useEffect(() => {
+    if (user && authModalOpen) {
+      setAuthModalOpen(false);
+    }
+  }, [user, authModalOpen]);
+
 
 
   const handleOpenAuth = () => {

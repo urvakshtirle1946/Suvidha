@@ -549,9 +549,7 @@ body:not(:has(.admin-root)) h6 {
 }
 
 .modal-close {
-  position: absolute;
-  right: 1.5rem;
-  top: 1.5rem;
+  position: static;
   padding: 0.5rem;
   border-radius: 50%;
   border: none;

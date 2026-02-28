@@ -9,28 +9,34 @@ export default function WaitlistPage() {
       width: '100vw',
       overflow: 'hidden',
       display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
       backgroundColor: '#f8f9fa',
-      padding: '1rem',
       boxSizing: 'border-box',
       fontFamily: 'var(--font-outfit), sans-serif'
     }}>
+      {/* Left Box: Form & Illustration */}
       <div style={{
-        background: '#ffffff',
-        width: '100%',
-        maxWidth: '800px',
-        height: '100%',
-        maxHeight: '800px',
-        borderRadius: '24px',
-        padding: 'clamp(2rem, 5vh, 4rem) 2rem 0 2rem',
-        boxShadow: '0 20px 40px rgba(0,0,0,0.05)',
+        flex: '1 1 50%',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
-        textAlign: 'center',
-        overflow: 'hidden'
+        justifyContent: 'center',
+        padding: '1rem',
+        height: '100%'
       }}>
+        <div style={{
+          background: '#ffffff',
+          width: '100%',
+          maxWidth: '800px',
+          height: '100%',
+          maxHeight: '800px',
+          borderRadius: '24px',
+          padding: 'clamp(1.5rem, 3vh, 2rem) 2rem 0 2rem',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.05)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
+          overflow: 'hidden'
+        }}>
         
         <h1 style={{
           fontSize: 'clamp(2rem, 5vw, 3rem)',
@@ -47,7 +53,7 @@ export default function WaitlistPage() {
           fontSize: '1rem',
           color: '#6b7280',
           maxWidth: '450px',
-          marginBottom: '2.5rem',
+          marginBottom: '1rem',
           lineHeight: '1.5'
         }}>
           Join now to access new features and updates and be part of our early community.
@@ -59,7 +65,7 @@ export default function WaitlistPage() {
           display: 'flex',
           alignItems: 'center',
           gap: '12px',
-          marginBottom: '3rem'
+          marginBottom: '1.5rem'
         }}>
           <div style={{ display: 'flex' }}>
             {/* Hardcoded sample avatars to match design */}
@@ -92,27 +98,48 @@ export default function WaitlistPage() {
         {/* Waitlist Illustration */}
         <div style={{
           width: '100%',
-          maxWidth: '600px',
+          maxWidth: '800px',
           marginTop: 'auto',
           display: 'flex',
           justifyContent: 'center',
-          flexShrink: 0 // Prevent the image container from shrinking unexpectedly
+          flex: '1 1 auto',
+          minHeight: 0
         }}>
           <img 
             src="/assets/waitlist_illustration.png" 
             alt="Community Illustration" 
             style={{ 
               width: '100%', 
-              height: 'auto',       // Allow natural scaling based on width
-              maxHeight: '35vh',    // Cap the maximum vertical footprint
+              height: '100%',       
+              maxHeight: '50vh',    
               objectFit: 'contain',
               objectPosition: 'bottom',
-              marginBottom: '-2px' // Flush with the bottom of the card
+              marginBottom: '-2px' 
             }} 
           />
         </div>
-
+        </div>
       </div>
+
+      {/* Right Box: Leaderboard iframe */}
+      <div 
+        className="leaderboard-container"
+        style={{
+          flex: '1 1 50%',
+          height: '100%',
+          backgroundColor: '#ffffff',
+          borderLeft: '1px solid #e5e7eb',
+          overflow: 'hidden'
+        }}
+      >
+        <iframe 
+          scrolling="yes" 
+          src="https://getlaunchlist.com/w/e/iCtHEk/leaderboard" 
+          style={{ width: '100%', display: 'block', border: 'none', height: '100%' }}
+          title="LaunchList Leaderboard"
+        />
+      </div>
+
     </div>
   );
 }

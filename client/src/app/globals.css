@@ -708,6 +708,16 @@ body:not(:has(.admin-root)) h6 {
   }
 }
 
+.leaderboard-container {
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .leaderboard-container {
+    display: none !important;
+  }
+}
+
 @theme inline {
   --font-helvetica: "Helvetica", "Arial", sans-serif;
   --font-apple-garamond: "Apple Garamond", "EB Garamond", "Garamond", serif;

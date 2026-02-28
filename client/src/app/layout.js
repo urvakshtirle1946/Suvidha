@@ -5,7 +5,7 @@ import { LocationProvider } from "@/context/LocationContext";
 import { CartProvider } from "@/context/CartContext";
 import AdminSessionManager from "@/components/AdminSessionManager";
 import CartDrawer from "@/components/CartDrawer";
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import GoogleAuthProviderWrapper from "@/components/GoogleAuthProviderWrapper";
 
 
 const outfit = Outfit({
@@ -34,7 +34,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${outfit.variable} ${cormorantGaramond.variable} font-sans`}>
-        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
+        <GoogleAuthProviderWrapper clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
           <AuthProvider>
             <LocationProvider>
               <CartProvider>
@@ -44,7 +44,7 @@ export default function RootLayout({ children }) {
               </CartProvider>
             </LocationProvider>
           </AuthProvider>
-        </GoogleOAuthProvider>
+        </GoogleAuthProviderWrapper>
       </body>
     </html>
   );

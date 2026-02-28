@@ -71,6 +71,14 @@ export function AuthProvider({ children }) {
     return handleAuthResponse(res);
   };
 
+  const googleLogin = async (tokenData) => {
+    const res = await apiFetch("/api/auth/google", {
+      method: "POST",
+      body: JSON.stringify(tokenData),
+    });
+    return handleAuthResponse(res);
+  };
+
   const updateUser = useCallback((data) => {
     setUser((prev) => (prev ? { ...prev, ...data } : data));
   }, []);
@@ -95,6 +103,7 @@ export function AuthProvider({ children }) {
         isLoaded,
         login,
         register,
+        googleLogin,
         logout,
         refreshUser,
         updateUser,

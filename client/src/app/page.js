@@ -96,15 +96,15 @@ export default function WaitlistPage() {
           marginTop: 'auto',
           display: 'flex',
           justifyContent: 'center',
-          flex: '1 1 auto',
-          minHeight: 0
+          flexShrink: 0 // Prevent the image container from shrinking unexpectedly
         }}>
           <img 
             src="/assets/waitlist_illustration.png" 
             alt="Community Illustration" 
             style={{ 
               width: '100%', 
-              height: '100%',
+              height: 'auto',       // Allow natural scaling based on width
+              maxHeight: '35vh',    // Cap the maximum vertical footprint
               objectFit: 'contain',
               objectPosition: 'bottom',
               marginBottom: '-2px' // Flush with the bottom of the card

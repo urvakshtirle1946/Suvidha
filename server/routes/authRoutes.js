@@ -5,12 +5,11 @@ const authController = require('../controllers/authController');
 const rateLimit = require('express-rate-limit');
 const { verifyJWT, requireRole } = require('../middleware/authMiddleware');
 
-// Rate Limiter: Max 5 OTPs per 10 minutes
-const otpLimiter = rateLimit({
-  windowMs: 10 * 60 * 1000, 
-  max: 5, 
-  message: { success: false, message: 'Too many OTP requests. Please try again later.' },
-  standardHeaders: true, 
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: { success: false, message: 'Too many authentication requests. Please try again later.' },
+  standardHeaders: true,
   legacyHeaders: false,
 });
 
@@ -23,20 +22,9 @@ const adminLoginLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// router.post('/send-otp', otpLimiter, authController.sendOtp); // Removed
-// router.post('/verify-otp', authController.verifyOtp); // Removed
-
+router.post('/register', authLimiter, authController.register);
+router.post('/login', authLimiter, authController.login);
 router.post('/admin-login', adminLoginLimiter, authController.adminLogin);
-router.post('/request-verification-otp', verifyJWT, authController.requestVerificationOtp);
-router.post('/verify-phone', verifyJWT, authController.verifyPhone);
-
-
-
-// router.post('/phone-login', authController.phoneLogin); // Removed
-router.post('/google-login', authController.googleLogin);
-
-// router.get('/msg91-config', authController.getMsg91Config); // Removed
-// router.post('/msg91-login', authController.msg91Login); // Removed
 router.put('/profile', verifyJWT, authController.updateProfile);
 router.get('/users', verifyJWT, requireRole(['admin', 'super_admin']), authController.getAllUsers);
 router.get('/me', verifyJWT, authController.getMe);

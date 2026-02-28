@@ -17,7 +17,7 @@ const getMockUsers = () => {
 const saveMockUser = (user) => {
     try {
         const users = getMockUsers();
-        const index = users.findIndex(u => u.phone === user.phone || u.email === user.email);
+        const index = users.findIndex(u => u.email === user.email);
         if (index >= 0) {
             users[index] = { ...users[index], ...user };
         } else {

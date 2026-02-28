@@ -7,31 +7,35 @@ import {
   useCallback,
 } from "react";
 import { useRouter } from "next/navigation";
-import { getApiUrl, apiFetch } from "@/utils/api";
+import { apiFetch } from "@/utils/api";
 
 const AuthContext = createContext();
+
+const readJsonSafe = async (res) => {
+  try {
+    return await res.json();
+  } catch (_) {
+    return null;
+  }
+};
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const router = useRouter();
 
-  const initLocalAuth = useCallback(async () => {
+  const refreshUser = useCallback(async () => {
     try {
       const res = await apiFetch("/api/auth/me");
+      const data = await readJsonSafe(res);
 
-      if (res.status === 401 || res.status === 403) {
-        setUser(null);
+      if (res.ok && data?.success && data?.user) {
+        setUser(data.user);
       } else {
-        const data = await res.json();
-        if (data.success && data.user) {
-          setUser(data.user);
-        } else {
-          setUser(null);
-        }
+        setUser(null);
       }
     } catch (err) {
-      console.error("Auth hydration failed. Note: If backend isn't deployed yet, cookies will fail.", err);
+      console.error("Auth hydration failed:", err);
       setUser(null);
     } finally {
       setIsLoaded(true);
@@ -39,53 +43,63 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    initLocalAuth();
-  }, [initLocalAuth]);
+    refreshUser();
+  }, [refreshUser]);
 
-  // Removed legacy empty getToken because it is restored above.
+  const handleAuthResponse = async (res) => {
+    const data = await readJsonSafe(res);
+    if (!res.ok || !data?.success || !data?.user) {
+      throw new Error(data?.message || "Authentication failed.");
+    }
+    setUser(data.user);
+    return data;
+  };
+
+  const login = async ({ email, password }) => {
+    const res = await apiFetch("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
+    return handleAuthResponse(res);
+  };
+
+  const register = async ({ name, email, password }) => {
+    const res = await apiFetch("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ name, email, password }),
+    });
+    return handleAuthResponse(res);
+  };
 
   const updateUser = useCallback((data) => {
-    setUser(prev => prev ? { ...prev, ...data } : data);
+    setUser((prev) => (prev ? { ...prev, ...data } : data));
   }, []);
-
-
-
-  const customGoogleLogin = async (credential) => {
-    try {
-      const res = await apiFetch("/api/auth/google-login", {
-          method: 'POST',
-          body: JSON.stringify({ token: credential })
-      });
-      const data = await res.json();
-      if (data.success) {
-          setUser(data.user);
-          return true;
-      } else {
-          console.error("Backend Google Auth Rejected:", data);
-          throw new Error(data.message + (data.error ? `: ${data.error}` : ''));
-      }
-    } catch (err) {
-      console.error("Custom Google Login error", err);
-      throw err;
-    }
-  };
 
   const logout = async () => {
     try {
       await apiFetch("/api/auth/logout", {
-        method: "POST"
+        method: "POST",
       });
-      setUser(null);
-      router.push("/");
     } catch (err) {
       console.error("Logout error", err);
+    } finally {
       setUser(null);
       router.push("/");
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, customGoogleLogin, logout, isLoaded, updateUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoaded,
+        login,
+        register,
+        logout,
+        refreshUser,
+        updateUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

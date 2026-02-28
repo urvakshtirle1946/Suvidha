@@ -94,9 +94,11 @@ exports.getBookings = async (req, res) => {
       const isAdmin = ['admin', 'super_admin'].includes(req.user.role);
       
       if (!isAdmin) {
-          // Force role-based row-level security
-          query += ' WHERE b.user_phone = $1 OR b.user_email = $2';
-          values.push(req.user.phone, req.user.email);
+          if (!req.user.email) {
+            return res.status(401).json({ success: false, message: 'Unauthorized: user email missing from session.' });
+          }
+          query += ' WHERE b.user_email = $1';
+          values.push(req.user.email);
       } else {
           // For admins, allow optional filtering logic
           if (phone && email) {

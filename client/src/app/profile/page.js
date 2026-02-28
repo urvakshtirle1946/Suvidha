@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import Navbar from '@/components/Navbar';
 import AuthModal from '@/components/AuthModal';
-import { Calendar, Clock, MapPin, User, CheckCircle, Lock } from 'lucide-react';
-import { getApiUrl, apiFetch } from '@/utils/api';
+import { Calendar, Clock, MapPin, User, Lock } from 'lucide-react';
+import { apiFetch } from '@/utils/api';
 
 export default function Profile() {
   const { user, isLoaded } = useAuth();
@@ -58,13 +58,6 @@ export default function Profile() {
                 {user.name || 'User Profile'}
               </h2>
               <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', color: '#4b5563' }}>
-                {user.phone && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ background: '#f3f4f6', padding: '6px', borderRadius: '50%' }}><Lock size={16} color="#0c831f" /></div>
-                    <span style={{ fontWeight: '500' }}>+91 {user.phone}</span>
-                    {user.phone_verified && <CheckCircle size={16} color="#0c831f" />}
-                  </div>
-                )}
                 {user.email && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div style={{ background: '#f3f4f6', padding: '6px', borderRadius: '50%' }}>
@@ -93,7 +86,7 @@ export default function Profile() {
                 </div>
                 <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#111827' }}>Login to see your profile</h2>
                 <p style={{ color: '#6b7280', marginBottom: '2rem', maxWidth: '400px', margin: '0 auto 2rem' }}>
-                    Please sign in with your phone number or email to view your personalized profile and booking history.
+                    Please sign in with your email and password to view your profile and booking history.
                 </p>
                 <button 
                     onClick={() => setAuthModalOpen(true)}

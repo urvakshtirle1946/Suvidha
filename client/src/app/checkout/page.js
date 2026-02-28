@@ -8,7 +8,7 @@ import AuthModal from '@/components/AuthModal';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, CheckCircle, AlertCircle, Calendar as CalendarIcon, Clock, MapPin, X, User } from 'lucide-react';
 import Link from 'next/link';
-import { getApiUrl, getImageUrl, apiFetch } from '@/utils/api';
+import { getImageUrl, apiFetch } from '@/utils/api';
 import { useEffect } from 'react';
 
 function ProviderList({ serviceName, currentHospitalId, onSelect }) {
@@ -18,6 +18,7 @@ function ProviderList({ serviceName, currentHospitalId, onSelect }) {
     useEffect(() => {
         const fetchProviders = async () => {
             try {
+                const cleanName = (serviceName || '').split(' at ')[0];
                 const res = await apiFetch(`/api/services?search=${encodeURIComponent(cleanName)}`);
                 if (res.ok) {
                     const data = await res.json();
@@ -124,7 +125,7 @@ export default function Checkout() {
   useEffect(() => {
     if (user) {
         if (!patientName) setPatientName(user.name || '');
-        if (!patientPhone) setPatientPhone(user.phone || '');
+        if (!patientPhone) setPatientPhone('');
     }
   }, [user, patientName, patientPhone]);
 
@@ -179,14 +180,14 @@ export default function Checkout() {
     setError(null);
 
     try {
-        const apiUrl = getApiUrl();
-        
         if (bookingIds.length > 0 && paymentMode === 'online') {
             // Bulk update payments for existing bookings
-                apiFetch(`/api/bookings/${id}/pay`, {
+            const updatePromises = bookingIds.map((id) =>
+              apiFetch(`/api/bookings/${id}/pay`, {
                     method: 'PATCH',
                     body: JSON.stringify({ transactionId: currentTxnId })
                 })
+            );
             await Promise.all(updatePromises);
             setSuccess(true);
             setTimeout(() => {
@@ -204,7 +205,7 @@ export default function Checkout() {
                 for (let i = 0; i < quantity; i++) {
                     const bookingData = {
                         name: patientName || user?.name || 'Unknown',
-                        userPhone: patientPhone || user?.phone || 'Unknown', 
+                        userPhone: patientPhone || 'Unknown',
                         userEmail: user?.email,
                         age: parseInt(patientAge) || 0, 
                         gender: patientGender || 'Not Specified',

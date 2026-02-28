@@ -33,7 +33,7 @@ export default function UserManagement() {
         const mappedUsers = data.map(u => ({
            id: u.id,
            name: u.name || 'User',
-           phone: u.phone,
+           email: u.email || '',
            location: u.location || 'Unknown',
            bookings: u.booking_count || 0,
            status: 'Active',
@@ -56,7 +56,7 @@ export default function UserManagement() {
 
   const filteredUsers = users.filter(u => 
      u.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-     u.phone.includes(searchTerm)
+     u.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Light & Clean Styles
@@ -79,7 +79,7 @@ export default function UserManagement() {
             <Search size={20} style={{ color: 'var(--text-secondary)' }} />
             <input 
                 type="text" 
-                placeholder="Search users by name or phone..." 
+                placeholder="Search users by name or email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', flex: 1, outline: 'none', fontSize: '1rem' }} 
@@ -93,7 +93,7 @@ export default function UserManagement() {
                     <thead>
                         <tr style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
                             <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>User</th>
-                            <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Phone</th>
+                            <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Email</th>
                             <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Location</th>
                             <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase', textAlign: 'center' }}>Total Bookings</th>
                             <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Joined</th>
@@ -117,7 +117,7 @@ export default function UserManagement() {
                                         <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>{user.name}</span>
                                     </div>
                                 </td>
-                                <td style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)' }}>{user.phone}</td>
+                                <td style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)' }}>{user.email || '-'}</td>
                                 <td style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)' }}>{user.location}</td>
                                 <td style={{ padding: '1.2rem 1.5rem', textAlign: 'center', fontWeight: 'bold', color: 'var(--text-primary)' }}>{user.bookings}</td>
                                 <td style={{ padding: '1.2rem 1.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{new Date(user.joined).toLocaleDateString()}</td>

@@ -10,7 +10,7 @@ export function CartProvider({ children }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const { user, isLoaded: authLoaded } = useAuth();
 
-  const cartKey = user ? `zelp_cart_${user.id || user.phone}` : 'zelp_cart_guest';
+  const cartKey = user ? `zelp_cart_${user.id}` : 'zelp_cart_guest';
 
   // Load cart from localStorage on mount
   useEffect(() => {

@@ -12,7 +12,7 @@ async function testDB() {
     console.table(res.rows);
     
     // Also fetch a few users
-    const users = await pool.query(`SELECT id, name, email, phone, authgear_id, phone_verified FROM users ORDER BY id DESC LIMIT 5`);
+    const users = await pool.query(`SELECT id, name, email, role, created_at FROM users ORDER BY id DESC LIMIT 5`);
     console.log("Recent users:", users.rows);
     
   } catch (err) {

@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { Settings, LogOut, ChevronDown, Calendar, User as UserIcon, Phone } from 'lucide-react';
+import { Settings, LogOut, ChevronDown, Calendar } from 'lucide-react';
 
 export default function ProfileDropdown({ onOpenSettings }) {
     const { user, logout } = useAuth();
@@ -82,9 +82,6 @@ export default function ProfileDropdown({ onOpenSettings }) {
                         <div style={{ padding: '12px 16px', borderBottom: '1px solid #f3f4f6', background: '#f9fafb' }}>
                             <p style={{ fontWeight: '600', color: '#111827', fontSize: '0.95rem' }}>{user.name || 'User'}</p>
                             {user.email && <p style={{ fontSize: '0.8rem', color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', marginTop: '2px' }}>{user.email}</p>}
-                            {user.phone && <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                <Phone size={12} /> {user.phone}
-                            </p>}
                         </div>
 
                     <div style={{ padding: '4px' }}>

@@ -30,7 +30,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
   useEffect(() => {
       if (user && isOpen && !patientName && !patientPhone) {
           setPatientName(user.name || '');
-          setPatientPhone(user.phone || '');
+          setPatientPhone('');
       }
   }, [user, isOpen, patientName, patientPhone]);
 
@@ -142,7 +142,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                 // Standard new booking flow
                 const bookingData = {
                     name: patientName || user?.name || 'Unknown',
-                    userPhone: patientPhone || user?.phone || 'Unknown',
+                    userPhone: patientPhone || 'Unknown',
                     age: parseInt(patientAge) || 0,
                     gender: patientGender || 'Not Specified',
                     date: (new Date(Date.now() + 86400000).toISOString() || '').split('T')[0],

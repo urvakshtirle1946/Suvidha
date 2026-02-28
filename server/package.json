@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:init": "node init_db.js"
+    "db:init": "node init_db.js",
+    "db:migrate:remove-user-phone": "node migrate_remove_user_phone_oauth_columns.js"
   },
   "keywords": [],
   "author": "",

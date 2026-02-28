@@ -1,358 +1,420 @@
 const db = require('../db');
-const crypto = require('crypto');
-const smsService = require('../services/smsService');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { getMockUsers, saveMockUser } = require('../mock_persistence');
+const { getMockUsers } = require('../mock_persistence');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'zelp_secret_key_2024';
 const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const getCookieOptions = (req, maxAge) => {
-    const origin = req.headers?.origin || '';
-    const isLocalOrigin = /localhost|127\.0\.0\.1/.test(origin);
-    const isLocalHost = req.hostname === 'localhost' || req.hostname === '127.0.0.1';
-    const isSecureRequest = req.secure || req.headers['x-forwarded-proto'] === 'https';
-    const useLocalCookieMode = (isLocalOrigin || isLocalHost) && !isSecureRequest;
+  const origin = req.headers?.origin || '';
+  const isLocalOrigin = /localhost|127\.0\.0\.1/.test(origin);
+  const isLocalHost = req.hostname === 'localhost' || req.hostname === '127.0.0.1';
+  const isSecureRequest = req.secure || req.headers['x-forwarded-proto'] === 'https';
+  const useLocalCookieMode = (isLocalOrigin || isLocalHost) && !isSecureRequest;
 
-    return {
-        httpOnly: true,
-        secure: !useLocalCookieMode,
-        sameSite: useLocalCookieMode ? "lax" : "none",
-        path: "/",
-        maxAge
-    };
+  return {
+    httpOnly: true,
+    secure: !useLocalCookieMode,
+    sameSite: useLocalCookieMode ? 'lax' : 'none',
+    path: '/',
+    maxAge
+  };
 };
 
 const getClearCookieOptions = (req) => {
-    const base = getCookieOptions(req, 0);
-    return {
-        httpOnly: base.httpOnly,
-        secure: base.secure,
-        sameSite: base.sameSite,
-        path: base.path
-    };
+  const base = getCookieOptions(req, 0);
+  return {
+    httpOnly: base.httpOnly,
+    secure: base.secure,
+    sameSite: base.sameSite,
+    path: base.path
+  };
 };
 
+const normalizeEmail = (email) => String(email || '').trim().toLowerCase();
+const normalizeName = (name) => String(name || '').trim();
 
-exports.requestVerificationOtp = async (req, res) => {
-    const { phone } = req.body;
-    if (!phone) return res.status(400).json({ success: false, message: 'Phone number required' });
+const validateProfilePayload = ({ name, email, password }, { requirePassword }) => {
+  const errors = [];
 
-    try {
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+  const cleanName = normalizeName(name);
+  const cleanEmail = normalizeEmail(email);
 
-        await db.query(
-            'INSERT INTO otp_codes (phone, code, expires_at) VALUES ($1, $2, $3) ON CONFLICT (phone) DO UPDATE SET code = $2, expires_at = $3',
-            [phone, otp, expiresAt]
-        );
+  if (!cleanName) errors.push('Username is required.');
+  if (cleanName.length < 2) errors.push('Username must be at least 2 characters.');
+  if (cleanName.length > 100) errors.push('Username must be at most 100 characters.');
 
-        await smsService.sendSms(phone, `Your Zelp verification code is: ${otp}`);
+  if (!cleanEmail) errors.push('Email is required.');
+  if (cleanEmail && !EMAIL_REGEX.test(cleanEmail)) errors.push('Please enter a valid email address.');
 
-        res.json({ success: true, message: 'OTP sent successfully' });
-    } catch (error) {
-        console.error('Request OTP Error:', error);
-        res.status(500).json({ success: false, message: 'Failed to send OTP' });
-    }
+  if (requirePassword && !password) errors.push('Password is required.');
+  if (password && (password.length < 8 || password.length > 72)) {
+    errors.push('Password must be between 8 and 72 characters.');
+  }
+
+  return {
+    errors,
+    cleanName,
+    cleanEmail
+  };
 };
 
-exports.verifyPhone = async (req, res) => {
-    const { phone, otp } = req.body;
-    if (!phone || !otp) return res.status(400).json({ success: false, message: 'Phone and OTP required' });
+const sanitizeUser = (user) => ({
+  id: user.id,
+  name: user.name,
+  email: user.email,
+  role: user.role,
+  created_at: user.created_at
+});
 
-    try {
-        const result = await db.query('SELECT * FROM otp_codes WHERE phone = $1 AND code = $2 AND expires_at > NOW()', [phone, otp]);
-        
-        if (result.rows.length === 0) {
-            return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
-        }
+const signUserToken = (user, expiresIn = '2d') => {
+  return jwt.sign(
+    {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    },
+    JWT_SECRET,
+    { expiresIn }
+  );
+};
 
-        const userEmail = req.user?.email || null;
-        const userPhone = req.user?.phone || null;
-        
-        if (userEmail) {
-            await db.query('UPDATE users SET phone_verified = true, phone = $1 WHERE phone = $1 OR email = $2', [phone, userEmail]);
-        } else if (userPhone) {
-            await db.query('UPDATE users SET phone_verified = true, phone = $1 WHERE phone = $1 OR phone = $2', [phone, userPhone]);
-        } else {
-            await db.query('UPDATE users SET phone_verified = true, phone = $1 WHERE phone = $1', [phone]);
-        }
+const issueUserSession = (req, res, user, statusCode, message) => {
+  const token = signUserToken(user, '2d');
+  const cookieOptions = getCookieOptions(req, TWO_DAYS_MS);
 
-        await db.query('DELETE FROM otp_codes WHERE phone = $1', [phone]);
+  return res
+    .cookie('zelp_access_token', token, cookieOptions)
+    .status(statusCode)
+    .json({
+      success: true,
+      message,
+      user: sanitizeUser(user)
+    });
+};
 
-        res.json({ success: true, message: 'Phone verified successfully' });
-    } catch (error) {
-        console.error('Verify OTP Error:', error);
-        res.status(500).json({ success: false, message: 'Verification failed' });
+exports.register = async (req, res) => {
+  const { name, email, password } = req.body || {};
+  const { errors, cleanName, cleanEmail } = validateProfilePayload(
+    { name, email, password },
+    { requirePassword: true }
+  );
+
+  if (errors.length) {
+    return res.status(400).json({
+      success: false,
+      message: errors[0],
+      errors
+    });
+  }
+
+  try {
+    const existingUser = await db.query('SELECT id FROM users WHERE email = $1', [cleanEmail]);
+    if (existingUser.rows.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: 'An account with this email already exists.'
+      });
     }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const insertResult = await db.query(
+      `INSERT INTO users (name, email, password, role)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, name, email, role, created_at`,
+      [cleanName, cleanEmail, hashedPassword, 'user']
+    );
+
+    return issueUserSession(req, res, insertResult.rows[0], 201, 'Registration successful.');
+  } catch (error) {
+    console.error('Register Error:', error);
+    if (error.code === '23505') {
+      return res.status(409).json({
+        success: false,
+        message: 'An account with this email already exists.'
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: 'Unable to register right now. Please try again.'
+    });
+  }
+};
+
+exports.login = async (req, res) => {
+  const email = normalizeEmail(req.body?.email);
+  const password = String(req.body?.password || '');
+
+  if (!email || !password) {
+    return res.status(400).json({
+      success: false,
+      message: 'Email and password are required.'
+    });
+  }
+
+  if (!EMAIL_REGEX.test(email)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Please enter a valid email address.'
+    });
+  }
+
+  try {
+    const result = await db.query(
+      'SELECT id, name, email, password, role, created_at FROM users WHERE email = $1 LIMIT 1',
+      [email]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password.'
+      });
+    }
+
+    const user = result.rows[0];
+    const isPasswordValid = user.password ? await bcrypt.compare(password, user.password) : false;
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password.'
+      });
+    }
+
+    return issueUserSession(req, res, user, 200, 'Login successful.');
+  } catch (error) {
+    console.error('Login Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Unable to login right now. Please try again.'
+    });
+  }
 };
 
 exports.adminLogin = async (req, res) => {
-    const { email, password } = req.body;
+  const email = normalizeEmail(req.body?.email);
+  const password = String(req.body?.password || '');
 
-    const cookieOptions = getCookieOptions(req, 7 * 24 * 60 * 60 * 1000); // 7 days
+  if (!email || !password) {
+    return res.status(400).json({
+      success: false,
+      message: 'Email and password are required.'
+    });
+  }
 
-    if (!email || !password) {
-        return res.status(400).json({ success: false, message: 'Email and Password are required' });
-    }
+  const cookieOptions = getCookieOptions(req, 24 * 60 * 60 * 1000);
 
-    try {
-        const checkUser = await db.query("SELECT * FROM users WHERE email = $1 AND role IN ('admin', 'super_admin')", [email]);
-        
-        if (checkUser.rows.length === 0) {
-            // Check fallback for default admin
-            if (email === 'admin@zelp.com' && password === 'demo123') {
-                const token = jwt.sign(
-                    { id: 0, email: 'admin@zelp.com', name: 'Demo Admin', phone: '9999999999', role: 'admin' },
-                    JWT_SECRET,
-                    { expiresIn: '1d' }
-                );
-                return res
-                    .cookie("admin_token", token, cookieOptions)
-                    .cookie("zelp_access_token", token, cookieOptions)
-                    .status(200)
-                    .json({ success: true, user: { email, role: 'admin' } });
-            }
-            return res.status(401).json({ success: false, message: 'Invalid Admin Credentials' });
-        }
-
-        const user = checkUser.rows[0];
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({ success: false, message: 'Invalid Admin Credentials' });
-        }
-
-        const token = jwt.sign(
-            { id: user.id, phone: user.phone, role: user.role, name: user.name, email: user.email },
-            JWT_SECRET,
-            { expiresIn: '1d' } // Admin token expires quicker
-        );
-
-        return res
-            .cookie("admin_token", token, cookieOptions)
-            .cookie("zelp_access_token", token, cookieOptions)
-            .status(200)
-            .json({
-                success: true,
-                user: {
-                    id: user.phone,
-                    name: user.name,
-                    email: user.email,
-                    phone: user.phone,
-                    role: user.role
-                },
-                message: 'Admin Login Successful'
-            });
-
-    } catch (e) {
-        console.error("Admin Auth Error", e);
-        res.status(500).json({ success: false, message: 'Server Error' });
-    }
-};
-
-// Hardcoded Credentials for Beta Phase
-const BETA_USERS = ['9876543210', '9999999999', '8888888888'];
-const ADMIN_USERS = ['1234567890', '7777777777'];
-
-
-// phoneLogin removed - using Authgear
-
-exports.getAllUsers = async (req, res) => {
-    try {
-        const query = `
-      SELECT u.id, u.name, u.email, u.phone, u.role, u.created_at,
-      (SELECT COUNT(*) FROM bookings b WHERE b.user_phone = u.phone) as booking_count
-      FROM users u
-      ORDER BY u.created_at DESC
-    `;
-        const result = await db.query(query);
-        res.json(result.rows);
-    } catch (error) {
-        console.error('Database Error in getAllUsers:', error);
-        console.log('Serving mock users in getAllUsers fallback');
-        const mockUsers = getMockUsers();
-        res.json(mockUsers.map(u => ({ ...u, booking_count: 0 })));
-    }
-};
-
-const { OAuth2Client } = require('google-auth-library');
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-exports.googleLogin = async (req, res) => {
-    const { token } = req.body;
-    if (!token) return res.status(400).json({ success: false, message: 'Token is required' });
-
-    try {
-        const ticket = await client.verifyIdToken({
-            idToken: token,
-            audience: process.env.GOOGLE_CLIENT_ID
-        });
-        
-        const payload = ticket.getPayload();
-        const { email, name, sub: googleId } = payload;
-        
-        let user;
-        const checkUser = await db.query('SELECT * FROM users WHERE email = $1 OR authgear_id = $2', [email, googleId]);
-        
-        if (checkUser.rows.length > 0) {
-            const existingUser = checkUser.rows[0];
-            await db.query(
-                `UPDATE users 
-                 SET authgear_id = COALESCE(authgear_id, $1), 
-                     name = CASE WHEN name = 'User' OR name IS NULL THEN $2 ELSE name END, 
-                     email = COALESCE(email, $4) 
-                 WHERE id = $3`,
-                [googleId, name, existingUser.id, email]
-            );
-            const updated = await db.query('SELECT * FROM users WHERE id = $1', [existingUser.id]);
-            user = updated.rows[0];
-        } else {
-            const insertRes = await db.query(
-                'INSERT INTO users (name, email, role, authgear_id, phone_verified) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-                [name, email, 'user', googleId, false]
-            );
-            user = insertRes.rows[0];
-        }
-
-        const jwtToken = jwt.sign(
-            { id: user.id || user.phone, phone: user.phone, role: user.role, name: user.name, email: user.email, phone_verified: user.phone_verified },
-            JWT_SECRET,
-            { expiresIn: '2d' }
-        );
-
-        const cookieOptions = getCookieOptions(req, TWO_DAYS_MS);
-
-        return res
-            .cookie("zelp_access_token", jwtToken, cookieOptions)
-            .status(200)
-            .json({
-                success: true,
-                user: {
-                    id: user.phone || user.id,
-                    name: user.name,
-                    email: user.email,
-                    phone: user.phone,
-                    role: user.role,
-                    phone_verified: user.phone_verified
-                },
-                message: 'Google Login Successful'
-            });
-        
-    } catch (error) {
-        console.error('Google Auth Error:', error);
-        res.status(500).json({ success: false, message: 'Invalid Google Token', error: error.message, stack: error.stack });
-    }
-};
-// msg91Login removed - using Authgear
-
-exports.updateProfile = async (req, res) => {
-    const { name, email, phone, password } = req.body;
-
-    const userEmail = req.user?.email || (email ? email : null);
-    const userPhone = req.user?.phone || phone || null;
-
-    // Check if user exists
+  try {
     const checkUser = await db.query(
-        'SELECT * FROM users WHERE email = $1 OR phone = $2', 
-        [userEmail, userPhone]
+      "SELECT id, name, email, password, role FROM users WHERE email = $1 AND role IN ('admin', 'super_admin') LIMIT 1",
+      [email]
     );
 
     if (checkUser.rows.length === 0) {
-        return res.status(404).json({ success: false, message: 'User not found' });
+      if (email === 'admin@zelp.com' && password === 'demo123') {
+        const demoAdmin = { id: 0, email, name: 'Demo Admin', role: 'admin' };
+        const token = signUserToken(demoAdmin, '1d');
+        return res
+          .cookie('admin_token', token, cookieOptions)
+          .cookie('zelp_access_token', token, cookieOptions)
+          .status(200)
+          .json({ success: true, user: demoAdmin, token, message: 'Admin login successful.' });
+      }
+
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid admin credentials.'
+      });
     }
 
-    try {
-        let hashedPassword = checkUser.rows[0].password;
-        if (password && password.trim() !== '') {
-            const salt = await bcrypt.genSalt(10);
-            hashedPassword = await bcrypt.hash(password, salt);
-        }
+    const user = checkUser.rows[0];
+    const isMatch = user.password ? await bcrypt.compare(password, user.password) : false;
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid admin credentials.'
+      });
+    }
 
-        const targetId = checkUser.rows[0].id;
+    const token = signUserToken(user, '1d');
 
-        const targetEmail = email ? email : checkUser.rows[0].email; // Keep existing if new is empty
+    return res
+      .cookie('admin_token', token, cookieOptions)
+      .cookie('zelp_access_token', token, cookieOptions)
+      .status(200)
+      .json({
+        success: true,
+        user: sanitizeUser(user),
+        token,
+        message: 'Admin login successful.'
+      });
+  } catch (error) {
+    console.error('Admin Login Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Unable to login right now. Please try again.'
+    });
+  }
+};
 
-        await db.query(
-            'UPDATE users SET name = $1, email = $2, password = $3, phone = COALESCE(phone, $4) WHERE id = $5',
-            [name, targetEmail, hashedPassword, phone, targetId]
-        );
+exports.getAllUsers = async (req, res) => {
+  try {
+    const query = `
+      SELECT
+        u.id,
+        u.name,
+        u.email,
+        u.role,
+        u.created_at,
+        (SELECT COUNT(*) FROM bookings b WHERE b.user_email = u.email) AS booking_count
+      FROM users u
+      ORDER BY u.created_at DESC
+    `;
 
-        // Fetch updated user to return
-        const updatedUserRaw = await db.query('SELECT * FROM users WHERE id = $1', [targetId]);
-        const updatedUser = updatedUserRaw.rows[0];
+    const result = await db.query(query);
+    return res.json(result.rows);
+  } catch (error) {
+    console.error('Database Error in getAllUsers:', error);
+    const mockUsers = getMockUsers().map((u) => ({
+      id: u.id,
+      name: u.name || 'User',
+      email: u.email || '',
+      role: u.role || 'user',
+      created_at: u.created_at || new Date().toISOString(),
+      booking_count: 0
+    }));
+    return res.json(mockUsers);
+  }
+};
 
-        // Generate new token with updated details
-        const token = jwt.sign(
-            { id: updatedUser.id || updatedUser.phone, phone: updatedUser.phone, role: updatedUser.role, name: updatedUser.name, email: updatedUser.email, phone_verified: updatedUser.phone_verified },
-            JWT_SECRET,
-            { expiresIn: '2d' }
-        );
+exports.updateProfile = async (req, res) => {
+  const authUserId = Number(req.user?.id);
+  if (!authUserId) {
+    return res.status(401).json({
+      success: false,
+      message: 'Unauthorized user.'
+    });
+  }
 
-        const cookieOptions = getCookieOptions(req, TWO_DAYS_MS);
+  const { name, email, password } = req.body || {};
+  const { errors, cleanName, cleanEmail } = validateProfilePayload(
+    { name, email, password },
+    { requirePassword: false }
+  );
 
-        res
-          .cookie("zelp_access_token", token, cookieOptions)
-          .json({
-            success: true,
-            message: 'Profile updated successfully',
-            user: {
-                id: updatedUser.phone || updatedUser.id,
-                name: updatedUser.name,
-                email: updatedUser.email,
-                phone: updatedUser.phone,
-                role: updatedUser.role,
-                phone_verified: updatedUser.phone_verified
-            }
+  if (errors.length) {
+    return res.status(400).json({
+      success: false,
+      message: errors[0],
+      errors
+    });
+  }
+
+  try {
+    const currentResult = await db.query(
+      'SELECT id, name, email, password, role, created_at FROM users WHERE id = $1 LIMIT 1',
+      [authUserId]
+    );
+
+    if (currentResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.'
+      });
+    }
+
+    const currentUser = currentResult.rows[0];
+
+    if (cleanEmail !== currentUser.email) {
+      const emailUsed = await db.query('SELECT id FROM users WHERE email = $1 AND id <> $2', [cleanEmail, authUserId]);
+      if (emailUsed.rows.length > 0) {
+        return res.status(409).json({
+          success: false,
+          message: 'This email is already in use by another account.'
         });
-
-    } catch (err) {
-        console.error("Update Profile Error:", err);
-        res.status(500).json({ success: false, message: 'Server Error' });
+      }
     }
+
+    let hashedPassword = currentUser.password;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 12);
+    }
+
+    const updatedResult = await db.query(
+      `UPDATE users
+       SET name = $1, email = $2, password = $3
+       WHERE id = $4
+       RETURNING id, name, email, role, created_at`,
+      [cleanName, cleanEmail, hashedPassword, authUserId]
+    );
+
+    const updatedUser = updatedResult.rows[0];
+    return issueUserSession(req, res, updatedUser, 200, 'Profile updated successfully.');
+  } catch (error) {
+    console.error('Update Profile Error:', error);
+    if (error.code === '23505') {
+      return res.status(409).json({
+        success: false,
+        message: 'This email is already in use by another account.'
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update profile. Please try again.'
+    });
+  }
 };
 
 exports.getMe = async (req, res) => {
-    if (!req.user) return res.status(401).json({ success: false });
+  const authUserId = Number(req.user?.id);
+  if (!authUserId) {
+    return res.status(401).json({
+      success: false,
+      message: 'Unauthorized user.'
+    });
+  }
 
-    try {
-        const searchEmail = req.user.email || null;
-        const searchPhone = req.user.phone || null;
+  try {
+    const result = await db.query(
+      'SELECT id, name, email, role, created_at FROM users WHERE id = $1 LIMIT 1',
+      [authUserId]
+    );
 
-        const checkUser = await db.query(
-            'SELECT * FROM users WHERE (email = $1 AND $1 IS NOT NULL) OR (phone = $2 AND $2 IS NOT NULL) ORDER BY id DESC LIMIT 1', 
-            [searchEmail, searchPhone]
-        );
-
-        if (checkUser.rows.length === 0) {
-             return res.status(404).json({ success: false, message: 'User not found in DB' });
-        }
-
-        const user = checkUser.rows[0];
-        const token = jwt.sign(
-            { id: user.id || user.phone, phone: user.phone, role: user.role, name: user.name, email: user.email, phone_verified: user.phone_verified },
-            JWT_SECRET,
-            { expiresIn: '2d' }
-        );
-
-        const cookieOptions = getCookieOptions(req, TWO_DAYS_MS);
-
-        res
-          .cookie("zelp_access_token", token, cookieOptions)
-          .json({
-            success: true,
-            user
-        });
-    } catch (err) {
-        console.error("GetMe Error:", err);
-        res.status(500).json({ success: false });
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.'
+      });
     }
+
+    const user = result.rows[0];
+    const token = signUserToken(user, '2d');
+    const cookieOptions = getCookieOptions(req, TWO_DAYS_MS);
+
+    return res
+      .cookie('zelp_access_token', token, cookieOptions)
+      .json({
+        success: true,
+        user: sanitizeUser(user)
+      });
+  } catch (error) {
+    console.error('GetMe Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Unable to fetch current user.'
+    });
+  }
 };
 
 exports.logout = (req, res) => {
-    const clearOpts = getClearCookieOptions(req);
-    res.clearCookie("zelp_access_token", clearOpts);
-    res.clearCookie("admin_token", clearOpts);
-    res.json({ success: true, message: 'Logged out successfully' });
+  const clearOpts = getClearCookieOptions(req);
+  res.clearCookie('zelp_access_token', clearOpts);
+  res.clearCookie('admin_token', clearOpts);
+  return res.json({ success: true, message: 'Logged out successfully.' });
 };

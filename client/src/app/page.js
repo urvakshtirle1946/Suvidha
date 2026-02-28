@@ -20,21 +20,25 @@ export default function WaitlistPage() {
 
   return (
     <div style={{
-      minHeight: '100vh',
+      height: '100vh',
+      width: '100vw',
+      overflow: 'hidden',
       display: 'flex',
-      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: '#f8f9fa',
-      padding: '2rem 1rem',
+      padding: '1rem',
+      boxSizing: 'border-box',
       fontFamily: 'var(--font-outfit), sans-serif'
     }}>
       <div style={{
         background: '#ffffff',
         width: '100%',
         maxWidth: '800px',
+        height: '100%',
+        maxHeight: '800px',
         borderRadius: '24px',
-        padding: '4rem 2rem 0 2rem',
+        padding: 'clamp(2rem, 5vh, 4rem) 2rem 0 2rem',
         boxShadow: '0 20px 40px rgba(0,0,0,0.05)',
         display: 'flex',
         flexDirection: 'column',
@@ -177,15 +181,18 @@ export default function WaitlistPage() {
           maxWidth: '600px',
           marginTop: 'auto',
           display: 'flex',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          flex: '1 1 auto',
+          minHeight: 0
         }}>
           <img 
             src="/assets/waitlist_illustration.png" 
             alt="Community Illustration" 
             style={{ 
               width: '100%', 
-              height: 'auto',
+              height: '100%',
               objectFit: 'contain',
+              objectPosition: 'bottom',
               marginBottom: '-2px' // Flush with the bottom of the card
             }} 
           />

@@ -99,18 +99,17 @@ export default function HomeClient({ hospitals, popularServices }) {
 
   // Categories with assigned images to match the movie card aesthetic
   const CATEGORIES = [
-      { name: 'Cardiology', desc: 'Heart & Blood Pressure Care', icon: <Heart size={50} color="rgba(255,255,255,0.3)" />, color: '#ff6b6b', href: '/hospitals?specialty=Cardiologist', img: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=400&q=80', rating: '4.8', votes: '1.2K' },
-      { name: 'Radiology', desc: 'Detailed Scans & X-Rays', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#a55eea', href: '/hospitals?category=Scan', img: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=400&q=80', rating: '4.7', votes: '850+' },
-      { name: 'Pathology', desc: 'Precision Lab Tests', icon: <TestTube size={50} color="rgba(255,255,255,0.3)" />, color: '#fd9644', href: '/lab-tests', img: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=400&q=80', rating: '4.9', votes: '2K+' },
-      { name: 'Orthopedic', desc: 'Bone & Joint Health', icon: <Bone size={50} color="rgba(255,255,255,0.3)" />, color: '#5f27cd', href: '/hospitals?specialty=Orthopedic', img: 'https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?auto=format&fit=crop&w=400&q=80', rating: '4.6', votes: '920+' },
-      { name: 'Pediatric', desc: 'Gentle Child Care', icon: <Baby size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9ff3', textColor: '#1f2937', href: '/hospitals?specialty=Pediatrician', img: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=400&q=80', rating: '4.9', votes: '3.1K' },
-      { name: 'Neurology', desc: 'Advanced Brain Care', icon: <Brain size={50} color="rgba(255,255,255,0.3)" />, color: '#54a0ff', href: '/hospitals?specialty=Neurologist', img: 'https://images.unsplash.com/photo-1559757175-9b2446f2cbec?auto=format&fit=crop&w=400&q=80', rating: '4.8', votes: '500+' },
-      { name: 'Eye Care', desc: 'Vision Specialists', icon: <Eye size={50} color="rgba(255,255,255,0.3)" />, color: '#1dd1a1', href: '/hospitals?specialty=Ophthalmologist', img: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=400&q=80', rating: '4.5', votes: '1.1K' },
-      { name: 'Dermatology', desc: 'Skin & Hair Treatments', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#00d2d3', href: '/hospitals?specialty=Dermatologist', img: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80', rating: '4.7', votes: '640+' },
-      { name: 'Diabetes', desc: 'Sugar Level Management', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ee5253', href: '/hospitals?specialty=Diabetes', img: 'https://images.unsplash.com/photo-1505576391780-c1f1cf1a8e&auto=format&fit=crop&w=400&q=80', rating: '4.6', votes: '780+' },
-      { name: 'Surgeries', desc: 'Expert Operations', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9f43', href: '/hospitals?category=Surgery', img: 'https://images.unsplash.com/photo-1583324113626-70df0f4deaab?auto=format&fit=crop&w=400&q=80', rating: '4.9', votes: '1.5K' },
-      { name: 'Physiotherapy', desc: 'Rehab & Recovery', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#10ac84', href: '/hospitals?specialty=Physiotherapy', img: 'https://images.unsplash.com/photo-1599552175960-b6ab71424b61?auto=format&fit=crop&w=400&q=80', rating: '4.7', votes: '430+' },
-      { name: 'Counseling', desc: 'Mental Health Support', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#f368e0', href: '/hospitals?specialty=Psychotherapy', img: 'https://images.unsplash.com/photo-1573497620053-ea5300f94f21?auto=format&fit=crop&w=400&q=80', rating: '4.8', votes: '1.8K' },
+      { name: 'Cardiology', desc: 'Heart & Blood Pressure Care', icon: <Heart size={50} color="rgba(255,255,255,0.3)" />, color: '#ff6b6b', href: '/hospitals?specialty=Cardiologist', img: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=400&q=80' },
+      { name: 'Radiology', desc: 'Detailed Scans & X-Rays', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#a55eea', href: '/hospitals?category=Scan', img: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=400&q=80' },
+      { name: 'Pathology', desc: 'Precision Lab Tests', icon: <TestTube size={50} color="rgba(255,255,255,0.3)" />, color: '#fd9644', href: '/lab-tests', img: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=400&q=80' },
+      { name: 'Orthopedic', desc: 'Bone & Joint Health', icon: <Bone size={50} color="rgba(255,255,255,0.3)" />, color: '#5f27cd', href: '/hospitals?specialty=Orthopedic', img: 'https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?auto=format&fit=crop&w=400&q=80' },
+      { name: 'Pediatric', desc: 'Gentle Child Care', icon: <Baby size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9ff3', textColor: '#1f2937', href: '/hospitals?specialty=Pediatrician', img: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=400&q=80' },
+      { name: 'Neurology', desc: 'Advanced Brain Care', icon: <Brain size={50} color="rgba(255,255,255,0.3)" />, color: '#54a0ff', href: '/hospitals?specialty=Neurologist', img: '/assets/categories/neurology.png' },
+      { name: 'Eye Care', desc: 'Vision Specialists', icon: <Eye size={50} color="rgba(255,255,255,0.3)" />, color: '#1dd1a1', href: '/hospitals?specialty=Ophthalmologist', img: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=400&q=80' },
+      { name: 'Dermatology', desc: 'Skin & Hair Treatments', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#00d2d3', href: '/hospitals?specialty=Dermatologist', img: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80' },
+      { name: 'Diabetes', desc: 'Sugar Level Management', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ee5253', href: '/hospitals?specialty=Diabetes', img: '/assets/categories/diabetes.png' },
+      { name: 'Surgeries', desc: 'Expert Operations', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9f43', href: '/hospitals?category=Surgery', img: 'https://images.unsplash.com/photo-1583324113626-70df0f4deaab?auto=format&fit=crop&w=400&q=80' },
+      { name: 'Physiotherapy', desc: 'Rehab & Recovery', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#10ac84', href: '/hospitals?specialty=Physiotherapy', img: '/assets/categories/physiotherapy.png' }
   ];
 
   return (
@@ -249,22 +248,7 @@ export default function HomeClient({ hospitals, popularServices }) {
                                             {cat.icon}
                                         </div>
                                     )}
-                                    <div style={{ 
-                                        position: 'absolute', 
-                                        bottom: 0, 
-                                        left: 0, 
-                                        right: 0, 
-                                        padding: '16px 10px 8px 10px', 
-                                        background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)', 
-                                        color: 'white', 
-                                        display: 'flex', 
-                                        alignItems: 'center', 
-                                        gap: '6px' 
-                                    }}>
-                                        <Star size={14} color="#ef4444" fill="#ef4444" /> 
-                                        <span style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>{cat.rating}/5</span>
-                                        <span style={{ fontSize: '0.75rem', opacity: 0.8, marginLeft: 'auto' }}>{cat.votes} Votes</span>
-                                    </div>
+                                    {/* Removed rating and votes overlay */}
                                 </div>
                                 
                                 {/* Text Info Below Card */}

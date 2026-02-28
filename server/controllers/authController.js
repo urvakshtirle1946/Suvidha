@@ -196,6 +196,61 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.googleLogin = async (req, res) => {
+  const { access_token } = req.body;
+  if (!access_token) {
+    return res.status(400).json({ success: false, message: 'Access token is required.' });
+  }
+
+  try {
+    // Fetch user details from Google API
+    const googleRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${access_token}` }
+    });
+    
+    if (!googleRes.ok) {
+      return res.status(401).json({ success: false, message: 'Invalid Google access token.' });
+    }
+
+    const { name, email, sub: google_id } = await googleRes.json();
+    const cleanEmail = normalizeEmail(email);
+    const cleanName = normalizeName(name);
+
+    // Check if user exists
+    const result = await db.query(
+      'SELECT id, name, email, role, created_at FROM users WHERE email = $1 LIMIT 1',
+      [cleanEmail]
+    );
+
+    let user;
+    let statusCode = 200;
+    let message = 'Google login successful.';
+
+    if (result.rows.length === 0) {
+      // User doesn't exist, create a new one. Password is null since they use Google.
+      const insertResult = await db.query(
+        `INSERT INTO users (name, email, role)
+         VALUES ($1, $2, $3)
+         RETURNING id, name, email, role, created_at`,
+        [cleanName, cleanEmail, 'user']
+      );
+      user = insertResult.rows[0];
+      statusCode = 201;
+      message = 'Google registration successful.';
+    } else {
+      user = result.rows[0];
+    }
+
+    return issueUserSession(req, res, user, statusCode, message);
+  } catch (error) {
+    console.error('Google Login Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Unable to login with Google right now. Please try again.'
+    });
+  }
+};
+
 exports.adminLogin = async (req, res) => {
   const email = normalizeEmail(req.body?.email);
   const password = String(req.body?.password || '');

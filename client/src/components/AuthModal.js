@@ -38,8 +38,6 @@ export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
     return tab === 'register' ? 'Create Account' : 'Login to Continue';
   }, [tab]);
 
-  if (!isOpen) return null;
-
   const setField = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
@@ -121,6 +119,8 @@ export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
     onSuccess: handleGoogleSuccess,
     onError: () => setError('Google login popup failed to open or was closed.'),
   });
+
+  if (!isOpen) return null;
 
   return (
     <div

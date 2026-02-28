@@ -29,11 +29,19 @@ export default function HomeClient({ hospitals, popularServices }) {
   const [selectedHospitalForProfile, setSelectedHospitalForProfile] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef(null);
+  const categorySliderRef = useRef(null);
 
   const scroll = (direction) => {
     if (sliderRef.current) {
       const scrollAmount = direction === 'left' ? -300 : 300;
       sliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  const scrollCategory = (direction) => {
+    if (categorySliderRef.current) {
+      const scrollAmount = direction === 'left' ? -300 : 300;
+      categorySliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
 
@@ -89,20 +97,20 @@ export default function HomeClient({ hospitals, popularServices }) {
       }
   };
 
-  // Categories with assigned colors to match the "Promo Card" aesthetic but smaller
+  // Categories with assigned images to match the movie card aesthetic
   const CATEGORIES = [
-      { name: 'Cardiology', desc: 'Heart Care', icon: <Heart size={50} color="rgba(255,255,255,0.3)" />, color: '#ff6b6b', href: '/hospitals?specialty=Cardiologist' },
-      { name: 'Radiology', desc: 'Scans & X-Rays', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#a55eea', href: '/hospitals?category=Scan' },
-      { name: 'Pathology', desc: 'Lab Tests', icon: <TestTube size={50} color="rgba(255,255,255,0.3)" />, color: '#fd9644', href: '/lab-tests' },
-      { name: 'Orthopedic', desc: 'Bone Health', icon: <Bone size={50} color="rgba(255,255,255,0.3)" />, color: '#5f27cd', href: '/hospitals?specialty=Orthopedic' },
-      { name: 'Pediatric', desc: 'Child Care', icon: <Baby size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9ff3', textColor: '#1f2937', href: '/hospitals?specialty=Pediatrician' },
-      { name: 'Neurology', desc: 'Brain Care', icon: <Brain size={50} color="rgba(255,255,255,0.3)" />, color: '#54a0ff', href: '/hospitals?specialty=Neurologist' },
-      { name: 'Eye Care', desc: 'Vision', icon: <Eye size={50} color="rgba(255,255,255,0.3)" />, color: '#1dd1a1', href: '/hospitals?specialty=Ophthalmologist' },
-      { name: 'Dermatology', desc: 'Skin & Hair', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#00d2d3', href: '/hospitals?specialty=Dermatologist' },
-      { name: 'Diabetes', desc: 'Sugar Levels', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ee5253', href: '/hospitals?specialty=Diabetes' },
-      { name: 'Surgeries', desc: 'Expert Operations', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9f43', href: '/hospitals?category=Surgery' },
-      { name: 'Physiotherapy', desc: 'Recovery', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#10ac84', href: '/hospitals?specialty=Physiotherapy' },
-      { name: 'Counseling', desc: 'Mental Health', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#f368e0', href: '/hospitals?specialty=Psychotherapy' },
+      { name: 'Cardiology', desc: 'Heart & Blood Pressure Care', icon: <Heart size={50} color="rgba(255,255,255,0.3)" />, color: '#ff6b6b', href: '/hospitals?specialty=Cardiologist', img: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=400&q=80', rating: '4.8', votes: '1.2K' },
+      { name: 'Radiology', desc: 'Detailed Scans & X-Rays', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#a55eea', href: '/hospitals?category=Scan', img: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=400&q=80', rating: '4.7', votes: '850+' },
+      { name: 'Pathology', desc: 'Precision Lab Tests', icon: <TestTube size={50} color="rgba(255,255,255,0.3)" />, color: '#fd9644', href: '/lab-tests', img: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=400&q=80', rating: '4.9', votes: '2K+' },
+      { name: 'Orthopedic', desc: 'Bone & Joint Health', icon: <Bone size={50} color="rgba(255,255,255,0.3)" />, color: '#5f27cd', href: '/hospitals?specialty=Orthopedic', img: 'https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?auto=format&fit=crop&w=400&q=80', rating: '4.6', votes: '920+' },
+      { name: 'Pediatric', desc: 'Gentle Child Care', icon: <Baby size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9ff3', textColor: '#1f2937', href: '/hospitals?specialty=Pediatrician', img: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=400&q=80', rating: '4.9', votes: '3.1K' },
+      { name: 'Neurology', desc: 'Advanced Brain Care', icon: <Brain size={50} color="rgba(255,255,255,0.3)" />, color: '#54a0ff', href: '/hospitals?specialty=Neurologist', img: 'https://images.unsplash.com/photo-1559757175-9b2446f2cbec?auto=format&fit=crop&w=400&q=80', rating: '4.8', votes: '500+' },
+      { name: 'Eye Care', desc: 'Vision Specialists', icon: <Eye size={50} color="rgba(255,255,255,0.3)" />, color: '#1dd1a1', href: '/hospitals?specialty=Ophthalmologist', img: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=400&q=80', rating: '4.5', votes: '1.1K' },
+      { name: 'Dermatology', desc: 'Skin & Hair Treatments', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#00d2d3', href: '/hospitals?specialty=Dermatologist', img: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80', rating: '4.7', votes: '640+' },
+      { name: 'Diabetes', desc: 'Sugar Level Management', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ee5253', href: '/hospitals?specialty=Diabetes', img: 'https://images.unsplash.com/photo-1505576391780-c1f1cf1a8e&auto=format&fit=crop&w=400&q=80', rating: '4.6', votes: '780+' },
+      { name: 'Surgeries', desc: 'Expert Operations', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9f43', href: '/hospitals?category=Surgery', img: 'https://images.unsplash.com/photo-1583324113626-70df0f4deaab?auto=format&fit=crop&w=400&q=80', rating: '4.9', votes: '1.5K' },
+      { name: 'Physiotherapy', desc: 'Rehab & Recovery', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#10ac84', href: '/hospitals?specialty=Physiotherapy', img: 'https://images.unsplash.com/photo-1599552175960-b6ab71424b61?auto=format&fit=crop&w=400&q=80', rating: '4.7', votes: '430+' },
+      { name: 'Counseling', desc: 'Mental Health Support', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#f368e0', href: '/hospitals?specialty=Psychotherapy', img: 'https://images.unsplash.com/photo-1573497620053-ea5300f94f21?auto=format&fit=crop&w=400&q=80', rating: '4.8', votes: '1.8K' },
   ];
 
   return (
@@ -175,65 +183,148 @@ export default function HomeClient({ hospitals, popularServices }) {
             </div>
         </div>
 
-        {/* Categories Grid (Mini Promo Cards) */}
-        <h2 style={{ marginBottom: '1.5rem', fontSize: 'clamp(1.2rem, 5vw, 1.5rem)' }}>Shop by Category</h2>
-        <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', 
-            gap: '1rem', 
-            marginBottom: '4rem' 
-        }}>
-             {CATEGORIES.map((cat, index) => (
-                 <Link key={index} href={cat.href} style={{ textDecoration: 'none' }}>
-                    <div style={{ 
-                        background: `linear-gradient(135deg, ${cat.color}, ${cat.color}dd)`, 
-                        borderRadius: '20px', 
-                        padding: '1.5rem', 
+        {/* Categories Slide Grid (Movie Cards Style) */}
+        <div style={{ position: 'relative', marginBottom: '4rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.2rem' }}>
+                <h2 style={{ fontSize: 'clamp(1.4rem, 5vw, 1.8rem)', fontWeight: 'bold', margin: 0, color: '#111827' }}>
+                    Shop by Category
+                </h2>
+                <Link href="/categories" style={{ color: '#db2777', textDecoration: 'none', fontWeight: '500', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    See All <span style={{ fontSize: '1.1rem' }}>›</span>
+                </Link>
+            </div>
+
+            <div style={{ position: 'relative' }}>
+                <div 
+                    ref={categorySliderRef}
+                    style={{ 
                         display: 'flex', 
-                        flexDirection: 'column', 
-                        justifyContent: 'space-between',
-                        color: cat.textColor || '#fff',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        height: '180px', 
-                        cursor: 'pointer',
-                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                        boxShadow: '0 8px 15px rgba(0,0,0,0.1)',
-                        border: '1px solid rgba(255,255,255,0.1)'
+                        gap: '1.2rem', 
+                        overflowX: 'auto', 
+                        paddingBottom: '1rem', 
+                        paddingRight: '2rem',
+                        scrollbarWidth: 'none',
+                        scrollBehavior: 'smooth',
+                        WebkitOverflowScrolling: 'touch'
                     }}
-                    onMouseOver={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
-                        e.currentTarget.style.boxShadow = '0 15px 30px rgba(0,0,0,0.15)';
+                    className="hide-scrollbar"
+                >
+                    {CATEGORIES.map((cat, index) => (
+                        <Link key={index} href={cat.href} style={{ textDecoration: 'none', display: 'block' }}>
+                            <div 
+                                style={{ 
+                                    width: '180px', 
+                                    flexShrink: 0, 
+                                    display: 'flex', 
+                                    flexDirection: 'column', 
+                                    cursor: 'pointer',
+                                    transition: 'transform 0.2s ease-out'
+                                }}
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(-4px)';
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                }}
+                            >
+                                {/* Image Card with Gradient & Rating Overlay */}
+                                <div style={{ 
+                                    position: 'relative', 
+                                    width: '180px', 
+                                    height: '260px', 
+                                    borderRadius: '12px', 
+                                    overflow: 'hidden',
+                                    backgroundColor: cat.color,
+                                    marginBottom: '0.8rem',
+                                    boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
+                                }}>
+                                    {cat.img ? (
+                                        <img 
+                                            src={cat.img} 
+                                            alt={cat.name}
+                                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                        />
+                                    ) : (
+                                        <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                            {cat.icon}
+                                        </div>
+                                    )}
+                                    <div style={{ 
+                                        position: 'absolute', 
+                                        bottom: 0, 
+                                        left: 0, 
+                                        right: 0, 
+                                        padding: '16px 10px 8px 10px', 
+                                        background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)', 
+                                        color: 'white', 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        gap: '6px' 
+                                    }}>
+                                        <Star size={14} color="#ef4444" fill="#ef4444" /> 
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>{cat.rating}/5</span>
+                                        <span style={{ fontSize: '0.75rem', opacity: 0.8, marginLeft: 'auto' }}>{cat.votes} Votes</span>
+                                    </div>
+                                </div>
+                                
+                                {/* Text Info Below Card */}
+                                <div>
+                                    <h3 style={{ 
+                                        fontSize: '1rem', 
+                                        fontWeight: '700', 
+                                        margin: '0 0 2px 0', 
+                                        color: '#1f2937', 
+                                        whiteSpace: 'nowrap', 
+                                        overflow: 'hidden', 
+                                        textOverflow: 'ellipsis' 
+                                    }}>
+                                        {cat.name}
+                                    </h3>
+                                    <p style={{ 
+                                        fontSize: '0.85rem', 
+                                        color: '#6b7280', 
+                                        margin: 0,
+                                        whiteSpace: 'nowrap', 
+                                        overflow: 'hidden', 
+                                        textOverflow: 'ellipsis'
+                                    }}>
+                                        {cat.desc}
+                                    </p>
+                                </div>
+                            </div>
+                        </Link>
+                    ))}
+                </div>
+
+                {/* Floating Right Arrow Overlay */}
+                <button 
+                    onClick={(e) => { e.preventDefault(); scrollCategory('right'); }}
+                    style={{ 
+                        position: 'absolute',
+                        right: '-15px',
+                        top: '40%',
+                        transform: 'translateY(-50%)',
+                        background: 'rgba(0,0,0,0.6)', 
+                        border: 'none', 
+                        borderRadius: '50%', 
+                        width: '40px', 
+                        height: '40px', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        cursor: 'pointer', 
+                        color: 'white',
+                        zIndex: 10,
+                        backdropFilter: 'blur(4px)',
+                        boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+                        transition: 'background 0.2s'
                     }}
-                    onMouseOut={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                        e.currentTarget.style.boxShadow = '0 8px 15px rgba(0,0,0,0.1)';
-                    }}
-                    >
-                        <div style={{ zIndex: 1 }}>
-                            <h3 style={{ fontSize: '1.2rem', marginBottom: '0.4rem', lineHeight: '1.2', fontWeight: 'bold' }}>{cat.name}</h3>
-                            <p style={{ fontSize: '0.85rem', opacity: 0.9, marginBottom: '1rem' }}>{cat.desc}</p>
-                            
-                            <span style={{ 
-                                fontSize: '0.8rem', 
-                                background: 'rgba(255,255,255,0.25)', 
-                                backdropFilter: 'blur(4px)',
-                                padding: '6px 12px', 
-                                borderRadius: '10px',
-                                fontWeight: '600',
-                                border: '1px solid rgba(255,255,255,0.3)'
-                            }}>
-                                View More
-                            </span>
-                        </div>
-                        
-                        {/* Decorative Icon */}
-                        <div style={{ position: 'absolute', right: '-10px', bottom: '-10px', transform: 'rotate(-10deg)' }}>
-                            {cat.icon}
-                        </div>
-                    </div>
-                 </Link>
-             ))}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.8)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.6)'}
+                >
+                    <ChevronRight size={24} />
+                </button>
+            </div>
         </div>
 
         {/* Popular Section (Horizontal Scroll with Controls) */}

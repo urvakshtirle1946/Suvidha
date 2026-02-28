@@ -31,12 +31,12 @@ function AdminLayoutContent({ children }) {
   
   const adminPathParam = params?.adminPath;
   const basePath = adminPathParam ? `/${adminPathParam}` : '';
-  const securePath = process.env.NEXT_PUBLIC_ADMIN_ROUTE;
+  const securePath = process.env.NEXT_PUBLIC_ADMIN_ROUTE || 'admin';
 
   useEffect(() => {
      if (!basePath) return; 
 
-     if (securePath && adminPathParam !== securePath) {
+     if (adminPathParam !== securePath) {
         console.warn(`Invalid admin path: ${adminPathParam}. Expected: ${securePath}`);
         router.replace('/'); 
         return;

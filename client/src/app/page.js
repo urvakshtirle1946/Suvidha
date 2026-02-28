@@ -1,23 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
-import { Mail, CheckCircle2 } from 'lucide-react';
 
 export default function WaitlistPage() {
-  const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!email) return;
-    // In a real app, send to backend here
-    setTimeout(() => {
-      setSubmitted(true);
-      setEmail('');
-    }, 600);
-  };
-
   return (
     <div style={{
       height: '100vh',
@@ -68,78 +53,7 @@ export default function WaitlistPage() {
           Join now to access new features and updates and be part of our early community.
         </p>
 
-        {submitted ? (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            background: '#ecfdf5',
-            color: '#059669',
-            padding: '1rem 2rem',
-            borderRadius: '50px',
-            marginBottom: '2rem',
-            fontWeight: '500'
-          }}>
-            <CheckCircle2 size={20} />
-            You're on the list! Keep an eye on your inbox.
-          </div>
-        ) : (
-          <form 
-            onSubmit={handleSubmit}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              background: '#f3f4f6',
-              borderRadius: '50px',
-              padding: '4px',
-              width: '100%',
-              maxWidth: '450px',
-              marginBottom: '1.5rem',
-              border: '1px solid #e5e7eb',
-              transition: 'border-color 0.2s'
-            }}
-          >
-            <input
-              type="email"
-              placeholder="ENTER YOUR EMAIL ADDRESS"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              style={{
-                background: 'transparent',
-                border: 'none',
-                outline: 'none',
-                padding: '0.8rem 1.5rem',
-                flexGrow: 1,
-                fontSize: '0.85rem',
-                fontWeight: '600',
-                color: '#374151',
-                letterSpacing: '0.05em'
-              }}
-            />
-            <button
-              type="submit"
-              style={{
-                background: '#111827',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '50px',
-                padding: '0.8rem 2rem',
-                fontSize: '0.85rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'transform 0.1s, background 0.2s',
-                whiteSpace: 'nowrap'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.background = '#000000'}
-              onMouseOut={(e) => e.currentTarget.style.background = '#111827'}
-              onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.97)'}
-              onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
-            >
-              GET NOTIFIED
-            </button>
-          </form>
-        )}
+        <div className="launchlist-widget" data-key-id="iCtHEk" data-height="180px"></div>
 
         <div style={{
           display: 'flex',

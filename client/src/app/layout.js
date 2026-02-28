@@ -6,6 +6,7 @@ import { CartProvider } from "@/context/CartContext";
 import AdminSessionManager from "@/components/AdminSessionManager";
 import CartDrawer from "@/components/CartDrawer";
 import GoogleAuthProviderWrapper from "@/components/GoogleAuthProviderWrapper";
+import Script from "next/script";
 
 
 const outfit = Outfit({
@@ -33,6 +34,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script src="https://getlaunchlist.com/js/widget.js" strategy="lazyOnload" />
+      </head>
       <body className={`${outfit.variable} ${cormorantGaramond.variable} font-sans`}>
         <GoogleAuthProviderWrapper clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
           <AuthProvider>

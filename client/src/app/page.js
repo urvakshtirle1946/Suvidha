@@ -1,20 +1,39 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Lock } from 'lucide-react';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
 export default function WaitlistPage() {
   const router = useRouter();
   const [showOTP, setShowOTP] = useState(false);
-  const [otpValue, setOtpValue] = useState("");
+  const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""]);
+  const inputRefs = useRef([]);
 
-  const handleOTPChange = (val) => {
-    setOtpValue(val);
-    if (val === "Zelp26") {
+  const handleOTPChange = (index, val) => {
+    // Only allow alphanumeric digits
+    if (val && !/^[a-zA-Z0-9]$/.test(val)) return;
+    
+    const newOtp = [...otpValues];
+    newOtp[index] = val;
+    setOtpValues(newOtp);
+
+    // Auto-advance to next input
+    if (val && index < 5) {
+      inputRefs.current[index + 1].focus();
+    }
+
+    // Check if full OTP validates
+    if (newOtp.join("") === "Zelp26") {
       router.push('/home');
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    // Handle backspace logic to move backward
+    if (e.key === "Backspace" && !otpValues[index] && index > 0) {
+      inputRefs.current[index - 1].focus();
     }
   };
 
@@ -215,17 +234,39 @@ export default function WaitlistPage() {
             <h2 style={{ marginBottom: '0.5rem', fontWeight: 600, color: '#111827' }}>Developer Access</h2>
             <p style={{ color: '#6b7280', fontSize: '0.85rem', marginBottom: '1.5rem' }}>Enter the access code to bypass the waitlist.</p>
             
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <InputOTP maxLength={6} value={otpValue} onChange={handleOTPChange}>
-                <InputOTPGroup>
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
-                </InputOTPGroup>
-              </InputOTP>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
+              {otpValues.map((digit, index) => (
+                <input
+                  key={index}
+                  ref={(el) => (inputRefs.current[index] = el)}
+                  type="text"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleOTPChange(index, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  style={{
+                    width: '40px',
+                    height: '45px',
+                    textAlign: 'center',
+                    fontSize: '1.25rem',
+                    fontWeight: '600',
+                    color: '#111827',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    outline: 'none',
+                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                    backgroundColor: '#fff'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#0c831f';
+                    e.target.style.boxShadow = '0 0 0 2px rgba(12, 131, 31, 0.2)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#d1d5db';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              ))}
             </div>
           </div>
         </div>

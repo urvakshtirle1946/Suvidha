@@ -189,7 +189,7 @@ export default function HomeClient({ hospitals, popularServices }) {
                 <h2 style={{ fontSize: 'clamp(1.4rem, 5vw, 1.8rem)', fontWeight: 'bold', margin: 0, color: '#111827' }}>
                     Shop by Category
                 </h2>
-                <Link href="/services" style={{ color: '#db2777', textDecoration: 'none', fontWeight: '500', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Link href="/hospitals" style={{ color: '#db2777', textDecoration: 'none', fontWeight: '500', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     See All <span style={{ fontSize: '1.1rem' }}>›</span>
                 </Link>
             </div>

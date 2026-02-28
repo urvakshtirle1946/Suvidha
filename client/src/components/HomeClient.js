@@ -189,7 +189,7 @@ export default function HomeClient({ hospitals, popularServices }) {
                 <h2 style={{ fontSize: 'clamp(1.4rem, 5vw, 1.8rem)', fontWeight: 'bold', margin: 0, color: '#111827' }}>
                     Shop by Category
                 </h2>
-                <Link href="/categories" style={{ color: '#db2777', textDecoration: 'none', fontWeight: '500', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Link href="/services" style={{ color: '#db2777', textDecoration: 'none', fontWeight: '500', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     See All <span style={{ fontSize: '1.1rem' }}>›</span>
                 </Link>
             </div>
@@ -295,6 +295,35 @@ export default function HomeClient({ hospitals, popularServices }) {
                         </Link>
                     ))}
                 </div>
+
+                {/* Floating Left Arrow Overlay */}
+                <button 
+                    onClick={(e) => { e.preventDefault(); scrollCategory('left'); }}
+                    style={{ 
+                        position: 'absolute',
+                        left: '-15px',
+                        top: '40%',
+                        transform: 'translateY(-50%)',
+                        background: 'rgba(0,0,0,0.6)', 
+                        border: 'none', 
+                        borderRadius: '50%', 
+                        width: '40px', 
+                        height: '40px', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        cursor: 'pointer', 
+                        color: 'white',
+                        zIndex: 10,
+                        backdropFilter: 'blur(4px)',
+                        boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+                        transition: 'background 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.8)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.6)'}
+                >
+                    <ChevronLeft size={24} />
+                </button>
 
                 {/* Floating Right Arrow Overlay */}
                 <button 

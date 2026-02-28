@@ -51,6 +51,11 @@ export function AuthProvider({ children }) {
     if (!res.ok || !data?.success || !data?.user) {
       throw new Error(data?.message || "Authentication failed.");
     }
+    
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+    }
+    
     setUser(data.user);
     return data;
   };
@@ -91,6 +96,9 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.error("Logout error", err);
     } finally {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem("token");
+      }
       setUser(null);
       router.push("/");
     }

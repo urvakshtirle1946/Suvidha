@@ -7,14 +7,23 @@ export const getApiUrl = () => {
 
 export const apiFetch = (endpoint, options = {}) => {
   const backendUrl = getApiUrl();
+  
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {})
+  };
+
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem("token");
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+  }
 
   return fetch(`${backendUrl}${endpoint}`, {
     credentials: "include",
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {})
-    }
+    headers
   });
 };
 

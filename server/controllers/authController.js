@@ -340,8 +340,9 @@ exports.updateProfile = async (req, res) => {
       }
     }
 
+    const hasPasswordChange = Boolean(password && String(password).trim().length > 0);
     let hashedPassword = currentUser.password;
-    if (password) {
+    if (hasPasswordChange) {
       hashedPassword = await bcrypt.hash(password, 12);
     }
 
@@ -353,8 +354,35 @@ exports.updateProfile = async (req, res) => {
       [cleanName, cleanEmail, hashedPassword, authUserId]
     );
 
+    if (updatedResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.'
+      });
+    }
+
+    if (hasPasswordChange) {
+      const verifyPasswordResult = await db.query(
+        'SELECT password FROM users WHERE id = $1 LIMIT 1',
+        [authUserId]
+      );
+
+      const persistedHash = verifyPasswordResult.rows[0]?.password;
+      const passwordPersisted = persistedHash ? await bcrypt.compare(password, persistedHash) : false;
+
+      if (!passwordPersisted) {
+        return res.status(500).json({
+          success: false,
+          message: 'Password update failed to persist. Please try again.'
+        });
+      }
+    }
+
     const updatedUser = updatedResult.rows[0];
-    return issueUserSession(req, res, updatedUser, 200, 'Profile updated successfully.');
+    const successMessage = hasPasswordChange
+      ? 'Profile updated successfully. Password changed.'
+      : 'Profile updated successfully.';
+    return issueUserSession(req, res, updatedUser, 200, successMessage);
   } catch (error) {
     console.error('Update Profile Error:', error);
     if (error.code === '23505') {

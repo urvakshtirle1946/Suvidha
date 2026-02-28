@@ -15,7 +15,7 @@ export default function WaitlistPage() {
     }}>
       {/* Left Box: Form & Illustration */}
       <div style={{
-        flex: '1 1 50%',
+        flex: 1, // Takes all remaining space
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -125,7 +125,7 @@ export default function WaitlistPage() {
       <div 
         className="leaderboard-container"
         style={{
-          flex: '1 1 50%',
+          flex: '0 0 380px', // Fixed smaller width for the leaderboard
           height: '100%',
           backgroundColor: '#ffffff',
           borderLeft: '1px solid #e5e7eb',

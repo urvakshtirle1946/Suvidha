@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 require('dotenv').config();
+const JWT_SECRET = process.env.JWT_SECRET || 'zelp_secret_key_2024';
 
 // Middleware to verify JWT token
 const verifyJWT = async (req, res, next) => {
@@ -24,7 +25,7 @@ const verifyJWT = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded; // Attach user payload to request
     next();
   } catch (err) {

@@ -1,4 +1,8 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, process.env.NODE_ENV === 'production' ? '.env' : '../.env') });
+const path = require('path');
+const fs = require('fs');
+const rootEnvPath = path.resolve(__dirname, '../.env');
+const localEnvPath = path.resolve(__dirname, '.env');
+require('dotenv').config({ path: fs.existsSync(localEnvPath) ? localEnvPath : rootEnvPath });
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');

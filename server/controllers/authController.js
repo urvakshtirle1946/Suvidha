@@ -5,6 +5,35 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { getMockUsers, saveMockUser } = require('../mock_persistence');
 
+const JWT_SECRET = process.env.JWT_SECRET || 'zelp_secret_key_2024';
+const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
+
+const getCookieOptions = (req, maxAge) => {
+    const origin = req.headers?.origin || '';
+    const isLocalOrigin = /localhost|127\.0\.0\.1/.test(origin);
+    const isLocalHost = req.hostname === 'localhost' || req.hostname === '127.0.0.1';
+    const isSecureRequest = req.secure || req.headers['x-forwarded-proto'] === 'https';
+    const useLocalCookieMode = (isLocalOrigin || isLocalHost) && !isSecureRequest;
+
+    return {
+        httpOnly: true,
+        secure: !useLocalCookieMode,
+        sameSite: useLocalCookieMode ? "lax" : "none",
+        path: "/",
+        maxAge
+    };
+};
+
+const getClearCookieOptions = (req) => {
+    const base = getCookieOptions(req, 0);
+    return {
+        httpOnly: base.httpOnly,
+        secure: base.secure,
+        sameSite: base.sameSite,
+        path: base.path
+    };
+};
+
 
 exports.requestVerificationOtp = async (req, res) => {
     const { phone } = req.body;
@@ -62,13 +91,7 @@ exports.verifyPhone = async (req, res) => {
 exports.adminLogin = async (req, res) => {
     const { email, password } = req.body;
 
-    const cookieOptions = {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-    };
+    const cookieOptions = getCookieOptions(req, 7 * 24 * 60 * 60 * 1000); // 7 days
 
     if (!email || !password) {
         return res.status(400).json({ success: false, message: 'Email and Password are required' });
@@ -82,7 +105,7 @@ exports.adminLogin = async (req, res) => {
             if (email === 'admin@zelp.com' && password === 'demo123') {
                 const token = jwt.sign(
                     { id: 0, email: 'admin@zelp.com', name: 'Demo Admin', phone: '9999999999', role: 'admin' },
-                    process.env.JWT_SECRET,
+                    JWT_SECRET,
                     { expiresIn: '1d' }
                 );
                 return res
@@ -103,7 +126,7 @@ exports.adminLogin = async (req, res) => {
 
         const token = jwt.sign(
             { id: user.id, phone: user.phone, role: user.role, name: user.name, email: user.email },
-            process.env.JWT_SECRET || 'zelp_secret_key_2024',
+            JWT_SECRET,
             { expiresIn: '1d' } // Admin token expires quicker
         );
 
@@ -195,17 +218,11 @@ exports.googleLogin = async (req, res) => {
 
         const jwtToken = jwt.sign(
             { id: user.id || user.phone, phone: user.phone, role: user.role, name: user.name, email: user.email, phone_verified: user.phone_verified },
-            process.env.JWT_SECRET || 'zelp_secret_key_2024',
-            { expiresIn: '30d' }
+            JWT_SECRET,
+            { expiresIn: '2d' }
         );
 
-        const cookieOptions = {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            path: "/",
-            maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
-        };
+        const cookieOptions = getCookieOptions(req, TWO_DAYS_MS);
 
         return res
             .cookie("zelp_access_token", jwtToken, cookieOptions)
@@ -269,17 +286,11 @@ exports.updateProfile = async (req, res) => {
         // Generate new token with updated details
         const token = jwt.sign(
             { id: updatedUser.id || updatedUser.phone, phone: updatedUser.phone, role: updatedUser.role, name: updatedUser.name, email: updatedUser.email, phone_verified: updatedUser.phone_verified },
-            process.env.JWT_SECRET,
-            { expiresIn: '30d' }
+            JWT_SECRET,
+            { expiresIn: '2d' }
         );
 
-        const cookieOptions = {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            path: "/",
-            maxAge: 30 * 24 * 60 * 60 * 1000
-        };
+        const cookieOptions = getCookieOptions(req, TWO_DAYS_MS);
 
         res
           .cookie("zelp_access_token", token, cookieOptions)
@@ -321,17 +332,11 @@ exports.getMe = async (req, res) => {
         const user = checkUser.rows[0];
         const token = jwt.sign(
             { id: user.id || user.phone, phone: user.phone, role: user.role, name: user.name, email: user.email, phone_verified: user.phone_verified },
-            process.env.JWT_SECRET,
-            { expiresIn: '30d' }
+            JWT_SECRET,
+            { expiresIn: '2d' }
         );
 
-        const cookieOptions = {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            path: "/",
-            maxAge: 30 * 24 * 60 * 60 * 1000
-        };
+        const cookieOptions = getCookieOptions(req, TWO_DAYS_MS);
 
         res
           .cookie("zelp_access_token", token, cookieOptions)
@@ -346,12 +351,7 @@ exports.getMe = async (req, res) => {
 };
 
 exports.logout = (req, res) => {
-    const clearOpts = { 
-        httpOnly: true, 
-        secure: true, 
-        sameSite: "none", 
-        path: "/" 
-    };
+    const clearOpts = getClearCookieOptions(req);
     res.clearCookie("zelp_access_token", clearOpts);
     res.clearCookie("admin_token", clearOpts);
     res.json({ success: true, message: 'Logged out successfully' });

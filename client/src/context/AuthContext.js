@@ -120,7 +120,6 @@ export function AuthProvider({ children }) {
         login,
         register,
         googleLogin,
-        loginRadiusAuth,
         logout,
         refreshUser,
         updateUser,

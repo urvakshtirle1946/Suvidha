@@ -3,13 +3,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { X } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useGoogleLogin } from '@react-oauth/google';
-import { useLRAuth } from 'loginradius-react';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
-  const { user, login, register, googleLogin, loginRadiusAuth } = useAuth();
-  const { loginWithPopup, getAccessTokenSilently } = useLRAuth();
+  const { user, login, register, googleLogin } = useAuth();
   const [tab, setTab] = useState(mode === 'register' ? 'register' : 'login');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -320,53 +318,6 @@ export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <button
-            onClick={async () => {
-              try {
-                setLoading(true);
-                setError('');
-                await loginWithPopup();
-                const token = await getAccessTokenSilently();
-                if (token) {
-                   await loginRadiusAuth({ access_token: token });
-                   setSuccess('Mobile authentication successful.');
-                   onClose();
-                } else {
-                   setError('No access token returned from LoginRadius.');
-                }
-              } catch (err) {
-                console.error('LoginRadius Auth Error:', err);
-                setError('Mobile authentication failed.');
-              } finally {
-                setLoading(false);
-              }
-            }}
-            disabled={loading}
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '12px',
-              background: '#fff',
-              border: '1px solid #e5e7eb',
-              borderRadius: '10px',
-              padding: '0.85rem',
-              fontWeight: '600',
-              color: '#374151',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
-              transition: 'background 0.2s',
-            }}
-            onMouseOver={(e) => { if (!loading) e.currentTarget.style.background = '#f9fafb' }}
-            onMouseOut={(e) => { if (!loading) e.currentTarget.style.background = '#fff' }}
-          >
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-              <line x1="12" y1="18" x2="12.01" y2="18"></line>
-            </svg>
-            Continue with Mobile Number
-          </button>
 
           <button
             onClick={() => loginWithGoogle()}

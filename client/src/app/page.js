@@ -3,7 +3,6 @@
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Lock } from 'lucide-react';
-import Link from 'next/link';
 
 export default function WaitlistPage() {
   const router = useRouter();
@@ -67,51 +66,34 @@ export default function WaitlistPage() {
           </div>
 
           {/* Headings */}
-          <div className="flex flex-col items-center mb-8">
+          <div className="flex flex-col items-center mb-12">
             <h1 className="text-5xl md:text-6xl lg:text-[76px] font-bold tracking-tight text-center mb-2 leading-[1.1] !text-white" style={{ color: 'white' }}>
-              Stop designing.
+              Premium healthcare.
             </h1>
             <h1 className="text-5xl md:text-6xl lg:text-[76px] font-bold tracking-tight text-center leading-[1.1] !text-[#34d399]" style={{ color: '#34d399' }}>
-              Start shipping.
+              Simplified.
             </h1>
           </div>
 
-          <p className="text-[#a1a1aa] text-center text-lg md:text-xl lg:text-2xl max-w-xl mb-12 leading-relaxed font-medium" style={{ color: '#a1a1aa' }}>
-            No more boilerplate. No more blank files. Just clean, ready-to-use, beautiful code.
-          </p>
-
           {/* Custom LaunchList Form matching exactly the provided design */}
-          <form className="launchlist-form flex w-full max-w-lg items-center gap-3 mb-10 relative z-20" action="https://getlaunchlist.com/s/iCtHEk" method="POST">
+          <form className="launchlist-form flex w-full max-w-md items-center gap-3 relative z-20" action="https://getlaunchlist.com/s/iCtHEk" method="POST">
             <input 
               type="email" 
               name="email"
               placeholder="you@email.com" 
               required
               style={{ color: 'white' }}
-              className="flex-1 bg-[#18181b] border border-[#27272a] text-white rounded-2xl px-6 py-4 text-base md:text-lg outline-none focus:border-[#34d399] transition-colors placeholder:text-[#52525b]"
+              className="flex-1 bg-[#18181b] border border-[#27272a] text-white rounded-xl px-5 py-3 text-base outline-none focus:border-[#34d399] transition-colors placeholder:text-[#52525b]"
             />
             <button 
               type="submit" 
               style={{ color: 'black' }}
-              className="bg-[#34d399] hover:bg-[#10b981] text-black font-bold rounded-2xl px-8 py-4 text-base md:text-lg transition-colors flex items-center justify-center whitespace-nowrap"
+              className="bg-[#34d399] hover:bg-[#10b981] text-black font-semibold rounded-xl px-6 py-3 text-base transition-colors flex items-center justify-center whitespace-nowrap"
             >
               Join &rarr;
             </button>
           </form>
 
-          {/* Waitlist Badge */}
-          <div className="flex items-center gap-3 bg-[#18181b]/80 backdrop-blur-md border border-[#27272a] rounded-full px-5 py-2 mb-10 shadow-sm">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#34d399] animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]"></div>
-            <span className="text-sm font-medium" style={{ color: '#a1a1aa' }}>Join <span className="font-semibold" style={{ color: 'white' }}>1,152</span> others on the waitlist</span>
-          </div>
-
-          {/* Link */}
-          <p className="text-sm font-medium mt-auto pb-4" style={{ color: '#71717a' }}>
-            Already have questions?{' '}
-            <Link href="#" className="underline decoration-[#3b82f6]/30 underline-offset-4 transition-colors hover:text-[#60a5fa]" style={{ color: '#3b82f6' }}>
-              Chat with us on Discord
-            </Link>
-          </p>
         </div>
       </div>
 

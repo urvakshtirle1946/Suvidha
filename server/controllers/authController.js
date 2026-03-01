@@ -36,11 +36,12 @@ const getClearCookieOptions = (req) => {
 const normalizeEmail = (email) => String(email || '').trim().toLowerCase();
 const normalizeName = (name) => String(name || '').trim();
 
-const validateProfilePayload = ({ name, email, password }, { requirePassword }) => {
+const validateProfilePayload = ({ name, email, password, phone }, { requirePassword, requirePhone }) => {
   const errors = [];
 
   const cleanName = normalizeName(name);
   const cleanEmail = normalizeEmail(email);
+  const cleanPhone = String(phone || '').trim();
 
   if (!cleanName) errors.push('Username is required.');
   if (cleanName.length < 2) errors.push('Username must be at least 2 characters.');
@@ -54,10 +55,17 @@ const validateProfilePayload = ({ name, email, password }, { requirePassword }) 
     errors.push('Password must be between 8 and 72 characters.');
   }
 
+  if (requirePhone && !cleanPhone) {
+    errors.push('Mobile Number is required.');
+  } else if (cleanPhone && cleanPhone.length < 7) {
+    errors.push('Please enter a valid Mobile Number.');
+  }
+
   return {
     errors,
     cleanName,
-    cleanEmail
+    cleanEmail,
+    cleanPhone
   };
 };
 
@@ -97,10 +105,10 @@ const issueUserSession = (req, res, user, statusCode, message) => {
 };
 
 exports.register = async (req, res) => {
-  const { name, email, password } = req.body || {};
-  const { errors, cleanName, cleanEmail } = validateProfilePayload(
-    { name, email, password },
-    { requirePassword: true }
+  const { name, email, password, phone } = req.body || {};
+  const { errors, cleanName, cleanEmail, cleanPhone } = validateProfilePayload(
+    { name, email, password, phone },
+    { requirePassword: true, requirePhone: true }
   );
 
   if (errors.length) {
@@ -121,14 +129,35 @@ exports.register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const insertResult = await db.query(
-      `INSERT INTO users (name, email, password, role)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id, name, email, role, created_at`,
-      [cleanName, cleanEmail, hashedPassword, 'user']
-    );
-
-    return issueUserSession(req, res, insertResult.rows[0], 201, 'Registration successful.');
+    
+    // Fallback: If the column `phone` doesn't exist yet, we catch it and ignore the phone data gracefully.
+    try {
+      const insertResult = await db.query(
+        `INSERT INTO users (name, email, password, phone, role)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING id, name, email, role, created_at`,
+        [cleanName, cleanEmail, hashedPassword, cleanPhone, 'user']
+      );
+      return issueUserSession(req, res, insertResult.rows[0], 201, 'Registration successful.');
+    } catch (dbErr) {
+       // If column 'phone' does not exist error code is 42703
+       if (dbErr.code === '42703') {
+           // Create the column proactively inside the node process instead of relying on PSQL CLI
+           await db.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)`);
+           
+           // Retry insertion
+           const retryInsertResult = await db.query(
+             `INSERT INTO users (name, email, password, phone, role)
+              VALUES ($1, $2, $3, $4, $5)
+              RETURNING id, name, email, role, created_at`,
+             [cleanName, cleanEmail, hashedPassword, cleanPhone, 'user']
+           );
+           return issueUserSession(req, res, retryInsertResult.rows[0], 201, 'Registration successful.');
+       } else {
+           throw dbErr;
+       }
+    }
+    
   } catch (error) {
     console.error('Register Error:', error);
     if (error.code === '23505') {
@@ -217,36 +246,91 @@ exports.googleLogin = async (req, res) => {
     const cleanName = normalizeName(name);
 
     // Check if user exists
-    const result = await db.query(
-      'SELECT id, name, email, role, created_at FROM users WHERE email = $1 LIMIT 1',
-      [cleanEmail]
-    );
-
-    let user;
-    let statusCode = 200;
-    let message = 'Google login successful.';
-
-    if (result.rows.length === 0) {
-      // User doesn't exist, create a new one. Password is null since they use Google.
-      const insertResult = await db.query(
-        `INSERT INTO users (name, email, role)
-         VALUES ($1, $2, $3)
-         RETURNING id, name, email, role, created_at`,
-        [cleanName, cleanEmail, 'user']
-      );
-      user = insertResult.rows[0];
-      statusCode = 201;
-      message = 'Google registration successful.';
-    } else {
-      user = result.rows[0];
+    let result;
+    try {
+        result = await db.query(
+          'SELECT id, name, email, role, created_at FROM users WHERE email = $1 LIMIT 1',
+          [cleanEmail]
+        );
+    } catch (dbErr) {
+        // Just in case `phone` doesn't exist yet, run the DB migration gracefully
+        if (dbErr.code === '42703') {
+           await db.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)`);
+           result = await db.query(
+             'SELECT id, name, email, role, created_at FROM users WHERE email = $1 LIMIT 1',
+             [cleanEmail]
+           );
+        } else {
+           throw dbErr;
+        }
     }
 
-    return issueUserSession(req, res, user, statusCode, message);
+    if (result && result.rows.length === 0) {
+      // User doesn't exist. Instead of creating them immediately, we pause the flow
+      // and tell the client we need their phone number to complete registration.
+      return res.status(200).json({
+         success: true,
+         requires_phone: true,
+         message: 'Please provide your mobile number to complete registration.',
+         tempUser: { name: cleanName, email: cleanEmail }
+      });
+    } else {
+      // User exists, login normally
+      return issueUserSession(req, res, result.rows[0], 200, 'Google login successful.');
+    }
   } catch (error) {
     console.error('Google Login Error:', error);
     return res.status(500).json({
       success: false,
       message: 'Unable to login with Google right now. Please try again.'
+    });
+  }
+};
+
+exports.completeGoogleRegistration = async (req, res) => {
+  const { name, email, phone } = req.body || {};
+  
+  // Note: We bypass password validation since it's a Google OAuth signup
+  const { errors, cleanName, cleanEmail, cleanPhone } = validateProfilePayload(
+    { name, email, phone },
+    { requirePassword: false, requirePhone: true }
+  );
+
+  if (errors.length) {
+    return res.status(400).json({
+      success: false,
+      message: errors[0],
+      errors
+    });
+  }
+
+  try {
+    // Double check they don't already exist to prevent race conditions
+    const existingUser = await db.query('SELECT id FROM users WHERE email = $1', [cleanEmail]);
+    if (existingUser.rows.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: 'An account with this email already exists.'
+      });
+    }
+
+    // Insert user with phone
+    const insertResult = await db.query(
+      `INSERT INTO users (name, email, phone, role)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, name, email, role, created_at`,
+      [cleanName, cleanEmail, cleanPhone, 'user']
+    );
+
+    return issueUserSession(req, res, insertResult.rows[0], 201, 'Google registration successful.');
+  } catch (error) {
+    console.error('Google Registration Error:', error);
+    if (error.code === '23505') {
+       return res.status(409).json({ success: false, message: 'An account with this email already exists.' });
+    }
+    return res.status(500).json({
+      success: false,
+      message: 'Unable to complete registration right now. Please try again.'
     });
   }
 };

@@ -68,10 +68,10 @@ export function AuthProvider({ children }) {
     return handleAuthResponse(res);
   };
 
-  const register = async ({ name, email, password }) => {
+  const register = async ({ name, email, password, phone }) => {
     const res = await apiFetch("/api/auth/register", {
       method: "POST",
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, password, phone }),
     });
     return handleAuthResponse(res);
   };
@@ -88,6 +88,14 @@ export function AuthProvider({ children }) {
     const res = await apiFetch("/api/auth/loginradius", {
       method: "POST",
       body: JSON.stringify(tokenData),
+    });
+    return handleAuthResponse(res);
+  };
+  
+  const completeGoogleRegistration = async (profileData) => {
+    const res = await apiFetch("/api/auth/complete-google", {
+      method: "POST",
+      body: JSON.stringify(profileData),
     });
     return handleAuthResponse(res);
   };
@@ -120,6 +128,7 @@ export function AuthProvider({ children }) {
         login,
         register,
         googleLogin,
+        completeGoogleRegistration,
         logout,
         refreshUser,
         updateUser,

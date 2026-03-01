@@ -10,6 +10,7 @@ import {
 import { Outfit } from 'next/font/google';
 
 import { ToastProvider, useToast } from '@/context/ToastContext';
+import { getApiUrl } from '@/utils/api';
 
 const outfit = Outfit({ subsets: ['latin'] });
 
@@ -68,7 +69,7 @@ function AdminLayoutContent({ children }) {
      const fetchNotifications = async () => {
          try {
              const token = localStorage.getItem('admin_token');
-             const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+             const backendUrl = getApiUrl();
              
              const res = await fetch(`${backendUrl}/api/bookings`, {
                  headers: {

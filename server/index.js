@@ -30,9 +30,11 @@ app.use(helmet({
 app.use(morgan('dev')); // HTTP Request Logger
 
 // Strict CORS Configuration for Cookies
+app.options("*", cors());
 app.use(cors({
   origin: [
     "https://tryzelp.app",
+    "https://admin.tryzelp.app",
     "http://localhost:3000",
     "https://suvidha-client.vercel.app",
     "https://suvidha-client-git-main-suvidha.vercel.app"

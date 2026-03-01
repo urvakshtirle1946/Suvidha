@@ -315,20 +315,25 @@ export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
           )}
 
           {(tab === 'register' || tab === 'complete-profile') && (
-            <input
-              type="tel"
-              placeholder="Mobile Number (e.g. +91 9876543210)"
-              value={form.phone}
-              onChange={(e) => setField('phone', e.target.value)}
-              autoComplete="tel"
-              style={{
-                padding: '0.8rem 0.9rem',
-                borderRadius: '10px',
-                border: '1px solid #d1d5db',
-                fontSize: '0.95rem',
-                outline: 'none'
-              }}
-            />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <input
+                type="tel"
+                placeholder="Mobile Number (e.g. +91 9876543210)"
+                value={form.phone}
+                onChange={(e) => setField('phone', e.target.value)}
+                autoComplete="tel"
+                style={{
+                  padding: '0.8rem 0.9rem',
+                  borderRadius: '10px',
+                  border: '1px solid #d1d5db',
+                  fontSize: '0.95rem',
+                  outline: 'none'
+                }}
+              />
+              <span style={{ fontSize: '0.75rem', color: '#6b7280', marginLeft: '4px' }}>
+                Note: You will not be able to edit this mobile number in the future.
+              </span>
+            </div>
           )}
 
           {tab !== 'complete-profile' && (

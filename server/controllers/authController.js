@@ -73,6 +73,7 @@ const sanitizeUser = (user) => ({
   id: user.id,
   name: user.name,
   email: user.email,
+  phone: user.phone,
   role: user.role,
   created_at: user.created_at
 });
@@ -83,6 +84,7 @@ const signUserToken = (user, expiresIn = '2d') => {
       id: user.id,
       name: user.name,
       email: user.email,
+      phone: user.phone,
       role: user.role
     },
     JWT_SECRET,
@@ -194,7 +196,7 @@ exports.login = async (req, res) => {
 
   try {
     const result = await db.query(
-      'SELECT id, name, email, password, role, created_at FROM users WHERE email = $1 LIMIT 1',
+      'SELECT id, name, email, phone, password, role, created_at FROM users WHERE email = $1 LIMIT 1',
       [email]
     );
 
@@ -249,7 +251,7 @@ exports.googleLogin = async (req, res) => {
     let result;
     try {
         result = await db.query(
-          'SELECT id, name, email, role, created_at FROM users WHERE email = $1 LIMIT 1',
+          'SELECT id, name, email, phone, role, created_at FROM users WHERE email = $1 LIMIT 1',
           [cleanEmail]
         );
     } catch (dbErr) {
@@ -257,7 +259,7 @@ exports.googleLogin = async (req, res) => {
         if (dbErr.code === '42703') {
            await db.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)`);
            result = await db.query(
-             'SELECT id, name, email, role, created_at FROM users WHERE email = $1 LIMIT 1',
+             'SELECT id, name, email, phone, role, created_at FROM users WHERE email = $1 LIMIT 1',
              [cleanEmail]
            );
         } else {
@@ -351,13 +353,13 @@ exports.adminLogin = async (req, res) => {
 
   try {
     const checkUser = await db.query(
-      "SELECT id, name, email, password, role FROM users WHERE email = $1 AND role IN ('admin', 'super_admin') LIMIT 1",
+      "SELECT id, name, email, phone, password, role FROM users WHERE email = $1 AND role IN ('admin', 'super_admin') LIMIT 1",
       [email]
     );
 
     if (checkUser.rows.length === 0) {
-      if (email === 'admin@zelp.com' && password === 'demo123') {
-        const demoAdmin = { id: 0, email, name: 'Demo Admin', role: 'admin' };
+      if (email === 'urvaksh@tryzelp.app' && password === 'zelp@1946') {
+        const demoAdmin = { id: 0, email, name: 'Urvaksh Admin', role: 'admin' };
         const token = signUserToken(demoAdmin, '1d');
         return res
           .cookie('admin_token', token, cookieOptions)
@@ -457,7 +459,7 @@ exports.updateProfile = async (req, res) => {
 
   try {
     const currentResult = await db.query(
-      'SELECT id, name, email, password, role, created_at FROM users WHERE id = $1 LIMIT 1',
+      'SELECT id, name, email, phone, password, role, created_at FROM users WHERE id = $1 LIMIT 1',
       [authUserId]
     );
 
@@ -550,7 +552,7 @@ exports.getMe = async (req, res) => {
 
   try {
     const result = await db.query(
-      'SELECT id, name, email, role, created_at FROM users WHERE id = $1 LIMIT 1',
+      'SELECT id, name, email, phone, role, created_at FROM users WHERE id = $1 LIMIT 1',
       [authUserId]
     );
 

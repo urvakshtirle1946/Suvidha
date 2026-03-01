@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { X, User, Mail, Lock, Save } from 'lucide-react';
+import { X, User, Mail, Lock, Save, Phone } from 'lucide-react';
 import { apiFetch } from '@/utils/api';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -191,6 +191,26 @@ export default function SettingsModal({ isOpen, onClose }) {
                 border: '1px solid #e5e7eb',
                 outline: 'none',
                 fontSize: '0.95rem'
+              }}
+            />
+          </div>
+
+          <div style={{ position: 'relative' }}>
+            <Phone size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+            <input
+              type="tel"
+              value={user?.phone || 'No mobile number'}
+              disabled
+              style={{
+                width: '100%',
+                padding: '12px 12px 12px 40px',
+                borderRadius: '12px',
+                border: '1px solid #e5e7eb',
+                background: '#f9fafb',
+                color: '#9ca3af',
+                outline: 'none',
+                fontSize: '0.95rem',
+                cursor: 'not-allowed'
               }}
             />
           </div>

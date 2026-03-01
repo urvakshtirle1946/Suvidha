@@ -38,14 +38,14 @@ export default function WaitlistPage() {
   };
 
   return (
-    <div className="h-screen w-screen bg-[#09090b] text-white flex font-sans relative overflow-hidden selection:bg-emerald-500/30">
-      {/* Subtle background glows */}
-      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-20%] left-[20%] w-[50%] h-[50%] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
+    <div className="flex h-screen w-screen overflow-hidden bg-[#09090b] font-sans selection:bg-emerald-500/30">
+      
+      {/* Left side content - Waitlist */}
+      <div className="relative flex-1 flex flex-col items-center justify-center p-8 z-10 w-full overflow-y-auto">
+        {/* Subtle background glows */ }
+        <div className="absolute top-[10%] left-[10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-[10%] right-[10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none" />
 
-      {/* Main Content Area (Left Side) */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8 relative z-10 w-full overflow-y-auto">
-        
         {/* Secret Developer Access Button */}
         <button 
           onClick={() => setShowOTP(true)}
@@ -55,10 +55,10 @@ export default function WaitlistPage() {
           <Lock size={18} />
         </button>
 
-        <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
+        <div className="w-full max-w-xl mx-auto flex flex-col items-center">
           {/* Logo (4 hearts forming a cross) */}
-          <div className="mb-8 flex items-center justify-center">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <div className="mb-6 flex items-center justify-center">
+            <svg width="40" height="40" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M24 21L19 15.5C16.5 12.5 16.5 7.5 19.5 5C22 3 24 5 24 5C24 5 26 3 28.5 5C31.5 7.5 31.5 12.5 29 15.5L24 21Z" fill="#34d399"/>
               <path d="M24 27L29 32.5C31.5 35.5 31.5 40.5 28.5 43C26 45 24 43 24 43C24 43 22 45 19.5 43C16.5 40.5 16.5 35.5 19 32.5L24 27Z" fill="#34d399"/>
               <path d="M21 24L15.5 29C12.5 31.5 7.5 31.5 5 28.5C3 26 5 24 5 24C5 24 3 22 5 19.5C7.5 16.5 12.5 16.5 15.5 19L21 24Z" fill="#34d399"/>
@@ -68,41 +68,56 @@ export default function WaitlistPage() {
 
           {/* Headings */}
           <div className="flex flex-col items-center mb-6">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-center mb-2 text-white leading-tight">
+            {/* Using inline style color to override globals.css targeting h1 tags directly */}
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-center mb-2 leading-tight !text-white" style={{ color: 'white' }}>
               Stop designing.
             </h1>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-center text-[#34d399] leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-center leading-tight !text-[#34d399]" style={{ color: '#34d399' }}>
               Start shipping.
             </h1>
           </div>
 
-          <p className="text-[#a1a1aa] text-center text-base md:text-lg max-w-md mb-10 leading-relaxed font-medium">
+          <p className="text-[#a1a1aa] text-center text-sm md:text-base max-w-sm mb-8 leading-relaxed font-medium" style={{ color: '#a1a1aa' }}>
             No more boilerplate. No more blank files. Just clean, ready-to-use, beautiful code.
           </p>
 
-          {/* LaunchList Form Widget Container */}
-          <div className="w-full max-w-md mb-6 relative z-20">
-            <div className="launchlist-widget" data-key-id="iCtHEk" data-height="180px"></div>
-          </div>
+          {/* Custom LaunchList Form matching exactly the provided design */}
+          <form className="launchlist-form flex w-full max-w-sm items-center gap-3 mb-8 relative z-20" action="https://getlaunchlist.com/s/iCtHEk" method="POST">
+            <input 
+              type="email" 
+              name="email"
+              placeholder="you@email.com" 
+              required
+              style={{ color: 'white' }}
+              className="flex-1 bg-[#18181b] border border-[#27272a] text-white rounded-xl px-4 py-3 text-sm outline-none focus:border-[#34d399] transition-colors placeholder:text-[#52525b]"
+            />
+            <button 
+              type="submit" 
+              style={{ color: 'black' }}
+              className="bg-[#34d399] hover:bg-[#10b981] text-black font-semibold rounded-xl px-5 py-3 text-sm transition-colors flex items-center justify-center whitespace-nowrap"
+            >
+              Join &rarr;
+            </button>
+          </form>
 
           {/* Waitlist Badge */}
           <div className="flex items-center gap-2 bg-[#18181b]/80 backdrop-blur-md border border-[#27272a] rounded-full px-4 py-1.5 mb-8 shadow-sm">
             <div className="w-2 h-2 rounded-full bg-[#34d399] animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]"></div>
-            <span className="text-xs text-[#a1a1aa] font-medium">Join <span className="text-[#f4f4f5] font-semibold">10,000+</span> others on the waitlist</span>
+            <span className="text-xs font-medium" style={{ color: '#a1a1aa' }}>Join <span className="font-semibold" style={{ color: 'white' }}>1,152</span> others on the waitlist</span>
           </div>
 
           {/* Link */}
-          <p className="text-sm text-[#71717a] font-medium mt-auto">
+          <p className="text-xs font-medium mt-auto" style={{ color: '#71717a' }}>
             Already have questions?{' '}
-            <Link href="#" className="text-[#3b82f6] hover:text-[#60a5fa] underline decoration-[#3b82f6]/30 underline-offset-4 transition-colors">
+            <Link href="#" className="underline decoration-[#3b82f6]/30 underline-offset-4 transition-colors hover:text-[#60a5fa]" style={{ color: '#3b82f6' }}>
               Chat with us on Discord
             </Link>
           </p>
         </div>
       </div>
 
-      {/* Right Box: Leaderboard iframe */}
-      <div className="hidden lg:block w-[450px] xl:w-[500px] h-full bg-[#0f0f11] border-l border-[#27272a] relative z-20 flex-shrink-0">
+      {/* Right side - Leaderboard iframe */}
+      <div className="hidden md:block w-[400px] lg:w-[450px] xl:w-[500px] h-full bg-[#0f0f11] border-l border-[#27272a] relative z-20 flex-shrink-0">
         <iframe 
           scrolling="yes" 
           src="https://getlaunchlist.com/w/e/iCtHEk/leaderboard" 
@@ -121,8 +136,8 @@ export default function WaitlistPage() {
             >
               &times;
             </button>
-            <h2 className="text-xl font-semibold text-white mb-2 tracking-tight">Developer Access</h2>
-            <p className="text-sm text-[#a1a1aa] mb-8">Enter the access code to bypass the waitlist.</p>
+            <h2 className="text-xl font-semibold mb-2 tracking-tight" style={{ color: 'white' }}>Developer Access</h2>
+            <p className="text-sm mb-8" style={{ color: '#a1a1aa' }}>Enter the access code to bypass the waitlist.</p>
             
             <div className="flex justify-center gap-2">
               {otpValues.map((digit, index) => (
@@ -132,6 +147,7 @@ export default function WaitlistPage() {
                   type="text"
                   maxLength={1}
                   value={digit}
+                  style={{ color: 'white', backgroundColor: '#09090b' }}
                   onChange={(e) => handleOTPChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   className="w-11 h-12 text-center text-lg font-semibold text-white border border-[#3f3f46] rounded-xl outline-none transition-all bg-[#09090b] focus:border-[#34d399] focus:ring-1 focus:ring-[#34d399] focus:bg-[#09090b]"

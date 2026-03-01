@@ -55,10 +55,10 @@ export default function WaitlistPage() {
           <Lock size={18} />
         </button>
 
-        <div className="w-full max-w-xl mx-auto flex flex-col items-center">
+        <div className="w-full max-w-3xl mx-auto flex flex-col items-center mt-[-40px]">
           {/* Logo (4 hearts forming a cross) */}
-          <div className="mb-6 flex items-center justify-center">
-            <svg width="40" height="40" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <div className="mb-10 flex items-center justify-center">
+            <svg width="56" height="56" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M24 21L19 15.5C16.5 12.5 16.5 7.5 19.5 5C22 3 24 5 24 5C24 5 26 3 28.5 5C31.5 7.5 31.5 12.5 29 15.5L24 21Z" fill="#34d399"/>
               <path d="M24 27L29 32.5C31.5 35.5 31.5 40.5 28.5 43C26 45 24 43 24 43C24 43 22 45 19.5 43C16.5 40.5 16.5 35.5 19 32.5L24 27Z" fill="#34d399"/>
               <path d="M21 24L15.5 29C12.5 31.5 7.5 31.5 5 28.5C3 26 5 24 5 24C5 24 3 22 5 19.5C7.5 16.5 12.5 16.5 15.5 19L21 24Z" fill="#34d399"/>
@@ -67,47 +67,46 @@ export default function WaitlistPage() {
           </div>
 
           {/* Headings */}
-          <div className="flex flex-col items-center mb-6">
-            {/* Using inline style color to override globals.css targeting h1 tags directly */}
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-center mb-2 leading-tight !text-white" style={{ color: 'white' }}>
+          <div className="flex flex-col items-center mb-8">
+            <h1 className="text-5xl md:text-6xl lg:text-[76px] font-bold tracking-tight text-center mb-2 leading-[1.1] !text-white" style={{ color: 'white' }}>
               Stop designing.
             </h1>
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-center leading-tight !text-[#34d399]" style={{ color: '#34d399' }}>
+            <h1 className="text-5xl md:text-6xl lg:text-[76px] font-bold tracking-tight text-center leading-[1.1] !text-[#34d399]" style={{ color: '#34d399' }}>
               Start shipping.
             </h1>
           </div>
 
-          <p className="text-[#a1a1aa] text-center text-sm md:text-base max-w-sm mb-8 leading-relaxed font-medium" style={{ color: '#a1a1aa' }}>
+          <p className="text-[#a1a1aa] text-center text-lg md:text-xl lg:text-2xl max-w-xl mb-12 leading-relaxed font-medium" style={{ color: '#a1a1aa' }}>
             No more boilerplate. No more blank files. Just clean, ready-to-use, beautiful code.
           </p>
 
           {/* Custom LaunchList Form matching exactly the provided design */}
-          <form className="launchlist-form flex w-full max-w-sm items-center gap-3 mb-8 relative z-20" action="https://getlaunchlist.com/s/iCtHEk" method="POST">
+          <form className="launchlist-form flex w-full max-w-lg items-center gap-3 mb-10 relative z-20" action="https://getlaunchlist.com/s/iCtHEk" method="POST">
             <input 
               type="email" 
               name="email"
               placeholder="you@email.com" 
               required
               style={{ color: 'white' }}
-              className="flex-1 bg-[#18181b] border border-[#27272a] text-white rounded-xl px-4 py-3 text-sm outline-none focus:border-[#34d399] transition-colors placeholder:text-[#52525b]"
+              className="flex-1 bg-[#18181b] border border-[#27272a] text-white rounded-2xl px-6 py-4 text-base md:text-lg outline-none focus:border-[#34d399] transition-colors placeholder:text-[#52525b]"
             />
             <button 
               type="submit" 
               style={{ color: 'black' }}
-              className="bg-[#34d399] hover:bg-[#10b981] text-black font-semibold rounded-xl px-5 py-3 text-sm transition-colors flex items-center justify-center whitespace-nowrap"
+              className="bg-[#34d399] hover:bg-[#10b981] text-black font-bold rounded-2xl px-8 py-4 text-base md:text-lg transition-colors flex items-center justify-center whitespace-nowrap"
             >
               Join &rarr;
             </button>
           </form>
 
           {/* Waitlist Badge */}
-          <div className="flex items-center gap-2 bg-[#18181b]/80 backdrop-blur-md border border-[#27272a] rounded-full px-4 py-1.5 mb-8 shadow-sm">
-            <div className="w-2 h-2 rounded-full bg-[#34d399] animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]"></div>
-            <span className="text-xs font-medium" style={{ color: '#a1a1aa' }}>Join <span className="font-semibold" style={{ color: 'white' }}>1,152</span> others on the waitlist</span>
+          <div className="flex items-center gap-3 bg-[#18181b]/80 backdrop-blur-md border border-[#27272a] rounded-full px-5 py-2 mb-10 shadow-sm">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#34d399] animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]"></div>
+            <span className="text-sm font-medium" style={{ color: '#a1a1aa' }}>Join <span className="font-semibold" style={{ color: 'white' }}>1,152</span> others on the waitlist</span>
           </div>
 
           {/* Link */}
-          <p className="text-xs font-medium mt-auto" style={{ color: '#71717a' }}>
+          <p className="text-sm font-medium mt-auto pb-4" style={{ color: '#71717a' }}>
             Already have questions?{' '}
             <Link href="#" className="underline decoration-[#3b82f6]/30 underline-offset-4 transition-colors hover:text-[#60a5fa]" style={{ color: '#3b82f6' }}>
               Chat with us on Discord
@@ -117,7 +116,8 @@ export default function WaitlistPage() {
       </div>
 
       {/* Right side - Leaderboard iframe */}
-      <div className="hidden md:block w-[400px] lg:w-[450px] xl:w-[500px] h-full bg-[#0f0f11] border-l border-[#27272a] relative z-20 flex-shrink-0">
+      {/* Decreased width from 400-500px to 300-360px */}
+      <div className="hidden md:block w-[300px] lg:w-[320px] xl:w-[360px] h-full bg-[#0f0f11] border-l border-[#27272a] relative z-20 flex-shrink-0">
         <iframe 
           scrolling="yes" 
           src="https://getlaunchlist.com/w/e/iCtHEk/leaderboard" 

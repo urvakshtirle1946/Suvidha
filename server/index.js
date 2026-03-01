@@ -30,17 +30,30 @@ app.use(helmet({
 app.use(morgan('dev')); // HTTP Request Logger
 
 // Strict CORS Configuration for Cookies
-app.options("*", cors());
-app.use(cors({
-  origin: [
-    "https://tryzelp.app",
-    "https://admin.tryzelp.app",
-    "http://localhost:3000",
-    "https://suvidha-client.vercel.app",
-    "https://suvidha-client-git-main-suvidha.vercel.app"
-  ],
-  credentials: true
-}));
+// Strict CORS Configuration for Cookies
+const allowedOrigins = [
+  "https://tryzelp.app",
+  "https://admin.tryzelp.app",
+  "http://localhost:3000",
+  "https://suvidha-client.vercel.app",
+  "https://suvidha-client-git-main-suvidha.vercel.app"
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+app.options(/.*/, cors());
 app.use(cookieParser());
 app.use(express.json()); // Built-in middleware replaces body-parser
 const staticOptions = {

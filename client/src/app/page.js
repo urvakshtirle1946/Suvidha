@@ -76,18 +76,18 @@ export default function WaitlistPage() {
           </div>
 
           {/* Custom LaunchList Form matching exactly the provided design */}
-          <form className="launchlist-form flex w-full max-w-[420px] items-center gap-3 relative z-20" action="https://getlaunchlist.com/s/iCtHEk" method="POST">
+          <form className="launchlist-form flex w-full max-w-[420px] items-center gap-2 relative z-20" action="https://getlaunchlist.com/s/iCtHEk" method="POST">
             <input 
               type="email" 
               name="email"
               placeholder="you@email.com" 
               required
-              className="w-full h-12 flex-1 bg-[#121214] border border-[#27272a] rounded-[14px] px-4 text-[15px] outline-none focus:border-[#34d399] transition-colors placeholder:text-[#71717a] shadow-inner tracking-wide"
+              className="w-full h-[52px] flex-1 bg-[#121214] border border-[#27272a] rounded-[16px] px-5 text-[15px] outline-none focus:border-[#34d399] transition-colors placeholder:text-[#52525b] shadow-inner tracking-wide"
               style={{ color: '#ffffff' }}
             />
             <button 
               type="submit" 
-              className="h-12 bg-[#34d399] hover:bg-[#10b981] rounded-[14px] px-7 text-[15px] transition-all flex items-center justify-center gap-2 whitespace-nowrap shadow-[0_0_15px_rgba(52,211,153,0.15)] hover:shadow-[0_0_25px_rgba(52,211,153,0.3)] font-bold tracking-wide cursor-pointer"
+              className="h-[52px] bg-[#34d399] hover:bg-[#10b981] rounded-[16px] px-8 text-[16px] transition-all flex items-center justify-center gap-2 whitespace-nowrap shadow-[0_0_15px_rgba(52,211,153,0.15)] hover:shadow-[0_0_25px_rgba(52,211,153,0.3)] font-semibold tracking-wide cursor-pointer"
               style={{ color: '#000000' }}
             >
               Join <span>&rarr;</span>

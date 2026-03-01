@@ -25,6 +25,7 @@ const adminLoginLimiter = rateLimit({
 router.post('/register', authLimiter, authController.register);
 router.post('/login', authLimiter, authController.login);
 router.post('/google', authLimiter, authController.googleLogin);
+router.post('/loginradius', authLimiter, authController.loginRadiusAuth);
 router.post('/admin-login', adminLoginLimiter, authController.adminLogin);
 router.put('/profile', verifyJWT, authController.updateProfile);
 router.get('/users', verifyJWT, requireRole(['admin', 'super_admin']), authController.getAllUsers);

@@ -84,6 +84,14 @@ export function AuthProvider({ children }) {
     return handleAuthResponse(res);
   };
 
+  const loginRadiusAuth = async (tokenData) => {
+    const res = await apiFetch("/api/auth/loginradius", {
+      method: "POST",
+      body: JSON.stringify(tokenData),
+    });
+    return handleAuthResponse(res);
+  };
+
   const updateUser = useCallback((data) => {
     setUser((prev) => (prev ? { ...prev, ...data } : data));
   }, []);
@@ -112,6 +120,7 @@ export function AuthProvider({ children }) {
         login,
         register,
         googleLogin,
+        loginRadiusAuth,
         logout,
         refreshUser,
         updateUser,

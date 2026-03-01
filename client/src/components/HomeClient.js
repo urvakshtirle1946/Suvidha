@@ -21,7 +21,7 @@ import { getApiUrl, getImageUrl } from '@/utils/api';
 import BookingModal from './BookingModal';
 import HospitalProfileModal from './HospitalProfileModal';
 import PaymentReminder from './PaymentReminder';
-import AmbulanceRequest from './AmbulanceRequest';
+// import AmbulanceRequest from './AmbulanceRequest';
 
 export default function HomeClient({ hospitals, popularServices }) {
   const { addToCart } = useCart();
@@ -472,7 +472,7 @@ export default function HomeClient({ hospitals, popularServices }) {
 
       </div>
       <PaymentReminder />
-      <AmbulanceRequest />
+      {/* <AmbulanceRequest /> */}
 
     </main>
   );

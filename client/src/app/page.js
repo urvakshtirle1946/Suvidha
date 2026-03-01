@@ -75,24 +75,9 @@ export default function WaitlistPage() {
             </h1>
           </div>
 
-          {/* Custom LaunchList Form matching exactly the provided design */}
-          <form className="launchlist-form flex w-full max-w-[420px] items-center gap-2 relative z-20" action="https://getlaunchlist.com/s/iCtHEk" method="POST">
-            <input 
-              type="email" 
-              name="email"
-              placeholder="you@email.com" 
-              required
-              className="w-full h-[52px] flex-1 bg-[#121214] border border-[#27272a] rounded-[16px] px-5 text-[15px] outline-none focus:border-[#34d399] transition-colors placeholder:text-[#52525b] shadow-inner tracking-wide"
-              style={{ color: '#ffffff' }}
-            />
-            <button 
-              type="submit" 
-              className="h-[52px] bg-[#34d399] hover:bg-[#10b981] rounded-[16px] px-8 text-[16px] transition-all flex items-center justify-center gap-2 whitespace-nowrap shadow-[0_0_15px_rgba(52,211,153,0.15)] hover:shadow-[0_0_25px_rgba(52,211,153,0.3)] font-semibold tracking-wide cursor-pointer"
-              style={{ color: '#000000' }}
-            >
-              Join <span>&rarr;</span>
-            </button>
-          </form>
+          <div className="w-full max-w-md mb-10 relative z-20">
+            <div className="launchlist-widget" data-key-id="iCtHEk" data-height="180px"></div>
+          </div>
 
         </div>
       </div>

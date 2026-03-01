@@ -130,6 +130,23 @@ exports.register = async (req, res) => {
       });
     }
 
+    if (cleanPhone) {
+      // Check if phone already exists
+      let existingPhone;
+      try {
+        existingPhone = await db.query('SELECT id FROM users WHERE phone = $1', [cleanPhone]);
+      } catch (err) {
+        if (err.code !== '42703') throw err; // Ignore column not found error, it will be added on insert
+      }
+      
+      if (existingPhone && existingPhone.rows.length > 0) {
+        return res.status(409).json({
+          success: false,
+          message: 'This mobile number is already in use by another account. Please use a different one.'
+        });
+      }
+    }
+
     const hashedPassword = await bcrypt.hash(password, 12);
     
     // Fallback: If the column `phone` doesn't exist yet, we catch it and ignore the phone data gracefully.
@@ -314,6 +331,22 @@ exports.completeGoogleRegistration = async (req, res) => {
         success: false,
         message: 'An account with this email already exists.'
       });
+    }
+
+    if (cleanPhone) {
+      let existingPhone;
+      try {
+        existingPhone = await db.query('SELECT id FROM users WHERE phone = $1', [cleanPhone]);
+      } catch (err) {
+        if (err.code !== '42703') throw err; // Ignore if column doesn't exist yet
+      }
+
+      if (existingPhone && existingPhone.rows.length > 0) {
+        return res.status(409).json({
+          success: false,
+          message: 'This mobile number is already in use by another account. Please use a different one.'
+        });
+      }
     }
 
     // Insert user with phone

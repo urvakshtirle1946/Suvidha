@@ -48,6 +48,12 @@ export function AuthProvider({ children }) {
 
   const handleAuthResponse = async (res) => {
     const data = await readJsonSafe(res);
+    
+    // If the backend specifically requires a phone, don't throw an error.
+    if (res.ok && data?.success && data?.requires_phone) {
+        return data;
+    }
+    
     if (!res.ok || !data?.success || !data?.user) {
       throw new Error(data?.message || "Authentication failed.");
     }

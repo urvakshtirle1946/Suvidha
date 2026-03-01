@@ -147,7 +147,7 @@ export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
               name: res.tempUser?.name || '', 
               email: res.tempUser?.email || '' 
           }));
-          setSuccess('Almost there! Please provide your Mobile Number.');
+          // Remove setSuccess so the user only sees the clean form description.
           setTab('complete-profile');
       } else {
           setSuccess('Google login successful.');

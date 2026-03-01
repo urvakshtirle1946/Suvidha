@@ -4,6 +4,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { ShieldCheck } from 'lucide-react';
 import { Outfit } from 'next/font/google';
 import { useAuth } from '@/context/AuthContext'; 
+import { getApiUrl } from '@/utils/api';
 
 const outfit = Outfit({ subsets: ['latin'] });
 
@@ -29,7 +30,7 @@ export default function AdminLogin() {
     setError('');
     
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000'; // Assuming this standard
+      const backendUrl = getApiUrl();
       const res = await fetch(`${backendUrl}/api/auth/admin-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

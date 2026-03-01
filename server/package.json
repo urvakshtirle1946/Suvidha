@@ -23,6 +23,7 @@
     "google-auth-library": "^10.5.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
+    "loginradius-sdk": "^11.7.0",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
     "pg": "^8.18.0",

@@ -25,7 +25,8 @@ export default function BookingsManagement() {
       const res = await fetch(`${apiUrl}/api/bookings`, {
         headers: {
           'Authorization': `Bearer ${token}`
-        }
+        },
+        cache: 'no-store'
       });
       if (res.ok) {
         const data = await res.json();
@@ -148,7 +149,7 @@ export default function BookingsManagement() {
                     </thead>
                     <tbody>
                         {filteredBookings.map((booking) => (
-                            <tr key={booking.id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }} className="hover:bg-gray-50 dark:hover:bg-gray-900">
+                            <tr key={booking.id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }} className="booking-row-hover">
                                 <td style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>#{booking.id}</td>
                                 <td style={{ padding: '1.2rem 1.5rem' }}>
                                     <div style={{ fontWeight: '600', color: 'var(--text-primary)', marginBottom: '4px' }}>{booking.patient_name}</div>

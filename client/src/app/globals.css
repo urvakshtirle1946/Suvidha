@@ -404,6 +404,10 @@ body:has(.admin-root),
   display: flex;
 }
 
+.booking-row-hover:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
 .reveal-h1 span {
   display: inline-block;
   opacity: 0;

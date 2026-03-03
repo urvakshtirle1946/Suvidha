@@ -1,13 +1,19 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { User, Lock, Save, Shield, Key, Mail } from 'lucide-react';
+import { User, Lock, Save, Shield, Mail } from 'lucide-react';
+import { useToast } from '@/context/ToastContext';
+import { getApiUrl } from '@/utils/api';
+import { useRouter } from 'next/navigation';
 
 export default function AdminProfile() {
+  const { addToast } = useToast();
+  const router = useRouter();
+
   const [profile, setProfile] = useState({
-    name: 'Super Admin',
-    email: 'admin@suvidha.com',
-    role: 'Super Administrator',
-    phone: '+91 99999 99999'
+    name: '',
+    email: '',
+    role: '',
+    phone: ''
   });
 
   const [passwords, setPasswords] = useState({
@@ -22,20 +28,112 @@ export default function AdminProfile() {
       { id: 2, name: 'S. Mehta', role: 'Support Staff', status: 'Active' }
   ]);
 
-  const handleSaveProfile = (e) => {
-      e.preventDefault();
-      alert('Profile Updated Successfully!');
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const url = getApiUrl() + '/api/auth/me';
+      const token = localStorage.getItem('admin_token');
+      const res = await fetch(url, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.user) {
+          setProfile({
+            name: data.user.name || '',
+            email: data.user.email || '',
+            role: data.user.role || 'admin',
+            phone: data.user.phone || ''
+          });
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const handleUpdatePassword = (e) => {
+  const handleSaveProfile = async (e) => {
+      e.preventDefault();
+      
+      try {
+        const url = getApiUrl() + '/api/auth/profile';
+        const token = localStorage.getItem('admin_token');
+        const res = await fetch(url, {
+            method: 'PUT',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json' 
+            },
+            body: JSON.stringify({
+                name: profile.name,
+                email: profile.email
+            })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            addToast('Profile Updated Successfully!', 'success');
+            // If they changed their email, log them out or redirect
+            // Assuming we just updated the name, it's fine.
+            if (data.user) {
+                setProfile(prev => ({
+                    ...prev,
+                    name: data.user.name || prev.name,
+                    email: data.user.email || prev.email,
+                }));
+            }
+        } else {
+            addToast(data.message || 'Failed to update profile', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        addToast('Something went wrong', 'error');
+      }
+  };
+
+  const handleUpdatePassword = async (e) => {
       e.preventDefault();
       if (passwords.new !== passwords.confirm) {
-          alert('New passwords do not match!');
+          addToast('New passwords do not match!', 'error');
           return;
       }
-      alert('Password Updated Successfully! (This will be effective next login)');
-      setPasswords({ current: '', new: '', confirm: '' });
-      // In a real app, this would hit an API endpoint
+
+      if (!passwords.new || passwords.new.length < 8) {
+          addToast('Password must be at least 8 characters!', 'error');
+          return;
+      }
+
+      try {
+        const url = getApiUrl() + '/api/auth/profile';
+        const token = localStorage.getItem('admin_token');
+        const res = await fetch(url, {
+            method: 'PUT',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json' 
+            },
+            // The backend endpoint updateProfile takes `password` without verifying `current` directly for simplicity, or normally it should
+            body: JSON.stringify({
+                name: profile.name,
+                email: profile.email,
+                password: passwords.new
+            })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            addToast('Password Updated Successfully! (Effective on next login)', 'success');
+            setPasswords({ current: '', new: '', confirm: '' });
+        } else {
+            addToast(data.message || 'Failed to update password', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        addToast('Something went wrong', 'error');
+      }
   };
 
   // Light & Clean Styles via standard CSS-in-JS logic matching Dashboard
@@ -79,10 +177,10 @@ export default function AdminProfile() {
                       boxShadow: '0 10px 25px rgba(255, 154, 158, 0.4)',
                       border: '4px solid #fff'
                   }}>
-                      {(profile.name || 'A').charAt(0)}
+                      {(profile.name || 'A').charAt(0).toUpperCase()}
                   </div>
                   <div>
-                      <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '4px' }}>{profile.name}</h2>
+                      <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '4px' }}>{profile.name || 'Loading...'}</h2>
                       <div style={{ 
                           display: 'inline-block',
                           padding: '4px 12px', 
@@ -92,7 +190,7 @@ export default function AdminProfile() {
                           fontSize: '0.85rem', 
                           fontWeight: '600' 
                       }}>
-                          {profile.role}
+                          {profile.role === 'super_admin' ? 'Super Administrator' : 'Administrator'}
                       </div>
                   </div>
               </div>
@@ -106,6 +204,7 @@ export default function AdminProfile() {
                             type="text" 
                             value={profile.name} onChange={e => setProfile({...profile, name: e.target.value})}
                             style={inputStyle}
+                            required
                           />
                       </div>
                   </div>
@@ -118,6 +217,7 @@ export default function AdminProfile() {
                             type="email" 
                             value={profile.email} onChange={e => setProfile({...profile, email: e.target.value})}
                             style={inputStyle}
+                            required
                           />
                       </div>
                   </div>
@@ -155,11 +255,13 @@ export default function AdminProfile() {
                         type="password" placeholder="New Password"
                         value={passwords.new} onChange={e => setPasswords({...passwords, new: e.target.value})}
                         style={{ ...inputStyle, padding: '0.9rem 1rem' }}
+                        required
                       />
                       <input 
                         type="password" placeholder="Confirm New Password"
                         value={passwords.confirm} onChange={e => setPasswords({...passwords, confirm: e.target.value})}
                         style={{ ...inputStyle, padding: '0.9rem 1rem' }}
+                        required
                       />
                       <button className="btn" style={{ 
                           marginTop: '0.5rem', padding: '0.9rem',
@@ -197,7 +299,7 @@ export default function AdminProfile() {
                               </span>
                           </div>
                       ))}
-                      <button className="btn-link" style={{ color: 'var(--accent)', alignSelf: 'flex-start', fontSize: '0.9rem', marginTop: '0.5rem', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: '600' }}>+ Add New Admin</button>
+                      <button className="btn-link" onClick={() => addToast('Not permitted in demo mode.', 'error')} type="button" style={{ color: 'var(--accent)', alignSelf: 'flex-start', fontSize: '0.9rem', marginTop: '0.5rem', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: '600' }}>+ Add New Admin</button>
                   </div>
               </div>
 

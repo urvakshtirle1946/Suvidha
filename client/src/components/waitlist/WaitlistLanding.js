@@ -36,7 +36,7 @@ export default function WaitlistLanding() {
     return (
       <div style={{
           minHeight: '100vh',
-          background: 'linear-gradient(135deg, #2b1049 0%, #17172b 50%, #10101f 100%)',
+          backgroundColor: '#0026e9',
           color: 'white',
           display: 'flex',
           flexDirection: 'column',
@@ -44,33 +44,35 @@ export default function WaitlistLanding() {
       }}>
         {/* Header */}
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4rem' }}>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Vidrush</h1>
-            <button style={{ color: 'rgba(255,255,255,0.7)', background: 'transparent', border: 'none', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '500' }}>
-              &rarr; Log Out
+            <img src="/logo.png" alt="Zelp Logo" style={{ height: '40px', objectFit: 'contain' }} />
+            <button 
+                onClick={() => setSubmitted(false)}
+                style={{ color: 'rgba(255,255,255,0.9)', background: 'transparent', border: 'none', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '500' }}>
+              &rarr; Back
             </button>
         </header>
 
         {/* Content */}
         <main style={{ maxWidth: '600px', margin: '0 auto', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <h1 style={{ fontSize: '4rem', fontWeight: '500', lineHeight: '1.1', marginBottom: '2rem', letterSpacing: '-0.02em' }}>
-              Your Studio<br/>Seat Is Reserved.
+            <h1 style={{ fontSize: '4rem', fontWeight: '500', lineHeight: '1.1', marginBottom: '2rem', letterSpacing: '-0.02em', color: 'white' }}>
+              Your Spot Is<br/>Reserved.
             </h1>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '2.5rem' }}>
                 <CheckCircle2 color="#22c55e" size={24} fill="rgba(34, 197, 94, 0.2)" />
-                <span style={{ fontWeight: '600', fontSize: '1.1rem' }}>You're on the waitlist</span>
+                <span style={{ fontWeight: '600', fontSize: '1.1rem', color: 'white' }}>You're on the waitlist</span>
             </div>
 
-            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '2rem' }}>
-              Vidrush is live and creators are already producing <span style={{color: 'white'}}>fully-autonomous videos.</span>
+            <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '2rem' }}>
+              Zelp is bringing you <span style={{color: 'white', fontWeight: 'bold'}}>affordable, hospital-level healthcare</span> right to your fingertips.
             </p>
             
-            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '3rem' }}>
-              You'll be the next wave—we'll ping you the moment a slot opens.
+            <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '3rem' }}>
+              We're rolling out access soon—keep an eye out for when spots open up in your area.
             </p>
 
-            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1rem', lineHeight: '1.6' }}>
-              Want early entry? Keep an eye on your inbox for priority invitations and special updates.
+            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1rem', lineHeight: '1.6' }}>
+              Watch your inbox for priority access invitations and exclusive updates from the Zelp team.
             </p>
         </main>
       </div>

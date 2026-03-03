@@ -90,8 +90,11 @@ export default function WaitlistLanding() {
         {/* Left Side: Illustration Image */}
         <div style={{ flex: '1 1 500px', position: 'relative', height: '100%', minHeight: '500px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <img 
-                src="/images/hero-illustration.png" 
+                src="/assets/waitlist_illustration.png"
                 alt="Rockstar character illustration"
+                onError={(e) => {
+                  e.currentTarget.src = '/logo.png';
+                }}
                 style={{
                    width: '100%',
                    maxHeight: '600px',

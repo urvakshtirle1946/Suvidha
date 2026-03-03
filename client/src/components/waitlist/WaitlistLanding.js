@@ -1,13 +1,22 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Volume2, VolumeX } from 'lucide-react';
 import { getApiUrl } from '@/utils/api';
 
 export default function WaitlistLanding() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef(null);
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
 
   const handleGoogleSuccess = async (tokenResponse) => {
     try {
@@ -89,44 +98,37 @@ export default function WaitlistLanding() {
   return (
     <div style={{
         minHeight: '100vh',
-        backgroundColor: '#ffffff', 
+        background: 'linear-gradient(to bottom, #ffffff 0%, #ffffff 50%, #eaddff 70%, #9fcaff 100%)', // Match VidRush Reference
         display: 'flex',
         flexDirection: 'column',
-        padding: '2rem',
+        padding: '0 2rem 2rem 2rem', 
         overflowX: 'hidden',
         overflowY: 'auto',
         position: 'relative'
     }}>
-      {/* Simple Animated Wave Background */}
-      <div style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        width: '100%',
-        height: '60%',
-        zIndex: 0,
-        pointerEvents: 'none',
-        overflow: 'hidden',
-        background: 'linear-gradient(180deg, transparent 0%, rgba(100, 180, 255, 0.4) 60%, rgba(0, 100, 255, 0.8) 100%)'
-      }}>
-        {/* A single, subtle, slow-moving wave for a simple transition */}
-        <svg viewBox="0 0 1440 320" style={{ position: 'absolute', bottom: 0, width: '200%', height: '100%', left: '0', animation: 'simpleWave 30s linear infinite', opacity: 0.15 }}>
-          <path fill="#0026e9" fillOpacity="1" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-          <path transform="translate(1440, 0)" fill="#0026e9" fillOpacity="1" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-        </svg>
-        <style>
-          {`
-            @keyframes simpleWave {
-              0% { transform: translateX(0); }
-              100% { transform: translateX(-50%); }
-            }
-          `}
-        </style>
-      </div>
-
-      {/* Navbar - Full Width for Top-Left Logo */}
-      <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start', position: 'relative', zIndex: 10 }}>
-           <img src="/logo.png" alt="Zelp Logo" style={{ height: '140px', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply' }} />
+      {/* Navbar - Full Width for Top-Left Logo and Right Button */}
+      <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 10, paddingTop: '1rem' }}>
+           <img src="/logo.png" alt="Zelp Logo" style={{ height: '80px', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply', marginTop: '-10px' }} />
+           
+           <button 
+             onClick={() => document.getElementById('waitlist-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+             style={{
+               backgroundColor: '#0026e9', 
+               color: 'white', 
+               padding: '0.6rem 1.2rem', 
+               fontSize: '0.95rem', 
+               fontWeight: '600', 
+               border: 'none', 
+               borderRadius: '8px',
+               cursor: 'pointer',
+               boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+               transition: 'all 0.2s ease',
+             }}
+             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#001bb3'}
+             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0026e9'}
+           >
+             Join waitlist
+           </button>
       </div>
 
       <div style={{
@@ -169,6 +171,7 @@ export default function WaitlistLanding() {
             </p>
 
             <form 
+              id="waitlist-form"
               onSubmit={async (e) => {
                 e.preventDefault();
                 const emailFormData = new FormData(e.currentTarget);
@@ -306,23 +309,57 @@ export default function WaitlistLanding() {
             <div style={{ 
               marginTop: '4rem', 
               width: '100%', 
-              maxWidth: '800px', 
-              borderRadius: '16px', 
+              maxWidth: '1000px', 
+              borderRadius: '24px', 
               overflow: 'hidden', 
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              backgroundColor: '#000'
+              backgroundColor: '#000',
+              position: 'relative'
             }}>
               <video 
+                ref={videoRef}
                 autoPlay 
                 loop 
-                muted 
+                muted={isMuted}
                 playsInline 
-                controls 
                 style={{ width: '100%', display: 'block' }}
               >
                 <source src="/assets/Zelp Launch.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
+              
+              <button
+                type="button"
+                onClick={toggleMute}
+                style={{
+                  position: 'absolute',
+                  bottom: '24px',
+                  right: '24px',
+                  backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                  backdropFilter: 'blur(4px)',
+                  color: 'white',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '50%',
+                  width: '48px',
+                  height: '48px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  zIndex: 20
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.4)';
+                  e.currentTarget.style.transform = 'scale(1)';
+                }}
+              >
+                {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+              </button>
             </div>
         </div>
       </div>

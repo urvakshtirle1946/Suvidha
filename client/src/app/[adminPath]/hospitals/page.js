@@ -235,6 +235,26 @@ export default function HospitalManagement() {
               </div>
               
               <div style={{ ...cardStyle, padding: '2.5rem', maxWidth: '700px', margin: '0 auto' }}>
+                  
+                  {/* Image Preview at the Top */}
+                  {(formData.image_file || formData.image_url) && (
+                      <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
+                          <div style={{ 
+                              width: '100%', height: '200px', 
+                              borderRadius: '16px', overflow: 'hidden', 
+                              border: '1px solid var(--border)',
+                              background: 'var(--bg-primary)',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center'
+                          }}>
+                              <img 
+                                  src={formData.image_file ? URL.createObjectURL(formData.image_file) : (formData.image_url.startsWith('data:') || formData.image_url.startsWith('http') ? formData.image_url : apiUrl + formData.image_url)} 
+                                  alt="Hospital Preview" 
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              />
+                          </div>
+                      </div>
+                  )}
+
                   <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                       
                       <div>

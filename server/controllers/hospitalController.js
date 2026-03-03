@@ -155,28 +155,51 @@ exports.updateHospital = async (req, res) => {
     // Note: This might fail if services are validated against bookings. 
     // For now, we assume simple replacement is desired.
     if (services && Array.isArray(services)) {
-      // Delete existing services for this hospital
-      await client.query('DELETE FROM services WHERE hospital_id = $1', [id]);
+      const incomingIds = services.filter(s => s.id).map(s => s.id);
 
-      // Insert new services
-      if (services.length > 0) {
-        const serviceQuery = `
+      try {
+        if (incomingIds.length > 0) {
+          // Delete services not in the incoming list
+          await client.query(`DELETE FROM services WHERE hospital_id = $1 AND id != ALL($2::int[])`, [id, incomingIds]);
+        } else {
+          // Delete all if empty
+          await client.query(`DELETE FROM services WHERE hospital_id = $1`, [id]);
+        }
+      } catch (deleteError) {
+        console.warn("Could not delete some services, possibly linked to existing bookings.", deleteError.message);
+        // Continue anyway, just don't delete them or fail the whole request
+      }
+
+      for (const service of services) {
+        // Skip empty rows
+        if (!service.name) continue;
+
+        if (service.id) {
+           await client.query(`
+              UPDATE services 
+              SET name = $1, category = $2, price = $3, discount_price = $4, description = $5
+              WHERE id = $6 AND hospital_id = $7
+           `, [
+              service.name,
+              service.category || 'General',
+              service.price,
+              service.discount_price || service.price,
+              service.description || '',
+              service.id,
+              id
+           ]);
+        } else {
+           await client.query(`
               INSERT INTO services (hospital_id, name, category, price, discount_price, description)
               VALUES ($1, $2, $3, $4, $5, $6)
-            `;
-
-        for (const service of services) {
-          // Skip empty rows
-          if (!service.name) continue;
-
-          await client.query(serviceQuery, [
-            id,
-            service.name,
-            service.category || 'General',
-            service.price,
-            service.discount_price || service.price,
-            service.description || ''
-          ]);
+           `, [
+             id,
+             service.name,
+             service.category || 'General',
+             service.price,
+             service.discount_price || service.price,
+             service.description || ''
+           ]);
         }
       }
     }

@@ -89,35 +89,17 @@ export default function WaitlistLanding() {
       }}>
           
         {/* Left Side: Illustration / Graphic */}
-        <div style={{ flex: '1 1 500px', position: 'relative', height: '600px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {/* Minimalist representation of the hero graphic from Image 1 */}
-            <div style={{ position: 'relative', width: '300px', height: '400px' }}>
-                {/* Window graphic */}
-                <div style={{ position: 'absolute', top: '0', right: '-80px', width: '80px', height: '100px', border: '4px solid white', borderRadius: '4px', display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: '4px', padding: '4px' }}>
-                    <div style={{ border: '2px solid white', borderRadius: '2px' }}></div>
-                    <div style={{ border: '2px solid white', borderRadius: '2px' }}></div>
-                    <div style={{ border: '2px solid white', borderRadius: '2px' }}></div>
-                    <div style={{ border: '2px solid white', borderRadius: '2px' }}></div>
-                </div>
-                
-                {/* Abstract Character Shapes matching vibe */}
-                <div style={{ position: 'absolute', bottom: '0', left: '0', right: '0', display: 'flex', justifyContent: 'center' }}>
-                   <div style={{ 
-                       width: '60px', height: '180px', background: 'black', borderRadius: '30px 30px 0 0',
-                       position: 'relative', zIndex: 2
-                   }}>
-                       <div style={{ position: 'absolute', top: '20px', left: '15px', width: '30px', height: '30px', background: 'white', borderRadius: '50%' }}></div>
-                   </div>
-                   {/* Rock hand / Guitar abstraction */}
-                   <div style={{ 
-                       width: '30px', height: '150px', background: 'white', position: 'absolute', top: '-100px', right: '80px', transform: 'rotate(15deg)', borderRadius: '15px', zIndex: 1
-                   }}></div>
-                   {/* Ground bubble */}
-                   <div style={{ position: 'absolute', bottom: '-20px', right: '-50px', width: '150px', height: '80px', background: 'white', borderRadius: '100px 100px 0 0', border: '2px solid black' }}></div>
-                </div>
-            </div>
-            {/* Visual Decorative Background circle */}
-            <div style={{ position: 'absolute', left: '-50px', top: '100px', width: '300px', height: '300px', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '50%', zIndex: 0 }}></div>
+        <div style={{ flex: '1 1 500px', position: 'relative', minHeight: '500px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <img 
+                src="/images/hero-illustration.png" 
+                alt="Rockstar character illustration"
+                style={{
+                   maxWidth: '100%',
+                   position: 'relative',
+                   zIndex: 1,
+                   objectFit: 'contain'
+                }} 
+            />
         </div>
 
         {/* Right Side: The White Card */}

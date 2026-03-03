@@ -56,10 +56,10 @@ export default function WaitlistLanding() {
           color: 'white',
           display: 'flex',
           flexDirection: 'column',
-          padding: '2rem'
+          padding: '0 2rem 2rem 2rem'
       }}>
         {/* Header */}
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4rem' }}>
+        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4rem', paddingTop: '1rem' }}>
             <img src="/logo.png" alt="Zelp Logo" style={{ height: '140px', objectFit: 'contain', background: 'transparent', mixBlendMode: 'plus-lighter' }} />
             <button 
                 onClick={() => setSubmitted(false)}

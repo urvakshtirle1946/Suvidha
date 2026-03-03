@@ -69,7 +69,7 @@ export default function WaitlistLanding() {
   return (
     <div style={{
         minHeight: '100vh',
-        backgroundColor: '#0026e6', 
+        backgroundColor: '#0026e9', 
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -124,7 +124,7 @@ export default function WaitlistLanding() {
             </h1>
 
             <p style={{ color: '#555', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '3rem', maxWidth: '400px' }}>
-              Don't let your portfolio site be boring and just like everyone else. This is a template like no other templates.
+              Get priority access to the fastest growing healthcare platform. Join the waitlist to secure your spot and experience healthcare like never before.
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '400px' }}>
@@ -163,15 +163,7 @@ export default function WaitlistLanding() {
                 </button>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '4rem' }}>
-                <div style={{ width: '40px', height: '40px', background: '#f5f5f5', borderRadius: '50%', border: '2px solid #111', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ width: '20px', height: '20px', background: '#111', borderRadius: '50%' }}></div>
-                </div>
-                <div>
-                    <p style={{ fontSize: '0.85rem', color: '#666', margin: 0 }}>Illustration by the fantastic</p>
-                    <p style={{ fontSize: '0.85rem', color: '#999', margin: 0, fontWeight: '600' }}>@bmendoza_22</p>
-                </div>
-            </div>
+
         </div>
       </div>
     </div>

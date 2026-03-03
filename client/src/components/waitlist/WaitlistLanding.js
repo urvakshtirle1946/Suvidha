@@ -89,7 +89,7 @@ export default function WaitlistLanding() {
   return (
     <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(180deg, #ffffff 40%, rgba(100, 180, 255, 0.6) 100%)', 
+        background: 'linear-gradient(180deg, #ffffff 0%, rgba(150, 200, 255, 0.2) 40%, rgba(100, 180, 255, 0.4) 60%, rgba(50, 150, 255, 0.6) 80%, rgba(0, 100, 255, 0.8) 100%)', 
         display: 'flex',
         flexDirection: 'column',
         padding: '2rem',

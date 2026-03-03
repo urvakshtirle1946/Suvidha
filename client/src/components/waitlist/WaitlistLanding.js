@@ -98,7 +98,7 @@ export default function WaitlistLanding() {
     }}>
       {/* Navbar - Full Width for Top-Left Logo */}
       <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
-           <img src="/logo.png" alt="Zelp Logo" style={{ height: '40px', objectFit: 'contain' }} />
+           <img src="/logo.png" alt="Zelp Logo" style={{ height: '80px', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply' }} />
       </div>
 
       <div style={{
@@ -116,23 +116,24 @@ export default function WaitlistLanding() {
             justifyContent: 'center',
             alignItems: 'center',
             textAlign: 'center',
-            maxWidth: '800px',
+            maxWidth: '1000px',
             width: '100%',
             marginTop: '-5vh' // A slight offset because the logo takes up space at the top
         }}>
             <h1 style={{ 
-              fontSize: '4.5rem', 
+              fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', 
               fontWeight: '500', 
               lineHeight: '1.2', 
               color: '#111', 
               marginBottom: '1.5rem',
               letterSpacing: '-0.02em',
-              fontFamily: 'var(--font-outfit)'
+              fontFamily: 'var(--font-outfit)',
+              whiteSpace: 'nowrap'
             }}>
               Transform your healthcare<br/>into a breeze
             </h1>
 
-            <p style={{ color: '#4b5563', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '3.5rem', maxWidth: '600px', fontWeight: '500' }}>
+            <p style={{ color: '#4b5563', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '3.5rem', maxWidth: '600px', fontWeight: '500', whiteSpace: 'normal' }}>
               Zelp helps you book and manage hospital treatments and lab tests instantly, just like having a personal healthcare assistant.
             </p>
 

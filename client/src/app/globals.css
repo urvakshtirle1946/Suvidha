@@ -379,12 +379,16 @@ body:not(:has(.admin-root)) h6 {
 
 /* Hide scrollbars in Admin */
 .custom-scrollbar::-webkit-scrollbar,
-body:has(.admin-root)::-webkit-scrollbar {
+html:has(.admin-root)::-webkit-scrollbar,
+body:has(.admin-root)::-webkit-scrollbar,
+.admin-root::-webkit-scrollbar {
   display: none;
 }
 
 .custom-scrollbar,
-body:has(.admin-root) {
+html:has(.admin-root),
+body:has(.admin-root),
+.admin-root {
   -ms-overflow-style: none;
   /* IE and Edge */
   scrollbar-width: none;

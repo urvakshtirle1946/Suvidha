@@ -1,5 +1,7 @@
 'use client';
 import { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { useGoogleLogin } from '@react-oauth/google';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export default function WaitlistLanding() {
@@ -7,16 +9,27 @@ export default function WaitlistLanding() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    setLoading(true);
-    // Simulate API call for waitlist registration
-    setTimeout(() => {
+  const { googleLogin } = useAuth();
+
+  const handleGoogleSuccess = async (tokenResponse) => {
+    try {
+      setLoading(true);
+      // Wait for backend to process the google login token
+      await googleLogin({ access_token: tokenResponse.access_token });
+      
+      // Successfully authenticated & registered
       setSubmitted(true);
+    } catch (err) {
+      console.error('Waitlist Google authentication failed:', err);
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
+
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: handleGoogleSuccess,
+    onError: () => console.error('Google login popup failed to open or was closed.'),
+  });
 
   // Success Confirmation Screen
   if (submitted) {
@@ -128,7 +141,7 @@ export default function WaitlistLanding() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '400px' }}>
                 <button 
-                  onClick={handleSubmit}
+                  onClick={() => loginWithGoogle()}
                   disabled={loading}
                   style={{ 
                     backgroundColor: 'white', 

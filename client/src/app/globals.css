@@ -377,6 +377,20 @@ body:not(:has(.admin-root)) h6 {
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
+/* Hide scrollbars in Admin */
+.custom-scrollbar::-webkit-scrollbar,
+body:has(.admin-root)::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scrollbar,
+body:has(.admin-root) {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
 .reveal-h1 {
   font-size: 1.8rem;
   font-weight: 800;

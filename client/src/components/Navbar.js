@@ -1,10 +1,11 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
 import { useCart } from '@/context/CartContext';
-import { ChevronDown, ShoppingCart, Menu, X, MapPin } from 'lucide-react';
+import { ChevronDown, ShoppingCart, Menu, X, MapPin, Search } from 'lucide-react';
 import { TextReveal } from './ui/text-reveal-animation';
 import { ZelpLogo } from './ui/zelp-text-reveal';
 import LocationModal from './LocationModal';
@@ -12,6 +13,7 @@ import SettingsModal from './SettingsModal';
 import ProfileDropdown from './ProfileDropdown';
 import AuthModal from './AuthModal';
 import SterlingGateKineticNavigation from './ui/SterlingGateKineticNavigation';
+import { getApiUrl } from '@/utils/api';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -22,6 +24,22 @@ export default function Navbar() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login');
+
+  // Search State
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const searchTimeoutRef = useRef(null);
+
+  const SUGGESTED_SEARCHES = [
+    { name: 'Full Body Checkup', type: 'Package' },
+    { name: 'Cardiology', type: 'Specialty' },
+    { name: 'Diabetes', type: 'Specialty' },
+    { name: 'MRI Scan', type: 'Scan' },
+    { name: 'Blood Test', type: 'Pathology' }
+  ];
 
   useEffect(() => {
     if (user && authModalOpen) {
@@ -36,6 +54,46 @@ export default function Navbar() {
     setAuthModalOpen(true);
   };
 
+  const fetchSearchResults = async (query) => {
+    if (!query || query.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+    
+    setIsSearching(true);
+    try {
+      const res = await fetch(`${getApiUrl()}/api/services?search=${encodeURIComponent(query)}&limit=5`);
+      if (res.ok) {
+        const data = await res.json();
+        setSearchResults(Array.isArray(data) ? data : (data.data || []));
+      }
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    const val = e.target.value;
+    setSearchQuery(val);
+    
+    if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+    }
+    
+    searchTimeoutRef.current = setTimeout(() => {
+        fetchSearchResults(val);
+    }, 300);
+  };
+
+  const handleSearchSelect = (serviceName) => {
+    setSearchQuery('');
+    setSearchResults([]);
+    setIsSearchFocused(false);
+    router.push(`/hospitals?search=${encodeURIComponent(serviceName)}`);
+  };
+
   return (
     <>
       <nav style={{ 
@@ -45,13 +103,161 @@ export default function Navbar() {
       }}>
         <div className="container nav-content">
           
-          {/* Kinetic Navigation Trigger (Mobile) */}
-          <div className="show-on-mobile" style={{ marginRight: '1rem' }}>
+          {/* Kinetic Navigation Trigger (Desktop) */}
+          <div className="hide-on-mobile" style={{ marginRight: '1rem' }}>
             <SterlingGateKineticNavigation onOpenAuth={handleOpenAuth} />
           </div>
 
-          {/* Logo & Location */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1 }}>
+          <div className="mobile-header-stack" style={{ width: '100%' }}>
+            {/* Top Row: Logo & Profile */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '8px' }}>
+                <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                    <span style={{ 
+                        fontSize: '1.8rem', fontWeight: '800', color: '#000', 
+                        letterSpacing: '-1.5px', fontFamily: 'var(--font-outfit), sans-serif', lineHeight: 1
+                    }}>
+                        Zelp
+                    </span>
+                </Link>
+
+               <div className="show-on-mobile">
+                  {user ? (
+                      <div 
+                        onClick={() => setSettingsModalOpen(true)}
+                        style={{ 
+                            fontSize: '1rem', color: '#ef4444', fontWeight: '600', cursor: 'pointer',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            width: '32px', height: '32px', borderRadius: '50%', border: '2px solid #ef4444'
+                        }}
+                      >
+                          {(user.name || 'User').charAt(0).toUpperCase()}
+                      </div>
+                  ) : (
+                      <button 
+                          onClick={handleOpenAuth}
+                          style={{ 
+                              background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', 
+                              padding: '4px 12px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '0.85rem'
+                          }}
+                      >
+                          Sign In
+                      </button>
+                  )}
+               </div>
+            </div>
+
+            {/* Middle Row: Location */}
+            <div style={{ position: 'relative', width: '100%', marginBottom: '12px' }}>
+                 <div 
+                    onClick={() => setLocationModalOpen(true)}
+                    style={{ 
+                        display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer',
+                        padding: '0.2rem 0', background: 'transparent'
+                    }}
+                 >
+                      <MapPin size={16} color="#ef4444" />
+                      <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: '#374151', maxWidth: '80%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {location || 'Select Location'}
+                      </span>
+                      <ChevronDown size={14} color="#374151" />
+                 </div>
+            </div>
+
+            {/* Bottom Row: Search Bar */}
+            <div style={{ position: 'relative', width: '100%' }}>
+                <div style={{
+                    display: 'flex', alignItems: 'center', gap: '8px',
+                    background: '#fff', borderRadius: '12px', padding: '10px 16px',
+                    border: isSearchFocused ? '1px solid #0c831f' : '1px solid #e5e7eb', 
+                    boxShadow: isSearchFocused ? '0 0 0 2px rgba(12, 131, 31, 0.1)' : '0 2px 5px rgba(0,0,0,0.05)',
+                    transition: 'all 0.2s'
+                }}>
+                    <Search size={18} color={isSearchFocused ? '#0c831f' : '#ef4444'} />
+                    <input 
+                        type="text" 
+                        placeholder="Search for tests, services..." 
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        onFocus={() => setIsSearchFocused(true)}
+                        onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                        style={{
+                            background: 'transparent', border: 'none', outline: 'none',
+                            width: '100%', fontSize: '0.95rem', color: '#374151'
+                        }}
+                    />
+                </div>
+
+                {/* Search Dropdown */}
+                {isSearchFocused && (
+                    <div style={{
+                        position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
+                        background: '#fff', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                        border: '1px solid #e5e7eb', zIndex: 1001, overflow: 'hidden'
+                    }}>
+                        {!searchQuery ? (
+                            <div style={{ padding: '0.5rem 0' }}>
+                                <div style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', fontWeight: 'bold', color: '#6b7280', textTransform: 'uppercase' }}>
+                                    Suggested Searches
+                                </div>
+                                {SUGGESTED_SEARCHES.map((item, idx) => (
+                                    <div 
+                                        key={idx}
+                                        onClick={() => handleSearchSelect(item.name)}
+                                        style={{
+                                            padding: '0.8rem 1rem', display: 'flex', justifyContent: 'space-between',
+                                            alignItems: 'center', cursor: 'pointer', borderBottom: idx < SUGGESTED_SEARCHES.length - 1 ? '1px solid #f3f4f6' : 'none'
+                                        }}
+                                        onMouseEnter={(e) => e.currentTarget.style.background = '#f9fafb'}
+                                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                                    >
+                                        <span style={{ fontSize: '0.9rem', color: '#374151' }}>{item.name}</span>
+                                        <span style={{ fontSize: '0.75rem', background: '#f3f4f6', padding: '2px 8px', borderRadius: '12px', color: '#6b7280' }}>
+                                            {item.type}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div style={{ padding: '0.5rem 0' }}>
+                                {isSearching ? (
+                                    <div style={{ padding: '1rem', textAlign: 'center', color: '#6b7280', fontSize: '0.9rem' }}>
+                                        Searching...
+                                    </div>
+                                ) : searchResults.length > 0 ? (
+                                    searchResults.map((result) => (
+                                        <div 
+                                            key={result.id}
+                                            onClick={() => handleSearchSelect(result.name)}
+                                            style={{
+                                                padding: '0.8rem 1rem', display: 'flex', flexDirection: 'column', gap: '4px',
+                                                cursor: 'pointer', borderBottom: '1px solid #f3f4f6'
+                                            }}
+                                            onMouseEnter={(e) => e.currentTarget.style.background = '#f9fafb'}
+                                            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                                        >
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#1f2937' }}>{result.name}</span>
+                                                <span style={{ fontSize: '0.85rem', color: '#0c831f', fontWeight: 'bold' }}>₹{result.discount_price || result.price}</span>
+                                            </div>
+                                            <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
+                                                {result.hospital_name || result.category}
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div style={{ padding: '1rem', textAlign: 'center', color: '#6b7280', fontSize: '0.9rem' }}>
+                                        No results found for "{searchQuery}"
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+          </div>
+
+          {/* Logo & Location (Desktop) */}
+          <div className="hide-on-mobile desktop-header-elements" style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1 }}>
               <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
                   <span style={{ 
                       fontSize: '1.8rem', fontWeight: '800', color: '#000', 
@@ -86,8 +292,8 @@ export default function Navbar() {
              <Link href="/hospitals" style={{ fontWeight: '500', color: '#1f2937' }}>Services</Link>
           </div>
           
-          {/* Right Actions */}
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          {/* Right Actions (Desktop) */}
+          <div className="hide-on-mobile desktop-header-elements" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
               <div className="hide-on-mobile" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
               <div className="hide-on-mobile" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                   {user ? (
@@ -109,14 +315,14 @@ export default function Navbar() {
               </div>
               </div>
               
-              {/* Cart is always visible but smaller on mobile */}
+              {/* Desktop Cart */}
               <button 
-                  className="btn btn-primary" 
+                  className="btn btn-primary hide-on-mobile" 
                   onClick={() => setIsCartOpen(true)}
                   style={{ borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem' }}
               >
                   <ShoppingCart size={18} /> 
-                  <span className="hide-on-mobile">My Cart</span>
+                  <span>My Cart</span>
                   {cartCount > 0 && (
                       <span style={{ 
                           background: '#fff', color: '#ff6f61', borderRadius: '50%', 
@@ -127,18 +333,6 @@ export default function Navbar() {
                       </span>
                   )}
               </button>
-              
-              {/* Mobile User Section - Keep initial or user icon */}
-               <div className="show-on-mobile">
-                  {user && (
-                      <div 
-                        onClick={() => setMobileMenuOpen(true)}
-                        style={{ fontSize: '0.9rem', color: '#0c831f', fontWeight: '500', cursor: 'pointer' }}
-                      >
-                          {(user.name || 'User').charAt(0).toUpperCase()}
-                      </div>
-                  )}
-               </div>
           </div>
         </div>
       </nav>

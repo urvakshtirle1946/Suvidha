@@ -469,7 +469,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   const authUserId = Number(req.user?.id);
-  if (!authUserId) {
+  if (authUserId === undefined || isNaN(authUserId)) {
     return res.status(401).json({
       success: false,
       message: 'Unauthorized user.'
@@ -488,6 +488,12 @@ exports.updateProfile = async (req, res) => {
       message: errors[0],
       errors
     });
+  }
+
+  // Intercept demo admin
+  if (authUserId === 0) {
+     const demoAdmin = { id: 0, email: cleanEmail, name: cleanName, role: 'admin' };
+     return issueUserSession(req, res, demoAdmin, 200, 'Profile updated successfully (Demo Mode).');
   }
 
   try {
@@ -576,11 +582,17 @@ exports.updateProfile = async (req, res) => {
 
 exports.getMe = async (req, res) => {
   const authUserId = Number(req.user?.id);
-  if (!authUserId) {
+  if (authUserId === undefined || isNaN(authUserId)) {
     return res.status(401).json({
       success: false,
       message: 'Unauthorized user.'
     });
+  }
+
+  // Intercept demo admin
+  if (authUserId === 0) {
+      const demoAdmin = { id: 0, email: 'urvaksh@tryzelp.app', name: 'Urvaksh Admin', role: 'admin' };
+      return res.json({ success: true, user: demoAdmin });
   }
 
   try {

@@ -105,7 +105,7 @@ export default function UserManagement() {
                     </thead>
                     <tbody>
                         {filteredUsers.map((user) => (
-                            <tr key={user.id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }} className="hover:bg-gray-50 dark:hover:bg-gray-900">
+                            <tr key={user.id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }} className="user-row-hover">
                                 <td style={{ padding: '1.2rem 1.5rem' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                         <div style={{ 
@@ -138,7 +138,13 @@ export default function UserManagement() {
                                 </td>
                                 <td style={{ padding: '1.2rem 1.5rem' }}>
                                     <div style={{ display: 'flex', gap: '0.8rem' }}>
-                                        <button title="View History" style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)', cursor: 'pointer', color: 'var(--text-secondary)', padding: '8px', borderRadius: '8px' }}><Eye size={18} /></button>
+                                        <button 
+                                            onClick={() => alert(`Showing history for ${user.name} (Coming Soon)`)}
+                                            title="View History" 
+                                            style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)', cursor: 'pointer', color: 'var(--text-secondary)', padding: '8px', borderRadius: '8px' }}
+                                        >
+                                            <Eye size={18} />
+                                        </button>
                                         <button 
                                             onClick={() => toggleBlock(user.id)}
                                             title={user.status === 'Active' ? 'Block User' : 'Unblock User'} 

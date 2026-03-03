@@ -404,7 +404,8 @@ body:has(.admin-root),
   display: flex;
 }
 
-.booking-row-hover:hover {
+.booking-row-hover:hover,
+.user-row-hover:hover {
   background-color: rgba(255, 255, 255, 0.05);
 }
 

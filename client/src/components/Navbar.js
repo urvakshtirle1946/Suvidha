@@ -108,7 +108,7 @@ export default function Navbar() {
             <SterlingGateKineticNavigation onOpenAuth={handleOpenAuth} />
           </div>
 
-          <div className="mobile-header-stack" style={{ width: '100%' }}>
+          <div className="mobile-header-stack show-on-mobile" style={{ width: '100%', flexDirection: 'column' }}>
             {/* Top Row: Logo & Profile */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '8px' }}>
                 <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
@@ -295,7 +295,6 @@ export default function Navbar() {
           {/* Right Actions (Desktop) */}
           <div className="hide-on-mobile desktop-header-elements" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
               <div className="hide-on-mobile" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-              <div className="hide-on-mobile" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                   {user ? (
                       <ProfileDropdown onOpenSettings={() => setSettingsModalOpen(true)} />
                   ) : (
@@ -312,7 +311,6 @@ export default function Navbar() {
                           Login / Sign Up
                       </button>
                   )}
-              </div>
               </div>
               
               {/* Desktop Cart */}

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter, usePathname, useParams } from 'next/navigation';
 import { 
   LayoutDashboard, Building2, Calendar, 
-  Users, ShieldCheck, LogOut, Menu, User, CheckCircle, Bell, 
+  Users, UserPlus, ShieldCheck, LogOut, Menu, User, CheckCircle, Bell, 
   Sun, Moon, ChevronLeft, ChevronRight 
 } from 'lucide-react';
 import { Outfit } from 'next/font/google';
@@ -237,6 +237,7 @@ function AdminLayoutContent({ children }) {
              <NavItem icon={<Building2 size={20} />} label="Hospitals" href={`${basePath}/hospitals`} active={pathname === `${basePath}/hospitals`} darkMode={darkMode} />
              <NavItem icon={<Calendar size={20} />} label="Bookings" href={`${basePath}/bookings`} active={pathname === `${basePath}/bookings`} darkMode={darkMode} />
              <NavItem icon={<Users size={20} />} label="Users" href={`${basePath}/users`} active={pathname === `${basePath}/users`} darkMode={darkMode} />
+             <NavItem icon={<UserPlus size={20} />} label="Waitlist" href={`${basePath}/waitlist`} active={pathname === `${basePath}/waitlist`} darkMode={darkMode} />
           </nav>
 
           {/* Widget: My Schedule (Calendar) */}

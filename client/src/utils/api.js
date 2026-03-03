@@ -1,8 +1,29 @@
-export const getApiUrl = () => {
-    if (process.env.NEXT_PUBLIC_API_URL) {
-        return process.env.NEXT_PUBLIC_API_URL;
+const FALLBACK_API_URL = 'https://suvidha-server-4u66.onrender.com';
+
+const isLoopbackUrl = (value) => {
+    try {
+        const parsed = new URL(value);
+        return ['localhost', '127.0.0.1', '::1'].includes(parsed.hostname);
+    } catch {
+        return false;
     }
-    return 'https://suvidha-server-4u66.onrender.com';
+};
+
+export const getApiUrl = () => {
+    const configuredUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
+
+    if (!configuredUrl) {
+        return FALLBACK_API_URL;
+    }
+
+    if (typeof window !== 'undefined') {
+        const isLocalAppHost = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+        if (!isLocalAppHost && isLoopbackUrl(configuredUrl)) {
+            return FALLBACK_API_URL;
+        }
+    }
+
+    return configuredUrl.replace(/\/+$/, '');
 };
 
 export const apiFetch = (endpoint, options = {}) => {

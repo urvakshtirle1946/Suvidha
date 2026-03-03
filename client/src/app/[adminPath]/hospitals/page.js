@@ -2,8 +2,10 @@
 import { useState, useEffect } from 'react';
 import { Building2, MapPin, Star, Plus, CheckCircle, Tag, XCircle } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
+import { getApiUrl } from '@/utils/api';
 
 export default function HospitalManagement() {
+  const apiUrl = getApiUrl();
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -79,7 +81,7 @@ export default function HospitalManagement() {
   const fetchHospitals = async () => {
     try {
       const token = localStorage.getItem('admin_token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`, { 
+      const res = await fetch(`${apiUrl}/api/hospitals`, { 
         cache: 'no-store',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -123,7 +125,7 @@ export default function HospitalManagement() {
       // Fetch Services
       try {
           const token = localStorage.getItem('admin_token');
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${hospital.id}`, {
+          const res = await fetch(`${apiUrl}/api/hospitals/${hospital.id}`, {
               headers: { 'Authorization': `Bearer ${token}` }
           });
           if (res.ok) {
@@ -143,7 +145,7 @@ export default function HospitalManagement() {
       if(!confirm('Are you sure you want to delete this hospital?')) return;
       try {
           const token = localStorage.getItem('admin_token');
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${id}`, {
+          const res = await fetch(`${apiUrl}/api/hospitals/${id}`, {
               method: 'DELETE',
               headers: { 'Authorization': `Bearer ${token}` }
           });
@@ -163,8 +165,8 @@ export default function HospitalManagement() {
     e.preventDefault();
     try {
         const url = editMode 
-            ? `${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals/${editId}` 
-            : `${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`;
+            ? `${apiUrl}/api/hospitals/${editId}` 
+            : `${apiUrl}/api/hospitals`;
         
     const method = editMode ? 'PUT' : 'POST';
 
@@ -278,7 +280,7 @@ export default function HospitalManagement() {
                           />
                           {formData.image_url && !formData.image_file && (
                               <div style={{ marginTop: '5px', fontSize: '0.8rem', color: 'var(--accent)' }}>
-                                  Current Image: <a href={(formData.image_url.startsWith('data:') || formData.image_url.startsWith('http')) ? formData.image_url : (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + formData.image_url} target="_blank" rel="noreferrer" style={{ color: 'inherit' }}>View</a>
+                                  Current Image: <a href={(formData.image_url.startsWith('data:') || formData.image_url.startsWith('http')) ? formData.image_url : apiUrl + formData.image_url} target="_blank" rel="noreferrer" style={{ color: 'inherit' }}>View</a>
                               </div>
                           )}
                       </div>
@@ -405,7 +407,7 @@ export default function HospitalManagement() {
                 if (hospital.image_url) {
                     bgImage = (hospital.image_url.startsWith('data:') || hospital.image_url.startsWith('http'))
                         ? hospital.image_url
-                        : (process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com') + hospital.image_url;
+                        : apiUrl + hospital.image_url;
                 }
 
                 return (

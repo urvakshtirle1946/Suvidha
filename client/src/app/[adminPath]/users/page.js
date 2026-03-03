@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { User, Search, Shield, ShieldOff, Eye } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
+import { getApiUrl } from '@/utils/api';
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -22,8 +23,9 @@ export default function UserManagement() {
 
   const fetchUsers = async () => {
     try {
+      const apiUrl = getApiUrl();
       const token = localStorage.getItem('admin_token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/auth/users`, {
+      const res = await fetch(`${apiUrl}/api/auth/users`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

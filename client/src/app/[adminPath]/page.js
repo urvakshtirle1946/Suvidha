@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ShieldCheck, Calendar, CheckCircle, LayoutDashboard, Building2, Users, LogOut, Menu, Activity, TrendingUp } from 'lucide-react';
+import { getApiUrl } from '@/utils/api';
 
 export default function AdminDashboard() {
   const params = useParams();
@@ -22,12 +23,13 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     // setLoading(true); // Don't set loading on poll to avoid flicker
     try {
+      const apiUrl = getApiUrl();
       const token = localStorage.getItem('admin_token');
       const fetchOpts = { headers: { 'Authorization': `Bearer ${token}` } };
       
       const [resBookings, resHospitals] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/bookings`, fetchOpts),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`, fetchOpts)
+          fetch(`${apiUrl}/api/bookings`, fetchOpts),
+          fetch(`${apiUrl}/api/hospitals`, fetchOpts)
       ]);
 
       if (resBookings.ok) {

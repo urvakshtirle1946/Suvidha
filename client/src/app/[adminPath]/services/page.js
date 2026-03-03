@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Stethoscope, Plus, Tag, Search, Filter, Building2 } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
+import { getApiUrl } from '@/utils/api';
 
 export default function ServiceManagement() {
   const [services, setServices] = useState([]);
@@ -34,8 +35,9 @@ export default function ServiceManagement() {
   const fetchServices = async (currentPage = 1) => {
     setLoading(true);
     try {
+      const apiUrl = getApiUrl();
       const token = localStorage.getItem('admin_token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/services?page=${currentPage}&limit=${LIMIT}`, {
+      const res = await fetch(`${apiUrl}/api/services?page=${currentPage}&limit=${LIMIT}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -58,8 +60,9 @@ export default function ServiceManagement() {
 
   const fetchHospitals = async () => {
       try {
+        const apiUrl = getApiUrl();
         const token = localStorage.getItem('admin_token');
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/hospitals`, {
+        const res = await fetch(`${apiUrl}/api/hospitals`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {
@@ -74,8 +77,9 @@ export default function ServiceManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+        const apiUrl = getApiUrl();
         const token = localStorage.getItem('admin_token');
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/services`, {
+        const res = await fetch(`${apiUrl}/api/services`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',

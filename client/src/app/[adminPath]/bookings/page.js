@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Calendar, Search, Filter, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
+import { getApiUrl } from '@/utils/api';
 
 export default function BookingsManagement() {
   const [bookings, setBookings] = useState([]);
@@ -19,8 +20,9 @@ export default function BookingsManagement() {
 
   const fetchBookings = async () => {
     try {
+      const apiUrl = getApiUrl();
       const token = localStorage.getItem('admin_token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/bookings`, {
+      const res = await fetch(`${apiUrl}/api/bookings`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -38,8 +40,9 @@ export default function BookingsManagement() {
 
   const updateStatus = async (id, newStatus) => {
       try {
+          const apiUrl = getApiUrl();
           const token = localStorage.getItem('admin_token');
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://suvidha-server-4u66.onrender.com'}/api/bookings/${id}/status`, {
+          const res = await fetch(`${apiUrl}/api/bookings/${id}/status`, {
               method: 'PATCH',
               headers: { 
                  'Content-Type': 'application/json',

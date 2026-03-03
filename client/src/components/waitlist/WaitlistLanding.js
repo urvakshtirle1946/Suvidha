@@ -9,7 +9,6 @@ export default function WaitlistLanding() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email) return;
     
     setLoading(true);
     // Simulate API call for waitlist registration

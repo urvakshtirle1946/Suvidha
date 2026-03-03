@@ -78,7 +78,7 @@ function AdminLayoutContent({ children }) {
 
   // Fetch Notifications (Recent Bookings)
   useEffect(() => {
-     if (!isAuthorized) return;
+     if (!isAuthorized || pathname?.endsWith('/login')) return;
      const fetchNotifications = async () => {
          try {
              const token = localStorage.getItem('admin_token');
@@ -153,6 +153,14 @@ function AdminLayoutContent({ children }) {
   }
 
   const isLoginPage = pathname?.endsWith('/login');
+  if (isLoginPage) {
+    return (
+      <div className={outfit.className} style={{ minHeight: '100vh' }}>
+        {children}
+      </div>
+    );
+  }
+
   if (isCheckingAuth) {
     return (
       <div style={{ minHeight: '100vh', background: '#050505' }} />

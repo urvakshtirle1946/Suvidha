@@ -89,15 +89,49 @@ export default function WaitlistLanding() {
   return (
     <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(180deg, #ffffff 0%, rgba(150, 200, 255, 0.2) 40%, rgba(100, 180, 255, 0.4) 60%, rgba(50, 150, 255, 0.6) 80%, rgba(0, 100, 255, 0.8) 100%)', 
+        backgroundColor: '#ffffff', 
         display: 'flex',
         flexDirection: 'column',
         padding: '2rem',
         overflow: 'hidden',
         position: 'relative'
     }}>
+      {/* Animated Wave Background */}
+      <div style={{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        width: '100%',
+        height: '60%',
+        zIndex: 0,
+        pointerEvents: 'none',
+        overflow: 'hidden'
+      }}>
+        {/* We use multiple SVG waves with opacity to create a smooth layered transition */}
+        <svg viewBox="0 0 1440 320" style={{ position: 'absolute', bottom: 0, width: '200%', height: '100%', left: '0', animation: 'wave 20s linear infinite', opacity: 0.2 }}>
+          <path fill="#0026e9" fillOpacity="1" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          <path transform="translate(1440, 0)" fill="#0026e9" fillOpacity="1" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+        <svg viewBox="0 0 1440 320" style={{ position: 'absolute', bottom: 0, width: '200%', height: '80%', left: '0', animation: 'wave 15s linear infinite reverse', opacity: 0.3 }}>
+          <path fill="#0026e9" fillOpacity="1" d="M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,240C672,256,768,256,864,229.3C960,203,1056,149,1152,144C1248,139,1344,181,1392,202.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          <path transform="translate(1440, 0)" fill="#0026e9" fillOpacity="1" d="M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,240C672,256,768,256,864,229.3C960,203,1056,149,1152,144C1248,139,1344,181,1392,202.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+        <svg viewBox="0 0 1440 320" style={{ position: 'absolute', bottom: 0, width: '200%', height: '60%', left: '0', animation: 'wave 10s linear infinite', opacity: 0.6 }}>
+          <path fill="#0026e9" fillOpacity="1" d="M0,128L48,144C96,160,192,192,288,181.3C384,171,480,117,576,106.7C672,96,768,128,864,160C960,192,1056,224,1152,213.3C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          <path transform="translate(1440, 0)" fill="#0026e9" fillOpacity="1" d="M0,128L48,144C96,160,192,192,288,181.3C384,171,480,117,576,106.7C672,96,768,128,864,160C960,192,1056,224,1152,213.3C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+        <style>
+          {`
+            @keyframes wave {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+          `}
+        </style>
+      </div>
+      
       {/* Navbar - Full Width for Top-Left Logo */}
-      <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
+      <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start', position: 'relative', zIndex: 10 }}>
            <img src="/logo.png" alt="Zelp Logo" style={{ height: '140px', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply' }} />
       </div>
 
@@ -108,6 +142,8 @@ export default function WaitlistLanding() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
+          position: 'relative',
+          zIndex: 10
       }}>
         {/* Main Content */}
         <div style={{ 

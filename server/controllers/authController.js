@@ -446,6 +446,46 @@ exports.joinWaitlistWithGoogle = async (req, res) => {
   }
 };
 
+exports.joinWaitlistWithEmail = async (req, res) => {
+  const { email } = req.body || {};
+  const cleanEmail = normalizeEmail(email);
+
+  if (!cleanEmail || !EMAIL_REGEX.test(cleanEmail)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Please provide a valid email address.'
+    });
+  }
+
+  try {
+    await ensureWaitlistTable();
+
+    const result = await db.query(
+      `INSERT INTO waitlist_signups (name, email, source, status, updated_at)
+       VALUES ('User', $1, 'email', 'pending', CURRENT_TIMESTAMP)
+       ON CONFLICT (email)
+       DO UPDATE SET
+         source = 'email',
+         status = 'pending',
+         updated_at = CURRENT_TIMESTAMP
+       RETURNING id, name, email, source, status, created_at, updated_at`,
+      [cleanEmail]
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Successfully added to waitlist.',
+      entry: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Waitlist Email Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Unable to join waitlist right now. Please try again.'
+    });
+  }
+};
+
 exports.getWaitlistEntries = async (_req, res) => {
   try {
     await ensureWaitlistTable();

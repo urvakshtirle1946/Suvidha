@@ -89,7 +89,7 @@ export default function WaitlistLanding() {
   return (
     <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(180deg, #ffffff 60%, rgba(200, 230, 255, 0.4) 100%)', 
+        background: 'linear-gradient(180deg, #ffffff 40%, rgba(100, 180, 255, 0.6) 100%)', 
         display: 'flex',
         flexDirection: 'column',
         padding: '2rem',
@@ -137,8 +137,92 @@ export default function WaitlistLanding() {
               Zelp helps you book and manage hospital treatments and lab tests instantly, just like having a personal healthcare assistant.
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+            <form 
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const emailFormData = new FormData(e.currentTarget);
+                const email = emailFormData.get('email');
+                if (!email) return;
+
+                try {
+                  setLoading(true);
+                  setError('');
+                  const apiUrl = getApiUrl();
+                  const res = await fetch(`${apiUrl}/api/auth/waitlist/email`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                  });
+                  const data = await res.json().catch(() => null);
+                  if (!res.ok || !data?.success) {
+                    throw new Error(data?.message || 'Unable to join waitlist right now.');
+                  }
+                  setSubmitted(true);
+                } catch (err) {
+                  setError(err.message || 'Waitlist submission failed.');
+                } finally {
+                  setLoading(false);
+                }
+              }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center', width: '100%', maxWidth: '400px' }}
+            >
+                <div style={{ display: 'flex', gap: '0.5rem', width: '100%', flexDirection: 'column' }}>
+                  <input 
+                    type="email" 
+                    name="email"
+                    placeholder="Enter your email address"
+                    required
+                    disabled={loading}
+                    style={{
+                      padding: '1rem',
+                      fontSize: '1.1rem',
+                      borderRadius: '8px',
+                      border: '1px solid #d1d5db',
+                      width: '100%',
+                      outline: 'none',
+                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                      transition: 'border-color 0.2s'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#0026e9'}
+                    onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+                  />
+                  
+                  <button 
+                    type="submit"
+                    disabled={loading}
+                    style={{ 
+                      backgroundColor: '#0026e9', 
+                      color: 'white', 
+                      padding: '1rem 2rem', 
+                      fontSize: '1.1rem', 
+                      fontWeight: '600', 
+                      border: 'none', 
+                      borderRadius: '8px',
+                      cursor: loading ? 'not-allowed' : 'pointer',
+                      display: 'flex', 
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      gap: '8px',
+                      width: '100%',
+                      boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+                      transition: 'all 0.2s ease',
+                      opacity: loading ? 0.7 : 1,
+                    }}
+                    onMouseEnter={(e) => { if(!loading) e.currentTarget.style.backgroundColor = '#001bb3' }}
+                    onMouseLeave={(e) => { if(!loading) e.currentTarget.style.backgroundColor = '#0026e9' }}
+                  >
+                    {loading ? 'Joining...' : 'Join the waitlist'}
+                  </button>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', width: '100%', margin: '1rem 0' }}>
+                  <div style={{ flex: 1, height: '1px', backgroundColor: '#e5e7eb' }}></div>
+                  <span style={{ margin: '0 1rem', color: '#6b7280', fontSize: '0.9rem' }}>or</span>
+                  <div style={{ flex: 1, height: '1px', backgroundColor: '#e5e7eb' }}></div>
+                </div>
+
                 <button 
+                  type="button"
                   onClick={() => loginWithGoogle()}
                   disabled={loading}
                   style={{ 
@@ -154,6 +238,7 @@ export default function WaitlistLanding() {
                     justifyContent: 'center',
                     alignItems: 'center',
                     gap: '12px',
+                    width: '100%',
                     boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
                     transition: 'all 0.2s ease',
                     opacity: loading ? 0.7 : 1,
@@ -171,7 +256,7 @@ export default function WaitlistLanding() {
                   )}
                   {loading ? 'Connecting...' : 'Continue with Google'}
                 </button>
-            </div>
+            </form>
              {error && (
                 <p style={{ color: '#dc2626', fontSize: '0.9rem', marginTop: '1rem' }}>
                   {error}

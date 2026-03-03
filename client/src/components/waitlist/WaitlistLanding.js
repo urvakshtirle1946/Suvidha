@@ -93,12 +93,13 @@ export default function WaitlistLanding() {
         display: 'flex',
         flexDirection: 'column',
         padding: '2rem',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        overflowY: 'auto',
         position: 'relative'
     }}>
-      {/* Animated Wave Background */}
+      {/* Simple Animated Wave Background */}
       <div style={{
-        position: 'absolute',
+        position: 'fixed',
         bottom: 0,
         left: 0,
         width: '100%',
@@ -106,31 +107,23 @@ export default function WaitlistLanding() {
         zIndex: 0,
         pointerEvents: 'none',
         overflow: 'hidden',
-        filter: 'blur(8px)'
+        background: 'linear-gradient(180deg, transparent 0%, rgba(100, 180, 255, 0.4) 60%, rgba(0, 100, 255, 0.8) 100%)'
       }}>
-        {/* We use multiple SVG waves with opacity to create a smooth layered transition */}
-        <svg viewBox="0 0 1440 320" style={{ position: 'absolute', bottom: 0, width: '200%', height: '100%', left: '0', animation: 'wave 20s linear infinite', opacity: 0.08 }}>
+        {/* A single, subtle, slow-moving wave for a simple transition */}
+        <svg viewBox="0 0 1440 320" style={{ position: 'absolute', bottom: 0, width: '200%', height: '100%', left: '0', animation: 'simpleWave 30s linear infinite', opacity: 0.15 }}>
           <path fill="#0026e9" fillOpacity="1" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
           <path transform="translate(1440, 0)" fill="#0026e9" fillOpacity="1" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
         </svg>
-        <svg viewBox="0 0 1440 320" style={{ position: 'absolute', bottom: 0, width: '200%', height: '80%', left: '0', animation: 'wave 15s linear infinite reverse', opacity: 0.15 }}>
-          <path fill="#0026e9" fillOpacity="1" d="M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,240C672,256,768,256,864,229.3C960,203,1056,149,1152,144C1248,139,1344,181,1392,202.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-          <path transform="translate(1440, 0)" fill="#0026e9" fillOpacity="1" d="M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,240C672,256,768,256,864,229.3C960,203,1056,149,1152,144C1248,139,1344,181,1392,202.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-        </svg>
-        <svg viewBox="0 0 1440 320" style={{ position: 'absolute', bottom: 0, width: '200%', height: '60%', left: '0', animation: 'wave 10s linear infinite', opacity: 0.3 }}>
-          <path fill="#0026e9" fillOpacity="1" d="M0,128L48,144C96,160,192,192,288,181.3C384,171,480,117,576,106.7C672,96,768,128,864,160C960,192,1056,224,1152,213.3C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-          <path transform="translate(1440, 0)" fill="#0026e9" fillOpacity="1" d="M0,128L48,144C96,160,192,192,288,181.3C384,171,480,117,576,106.7C672,96,768,128,864,160C960,192,1056,224,1152,213.3C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-        </svg>
         <style>
           {`
-            @keyframes wave {
+            @keyframes simpleWave {
               0% { transform: translateX(0); }
               100% { transform: translateX(-50%); }
             }
           `}
         </style>
       </div>
-      
+
       {/* Navbar - Full Width for Top-Left Logo */}
       <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start', position: 'relative', zIndex: 10 }}>
            <img src="/logo.png" alt="Zelp Logo" style={{ height: '140px', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply' }} />
@@ -142,7 +135,6 @@ export default function WaitlistLanding() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
           position: 'relative',
           zIndex: 10
       }}>
@@ -155,7 +147,9 @@ export default function WaitlistLanding() {
             textAlign: 'center',
             maxWidth: '1000px',
             width: '100%',
-            marginTop: '-5vh' // A slight offset because the logo takes up space at the top
+            margin: 'auto 0',
+            paddingTop: '2rem',
+            paddingBottom: '4rem'
         }}>
             <h1 style={{ 
               fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', 
@@ -307,6 +301,29 @@ export default function WaitlistLanding() {
                   {error}
                 </p>
               )}
+
+            {/* Launch Video Section */}
+            <div style={{ 
+              marginTop: '4rem', 
+              width: '100%', 
+              maxWidth: '800px', 
+              borderRadius: '16px', 
+              overflow: 'hidden', 
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              backgroundColor: '#000'
+            }}>
+              <video 
+                autoPlay 
+                loop 
+                muted 
+                playsInline 
+                controls 
+                style={{ width: '100%', display: 'block' }}
+              >
+                <source src="/assets/Zelp Launch.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
         </div>
       </div>
     </div>

@@ -358,6 +358,7 @@ function AdminLayoutContent({ children }) {
                      </div>
                      
                      <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-secondary)', marginBottom: '0.8rem', fontWeight: 'bold' }}>Most Recent</h4>
+                     
                      <div className="custom-scrollbar" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', maxHeight: '300px', overflowY: 'auto' }}>
                         {notifications.length > 0 ? (
                             notifications.map(booking => (
@@ -431,19 +432,20 @@ function NavItem({ icon, label, href, active, darkMode }) {
 }
 
 function MiniPatientRow({ name, issue, time, status }) {
+    const safeName = name || 'User';
     return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--text-secondary)' }}>
-                {name.substring(0,2).toUpperCase()}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0.4rem 0' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+                {safeName.substring(0,2).toUpperCase()}
             </div>
             <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.9rem', fontWeight: '500', color: 'var(--text-primary)' }}>{name}</div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{issue}</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: '500', color: 'var(--text-primary)' }}>{safeName}</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{issue || 'General Inquiry'}</div>
             </div>
             {status === 'active' ? (
                 <CheckCircle size={16} color="var(--accent)" />
             ) : (
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{time}</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{time || 'Just now'}</div>
             )}
         </div>
     );

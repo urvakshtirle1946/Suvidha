@@ -99,17 +99,17 @@ export default function WaitlistLanding() {
   return (
     <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(to bottom, #ffffff 0%, #ffffff 40%, #eaddff 60%, #9fcaff 100%)', // Adjusted to start blending earlier
+        background: 'linear-gradient(to bottom, #ffffff 0%, #ffffff 20%, #eaddff 45%, #9fcaff 100%)', // Increased gradient height so color reaches buttons
         display: 'flex',
         flexDirection: 'column',
-        padding: '0 2rem 2rem 2rem', 
+        padding: '0 clamp(1rem, 5vw, 2rem) 2rem clamp(1rem, 5vw, 2rem)', 
         overflowX: 'hidden',
         overflowY: 'auto',
         position: 'relative'
     }}>
       {/* Navbar - Full Width for Top-Left Logo and Right Button */}
       <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 10, paddingTop: '1rem' }}>
-           <img src="/logo.png" alt="Zelp Logo" style={{ height: '120px', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply', marginTop: '-10px' }} />
+           <img src="/logo.png" alt="Zelp Logo" style={{ height: 'clamp(80px, 12vw, 120px)', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply', marginTop: '-10px' }} />
            
            <button 
              onClick={() => setShowPopup(true)}
@@ -249,7 +249,7 @@ export default function WaitlistLanding() {
 
                 <span style={{ color: '#6b7280', fontSize: '0.95rem', fontWeight: '500', padding: '0 0.5rem' }}>or</span>
 
-                <div style={{ display: 'flex', gap: '0.5rem', width: '350px' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', flex: '1 1 300px', maxWidth: '100%' }}>
                   <input 
                     type="email" 
                     name="email"
@@ -296,7 +296,7 @@ export default function WaitlistLanding() {
                     onMouseEnter={(e) => { if(!loading) e.currentTarget.style.backgroundColor = '#001bb3' }}
                     onMouseLeave={(e) => { if(!loading) e.currentTarget.style.backgroundColor = '#0026e9' }}
                   >
-                    {loading ? 'Joining...' : 'Join'}
+                    {loading ? 'Joining...' : 'Join Waitlist'}
                   </button>
                 </div>
             </form>
@@ -531,7 +531,7 @@ export default function WaitlistLanding() {
                 onMouseEnter={(e) => { if(!loading) e.currentTarget.style.backgroundColor = '#001bb3' }}
                 onMouseLeave={(e) => { if(!loading) e.currentTarget.style.backgroundColor = '#0026e9' }}
               >
-                {loading ? 'Joining...' : 'Join'}
+                {loading ? 'Joining...' : 'Join Waitlist'}
               </button>
             </form>
             {error && (

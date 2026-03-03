@@ -98,7 +98,7 @@ export default function WaitlistLanding() {
     }}>
       {/* Navbar - Full Width for Top-Left Logo */}
       <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
-           <img src="/logo.png" alt="Zelp Logo" style={{ height: '80px', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply' }} />
+           <img src="/logo.png" alt="Zelp Logo" style={{ height: '140px', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply' }} />
       </div>
 
       <div style={{

@@ -214,7 +214,7 @@ export default function WaitlistLanding() {
 
                 <span style={{ color: '#6b7280', fontSize: '0.95rem', fontWeight: '500', padding: '0 0.5rem' }}>or</span>
 
-                <div style={{ display: 'flex', gap: '0.5rem', flex: 1, minWidth: '300px' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', width: '350px' }}>
                   <input 
                     type="email" 
                     name="email"

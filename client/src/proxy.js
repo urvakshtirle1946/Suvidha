@@ -16,6 +16,11 @@ export function proxy(req) {
 
   // 2. Rewrite requests from the admin subdomain to the internal hidden folder
   if (isAdminSubdomain) {
+    // Send root directly to login with explicit path to avoid blank shell states.
+    if (url.pathname === '/') {
+      return NextResponse.redirect(new URL(`/${adminPath}/login`, req.url));
+    }
+
     if (!url.pathname.startsWith(`/${adminPath}`)) {
       url.pathname = `/${adminPath}${url.pathname === '/' ? '' : url.pathname}`;
       return NextResponse.rewrite(url);

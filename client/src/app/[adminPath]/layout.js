@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname, useParams } from 'next/navigation';
 import { 
@@ -22,6 +22,7 @@ function AdminLayoutContent({ children }) {
   
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
   const [darkMode, setDarkMode] = useState(true); // Theme state (Default: Dark)
 
@@ -30,35 +31,47 @@ function AdminLayoutContent({ children }) {
 
   const { addToast } = useToast();
   
-  const adminPathParam = params?.adminPath;
-  const basePath = adminPathParam ? `/${adminPathParam}` : '';
   const securePath = process.env.NEXT_PUBLIC_ADMIN_ROUTE || 'admin';
+  const adminPathParam = params?.adminPath || securePath;
+  const basePath = `/${adminPathParam}`;
 
   useEffect(() => {
-     if (!basePath) return; 
-
-     if (adminPathParam !== securePath) {
-        console.warn(`Invalid admin path: ${adminPathParam}. Expected: ${securePath}`);
-        router.replace('/'); 
+     const requestedPath = params?.adminPath;
+     if (requestedPath && requestedPath !== securePath) {
+        console.warn(`Invalid admin path: ${requestedPath}. Expected: ${securePath}`);
+        setIsAuthorized(false);
+        setIsCheckingAuth(false);
+        router.replace(`/${securePath}/login`);
         return;
      }
 
      const checkAuth = () => {
-         const auth = localStorage.getItem('admin_auth');
-         if (pathname?.endsWith('/login')) {
-             setIsAuthorized(true);
-             return;
-         }
-         if (!auth) {
-             router.push(`${basePath}/login`);
-         } else {
-             setIsAuthorized(true);
+         try {
+             const auth = localStorage.getItem('admin_auth');
+             if (pathname?.endsWith('/login')) {
+                 setIsAuthorized(true);
+                 setIsCheckingAuth(false);
+                 return;
+             }
+             if (!auth) {
+                 setIsAuthorized(false);
+                 setIsCheckingAuth(false);
+                 router.replace(`${basePath}/login`);
+             } else {
+                 setIsAuthorized(true);
+                 setIsCheckingAuth(false);
+             }
+         } catch (err) {
+             console.error('Admin auth check failed:', err);
+             setIsAuthorized(false);
+             setIsCheckingAuth(false);
+             router.replace(`${basePath}/login`);
          }
      };
      
      const timer = setTimeout(checkAuth, 100);
      return () => clearTimeout(timer);
-  }, [router, basePath, pathname, adminPathParam, securePath]);
+  }, [router, basePath, pathname, params?.adminPath, securePath]);
 
   // Fetch Notifications State
   const [notifications, setNotifications] = useState([]);
@@ -140,7 +153,17 @@ function AdminLayoutContent({ children }) {
   }
 
   const isLoginPage = pathname?.endsWith('/login');
-  if (!isAuthorized) return null; 
+  if (isCheckingAuth) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#050505' }} />
+    );
+  }
+
+  if (!isAuthorized) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#050505' }} />
+    );
+  }
 
   // Theme Variables
   const themeStyles = {

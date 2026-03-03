@@ -97,6 +97,46 @@ export default function WaitlistLanding() {
 
   // Initial Signup Screen
   return (
+    <>
+    <style>{`
+      .waitlist-form-mobile {
+        display: flex; 
+        flex-direction: row; 
+        flex-wrap: wrap;
+        gap: 1rem; 
+        align-items: center; 
+        justify-content: center;
+        width: 100%; 
+        max-width: 800px;
+      }
+      .email-input-group {
+        display: flex; 
+        gap: 0.5rem; 
+        flex: 1 1 300px; 
+        max-width: 100%;
+      }
+      @media (max-width: 640px) {
+        .waitlist-form-mobile {
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+        .waitlist-form-mobile > button,
+        .waitlist-form-mobile .email-input-group {
+          width: 100% !important;
+          max-width: 100% !important;
+          flex: none !important;
+        }
+        .email-input-group {
+          flex-direction: column;
+          gap: 1rem;
+        }
+        .email-input-group input,
+        .email-input-group button {
+          width: 100% !important;
+          min-width: 100% !important;
+        }
+      }
+    `}</style>
     <div style={{
         minHeight: '100vh',
         background: 'linear-gradient(to bottom, #ffffff 0%, #ffffff 20%, #eaddff 45%, #9fcaff 100%)', // Increased gradient height so color reaches buttons
@@ -199,16 +239,7 @@ export default function WaitlistLanding() {
                   setLoading(false);
                 }
               }}
-              style={{
-                display: 'flex', 
-                flexDirection: 'row', 
-                flexWrap: 'wrap',
-                gap: '1rem', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                width: '100%', 
-                maxWidth: '800px' 
-              }}
+              className="waitlist-form-mobile"
             >
                 <button 
                   type="button"
@@ -249,7 +280,7 @@ export default function WaitlistLanding() {
 
                 <span style={{ color: '#6b7280', fontSize: '0.95rem', fontWeight: '500', padding: '0 0.5rem' }}>or</span>
 
-                <div style={{ display: 'flex', gap: '0.5rem', flex: '1 1 300px', maxWidth: '100%' }}>
+                <div className="email-input-group">
                   <input 
                     type="email" 
                     name="email"
@@ -543,5 +574,6 @@ export default function WaitlistLanding() {
         </div>
       )}
     </div>
+    </>
   );
 }

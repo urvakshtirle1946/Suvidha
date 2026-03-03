@@ -78,6 +78,26 @@ const sanitizeUser = (user) => ({
   created_at: user.created_at
 });
 
+const ensureWaitlistTable = async () => {
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS waitlist_signups (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      google_id VARCHAR(255) UNIQUE,
+      source VARCHAR(50) NOT NULL DEFAULT 'google',
+      status VARCHAR(50) NOT NULL DEFAULT 'pending',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  await db.query(`
+    CREATE INDEX IF NOT EXISTS idx_waitlist_signups_created_at
+    ON waitlist_signups (created_at DESC);
+  `);
+};
+
 const signUserToken = (user, expiresIn = '2d') => {
   return jwt.sign(
     {
@@ -366,6 +386,80 @@ exports.completeGoogleRegistration = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Unable to complete registration right now. Please try again.'
+    });
+  }
+};
+
+exports.joinWaitlistWithGoogle = async (req, res) => {
+  const { access_token } = req.body || {};
+  if (!access_token) {
+    return res.status(400).json({ success: false, message: 'Access token is required.' });
+  }
+
+  try {
+    const googleRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${access_token}` }
+    });
+
+    if (!googleRes.ok) {
+      return res.status(401).json({ success: false, message: 'Invalid Google access token.' });
+    }
+
+    const { name, email, sub: google_id } = await googleRes.json();
+    const cleanEmail = normalizeEmail(email);
+    const cleanName = normalizeName(name);
+
+    if (!cleanEmail || !EMAIL_REGEX.test(cleanEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Google account email is missing or invalid.'
+      });
+    }
+
+    await ensureWaitlistTable();
+
+    const result = await db.query(
+      `INSERT INTO waitlist_signups (name, email, google_id, source, status, updated_at)
+       VALUES ($1, $2, $3, 'google', 'pending', CURRENT_TIMESTAMP)
+       ON CONFLICT (email)
+       DO UPDATE SET
+         name = EXCLUDED.name,
+         google_id = COALESCE(EXCLUDED.google_id, waitlist_signups.google_id),
+         source = 'google',
+         status = 'pending',
+         updated_at = CURRENT_TIMESTAMP
+       RETURNING id, name, email, source, status, created_at, updated_at`,
+      [cleanName || 'User', cleanEmail, google_id || null]
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Successfully added to waitlist.',
+      entry: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Waitlist Google Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Unable to join waitlist right now. Please try again.'
+    });
+  }
+};
+
+exports.getWaitlistEntries = async (_req, res) => {
+  try {
+    await ensureWaitlistTable();
+    const result = await db.query(
+      `SELECT id, name, email, source, status, created_at
+       FROM waitlist_signups
+       ORDER BY created_at DESC`
+    );
+    return res.json(result.rows);
+  } catch (error) {
+    console.error('Database Error in getWaitlistEntries:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Unable to fetch waitlist entries.'
     });
   }
 };

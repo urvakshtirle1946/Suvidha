@@ -1,26 +1,32 @@
 'use client';
 import { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
 import { useGoogleLogin } from '@react-oauth/google';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
+import { getApiUrl } from '@/utils/api';
 
 export default function WaitlistLanding() {
-  const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const { googleLogin } = useAuth();
+  const [error, setError] = useState('');
 
   const handleGoogleSuccess = async (tokenResponse) => {
     try {
       setLoading(true);
-      // Wait for backend to process the google login token
-      await googleLogin({ access_token: tokenResponse.access_token });
-      
-      // Successfully authenticated & registered
+      setError('');
+      const apiUrl = getApiUrl();
+      const res = await fetch(`${apiUrl}/api/auth/waitlist/google`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ access_token: tokenResponse.access_token })
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.message || 'Unable to join waitlist right now.');
+      }
       setSubmitted(true);
     } catch (err) {
-      console.error('Waitlist Google authentication failed:', err);
+      setError(err.message || 'Google authentication failed.');
     } finally {
       setLoading(false);
     }
@@ -28,7 +34,7 @@ export default function WaitlistLanding() {
 
   const loginWithGoogle = useGoogleLogin({
     onSuccess: handleGoogleSuccess,
-    onError: () => console.error('Google login popup failed to open or was closed.'),
+    onError: () => setError('Google login popup failed to open or was closed.')
   });
 
   // Success Confirmation Screen
@@ -175,6 +181,11 @@ export default function WaitlistLanding() {
                   )}
                   {loading ? 'Connecting...' : 'Continue with Google'}
                 </button>
+                {error && (
+                  <p style={{ color: '#dc2626', fontSize: '0.9rem', margin: 0 }}>
+                    {error}
+                  </p>
+                )}
             </div>
 
 

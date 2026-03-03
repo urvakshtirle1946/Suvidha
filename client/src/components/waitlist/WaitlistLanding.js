@@ -118,7 +118,7 @@ export default function WaitlistLanding() {
       @media (max-width: 640px) {
         .waitlist-form-mobile {
           flex-direction: column;
-          gap: 1.5rem;
+          gap: 1rem;
         }
         .waitlist-form-mobile > button,
         .waitlist-form-mobile .email-input-group {
@@ -128,7 +128,7 @@ export default function WaitlistLanding() {
         }
         .email-input-group {
           flex-direction: column;
-          gap: 1rem;
+          gap: 0.75rem;
         }
         .email-input-group input,
         .email-input-group button {
@@ -195,19 +195,27 @@ export default function WaitlistLanding() {
             paddingBottom: '4rem'
         }}>
             <h1 style={{ 
-              fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', 
+              fontSize: 'clamp(2rem, 8vw, 4.5rem)', 
               fontWeight: '500', 
               lineHeight: '1.2', 
               color: '#111', 
-              marginBottom: '1.5rem',
+              marginBottom: '1rem',
               letterSpacing: '-0.02em',
               fontFamily: 'var(--font-outfit)',
-              whiteSpace: 'nowrap'
+              wordWrap: 'break-word'
             }}>
               Transform your healthcare<br/>into a breeze
             </h1>
 
-            <p style={{ color: '#4b5563', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '3.5rem', maxWidth: '600px', fontWeight: '500', whiteSpace: 'normal' }}>
+            <p style={{ 
+              color: '#4b5563', 
+              fontSize: 'clamp(0.95rem, 4vw, 1.1rem)', 
+              lineHeight: '1.5', 
+              marginBottom: '2.5rem', 
+              maxWidth: '600px', 
+              fontWeight: '500', 
+              padding: '0 0.5rem' 
+            }}>
               Zelp helps you book and manage hospital treatments and lab tests instantly, just like having a personal healthcare assistant.
             </p>
 

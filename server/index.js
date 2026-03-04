@@ -35,6 +35,7 @@ const allowedOrigins = [
   "https://tryzelp.app",
   "https://admin.tryzelp.app",
   "https://waitlist.tryzelp.app",
+  "https://waiting.tryzelp.app",
   "http://localhost:3000",
   "https://suvidha-client.vercel.app",
   "https://suvidha-client-git-main-suvidha.vercel.app"

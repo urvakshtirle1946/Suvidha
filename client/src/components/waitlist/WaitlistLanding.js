@@ -205,7 +205,7 @@ export default function WaitlistLanding() {
               fontFamily: 'var(--font-outfit)',
               wordWrap: 'break-word'
             }}>
-              Transform your healthcare<br/>into a breeze
+              The fastest way to book medical tests
             </h1>
 
             <p style={{ 
@@ -217,7 +217,7 @@ export default function WaitlistLanding() {
               fontWeight: '500', 
               padding: '0 0.5rem' 
             }}>
-              Zelp helps you book and manage hospital treatments and lab tests instantly, just like having a personal healthcare assistant.
+              Compare prices and book MRI, CT scans, X-rays and lab tests near you — with instant time slots and quick ambulance access.
             </p>
 
             <form 

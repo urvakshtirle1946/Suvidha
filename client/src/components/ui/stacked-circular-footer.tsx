@@ -3,7 +3,7 @@ import { Facebook, Instagram, Linkedin, Mail } from "lucide-react"
 function StackedCircularFooter() {
     return (
         <div className="w-full flex justify-center pb-8 px-4 mt-8">
-            <footer className="w-full max-w-[1000px] bg-white/40 backdrop-blur-lg rounded-[24px] py-4 px-6 md:px-10 flex flex-col md:flex-row flex-wrap items-center justify-center md:justify-between shadow-sm border border-white/60 gap-y-4">
+            <footer className="w-full max-w-[1000px] bg-white/40 backdrop-blur-lg rounded-[24px] overflow-hidden py-4 px-6 md:px-10 flex flex-col md:flex-row flex-wrap items-center justify-center md:justify-between shadow-sm border border-white/60 gap-y-4">
 
                 {/* Left: Logo & Copyright */}
                 <div className="flex flex-col items-center md:items-start">

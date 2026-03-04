@@ -406,7 +406,7 @@ export default function WaitlistLanding() {
             {/* Footer */}
             <div style={{ marginTop: 'auto', paddingTop: '2rem', paddingBottom: '1rem', width: '100%', textAlign: 'center' }}>
               <p style={{ color: '#6b7280', fontSize: '0.95rem', fontWeight: '500' }}>
-                Built with ❤️ by{' '}
+                Built ❤️ by{' '}
                 <a 
                   href="https://www.linkedin.com/in/urvaksh-tirle" 
                   target="_blank" 

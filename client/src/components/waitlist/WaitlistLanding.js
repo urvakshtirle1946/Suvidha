@@ -155,7 +155,7 @@ export default function WaitlistLanding() {
            <button 
              onClick={() => setShowPopup(true)}
              style={{
-               backgroundColor: '#0026e9', 
+               backgroundColor: '#000000', 
                color: 'white', 
                padding: '0.6rem 1.2rem', 
                fontSize: '0.95rem', 
@@ -166,8 +166,8 @@ export default function WaitlistLanding() {
                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
                transition: 'all 0.2s ease',
              }}
-             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#001bb3'}
-             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0026e9'}
+             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1f2937'}
+             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#000000'}
            >
              Join waitlist
            </button>
@@ -301,7 +301,7 @@ export default function WaitlistLanding() {
                       height: '52px',
                       fontSize: '1rem',
                       borderRadius: '8px',
-                      border: '1px solid #d1d5db',
+                      border: '2px solid #d1d5db',
                       flex: 1,
                       outline: 'none',
                       boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
@@ -544,7 +544,7 @@ export default function WaitlistLanding() {
                   height: '52px',
                   fontSize: '1rem',
                   borderRadius: '8px',
-                  border: '1px solid #d1d5db',
+                  border: '2px solid #d1d5db',
                   width: '100%',
                   outline: 'none',
                   transition: 'border-color 0.2s',

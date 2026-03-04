@@ -4,24 +4,12 @@ import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react"
 function StackedCircularFooter() {
     return (
         <div className="w-full flex justify-center pb-8 px-4">
-            <footer className="w-full max-w-[1000px] bg-black text-white rounded-[24px] py-16 px-6 flex flex-col items-center">
+            <footer className="w-full max-w-[1000px] bg-[#09090b] text-white rounded-[24px] pt-16 pb-12 px-6 flex flex-col items-center shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] border border-[#27272a]">
                 {/* Logo Section */}
-                <div className="mb-8 flex items-center justify-center gap-3">
-                    {/* Custom Logo rendering similar to the S icon in the image */}
-                    <div className="bg-blue-600 rounded-lg w-8 h-8 flex items-center justify-center font-bold text-lg shadow-[0_0_15px_rgba(37,99,235,0.5)]">
-                        Z
-                    </div>
-                    <span className="text-xl font-bold tracking-tight">zelp</span>
+                <div className="mb-14 flex items-center justify-center gap-2">
+                    <img src="/favicon.ico" alt="Zelp Logo" className="w-[34px] h-[34px] rounded-lg shadow-[0_0_15px_rgba(37,99,235,0.8)]" />
+                    <span className="text-[22px] font-bold tracking-tight mt-1">zelp</span>
                 </div>
-
-                {/* Navigation Links */}
-                <nav className="mb-10 flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm font-medium text-gray-300">
-                    <a href="#" className="hover:text-white transition-colors">Homepage</a>
-                    <a href="#" className="hover:text-white transition-colors">Products</a>
-                    <a href="#" className="hover:text-white transition-colors">Services</a>
-                    <a href="#" className="hover:text-white transition-colors">About Us</a>
-                    <a href="#" className="hover:text-white transition-colors">Contact Us</a>
-                </nav>
 
                 {/* Social Icons */}
                 <div className="flex justify-center flex-wrap gap-8 text-gray-400">

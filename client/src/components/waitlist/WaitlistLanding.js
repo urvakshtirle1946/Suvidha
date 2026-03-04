@@ -354,7 +354,8 @@ export default function WaitlistLanding() {
               overflow: 'hidden', 
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
               backgroundColor: '#000',
-              position: 'relative'
+              position: 'relative',
+              marginBottom: '2rem' // Added margin to separate from footer
             }}>
               <video 
                 ref={videoRef}
@@ -400,6 +401,28 @@ export default function WaitlistLanding() {
               >
                 {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
               </button>
+            </div>
+            
+            {/* Footer */}
+            <div style={{ marginTop: 'auto', paddingTop: '2rem', paddingBottom: '1rem', width: '100%', textAlign: 'center' }}>
+              <p style={{ color: '#6b7280', fontSize: '0.95rem', fontWeight: '500' }}>
+                Built with ❤️ by{' '}
+                <a 
+                  href="https://www.linkedin.com/in/urvaksh-tirle" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ 
+                    color: '#0026e9', 
+                    textDecoration: 'none', 
+                    fontWeight: '600',
+                    transition: 'color 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#001bb3'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#0026e9'}
+                >
+                  Urvaksh
+                </a>
+              </p>
             </div>
         </div>
       </div>

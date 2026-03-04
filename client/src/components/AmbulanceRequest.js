@@ -69,14 +69,14 @@ export default function AmbulanceRequest() {
     };
 
     useEffect(() => {
-        if ("navigator" in window) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                setLocation({
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                });
-            });
-        }
+        // if ("navigator" in window) {
+        //     navigator.geolocation.getCurrentPosition((position) => {
+        //         setLocation({
+        //             lat: position.coords.latitude,
+        //             lng: position.coords.longitude,
+        //         });
+        //     });
+        // }
     }, []);
 
     const toggleWidget = () => setIsOpen((prev) => !prev);

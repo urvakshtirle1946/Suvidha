@@ -5,8 +5,8 @@ import { getApiUrl } from '@/utils/api';
 const LocationContext = createContext();
 
 export function LocationProvider({ children }) {
-  const [location, setLocation] = useState('Detecting location...');
-  const [city, setCity] = useState('');
+  const [location, setLocation] = useState('Indore, India');
+  const [city, setCity] = useState('Indore');
   // Default to Indore coordinates
   const [latitude, setLatitude] = useState(22.7196); 
   const [longitude, setLongitude] = useState(75.8577);
@@ -60,7 +60,7 @@ export function LocationProvider({ children }) {
   };
 
   useEffect(() => {
-    detectLocation();
+    // Intentionally left empty to prevent auto-prompting for location on mount.
   }, []);
 
   return (

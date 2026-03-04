@@ -3,7 +3,7 @@ import { Facebook, Instagram, Linkedin } from "lucide-react"
 function StackedCircularFooter() {
     return (
         <div className="w-full flex justify-center pb-8 px-4">
-            <footer className="w-full max-w-[800px] bg-[#0a0a0a] text-white rounded-[24px] py-2 px-8 flex flex-row items-center justify-between shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] border border-[#1f1f1f]">
+            <footer className="w-full max-w-[1000px] bg-[#0a0a0a] text-white rounded-[24px] py-2 px-8 flex flex-row items-center justify-between shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] border border-[#1f1f1f]">
 
                 {/* Left: Logo Section */}
                 <div className="flex items-center gap-2">
@@ -14,7 +14,7 @@ function StackedCircularFooter() {
                 {/* Middle: Copyright */}
                 <div className="hidden sm:block">
                     <p className="text-[10px] text-gray-400 font-medium tracking-wide">
-                        Copyright 2024© zelp
+                        © 2024 zelp
                     </p>
                 </div>
 

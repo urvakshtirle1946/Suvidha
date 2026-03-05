@@ -8,7 +8,6 @@ export default function WaitlistLanding() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const footerLinks = ['Home', 'Services', 'Contact'];
 
   const handleGoogleSuccess = async (tokenResponse) => {
     try {
@@ -204,42 +203,6 @@ export default function WaitlistLanding() {
             </div>
         </div>
       </div>
-      <footer style={{
-          position: 'absolute',
-          left: '50%',
-          bottom: '1.25rem',
-          transform: 'translateX(-50%)',
-          width: 'min(94%, 1200px)',
-          zIndex: 3
-      }}>
-        <div style={{
-            background: 'rgba(255, 255, 255, 0.62)',
-            border: '1px solid rgba(255, 255, 255, 0.72)',
-            borderRadius: '999px',
-            backdropFilter: 'blur(6px)',
-            WebkitBackdropFilter: 'blur(6px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1rem',
-            flexWrap: 'wrap',
-            padding: '0.75rem 1.2rem'
-        }}>
-          <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#111' }}>Zelp</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-            {footerLinks.map((link) => (
-              <a
-                key={link}
-                href="#"
-                style={{ color: 'rgba(17, 17, 17, 0.8)', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500 }}
-              >
-                {link}
-              </a>
-            ))}
-            <span style={{ color: 'rgba(17, 17, 17, 0.55)', fontSize: '0.8rem' }}>(c) {new Date().getFullYear()}</span>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { getApiUrl } from '@/utils/api';
 
@@ -8,6 +8,13 @@ export default function WaitlistLanding() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const footerLinks = ['Homepage', 'Products', 'Services', 'About Us', 'Contact Us'];
+  const socialLinks = [
+    { label: 'Facebook', href: '#', icon: Facebook },
+    { label: 'X', href: '#', icon: Twitter },
+    { label: 'Instagram', href: '#', icon: Instagram },
+    { label: 'LinkedIn', href: '#', icon: Linkedin }
+  ];
 
   const handleGoogleSuccess = async (tokenResponse) => {
     try {
@@ -95,11 +102,12 @@ export default function WaitlistLanding() {
         minHeight: '100vh',
         backgroundColor: '#0026e6', 
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
         padding: '2rem',
         overflow: 'hidden',
-        position: 'relative'
+        position: 'relative',
+        gap: '2rem'
     }}>
       <div style={{
           width: '100%',
@@ -108,7 +116,9 @@ export default function WaitlistLanding() {
           justifyContent: 'space-between',
           alignItems: 'center',
           gap: '4rem',
-          flexWrap: 'wrap'
+          flexWrap: 'wrap',
+          margin: '0 auto',
+          flex: 1
       }}>
           
         {/* Left Side: Illustration Image */}
@@ -203,6 +213,73 @@ export default function WaitlistLanding() {
             </div>
         </div>
       </div>
+
+      <footer style={{ width: '100%', maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{
+            background: '#050505',
+            borderRadius: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            boxShadow: '0 18px 44px rgba(0, 0, 0, 0.4)',
+            padding: '2.25rem 1.5rem',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '1.5rem'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#ffffff' }}>
+            <div style={{
+                width: '28px',
+                height: '28px',
+                borderRadius: '999px',
+                background: 'linear-gradient(145deg, #6d7cff 0%, #9f8bff 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 700,
+                fontSize: '0.9rem'
+            }}>
+              S
+            </div>
+            <span style={{ fontSize: '1.15rem', fontWeight: 600, letterSpacing: '0.01em' }}>slothui</span>
+          </div>
+
+          <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: '1.5rem',
+              rowGap: '0.75rem'
+          }}>
+            {footerLinks.map((link) => (
+              <a
+                key={link}
+                href="#"
+                style={{
+                  color: 'rgba(255, 255, 255, 0.78)',
+                  fontSize: '0.95rem',
+                  fontWeight: 500,
+                  textDecoration: 'none'
+                }}
+              >
+                {link}
+              </a>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+            {socialLinks.map(({ label, href, icon: Icon }) => (
+              <a
+                key={label}
+                href={href}
+                aria-label={label}
+                style={{ color: 'rgba(255, 255, 255, 0.7)', display: 'inline-flex' }}
+              >
+                <Icon size={18} strokeWidth={2} />
+              </a>
+            ))}
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

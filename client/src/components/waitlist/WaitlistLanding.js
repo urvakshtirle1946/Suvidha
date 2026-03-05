@@ -296,7 +296,7 @@ export default function WaitlistLanding() {
                     placeholder="Enter your email address"
                     required
                     disabled={loading}
-                    className="h-[52px] text-[1rem] bg-white text-gray-900 border-2 border-gray-300 focus-visible:ring-black focus-visible:ring-offset-1"
+                    className="h-[52px] text-[1rem] bg-white text-gray-900 border-2 border-gray-300 focus-visible:ring-black focus-visible:ring-offset-1 text-center"
                     style={{ flex: 1, minWidth: '200px' }}
                   />
                   
@@ -524,7 +524,7 @@ export default function WaitlistLanding() {
                 placeholder="Enter your email address"
                 required
                 disabled={loading}
-                className="h-[52px] text-[1rem] bg-white text-gray-900 border-2 border-gray-300 focus-visible:ring-black focus-visible:ring-offset-1 w-full"
+                className="h-[52px] text-[1rem] bg-white text-gray-900 border-2 border-gray-300 focus-visible:ring-black focus-visible:ring-offset-1 w-full text-center"
               />
               
               <button 

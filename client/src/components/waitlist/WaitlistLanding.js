@@ -4,6 +4,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { CheckCircle2, Volume2, VolumeX } from 'lucide-react';
 import { getApiUrl } from '@/utils/api';
 import { StackedCircularFooter } from '@/components/ui/stacked-circular-footer';
+import { Input } from '@/components/ui/input';
 
 export default function WaitlistLanding() {
   const [submitted, setSubmitted] = useState(false);
@@ -290,29 +291,14 @@ export default function WaitlistLanding() {
                 <span style={{ color: '#6b7280', fontSize: '0.95rem', fontWeight: '500', padding: '0 0.5rem' }}>or</span>
 
                 <div className="email-input-group">
-                  <input 
+                  <Input 
                     type="email" 
                     name="email"
                     placeholder="Enter your email address"
                     required
                     disabled={loading}
-                    style={{
-                      padding: '0 1rem',
-                      height: '52px',
-                      fontSize: '1rem',
-                      borderRadius: '8px',
-                      border: '2px solid #d1d5db',
-                      backgroundColor: '#ffffff',
-                      color: '#111',
-                      boxSizing: 'border-box',
-                      flex: 1,
-                      outline: 'none',
-                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-                      transition: 'border-color 0.2s',
-                      minWidth: '200px'
-                    }}
-                    onFocus={(e) => e.target.style.borderColor = '#000000'}
-                    onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+                    className="h-[52px] text-[1rem] bg-white text-gray-900 border-2 border-gray-300 focus-visible:ring-black focus-visible:ring-offset-1"
+                    style={{ flex: 1, minWidth: '200px' }}
                   />
                   
                   <button 
@@ -536,27 +522,13 @@ export default function WaitlistLanding() {
               }}
               style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1rem' }}
             >
-              <input 
+              <Input 
                 type="email" 
                 name="email"
                 placeholder="Enter your email address"
                 required
                 disabled={loading}
-                style={{
-                  padding: '0 1rem',
-                  height: '52px',
-                  fontSize: '1rem',
-                  borderRadius: '8px',
-                  border: '2px solid #d1d5db',
-                  backgroundColor: '#ffffff',
-                  color: '#111',
-                  width: '100%',
-                  outline: 'none',
-                  transition: 'border-color 0.2s',
-                  boxSizing: 'border-box'
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#000000'}
-                onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+                className="h-[52px] text-[1rem] bg-white text-gray-900 border-2 border-gray-300 focus-visible:ring-black focus-visible:ring-offset-1 w-full"
               />
               
               <button 

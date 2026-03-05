@@ -301,14 +301,14 @@ export default function WaitlistLanding() {
                       height: '52px',
                       fontSize: '1rem',
                       borderRadius: '8px',
-                      border: '2px solid #d1d5db',
+                      border: '3px solid #d1d5db',
                       flex: 1,
                       outline: 'none',
                       boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
                       transition: 'border-color 0.2s',
                       minWidth: '200px'
                     }}
-                    onFocus={(e) => e.target.style.borderColor = '#0026e9'}
+                    onFocus={(e) => e.target.style.borderColor = '#000000'}
                     onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
                   />
                   
@@ -316,7 +316,7 @@ export default function WaitlistLanding() {
                     type="submit"
                     disabled={loading}
                     style={{ 
-                      backgroundColor: '#0026e9', 
+                      backgroundColor: '#000000', 
                       color: 'white', 
                       padding: '0 1.5rem', 
                       height: '52px',
@@ -333,8 +333,8 @@ export default function WaitlistLanding() {
                       opacity: loading ? 0.7 : 1,
                       whiteSpace: 'nowrap'
                     }}
-                    onMouseEnter={(e) => { if(!loading) e.currentTarget.style.backgroundColor = '#001bb3' }}
-                    onMouseLeave={(e) => { if(!loading) e.currentTarget.style.backgroundColor = '#0026e9' }}
+                    onMouseEnter={(e) => { if(!loading) e.currentTarget.style.backgroundColor = '#1f2937' }}
+                    onMouseLeave={(e) => { if(!loading) e.currentTarget.style.backgroundColor = '#000000' }}
                   >
                     {loading ? 'Joining...' : 'Join Waitlist'}
                   </button>
@@ -544,13 +544,13 @@ export default function WaitlistLanding() {
                   height: '52px',
                   fontSize: '1rem',
                   borderRadius: '8px',
-                  border: '2px solid #d1d5db',
+                  border: '3px solid #d1d5db',
                   width: '100%',
                   outline: 'none',
                   transition: 'border-color 0.2s',
                   boxSizing: 'border-box'
                 }}
-                onFocus={(e) => e.target.style.borderColor = '#0026e9'}
+                onFocus={(e) => e.target.style.borderColor = '#000000'}
                 onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
               />
               
@@ -558,7 +558,7 @@ export default function WaitlistLanding() {
                 type="submit"
                 disabled={loading}
                 style={{ 
-                  backgroundColor: '#0026e9', 
+                  backgroundColor: '#000000', 
                   color: 'white', 
                   height: '52px',
                   fontSize: '1rem', 
@@ -572,8 +572,8 @@ export default function WaitlistLanding() {
                   transition: 'background-color 0.2s ease',
                   width: '100%'
                 }}
-                onMouseEnter={(e) => { if(!loading) e.currentTarget.style.backgroundColor = '#001bb3' }}
-                onMouseLeave={(e) => { if(!loading) e.currentTarget.style.backgroundColor = '#0026e9' }}
+                onMouseEnter={(e) => { if(!loading) e.currentTarget.style.backgroundColor = '#1f2937' }}
+                onMouseLeave={(e) => { if(!loading) e.currentTarget.style.backgroundColor = '#000000' }}
               >
                 {loading ? 'Joining...' : 'Join Waitlist'}
               </button>

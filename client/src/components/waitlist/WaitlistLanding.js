@@ -3,8 +3,8 @@ import { useState, useRef } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { CheckCircle2, Volume2, VolumeX } from 'lucide-react';
 import { getApiUrl } from '@/utils/api';
-import { StackedCircularFooter } from '@/components/ui/stacked-circular-footer';
 import { Input } from '@/components/ui/input';
+import { CenteredLightFooter } from '@/components/ui/centered-light-footer';
 
 export default function WaitlistLanding() {
   const [submitted, setSubmitted] = useState(false);
@@ -393,8 +393,7 @@ export default function WaitlistLanding() {
               </button>
             </div>
             
-            {/* Footer */}
-            <StackedCircularFooter />
+            <CenteredLightFooter />
         </div>
       </div>
 

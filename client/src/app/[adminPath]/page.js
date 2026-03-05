@@ -32,6 +32,14 @@ export default function AdminDashboard() {
           fetch(`${apiUrl}/api/hospitals`, fetchOpts)
       ]);
 
+      if (resBookings.status === 401 || resBookings.status === 403 || 
+          resHospitals.status === 401 || resHospitals.status === 403) {
+        localStorage.removeItem('admin_auth');
+        localStorage.removeItem('admin_token');
+        window.location.href = `/${process.env.NEXT_PUBLIC_ADMIN_ROUTE || 'admin'}/login`;
+        return;
+      }
+
       if (resBookings.ok) {
         const data = await resBookings.json();
         setBookings(data);

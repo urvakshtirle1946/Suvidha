@@ -24,6 +24,13 @@ export default function WaitlistManagement() {
         headers: { Authorization: `Bearer ${token}` }
       });
 
+      if (res.status === 401 || res.status === 403) {
+        localStorage.removeItem('admin_auth');
+        localStorage.removeItem('admin_token');
+        window.location.href = `/${process.env.NEXT_PUBLIC_ADMIN_ROUTE || 'admin'}/login`;
+        return;
+      }
+
       if (!res.ok) {
         const data = await res.json().catch(() => null);
         throw new Error(data?.message || 'Failed to fetch waitlist.');

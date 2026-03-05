@@ -6,7 +6,7 @@ function StackedCircularFooter() {
             <footer className="w-full max-w-[1000px] bg-white/40 backdrop-blur-lg rounded-2xl overflow-hidden py-4 px-6 md:px-10 flex flex-col md:flex-row flex-wrap items-center justify-center md:justify-between shadow-sm border border-white/60 gap-y-4">
 
                 {/* Left */}
-                <div className="flex flex-col items-center md:items-start">
+                <div className="flex flex-col items-center md:items-start pl-2 md:pl-4">
                     <div className="flex items-center gap-2 mb-1">
                         <img
                             src="/favicon.ico"
@@ -31,7 +31,7 @@ function StackedCircularFooter() {
                 </div>
 
                 {/* Right */}
-                <div className="flex items-center gap-4 text-gray-500">
+                <div className="flex items-center gap-4 text-gray-500 pr-2 md:pr-4">
                     <a href="#" className="hover:text-blue-600 hover:scale-110 transition-all p-2 bg-white/50 rounded-full shadow-sm">
                         <Facebook className="h-[16px] w-[16px]" />
                     </a>

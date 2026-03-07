@@ -2,12 +2,11 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
-import BookingModal from '@/components/BookingModal';
 import { Search, MapPin, Filter, Activity, Clock, SlidersHorizontal, ArrowUpDown, X, Lock, ChevronDown, Heart, Smile, Eye, Building2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
 import { useCart } from '@/context/CartContext';
-import { getApiUrl, getImageUrl } from '@/utils/api';
+import { apiFetch, getImageUrl } from '@/utils/api';
 
 function HospitalsContent() {
   const router = useRouter();
@@ -29,11 +28,10 @@ function HospitalsContent() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const apiUrl = getApiUrl();
-        let url = `${apiUrl}/api/services`;
-        if (categoryFilter) url += `?category=${categoryFilter}`;
-        
-        const res = await fetch(url);
+        let endpoint = '/api/services';
+        if (categoryFilter) endpoint += `?category=${encodeURIComponent(categoryFilter)}`;
+
+        const res = await apiFetch(endpoint);
         const data = await res.json();
         
         // Handle both flattened array and paginated object formats
@@ -258,12 +256,6 @@ function HospitalsContent() {
         )}
 
       </div>
-
-      <BookingModal 
-        isOpen={!!selectedHospital} // For now, this just opens modal, in future could be "Go to Cart"
-        onClose={() => setSelectedHospital(null)} 
-        service={selectedHospital} 
-      />
     </main>
   );
 }
@@ -275,3 +267,6 @@ export default function Hospitals() {
     </Suspense>
   );
 }
+
+
+

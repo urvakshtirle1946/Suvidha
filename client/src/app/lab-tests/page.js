@@ -2,7 +2,6 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
-import BookingModal from '@/components/BookingModal';
 import { Search, MapPin, Star, Filter, Activity, Clock, SlidersHorizontal, TestTube } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { getApiUrl, getImageUrl } from '@/utils/api';
@@ -14,7 +13,6 @@ function LabTestsContent() {
   
   const { addToCart } = useCart();
   const [searchTerm, setSearchTerm] = useState(querySearch || '');
-  const [selectedTest, setSelectedTest] = useState(null);
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -130,7 +128,6 @@ function LabTestsContent() {
                                  const price = parseFloat(test.discount_price || test.price);
                                  const mrp = parseFloat(test.price);
                                  addToCart({ ...test, price, mrp });
-                                 setSelectedTest({ ...test, price, mrp, directBooking: true });
                              }}
                              onMouseOver={(e) => { e.currentTarget.style.background = '#ff6f61'; e.currentTarget.style.color = '#fff'; }}
                              onMouseOut={(e) => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#ff6f61'; }}
@@ -144,12 +141,6 @@ function LabTestsContent() {
         </div>
 
       </div>
-
-      <BookingModal 
-        isOpen={!!selectedTest} 
-        onClose={() => setSelectedTest(null)} 
-        service={selectedTest} 
-      />
     </main>
   );
 }
@@ -161,3 +152,4 @@ export default function LabTests() {
     </Suspense>
   );
 }
+

@@ -122,7 +122,8 @@ const issueUserSession = (req, res, user, statusCode, message) => {
     .json({
       success: true,
       message,
-      user: sanitizeUser(user)
+      user: sanitizeUser(user),
+      token
     });
 };
 
@@ -726,7 +727,8 @@ exports.getMe = async (req, res) => {
   // Intercept demo admin
   if (authUserId === 0) {
       const demoAdmin = { id: 0, email: 'urvaksh@tryzelp.app', name: 'Urvaksh Admin', role: 'admin' };
-      return res.json({ success: true, user: demoAdmin });
+      const token = signUserToken(demoAdmin, '2d');
+      return res.json({ success: true, user: demoAdmin, token });
   }
 
   try {
@@ -750,7 +752,8 @@ exports.getMe = async (req, res) => {
       .cookie('zelp_access_token', token, cookieOptions)
       .json({
         success: true,
-        user: sanitizeUser(user)
+        user: sanitizeUser(user),
+        token
       });
   } catch (error) {
     console.error('GetMe Error:', error);
@@ -767,3 +770,5 @@ exports.logout = (req, res) => {
   res.clearCookie('admin_token', clearOpts);
   return res.json({ success: true, message: 'Logged out successfully.' });
 };
+
+

@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
 import { X, Calendar, User, MapPin, CheckCircle, Home, Plus, ArrowUpDown, Clock } from 'lucide-react';
 import AuthModal from './AuthModal';
-import { getApiUrl, getImageUrl } from '@/utils/api';
+import { apiFetch, getImageUrl } from '@/utils/api';
 
 export default function BookingModal({ isOpen, onClose, service }) {
   const { user } = useAuth();
@@ -51,9 +51,8 @@ export default function BookingModal({ isOpen, onClose, service }) {
   const fetchLabs = async (serviceName, preselectedId) => {
       setFetchingLabs(true);
       try {
-          const apiUrl = getApiUrl();
           const cleanName = (serviceName || '').split(' at ')[0]; 
-          const res = await fetch(`${apiUrl}/api/services?search=${encodeURIComponent(cleanName)}`);
+          const res = await apiFetch(`/api/services?search=${encodeURIComponent(cleanName)}`);
           if (res.ok) {
               const data = await res.json();
               const list = Array.isArray(data) ? data : (data.data || []);
@@ -128,12 +127,11 @@ export default function BookingModal({ isOpen, onClose, service }) {
 
         setLoading(true);
         try {
-            const apiUrl = getApiUrl();
             let res;
             
             if (bookingId && paymentMethod === 'online') {
                 // Scenario: User confirmed "Pay at Hospital" first, then clicked "Pay Online Now"
-                res = await fetch(`${apiUrl}/api/bookings/${bookingId}/pay`, {
+                res = await apiFetch(`/api/bookings/${bookingId}/pay`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ transactionId: currentTxnId })
@@ -154,7 +152,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                     transactionId: currentTxnId
                 };
 
-                res = await fetch(`${apiUrl}/api/bookings`, {
+                res = await apiFetch(`/api/bookings`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(bookingData)
@@ -566,3 +564,6 @@ export default function BookingModal({ isOpen, onClose, service }) {
     </>
   );
 }
+
+
+

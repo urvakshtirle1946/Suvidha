@@ -26,12 +26,29 @@ export function AuthProvider({ children }) {
 
   const refreshUser = useCallback(async () => {
     try {
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setUser(null);
+          setIsLoaded(true);
+          return;
+        }
+      }
+
       const res = await apiFetch("/api/auth/me");
       const data = await readJsonSafe(res);
 
       if (res.ok && data?.success && data?.user) {
+        if (typeof window !== 'undefined') {
+          if (data?.token) {
+            localStorage.setItem("token", data.token);
+          }
+        }
         setUser(data.user);
       } else {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem("token");
+        }
         setUser(null);
       }
     } catch (err) {
@@ -148,3 +165,4 @@ export function AuthProvider({ children }) {
 export function useAuth() {
   return useContext(AuthContext);
 }
+

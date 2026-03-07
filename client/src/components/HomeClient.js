@@ -18,14 +18,12 @@ import {
 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { getApiUrl, getImageUrl } from '@/utils/api';
-import BookingModal from './BookingModal';
 import HospitalProfileModal from './HospitalProfileModal';
 import PaymentReminder from './PaymentReminder';
 // import AmbulanceRequest from './AmbulanceRequest';
 
 export default function HomeClient({ hospitals, popularServices }) {
   const { addToCart } = useCart();
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedHospitalForProfile, setSelectedHospitalForProfile] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef(null);
@@ -396,12 +394,6 @@ export default function HomeClient({ hospitals, popularServices }) {
             ))}
         </div>
 
-        <BookingModal 
-             isOpen={!!selectedProduct}
-             onClose={() => setSelectedProduct(null)}
-             service={selectedProduct}
-        />
-
         {/* Featured Hospitals Section */}
         <h2 style={{ marginTop: '4rem', marginBottom: '1.5rem', fontSize: 'clamp(1.2rem, 5vw, 1.5rem)' }}>Featured Hospitals</h2>
         <div style={{ 
@@ -466,7 +458,9 @@ export default function HomeClient({ hospitals, popularServices }) {
            hospital={selectedHospitalForProfile}
            onBookService={(service) => {
               setSelectedHospitalForProfile(null);
-              setSelectedProduct(service);
+              const price = parseFloat(service.discount_price || service.price);
+              const mrp = parseFloat(service.price);
+              addToCart({ ...service, quantity: 1, hospital_name: service.hospital_name || 'Hospital Service', price, mrp });
            }}
         />
 
@@ -522,3 +516,4 @@ function ProductCard({ title, time, price, oldPrice, discount, onAdd, image }) {
         </div>
     );
 }
+

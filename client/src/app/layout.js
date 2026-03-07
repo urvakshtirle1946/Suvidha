@@ -1,4 +1,4 @@
-import { Outfit, Cormorant_Garamond } from "next/font/google";
+import { Outfit, Cormorant_Garamond, Libre_Baskerville } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { LocationProvider } from "@/context/LocationContext";
@@ -6,8 +6,6 @@ import { CartProvider } from "@/context/CartContext";
 import AdminSessionManager from "@/components/AdminSessionManager";
 import CartDrawer from "@/components/CartDrawer";
 import GoogleAuthProviderWrapper from "@/components/GoogleAuthProviderWrapper";
-import Script from "next/script";
-
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -22,12 +20,18 @@ const cormorantGaramond = Cormorant_Garamond({
   display: "swap",
 });
 
+const baskerville = Libre_Baskerville({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-baskerville",
+  display: "swap",
+});
 
 export const metadata = {
   title: "Zelp - Premium Healthcare Simplified",
   description: "Book verified hospital services and lab tests with best discounts.",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/zelp-favicon.png",
   },
 };
 
@@ -35,9 +39,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <Script src="https://getlaunchlist.com/js/widget.js" strategy="lazyOnload" />
       </head>
-      <body className={`${outfit.variable} ${cormorantGaramond.variable} font-sans`}>
+      <body className={`${outfit.variable} ${cormorantGaramond.variable} ${baskerville.variable} font-sans`}>
         <GoogleAuthProviderWrapper clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
           <AuthProvider>
             <LocationProvider>

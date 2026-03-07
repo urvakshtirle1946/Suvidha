@@ -10,6 +10,17 @@ import { ArrowLeft, CheckCircle, AlertCircle, Calendar as CalendarIcon, Clock, M
 import Link from 'next/link';
 import { getImageUrl, apiFetch } from '@/utils/api';
 import { useEffect } from 'react';
+import Script from 'next/script';
+
+function loadRazorpay() {
+    return new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+    });
+}
 
 function ProviderList({ serviceName, currentHospitalId, onSelect }) {
     const [labs, setLabs] = useState([]);
@@ -111,23 +122,9 @@ export default function Checkout() {
   // Schedule State
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-  const [transactionId, setTransactionId] = useState('');
-  const [showPayment, setShowPayment] = useState(false);
   const [paymentMode, setPaymentMode] = useState('hospital'); // 'hospital' or 'online'
   const [bookingIds, setBookingIds] = useState([]);
 
-  // Patient Details State
-  const [patientName, setPatientName] = useState('');
-  const [patientAge, setPatientAge] = useState('');
-  const [patientGender, setPatientGender] = useState('');
-  const [patientPhone, setPatientPhone] = useState('');
-
-  useEffect(() => {
-    if (user) {
-        if (!patientName) setPatientName(user.name || '');
-        if (!patientPhone) setPatientPhone('');
-    }
-  }, [user, patientName, patientPhone]);
 
   const updateCartWithProvider = (index, newItem) => {
     updateCartItem(index, newItem);
@@ -145,11 +142,6 @@ export default function Checkout() {
         return;
     }
 
-    if (!patientName || !patientAge || !patientGender || !patientPhone || patientPhone.length < 10) {
-        setError("Please fill out all patient details correctly.");
-        return;
-    }
-
     // Check if every item has a provider
     const missingProvider = cart.find(item => !item.hospitalId);
     if (missingProvider) {
@@ -158,37 +150,127 @@ export default function Checkout() {
     }
 
     if (paymentMode === 'online') {
-        setShowPayment(true); 
+        processRazorpayPayment(); 
     } else {
         // Pay at Hospital - finalize immediately
-        finalizeCheckout(); 
+        finalizeCheckout('PAY_AT_HOSPITAL'); 
     }
   };
 
-  /* Removed handleCompletionConfirm */
+  const processRazorpayPayment = async () => {
+      setLoading(true);
+      setError(null);
 
-  const finalizeCheckout = async () => {
+      const resLoad = await loadRazorpay();
+      if (!resLoad) {
+          setError('Razorpay SDK failed to load. Are you online?');
+          setLoading(false);
+          return;
+      }
+
+      try {
+          const amountToPay = cartTotal + 50; // Total + Taxes
+          
+          // Get order from backend
+          const orderRes = await apiFetch('/api/bookings/razorpay-order', {
+              method: 'POST',
+              body: JSON.stringify({ amount: amountToPay })
+          });
+          
+          if (!orderRes.ok) {
+               const errorPayload = await orderRes.json().catch(() => null);
+               if (orderRes.status === 401) {
+                  setError('Session expired. Please login again to continue payment.');
+                  setAuthModalOpen(true);
+                  setLoading(false);
+                  return;
+               }
+               const errorMessage = errorPayload?.message || errorPayload?.error || 'Could not initiate payment. Server error.';
+               setError(errorMessage);
+               setLoading(false);
+               return;
+          }
+
+          const { order, keyId } = await orderRes.json();
+          console.log('Razorpay Order:', order);
+          console.log('Using Key:', keyId);
+          
+          const options = {
+              key: keyId, // Force use the exact key backend used
+              amount: order.amount,
+              currency: order.currency,
+              name: 'Zelp',
+              image: getImageUrl('/logo.png'),
+              description: 'Booking Payment',
+              order_id: order.id,
+              handler: async function (response) {
+                  // Finalize checkout with the razorpay payment id
+                  await finalizeCheckout(response.razorpay_payment_id, response);
+              },
+              prefill: {
+                  name: user?.name || 'Customer',
+                  email: user?.email || 'test@suvidha.com',
+                  contact: '9999999999' // Razorpay API sometimes fails 400 if contact is entirely missing or invalid format in Test Mode
+              },
+              theme: {
+                  color: '#0c831f'
+              }
+          };
+
+          const paymentObject = new window.Razorpay(options);
+          
+          paymentObject.on('payment.failed', function (response){
+              setError('Payment Failed. Reason: ' + response.error.description);
+              setLoading(false);
+          });
+          
+          paymentObject.open();
+
+      } catch (err) {
+          console.error(err);
+          setError('Failed to initiate Razorpay payment');
+          setLoading(false);
+      }
+  };
+
+  const finalizeCheckout = async (currentTxnId, razorpayResponse = null) => {
     const isHospitalPay = paymentMode === 'hospital';
-    const currentTxnId = isHospitalPay ? 'PAY_AT_HOSPITAL' : transactionId;
-
-    if (!isHospitalPay && (!currentTxnId || currentTxnId.length < 6)) {
-        alert('Please enter a valid Transaction ID');
-        return;
-    }
 
     setLoading(true);
     setError(null);
 
     try {
         if (bookingIds.length > 0 && paymentMode === 'online') {
-            // Bulk update payments for existing bookings
-            const updatePromises = bookingIds.map((id) =>
-              apiFetch(`/api/bookings/${id}/pay`, {
-                    method: 'PATCH',
-                    body: JSON.stringify({ transactionId: currentTxnId })
-                })
-            );
-            await Promise.all(updatePromises);
+            // Flow when user creates booking (hospital mode) then clicks 'Pay Online Now'
+            
+            // 1) Verify the payment on the backend first
+            if (razorpayResponse) {
+                const verifyRes = await apiFetch(`/api/bookings/verify-payment`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        razorpay_order_id: razorpayResponse.razorpay_order_id,
+                        razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+                        razorpay_signature: razorpayResponse.razorpay_signature,
+                        bookingIds
+                    })
+                });
+
+                if (!verifyRes.ok) {
+                     setError("Payment verification failed.");
+                     setLoading(false);
+                     return;
+                }
+            } else {
+                 // For safety or fallback (should rarely happen in razorpay online mode since we need signature)
+                 const updatePromises = bookingIds.map((id) =>
+                    apiFetch(`/api/bookings/${id}/pay`, {
+                        method: 'PATCH',
+                        body: JSON.stringify({ transactionId: currentTxnId })
+                    })
+                 );
+                 await Promise.all(updatePromises);
+            }
+
             setSuccess(true);
             setTimeout(() => {
                 router.push('/bookings');
@@ -204,11 +286,11 @@ export default function Checkout() {
                 const requests = [];
                 for (let i = 0; i < quantity; i++) {
                     const bookingData = {
-                        name: patientName || user?.name || 'Unknown',
-                        userPhone: patientPhone || 'Unknown',
+                        name: user?.name || 'Unknown',
+                        userPhone: 'Unknown',
                         userEmail: user?.email,
-                        age: parseInt(patientAge) || 0, 
-                        gender: patientGender || 'Not Specified',
+                        age: 0, 
+                        gender: 'Not Specified',
                         date: selectedDate,
                         time: selectedTime,
                         address: location || 'New Delhi, India',
@@ -236,6 +318,24 @@ export default function Checkout() {
 
             await Promise.all(bookingPromises);
             setBookingIds(createdIds);
+            
+            // If they paid online directly from cart, verify payment
+            if (!isHospitalPay && razorpayResponse) {
+                const verifyRes = await apiFetch(`/api/bookings/verify-payment`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        razorpay_order_id: razorpayResponse.razorpay_order_id,
+                        razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+                        razorpay_signature: razorpayResponse.razorpay_signature,
+                        bookingIds: createdIds
+                    })
+                });
+
+                if (!verifyRes.ok) {
+                     setError("Payment was successful but verification failed during booking creation.");
+                }
+            }
+
             setSuccess(true);
             clearCart();
             
@@ -278,7 +378,7 @@ export default function Checkout() {
                                 onClick={() => {
                                     setSuccess(false);
                                     setPaymentMode('online');
-                                    setShowPayment(true);
+                                    processRazorpayPayment();
                                 }}
                                 style={{ background: '#0c831f', color: '#fff', border: 'none', padding: '12px 30px', borderRadius: '12px', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)' }}
                             >
@@ -367,37 +467,6 @@ export default function Checkout() {
                         ))}
                     </div>
 
-                    {/* Patient Details Section */}
-                    <div className="card patient-card" style={{ background: '#fff', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', marginBottom: '1.5rem' }}>
-                        <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.2rem', color: '#111827' }}>
-                             <User size={18} color="#0c831f" /> Patient Details
-                        </h3>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
-                            <div>
-                                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 'bold', color: '#374151' }}>Patient Name</label>
-                                <input type="text" placeholder="Full Name" value={patientName} onChange={e => setPatientName(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none', background: '#f9fafb' }} />
-                            </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 'bold', color: '#374151' }}>Age</label>
-                                    <input type="number" placeholder="Age" value={patientAge} onChange={e => setPatientAge(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none', background: '#f9fafb' }} />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 'bold', color: '#374151' }}>Gender</label>
-                                    <select value={patientGender} onChange={e => setPatientGender(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none', background: '#f9fafb' }}>
-                                        <option value="">Select</option>
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div>
-                                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 'bold', color: '#374151' }}>Mobile Number</label>
-                                <input type="tel" placeholder="10-digit Mobile Number" value={patientPhone} onChange={e => setPatientPhone(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #d1d5db', outline: 'none', background: '#f9fafb' }} />
-                            </div>
-                        </div>
-                    </div>
 
                     {/* Schedule Section */}
                     <div className="card schedule-card" style={{ background: '#fff', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
@@ -579,57 +648,6 @@ export default function Checkout() {
           </div>
       )}
 
-      {showPayment && (
-          <div style={{ position: 'fixed', inset: 0, zIndex: 3000, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-              <div style={{ background: '#fff', width: '100%', maxWidth: '440px', borderRadius: '24px', padding: '2rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', position: 'relative' }}>
-                  <button 
-                    onClick={() => setShowPayment(false)} 
-                    style={{ position: 'absolute', top: '20px', right: '20px', background: '#f3f4f6', border: 'none', borderRadius: '50%', padding: '6px', cursor: 'pointer' }}
-                  >
-                        <X size={20} />
-                  </button>
-
-                  <h3 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '1.5rem', textAlign: 'center' }}>Scan & Pay</h3>
-                  
-                  <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                        <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-                            Pay <b>₹{cartTotal + 50}</b> to confirm your home booking.
-                        </p>
-                        <div style={{ width: '220px', height: '220px', margin: '0 auto', background: '#fff', border: '1px solid #f3f4f6', borderRadius: '16px', padding: '10px' }}>
-                             <img src={getImageUrl('/uploads/Qr.jpg')} alt="QR" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={(e) => e.target.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=upi://pay?pa=suvidha@okaxis&pn=Suvidha&cu=INR"} />
-                        </div>
-                  </div>
-
-                  <div style={{ marginBottom: '2rem' }}>
-                       <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: '#1f2937', marginBottom: '8px' }}>Transaction ID (UTR)</label>
-                       <input 
-                         type="text" 
-                         className="payment-input"
-                         placeholder="12-digit transaction ID" 
-                         value={transactionId}
-                         onChange={(e) => setTransactionId(e.target.value)}
-                         style={{ 
-                            width: '100%', padding: '1rem', borderRadius: '12px', border: '2px solid #f3f4f6', 
-                            fontSize: '1.1rem', fontWeight: '600', outline: 'none'
-                         }}
-                       />
-                  </div>
-
-                  <button 
-                    onClick={finalizeCheckout}
-                    disabled={loading || !transactionId}
-                    style={{ 
-                        width: '100%', padding: '1rem', background: transactionId ? '#0c831f' : '#e5e7eb', 
-                        color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '1.1rem',
-                        cursor: transactionId ? 'pointer' : 'not-allowed'
-                    }}
-                  >
-                        {loading ? 'Verifying...' : 'Book Appointment'}
-                  </button>
-              </div>
-          </div>
-      )}
-
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
 
       <style jsx>{`
@@ -778,3 +796,6 @@ export default function Checkout() {
     </main>
   );
 }
+
+
+

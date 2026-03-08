@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { useState, useRef, useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { CheckCircle2, Volume2, VolumeX, Play, Pause } from 'lucide-react';
@@ -250,6 +250,17 @@ export default function WaitlistLanding() {
             </p>
           </div>
 
+          {/* New Footer for Success Page */}
+          <div style={{ 
+            marginTop: 'auto', 
+            paddingTop: '2rem',
+            borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+            fontSize: '0.9rem',
+            color: 'rgba(255, 255, 255, 0.5)',
+            fontWeight: '500'
+          }}>
+            Build by <span style={{ color: '#ef4444' }}>❤️</span> <a href="https://www.linkedin.com/in/urvaksh-tirle" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textDecoration: 'none', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Urvaksh</a>
+          </div>
         </div>
       </div>
     );
@@ -605,9 +616,14 @@ export default function WaitlistLanding() {
             </div>
 
             {/* Center: Links */}
-            <div className="footer-section footer-center">
-              <Link href="/terms-of-service" style={{ color: '#111827', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 500, opacity: 0.9 }}>terms of service</Link>
-              <Link href="/privacy-policy" style={{ color: '#111827', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 500, opacity: 0.9 }}>privacy policy</Link>
+            <div className="footer-section footer-center" style={{ flexDirection: 'column', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', gap: '1.5rem' }}>
+                <Link href="/terms-of-service" style={{ color: '#111827', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 500, opacity: 0.9 }}>terms of service</Link>
+                <Link href="/privacy-policy" style={{ color: '#111827', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 500, opacity: 0.9 }}>privacy policy</Link>
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#6b7280', fontWeight: '500' }}>
+                Build by <span style={{ color: '#ef4444' }}>❤️</span> <a href="https://www.linkedin.com/in/urvaksh-tirle" target="_blank" rel="noopener noreferrer" style={{ color: '#111827', textDecoration: 'none', borderBottom: '1px solid #e5e7eb' }}>Urvaksh</a>
+              </div>
             </div>
 
             {/* Right: Icons */}

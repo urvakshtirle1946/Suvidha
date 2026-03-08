@@ -11,7 +11,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 
 const app = express();
-app.set("trust proxy", 1); // Required for secure cookies on Render
+app.set('trust proxy', 1); // Required for secure cookies on Render
 const PORT = process.env.PORT || 5000;
 
 const authRoutes = require('./routes/authRoutes');
@@ -21,60 +21,69 @@ const hospitalRoutes = require('./routes/hospitalRoutes');
 const locationRoutes = require('./routes/locationRoutes');
 const ambulanceRoutes = require('./routes/ambulanceRoutes');
 
-// CORS Configuration
-const allowedOrigins = [
-  "https://waiting.tryzelp.app",
-  "https://admin.tryzelp.app",
-  "https://tryzelp.app",
-  "https://waitlist.tryzelp.app",
-  "http://localhost:3000",
-  "http://localhost:5173",
-  "https://suvidha-client.vercel.app"
-];
+// CORS configuration for web and local clients
+const explicitlyAllowedOrigins = new Set([
+  'https://waiting.tryzelp.app',
+  'https://admin.tryzelp.app',
+  'https://tryzelp.app',
+  'https://waitlist.tryzelp.app',
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'https://suvidha-client.vercel.app'
+]);
+
+const normalizeOrigin = (origin) => origin.trim().toLowerCase().replace(/\/+$/, '');
+
+const isOriginAllowed = (origin) => {
+  if (!origin) return true;
+
+  const normalized = normalizeOrigin(origin);
+  if (explicitlyAllowedOrigins.has(normalized)) return true;
+
+  try {
+    const hostname = new URL(normalized).hostname.toLowerCase();
+    return hostname === 'tryzelp.app' || hostname.endsWith('.tryzelp.app');
+  } catch {
+    return false;
+  }
+};
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    const normalized = origin.trim().toLowerCase().replace(/\/+$/, '');
-    const isAllowed = allowedOrigins.includes(normalized) || normalized.endsWith('.tryzelp.app');
-    
-    if (isAllowed) {
-      callback(null, true);
-    } else {
-      console.warn(`[CORS] Blocked Origin: ${origin}`);
-      callback(null, false);
+  origin: (origin, callback) => {
+    if (isOriginAllowed(origin)) {
+      return callback(null, true);
     }
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "Accept", "X-Requested-With"],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With', 'X-HTTP-Method-Override'],
   optionsSuccessStatus: 200
 };
 
-// 1. Apply CORS options for all preflight (OPTIONS) requests
+app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
-// 2. Apply CORS middleware for all actual requests
-app.use(cors(corsOptions));
-
 // 2. Logging
-app.use(morgan('dev')); 
+app.use(morgan('dev'));
 
 // 3. Security Headers
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" },
-  crossOriginEmbedderPolicy: false,
-  crossOriginOpenerPolicy: false // Relaxed for OAuth popups
-})); 
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginEmbedderPolicy: false,
+    crossOriginOpenerPolicy: false // Relaxed for OAuth popups
+  })
+);
 app.use(cookieParser());
 app.use(express.json()); // Built-in middleware replaces body-parser
+
 const staticOptions = {
   setHeaders: (res) => {
     res.set('Cross-Origin-Resource-Policy', 'cross-origin');
   }
 };
+
 app.use('/uploads', express.static('uploads', staticOptions)); // For dynamic uploads
 app.use('/uploads', express.static('static/uploads', staticOptions)); // Fallback for repo images
 
@@ -95,4 +104,3 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-// Trigger restart

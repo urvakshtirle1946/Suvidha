@@ -12,7 +12,9 @@ export default function WaitlistLanding() {
   const [error, setError] = useState('');
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [showManualEmailForm, setShowManualEmailForm] = useState(false);
   const videoRef = useRef(null);
+
   useEffect(() => {
     setIsMounted(true);
     // Restore submitted state from localStorage
@@ -21,6 +23,26 @@ export default function WaitlistLanding() {
       setSubmitted(true);
     }
   }, []);
+
+  // Re-trigger Waitlister script when modal opens or on mount for hero form
+  useEffect(() => {
+    if (!isMounted) return;
+
+    // Check if script already exists to avoid duplicates
+    const existingScript = document.querySelector('script[src*="waitlister.me"]');
+    if (existingScript) {
+      existingScript.remove();
+    }
+    
+    const script = document.createElement('script');
+    script.src = "https://waitlister.me/js/embed.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }, [showManualEmailForm, isMounted]);
+
+  const openWaitlisterForm = () => {
+    setShowManualEmailForm(true);
+  };
 
   const toggleMute = () => {
     if (videoRef.current) {
@@ -321,8 +343,7 @@ export default function WaitlistLanding() {
           />
 
           <button
-            onClick={() => loginWithGoogle()}
-            disabled={loading}
+            onClick={openWaitlisterForm}
             style={{
               backgroundColor: '#000',
               color: '#fff',
@@ -331,11 +352,10 @@ export default function WaitlistLanding() {
               fontWeight: '600',
               border: 'none',
               borderRadius: '8px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1
+              cursor: 'pointer'
             }}
           >
-            {loading ? 'Joining...' : 'Join waitlist'}
+            Join waitlist
           </button>
         </div>
 
@@ -396,8 +416,7 @@ export default function WaitlistLanding() {
 
               <button
                 type="button"
-                onClick={() => loginWithGoogle()}
-                disabled={loading}
+                onClick={openWaitlisterForm}
                 style={{
                   backgroundColor: '#111827',
                   color: '#fff',
@@ -406,25 +425,22 @@ export default function WaitlistLanding() {
                   fontWeight: '500',
                   border: '1px solid #111827',
                   borderRadius: '12px',
-                  cursor: loading ? 'not-allowed' : 'pointer',
+                  cursor: 'pointer',
                   height: '56px',
                   whiteSpace: 'nowrap',
                   boxShadow: '0 10px 15px -3px rgba(17, 24, 39, 0.4), 0 4px 6px -2px rgba(17, 24, 39, 0.2)',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  opacity: loading ? 0.7 : 1
+                  transition: 'transform 0.2s, box-shadow 0.2s'
                 }}
                 onMouseOver={(e) => {
-                  if (loading) return;
                   e.currentTarget.style.transform = 'translateY(-2px)';
                   e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(17, 24, 39, 0.5)';
                 }}
                 onMouseOut={(e) => {
-                  if (loading) return;
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(17, 24, 39, 0.4)';
                 }}
               >
-                {loading ? 'Processing...' : 'Get Early Access'}
+                Get Early Access
               </button>
             </div>
 
@@ -432,6 +448,83 @@ export default function WaitlistLanding() {
               <p style={{ color: '#dc2626', fontSize: '0.9rem', marginTop: '1rem' }}>
                 {error}
               </p>
+            )}
+
+            {showManualEmailForm && (
+              <div
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  backdropFilter: 'blur(4px)',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  zIndex: 9999,
+                  padding: '1rem',
+                  animation: 'fadeIn 0.2s ease-out'
+                }}
+                onClick={(e) => {
+                  if (e.target === e.currentTarget) {
+                    setShowManualEmailForm(false);
+                  }
+                }}
+              >
+                <div
+                  style={{
+                    width: '100%',
+                    maxWidth: '520px',
+                    background: '#fff',
+                    borderRadius: '16px',
+                    padding: '2rem 1.5rem',
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+                    position: 'relative',
+                    animation: 'scaleUp 0.2s ease-out'
+                  }}
+                >
+                  <button
+                    onClick={() => setShowManualEmailForm(false)}
+                    style={{
+                      position: 'absolute',
+                      top: '16px',
+                      right: '16px',
+                      background: '#f3f4f6',
+                      border: 'none',
+                      borderRadius: '50%',
+                      width: '32px',
+                      height: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      color: '#4b5563',
+                      transition: 'background 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = '#e5e7eb'}
+                    onMouseOut={(e) => e.currentTarget.style.background = '#f3f4f6'}
+                    aria-label="Close"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+
+                  {isMounted && (
+                    <div 
+                      key="modal-waitlist"
+                      dangerouslySetInnerHTML={{ 
+                        __html: '<div class="waitlister-form" data-waitlist-key="3SMfipgo2R1D" data-height="307px"></div>' 
+                      }} 
+                    />
+                  )}
+                </div>
+              </div>
             )}
 
             <div className="video-wrapper">

@@ -23,35 +23,41 @@ const ambulanceRoutes = require('./routes/ambulanceRoutes');
 
 // CORS Configuration
 const allowedOrigins = [
+  "https://waiting.tryzelp.app",
   "https://admin.tryzelp.app",
   "https://tryzelp.app",
   "https://waitlist.tryzelp.app",
-  "https://waiting.tryzelp.app",
   "http://localhost:3000",
   "http://localhost:5173",
   "https://suvidha-client.vercel.app"
 ];
 
-// Handles preflight requests for all routes
-app.options('*', cors());
+const corsOptions = {
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const normalized = origin.trim().toLowerCase().replace(/\/+$/, '');
+    const isAllowed = allowedOrigins.includes(normalized) || normalized.endsWith('.tryzelp.app');
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      console.warn(`[CORS] Blocked Origin: ${origin}`);
+      callback(null, false);
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Accept", "X-Requested-With"],
+  optionsSuccessStatus: 200
+};
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-      const normalized = origin.trim().toLowerCase().replace(/\/+$/, '');
-      if (allowedOrigins.includes(normalized) || normalized.endsWith('.tryzelp.app')) {
-        callback(null, true);
-      } else {
-        console.warn(`[CORS] Blocked Origin: ${origin}`);
-        callback(null, false);
-      }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Accept", "X-Requested-With"]
-  })
-);
+// 1. Apply CORS options for all preflight (OPTIONS) requests
+app.options('*', cors(corsOptions));
+
+// 2. Apply CORS middleware for all actual requests
+app.use(cors(corsOptions));
 
 // 2. Logging
 app.use(morgan('dev')); 

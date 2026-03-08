@@ -23,8 +23,8 @@ const ambulanceRoutes = require('./routes/ambulanceRoutes');
 
 // CORS Configuration
 const allowedOrigins = [
-  "https://tryzelp.app",
   "https://admin.tryzelp.app",
+  "https://tryzelp.app",
   "https://waitlist.tryzelp.app",
   "https://waiting.tryzelp.app",
   "http://localhost:3000",
@@ -32,26 +32,15 @@ const allowedOrigins = [
   "https://suvidha-client.vercel.app"
 ];
 
-const isOriginAllowed = (origin) => {
-  if (!origin) return true;
-  const normalized = origin.trim().toLowerCase().replace(/\/+$/, '');
-  
-  // 1. Direct match
-  if (allowedOrigins.includes(normalized)) return true;
-  
-  // 2. Subdomain check for tryzelp.app
-  if (normalized.endsWith('.tryzelp.app') || normalized === 'https://tryzelp.app') return true;
-  
-  // 3. Localhost check
-  if (normalized.startsWith('http://localhost:')) return true;
-  
-  return false;
-};
+// Handles preflight requests for all routes
+app.options('*', cors());
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (isOriginAllowed(origin)) {
+      if (!origin) return callback(null, true);
+      const normalized = origin.trim().toLowerCase().replace(/\/+$/, '');
+      if (allowedOrigins.includes(normalized) || normalized.endsWith('.tryzelp.app')) {
         callback(null, true);
       } else {
         console.warn(`[CORS] Blocked Origin: ${origin}`);
@@ -60,16 +49,7 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: [
-      "Content-Type", 
-      "Authorization", 
-      "Accept", 
-      "X-Requested-With",
-      "X-HTTP-Method-Override",
-      "Cache-Control"
-    ],
-    preflightContinue: false,
-    optionsSuccessStatus: 200
+    allowedHeaders: ["Content-Type", "Authorization", "Accept", "X-Requested-With"]
   })
 );
 

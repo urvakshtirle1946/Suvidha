@@ -13,6 +13,7 @@ export default function WaitlistLanding() {
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
   const [showManualEmailForm, setShowManualEmailForm] = useState(false);
+  const [referralCode, setReferralCode] = useState('');
   const videoRef = useRef(null);
   const waitlisterRef = useRef(null);
 
@@ -89,13 +90,212 @@ export default function WaitlistLanding() {
 
   if (submitted) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#0026e9', color: '#fff', padding: '2rem' }}>
-        <div style={{ maxWidth: '760px', margin: '0 auto', paddingTop: '2rem' }}>
-          <CheckCircle2 color="#22c55e" size={28} />
-          <h1 style={{ fontSize: '3rem', marginTop: '1rem', marginBottom: '1rem' }}>Your Spot Is Reserved.</h1>
-          <p style={{ fontSize: '1.05rem', lineHeight: '1.7' }}>
-            You are on the waitlist. Watch your inbox for priority access updates from Zelp.
-          </p>
+      <div style={{ 
+        minHeight: '100vh', 
+        backgroundColor: '#0a0b14', 
+        color: '#fff', 
+        fontFamily: 'var(--font-helvetica)',
+        position: 'relative',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        {/* Background Gradients / Spotlights */}
+        <div style={{
+          position: 'absolute',
+          top: '-10%',
+          left: '-5%',
+          width: '60%',
+          height: '60%',
+          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%)',
+          filter: 'blur(80px)',
+          zIndex: 0
+        }} />
+        <div style={{
+          position: 'absolute',
+          top: '20%',
+          right: '-10%',
+          width: '50%',
+          height: '50%',
+          background: 'radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%)',
+          filter: 'blur(100px)',
+          zIndex: 0
+        }} />
+        <div style={{
+          position: 'absolute',
+          bottom: '-10%',
+          left: '20%',
+          width: '40%',
+          height: '40%',
+          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%)',
+          filter: 'blur(60px)',
+          zIndex: 0
+        }} />
+
+        {/* Top Navigation */}
+        <nav style={{ 
+          width: '100%', 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          padding: '1.5rem 2rem',
+          position: 'relative',
+          zIndex: 10
+        }}>
+          <img
+            src="/logo.png"
+            alt="Zelp Logo"
+            style={{ height: '40px', objectFit: 'contain' }}
+          />
+          <button 
+            onClick={() => {
+              setSubmitted(false);
+              setLoading(false);
+              setError('');
+            }}
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              color: '#fff',
+              padding: '0.5rem 1rem',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '0.9rem',
+              fontWeight: '500',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Log Out
+          </button>
+        </nav>
+
+        {/* Main Content */}
+        <div style={{ 
+          maxWidth: '800px', 
+          width: '100%',
+          margin: '0 auto', 
+          padding: '4rem 2rem',
+          position: 'relative',
+          zIndex: 10
+        }}>
+          <h1 style={{ 
+            fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', 
+            fontWeight: '600', 
+            marginBottom: '1.5rem',
+            lineHeight: '1.1',
+            letterSpacing: '-0.03em',
+            color: '#fff'
+          }}>
+            Your Spot Is Reserved.
+          </h1>
+
+          <div style={{ 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '0.5rem',
+            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+            border: '1px solid rgba(34, 197, 94, 0.2)',
+            padding: '0.4rem 0.8rem',
+            borderRadius: '99px',
+            marginBottom: '2.5rem'
+          }}>
+            <div style={{ 
+              backgroundColor: '#22c55e', 
+              borderRadius: '50%', 
+              display: 'flex', 
+              padding: '2px' 
+            }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#22c55e' }}>
+              You're on the waitlist
+            </span>
+          </div>
+
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: '1.5rem',
+            color: 'rgba(255, 255, 255, 0.7)',
+            fontSize: '1.05rem',
+            lineHeight: '1.6',
+            marginBottom: '3.5rem',
+            maxWidth: '680px'
+          }}>
+            <p>
+              Zelp is preparing to revolutionize healthcare booking, and we're already onboarding top medical centers.
+            </p>
+            <p>
+              You'll be part of the early wave—we'll notify you the moment a slot becomes available in your area.
+            </p>
+            <p>
+              Want early entry? Keep an eye on your inbox for priority invitations and special updates from the Zelp team.
+            </p>
+          </div>
+
+          {/* Referral Section */}
+          <div style={{ maxWidth: '440px' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.5rem', color: '#fff' }}>
+              Have a Referral Code?
+            </h3>
+            <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
+              Redeem your code to get immediate access.
+            </p>
+            
+            <div style={{ 
+              display: 'flex', 
+              gap: '0.75rem', 
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              padding: '0.5rem',
+              borderRadius: '12px'
+            }}>
+              <input
+                type="text"
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                placeholder="ENTER YOUR REFERRAL CODE"
+                style={{
+                  flex: 1,
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  color: '#fff',
+                  padding: '0.5rem 0.75rem',
+                  fontSize: '0.85rem',
+                  fontWeight: '500',
+                  outline: 'none',
+                  letterSpacing: '0.05em'
+                }}
+              />
+              <button
+                style={{
+                  backgroundColor: '#4f46e5',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '0.6rem 1.25rem',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#4338ca'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#4f46e5'}
+              >
+                Redeem
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );

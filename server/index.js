@@ -24,34 +24,37 @@ const ambulanceRoutes = require('./routes/ambulanceRoutes');
 // CORS Configuration
 const allowedOrigins = [
   "https://tryzelp.app",
+  "https://admin.tryzelp.app",
+  "https://waitlist.tryzelp.app",
+  "https://waiting.tryzelp.app",
   "http://localhost:3000",
-  "https://suvidha-client.vercel.app",
-  "https://suvidha-client-git-main-suvidha.vercel.app"
+  "http://localhost:5173",
+  "https://suvidha-client.vercel.app"
 ];
 
-// Helper to check if origin is allowed
 const isOriginAllowed = (origin) => {
   if (!origin) return true;
-  const normalized = origin.replace(/\/+$/, '').toLowerCase();
+  const normalized = origin.trim().toLowerCase().replace(/\/+$/, '');
   
-  // Direct whitelist match
-  if (allowedOrigins.some(o => o.replace(/\/+$/, '').toLowerCase() === normalized)) return true;
+  // 1. Direct match
+  if (allowedOrigins.includes(normalized)) return true;
   
-  // Regex match for tryzelp.app and its subdomains
-  const tryZelpRegex = /^https:\/\/(.*\.)?tryzelp\.app$/;
-  if (tryZelpRegex.test(normalized)) return true;
+  // 2. Subdomain check for tryzelp.app
+  if (normalized.endsWith('.tryzelp.app') || normalized === 'https://tryzelp.app') return true;
+  
+  // 3. Localhost check
+  if (normalized.startsWith('http://localhost:')) return true;
   
   return false;
 };
 
-// 1. CORS MUST be before Helmet and other middleware
 app.use(
   cors({
     origin: function (origin, callback) {
       if (isOriginAllowed(origin)) {
         callback(null, true);
       } else {
-        console.warn(`[CORS] Blocked origin: ${origin}`);
+        console.warn(`[CORS] Blocked Origin: ${origin}`);
         callback(null, false);
       }
     },
@@ -61,12 +64,12 @@ app.use(
       "Content-Type", 
       "Authorization", 
       "Accept", 
-      "X-Requested-With", 
+      "X-Requested-With",
       "X-HTTP-Method-Override",
-      "Access-Control-Allow-Origin"
+      "Cache-Control"
     ],
     preflightContinue: false,
-    optionsSuccessStatus: 200 // Some tools prefer 200
+    optionsSuccessStatus: 200
   })
 );
 

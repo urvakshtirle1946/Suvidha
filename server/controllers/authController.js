@@ -493,6 +493,7 @@ exports.getWaitlistEntries = async (_req, res) => {
     const result = await db.query(
       `SELECT id, name, email, source, status, created_at
        FROM waitlist_signups
+       WHERE source NOT IN ('email', 'waitlist.me')
        ORDER BY created_at DESC`
     );
     return res.json(result.rows);

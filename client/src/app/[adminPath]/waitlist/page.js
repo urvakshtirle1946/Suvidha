@@ -47,6 +47,9 @@ export default function WaitlistManagement() {
   };
 
   const filteredEntries = entries.filter((entry) => {
+    // Exclude waitlist.me and manual email entries
+    if (entry.source === 'waitlist.me' || entry.source === 'email') return false;
+    
     const name = String(entry.name || '').toLowerCase();
     const email = String(entry.email || '').toLowerCase();
     const needle = searchTerm.toLowerCase();

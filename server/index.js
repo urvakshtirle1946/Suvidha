@@ -21,15 +21,6 @@ const hospitalRoutes = require('./routes/hospitalRoutes');
 const locationRoutes = require('./routes/locationRoutes');
 const ambulanceRoutes = require('./routes/ambulanceRoutes');
 
-// Middleware
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" },
-  crossOriginEmbedderPolicy: false,
-  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
-})); // Security Headers
-app.use(morgan('dev')); // HTTP Request Logger
-
-// Strict CORS Configuration for Cookies
 // Strict CORS Configuration for Cookies
 const allowedOrigins = [
   "https://tryzelp.app",
@@ -41,21 +32,39 @@ const allowedOrigins = [
   "https://suvidha-client-git-main-suvidha.vercel.app"
 ];
 
+// 1. CORS MUST be before Helmet and other middleware to handle preflights correctly
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin) return callback(null, true);
+      
+      const normalizedOrigin = origin.replace(/\/+$/, '');
+      const isAllowed = allowedOrigins.some(o => o.replace(/\/+$/, '') === normalizedOrigin);
+      
+      if (isAllowed) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        console.warn(`[CORS] Blocked origin: ${origin}`);
+        callback(null, false);
       }
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
   })
 );
-app.options(/.*/, cors());
+
+// 2. Logging
+app.use(morgan('dev')); 
+
+// 3. Security Headers
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginEmbedderPolicy: false,
+  crossOriginOpenerPolicy: false // Relaxed for OAuth popups
+})); 
 app.use(cookieParser());
 app.use(express.json()); // Built-in middleware replaces body-parser
 const staticOptions = {

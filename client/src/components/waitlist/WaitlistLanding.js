@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { CheckCircle2, Volume2, VolumeX, Play, Pause } from 'lucide-react';
 import Link from 'next/link';
-import { getApiUrl } from '@/utils/api';
+import { getApiUrl, apiFetch } from '@/utils/api';
 
 export default function WaitlistLanding() {
   const [isMounted, setIsMounted] = useState(false);
@@ -62,11 +62,9 @@ export default function WaitlistLanding() {
     try {
       setLoading(true);
       setError('');
-      const apiUrl = getApiUrl();
-      const res = await fetch(`${apiUrl}/api/auth/waitlist/google`, {
+      
+      const res = await apiFetch(`/api/auth/waitlist/google`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ access_token: tokenResponse.access_token })
       });
 
@@ -77,6 +75,7 @@ export default function WaitlistLanding() {
 
       setSubmitted(true);
     } catch (err) {
+      console.error('Waitlist Join Error:', err);
       setError(err.message || 'Google authentication failed.');
     } finally {
       setLoading(false);

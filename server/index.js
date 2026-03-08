@@ -21,7 +21,7 @@ const hospitalRoutes = require('./routes/hospitalRoutes');
 const locationRoutes = require('./routes/locationRoutes');
 const ambulanceRoutes = require('./routes/ambulanceRoutes');
 
-// Strict CORS Configuration for Cookies
+// CORS Configuration for Cookies
 const allowedOrigins = [
   "https://tryzelp.app",
   "https://admin.tryzelp.app",
@@ -32,25 +32,34 @@ const allowedOrigins = [
   "https://suvidha-client-git-main-suvidha.vercel.app"
 ];
 
-// 1. CORS MUST be before Helmet and other middleware to handle preflights correctly
+// Helper to check if origin is allowed
+const isOriginAllowed = (origin) => {
+  if (!origin) return true;
+  const normalized = origin.replace(/\/+$/, '').toLowerCase();
+  
+  // Direct match
+  if (allowedOrigins.some(o => o.replace(/\/+$/, '').toLowerCase() === normalized)) return true;
+  
+  // Subdomain match for tryzelp.app
+  if (normalized.endsWith('.tryzelp.app')) return true;
+  
+  return false;
+};
+
+// 1. CORS MUST be before Helmet and other middleware
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-      
-      const normalizedOrigin = origin.replace(/\/+$/, '');
-      const isAllowed = allowedOrigins.some(o => o.replace(/\/+$/, '') === normalizedOrigin);
-      
-      if (isAllowed) {
+      if (isOriginAllowed(origin)) {
         callback(null, true);
       } else {
-        console.warn(`[CORS] Blocked origin: ${origin}`);
+        console.warn(`[CORS] Blocked or unknown origin: ${origin}`);
         callback(null, false);
       }
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "Accept"], // Added Accept
     preflightContinue: false,
     optionsSuccessStatus: 204
   })

@@ -13,7 +13,6 @@ export default function WaitlistLanding() {
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
   const [showManualEmailForm, setShowManualEmailForm] = useState(false);
-  const [referralCode, setReferralCode] = useState('');
   const videoRef = useRef(null);
   const waitlisterRef = useRef(null);
 
@@ -145,7 +144,7 @@ export default function WaitlistLanding() {
           <img
             src="/logo.png"
             alt="Zelp Logo"
-            style={{ height: '40px', objectFit: 'contain' }}
+            style={{ height: '60px', objectFit: 'contain' }}
           />
           <button 
             onClick={() => {
@@ -243,59 +242,6 @@ export default function WaitlistLanding() {
             </p>
           </div>
 
-          {/* Referral Section */}
-          <div style={{ maxWidth: '440px' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.5rem', color: '#fff' }}>
-              Have a Referral Code?
-            </h3>
-            <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
-              Redeem your code to get immediate access.
-            </p>
-            
-            <div style={{ 
-              display: 'flex', 
-              gap: '0.75rem', 
-              backgroundColor: 'rgba(255, 255, 255, 0.03)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              padding: '0.5rem',
-              borderRadius: '12px'
-            }}>
-              <input
-                type="text"
-                value={referralCode}
-                onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
-                placeholder="ENTER YOUR REFERRAL CODE"
-                style={{
-                  flex: 1,
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  color: '#fff',
-                  padding: '0.5rem 0.75rem',
-                  fontSize: '0.85rem',
-                  fontWeight: '500',
-                  outline: 'none',
-                  letterSpacing: '0.05em'
-                }}
-              />
-              <button
-                style={{
-                  backgroundColor: '#4f46e5',
-                  color: '#fff',
-                  border: 'none',
-                  padding: '0.6rem 1.25rem',
-                  borderRadius: '8px',
-                  fontWeight: '600',
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  transition: 'background 0.2s'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#4338ca'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#4f46e5'}
-              >
-                Redeem
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     );
@@ -375,7 +321,7 @@ export default function WaitlistLanding() {
           <img
             src="/logo.png"
             alt="Zelp Logo"
-            style={{ height: 'clamp(55px, 8vw, 110px)', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply', marginTop: '-15px' }}
+            style={{ height: 'clamp(70px, 10vw, 140px)', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply', marginTop: '-20px' }}
           />
 
           <button
@@ -646,7 +592,7 @@ export default function WaitlistLanding() {
               <img
                 src="/logo.png"
                 alt="Zelp Logo"
-                style={{ height: '130px', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply', marginTop: '-25px', marginBottom: '-25px' }}
+                style={{ height: '160px', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply', marginTop: '-30px', marginBottom: '-30px' }}
               />
             </div>
 

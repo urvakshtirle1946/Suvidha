@@ -21,12 +21,9 @@ const hospitalRoutes = require('./routes/hospitalRoutes');
 const locationRoutes = require('./routes/locationRoutes');
 const ambulanceRoutes = require('./routes/ambulanceRoutes');
 
-// CORS Configuration for Cookies
+// CORS Configuration
 const allowedOrigins = [
   "https://tryzelp.app",
-  "https://admin.tryzelp.app",
-  "https://waitlist.tryzelp.app",
-  "https://waiting.tryzelp.app",
   "http://localhost:3000",
   "https://suvidha-client.vercel.app",
   "https://suvidha-client-git-main-suvidha.vercel.app"
@@ -37,11 +34,12 @@ const isOriginAllowed = (origin) => {
   if (!origin) return true;
   const normalized = origin.replace(/\/+$/, '').toLowerCase();
   
-  // Direct match
+  // Direct whitelist match
   if (allowedOrigins.some(o => o.replace(/\/+$/, '').toLowerCase() === normalized)) return true;
   
-  // Subdomain match for tryzelp.app
-  if (normalized.endsWith('.tryzelp.app')) return true;
+  // Regex match for tryzelp.app and its subdomains
+  const tryZelpRegex = /^https:\/\/(.*\.)?tryzelp\.app$/;
+  if (tryZelpRegex.test(normalized)) return true;
   
   return false;
 };
@@ -53,15 +51,22 @@ app.use(
       if (isOriginAllowed(origin)) {
         callback(null, true);
       } else {
-        console.warn(`[CORS] Blocked or unknown origin: ${origin}`);
+        console.warn(`[CORS] Blocked origin: ${origin}`);
         callback(null, false);
       }
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Accept"], // Added Accept
+    allowedHeaders: [
+      "Content-Type", 
+      "Authorization", 
+      "Accept", 
+      "X-Requested-With", 
+      "X-HTTP-Method-Override",
+      "Access-Control-Allow-Origin"
+    ],
     preflightContinue: false,
-    optionsSuccessStatus: 204
+    optionsSuccessStatus: 200 // Some tools prefer 200
   })
 );
 

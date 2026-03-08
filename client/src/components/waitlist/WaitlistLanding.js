@@ -18,6 +18,11 @@ export default function WaitlistLanding() {
 
   useEffect(() => {
     setIsMounted(true);
+    // Restore submitted state from localStorage
+    const persistState = localStorage.getItem('zelp_waitlist_submitted');
+    if (persistState === 'true') {
+      setSubmitted(true);
+    }
   }, []);
 
   // Re-trigger Waitlister script when modal opens or on mount for hero form
@@ -73,6 +78,8 @@ export default function WaitlistLanding() {
         throw new Error(data?.message || 'Unable to join waitlist right now.');
       }
 
+      // Persist submission state
+      localStorage.setItem('zelp_waitlist_submitted', 'true');
       setSubmitted(true);
     } catch (err) {
       console.error('Waitlist Join Error:', err);
@@ -148,6 +155,7 @@ export default function WaitlistLanding() {
           />
           <button 
             onClick={() => {
+              localStorage.removeItem('zelp_waitlist_submitted');
               setSubmitted(false);
               setLoading(false);
               setError('');

@@ -1,4 +1,5 @@
 import { Outfit, Cormorant_Garamond, Libre_Baskerville } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { LocationProvider } from "@/context/LocationContext";
@@ -39,14 +40,20 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="preconnect" href="https://waitlister.me" />
+        <link rel="dns-prefetch" href="https://waitlister.me" />
       </head>
-      <body className={`${outfit.variable} ${cormorantGaramond.variable} ${baskerville.variable} font-sans`}>
+      <body className={`${outfit.variable} ${cormorantGaramond.variable} ${baskerville.variable} font-sans`} suppressHydrationWarning>
         <GoogleAuthProviderWrapper clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
           <AuthProvider>
             <LocationProvider>
               <CartProvider>
                 <AdminSessionManager />
                 <CartDrawer />
+                <Script
+                  src="https://waitlister.me/js/embed.js"
+                  strategy="afterInteractive"
+                />
                 {children}
               </CartProvider>
             </LocationProvider>

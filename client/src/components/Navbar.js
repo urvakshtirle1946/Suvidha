@@ -101,7 +101,7 @@ export default function Navbar() {
         height: 'var(--header-height)', background: '#fff', borderBottom: '1px solid #e5e7eb',
         display: 'flex', alignItems: 'center'
       }}>
-        <div className="container nav-content">
+        <div className="container nav-content" style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%', padding: '0 2rem' }}>
           
           {/* Kinetic Navigation Trigger (Desktop) */}
           <div className="hide-on-mobile" style={{ marginRight: '1rem' }}>
@@ -257,22 +257,24 @@ export default function Navbar() {
           </div>
 
           {/* Logo & Location (Desktop) */}
-          <div className="hide-on-mobile desktop-header-elements" style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1 }}>
-              <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+          <div className="hide-on-mobile desktop-header-elements" style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1, paddingLeft: '1rem', height: '100%' }}>
+              <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', height: '100%' }}>
                   <span style={{ 
                       fontSize: '1.8rem', fontWeight: '800', color: '#000', 
-                      letterSpacing: '-1.5px', fontFamily: 'var(--font-outfit), sans-serif', lineHeight: 1
+                      letterSpacing: '-1.5px', fontFamily: 'var(--font-outfit), sans-serif', 
+                      lineHeight: 'var(--header-height)', display: 'inline-block'
                   }}>
                       Zelp
                   </span>
               </Link>
               
-              <div className="hide-on-mobile" style={{ position: 'relative' }}>
+              <div className="hide-on-mobile" style={{ position: 'relative', display: 'flex', alignItems: 'center', height: '100%' }}>
                    <div 
                       onClick={() => setLocationModalOpen(true)}
                       style={{ 
                           display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer',
-                          padding: '0.5rem', borderRadius: '8px', background: 'transparent', transition: 'background 0.2s'
+                          padding: '0.5rem', borderRadius: '8px', background: 'transparent', transition: 'background 0.2s',
+                          height: 'fit-content'
                       }}
                       onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
                       onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
@@ -287,13 +289,13 @@ export default function Navbar() {
           </div>
 
           {/* Nav Links - Desktop */}
-          <div className="hide-on-mobile" style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginRight: '2rem' }}>
-             <Link href="/" style={{ fontWeight: '500', color: '#1f2937' }}>Home</Link>
-             <Link href="/hospitals" style={{ fontWeight: '500', color: '#1f2937' }}>Services</Link>
+          <div className="hide-on-mobile" style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginRight: '2rem', height: '100%' }}>
+             <Link href="/" style={{ fontWeight: '500', color: '#1f2937', height: '100%', display: 'flex', alignItems: 'center' }}>Home</Link>
+             <Link href="/hospitals" style={{ fontWeight: '500', color: '#1f2937', height: '100%', display: 'flex', alignItems: 'center' }}>Services</Link>
           </div>
           
           {/* Right Actions (Desktop) */}
-          <div className="hide-on-mobile desktop-header-elements" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div className="hide-on-mobile desktop-header-elements" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', paddingRight: '1rem' }}>
               <div className="hide-on-mobile" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                   {user ? (
                       <ProfileDropdown onOpenSettings={() => setSettingsModalOpen(true)} />

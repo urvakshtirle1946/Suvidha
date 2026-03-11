@@ -28,6 +28,7 @@ const explicitlyAllowedOrigins = new Set([
   'https://tryzelp.app',
   'https://waitlist.tryzelp.app',
   'http://localhost:3000',
+  'http://127.0.0.1:3000',
   'http://localhost:5173',
   'https://suvidha-client.vercel.app'
 ]);
@@ -53,7 +54,7 @@ const corsOptions = {
     if (isOriginAllowed(origin)) {
       return callback(null, true);
     }
-    return callback(new Error(`CORS blocked for origin: ${origin}`));
+    return callback(null, false);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -62,9 +63,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
 
-// 2. Logging
 app.use(morgan('dev'));
 
 // 3. Security Headers

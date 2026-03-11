@@ -1,9 +1,7 @@
-'use client';
 import { useState, useRef, useEffect } from 'react';
-import { useGoogleLogin } from '@react-oauth/google';
-import { CheckCircle2, Volume2, VolumeX, Play, Pause } from 'lucide-react';
+import { Volume2, VolumeX, Play, Pause } from 'lucide-react';
 import Link from 'next/link';
-import { getApiUrl, apiFetch } from '@/utils/api';
+import { apiFetch } from '@/utils/api';
 
 export default function WaitlistLanding() {
   const [isMounted, setIsMounted] = useState(false);
@@ -24,21 +22,6 @@ export default function WaitlistLanding() {
     }
   }, []);
 
-  // Re-trigger Waitlister script when modal opens or on mount for hero form
-  useEffect(() => {
-    if (!isMounted) return;
-
-    // Check if script already exists to avoid duplicates
-    const existingScript = document.querySelector('script[src*="waitlister.me"]');
-    if (existingScript) {
-      existingScript.remove();
-    }
-    
-    const script = document.createElement('script');
-    script.src = "https://waitlister.me/js/embed.js";
-    script.async = true;
-    document.body.appendChild(script);
-  }, [showManualEmailForm, isMounted]);
 
   const openWaitlisterForm = () => {
     setShowManualEmailForm(true);
@@ -62,36 +45,6 @@ export default function WaitlistLanding() {
     }
   };
 
-  const handleGoogleSuccess = async (tokenResponse) => {
-    try {
-      setLoading(true);
-      setError('');
-      
-      const res = await apiFetch(`/api/auth/waitlist/google`, {
-        method: 'POST',
-        body: JSON.stringify({ access_token: tokenResponse.access_token })
-      });
-
-      const data = await res.json().catch(() => null);
-      if (!res.ok || !data?.success) {
-        throw new Error(data?.message || 'Unable to join waitlist right now.');
-      }
-
-      // Persist submission state
-      localStorage.setItem('zelp_waitlist_submitted', 'true');
-      setSubmitted(true);
-    } catch (err) {
-      console.error('Waitlist Join Error:', err);
-      setError(err.message || 'Google authentication failed.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loginWithGoogle = useGoogleLogin({
-    onSuccess: handleGoogleSuccess,
-    onError: () => setError('Google login popup failed to open or was closed.')
-  });
 
   if (submitted) {
     return (
@@ -378,31 +331,6 @@ export default function WaitlistLanding() {
             </p>
 
             <div className="waitlist-actions" style={{ maxWidth: '560px', margin: '0 auto', position: 'relative', zIndex: 10 }}>
-              <button
-                type="button"
-                onClick={openWaitlisterForm}
-                style={{
-                  backgroundColor: '#fff',
-                  color: '#111',
-                  padding: '0.8rem 1.5rem',
-                  fontSize: '1rem',
-                  fontWeight: '500',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  gap: '12px',
-                  height: '56px',
-                  whiteSpace: 'nowrap',
-                  transition: 'background 0.2s'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.background = '#f9fafb'}
-                onMouseOut={(e) => e.currentTarget.style.background = '#fff'}
-              >
-                Join with Google
-              </button>
 
               <button
                 type="button"
@@ -440,82 +368,82 @@ export default function WaitlistLanding() {
               </p>
             )}
 
-            {showManualEmailForm && (
+            {/* Pre-render modal at start for instant speed */}
+            <div
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                backdropFilter: 'blur(4px)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 9999,
+                padding: '1rem',
+                transition: 'opacity 0.2s ease-out, visibility 0.2s ease-out',
+                opacity: showManualEmailForm ? 1 : 0,
+                visibility: showManualEmailForm ? 'visible' : 'hidden',
+                pointerEvents: showManualEmailForm ? 'auto' : 'none'
+              }}
+              onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                  setShowManualEmailForm(false);
+                }
+              }}
+            >
               <div
                 style={{
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
                   width: '100%',
-                  height: '100%',
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  backdropFilter: 'blur(4px)',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  zIndex: 9999,
-                  padding: '1rem',
-                  animation: 'fadeIn 0.2s ease-out'
-                }}
-                onClick={(e) => {
-                  if (e.target === e.currentTarget) {
-                    setShowManualEmailForm(false);
-                  }
+                  maxWidth: '520px',
+                  background: '#fff',
+                  borderRadius: '16px',
+                  padding: '2rem 1.5rem',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+                  position: 'relative',
+                  transform: showManualEmailForm ? 'scale(1)' : 'scale(0.95)',
+                  transition: 'transform 0.2s ease-out'
                 }}
               >
-                <div
+                <button
+                  onClick={() => setShowManualEmailForm(false)}
                   style={{
-                    width: '100%',
-                    maxWidth: '520px',
-                    background: '#fff',
-                    borderRadius: '16px',
-                    padding: '2rem 1.5rem',
-                    boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-                    position: 'relative',
-                    animation: 'scaleUp 0.2s ease-out'
+                    position: 'absolute',
+                    top: '16px',
+                    right: '16px',
+                    background: '#f3f4f6',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '32px',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    color: '#4b5563',
+                    transition: 'background 0.2s'
                   }}
+                  onMouseOver={(e) => e.currentTarget.style.background = '#e5e7eb'}
+                  onMouseOut={(e) => e.currentTarget.style.background = '#f3f4f6'}
+                  aria-label="Close"
                 >
-                  <button
-                    onClick={() => setShowManualEmailForm(false)}
-                    style={{
-                      position: 'absolute',
-                      top: '16px',
-                      right: '16px',
-                      background: '#f3f4f6',
-                      border: 'none',
-                      borderRadius: '50%',
-                      width: '32px',
-                      height: '32px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      color: '#4b5563',
-                      transition: 'background 0.2s'
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.background = '#e5e7eb'}
-                    onMouseOut={(e) => e.currentTarget.style.background = '#f3f4f6'}
-                    aria-label="Close"
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                  </button>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
 
-                  {isMounted && (
-                    <div 
-                      key="modal-waitlist"
-                      dangerouslySetInnerHTML={{ 
-                        __html: '<div class="waitlister-form" data-waitlist-key="3SMfipgo2R1D" data-height="307px"></div>' 
-                      }} 
-                    />
-                  )}
-                </div>
+                <div 
+                  className="waitlister-form" 
+                  data-waitlist-key="3SMfipgo2R1D" 
+                  data-height="307px"
+                ></div>
               </div>
-            )}
+            </div>
 
             <div className="video-wrapper">
               {/* Spotlight Glow Effect */}

@@ -4,12 +4,13 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { Search, MapPin, Star, Filter, Activity, Clock, SlidersHorizontal, TestTube } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import { getApiUrl, getImageUrl } from '@/utils/api';
+import { apiFetch, getImageUrl } from '@/utils/api';
 
 function LabTestsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const querySearch = searchParams.get('search');
+  const queryTitle = searchParams.get('title');
   
   const { addToCart } = useCart();
   const [searchTerm, setSearchTerm] = useState(querySearch || '');
@@ -20,8 +21,7 @@ function LabTestsContent() {
   useEffect(() => {
      const fetchData = async () => {
          try {
-             const apiUrl = getApiUrl();
-             const res = await fetch(`${apiUrl}/api/services?category=Lab`);
+             const res = await apiFetch('/api/services?category=Lab');
              if (res.ok) {
                  const rawData = await res.json();
                  // Handle both formats
@@ -39,7 +39,7 @@ function LabTestsContent() {
                  setTests(enhancedData);
              }
          } catch (err) {
-             console.error(err);
+             console.error('LabTests fetch error:', err);
          } finally {
              setLoading(false);
          }

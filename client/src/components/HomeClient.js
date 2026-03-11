@@ -99,7 +99,7 @@ export default function HomeClient({ hospitals, popularServices }) {
   const CATEGORIES = [
       { name: 'Cardiology', desc: 'Heart & Blood Pressure Care', icon: <Heart size={50} color="rgba(255,255,255,0.3)" />, color: '#ff6b6b', href: '/hospitals?specialty=Cardiologist', img: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=400&q=80' },
       { name: 'Radiology', desc: 'Detailed Scans & X-Rays', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#a55eea', href: '/hospitals?category=Scan', img: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=400&q=80' },
-      { name: 'Pathology', desc: 'Precision Lab Tests', icon: <TestTube size={50} color="rgba(255,255,255,0.3)" />, color: '#fd9644', href: '/lab-tests', img: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=400&q=80' },
+      { name: 'Pathology', desc: 'Precision Lab Tests', icon: <TestTube size={50} color="rgba(255,255,255,0.3)" />, color: '#fd9644', href: '/lab-tests?title=Pathology', img: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=400&q=80' },
       { name: 'Orthopedic', desc: 'Bone & Joint Health', icon: <Bone size={50} color="rgba(255,255,255,0.3)" />, color: '#5f27cd', href: '/hospitals?specialty=Orthopedic', img: 'https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?auto=format&fit=crop&w=400&q=80' },
       { name: 'Pediatric', desc: 'Gentle Child Care', icon: <Baby size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9ff3', textColor: '#1f2937', href: '/hospitals?specialty=Pediatrician', img: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=400&q=80' },
       { name: 'Neurology', desc: 'Advanced Brain Care', icon: <Brain size={50} color="rgba(255,255,255,0.3)" />, color: '#54a0ff', href: '/hospitals?specialty=Neurologist', img: '/assets/categories/neurology.png' },
@@ -132,8 +132,10 @@ export default function HomeClient({ hospitals, popularServices }) {
                     padding: 'clamp(1.5rem, 5vw, 3rem)', // Responsive padding
                     color: '#fff',
                     opacity: currentSlide === index ? 1 : 0,
-                    transition: 'opacity 0.8s ease-in-out',
-                    zIndex: currentSlide === index ? 2 : 1,
+                    visibility: currentSlide === index ? 'visible' : 'hidden',
+                    pointerEvents: currentSlide === index ? 'auto' : 'none',
+                    transition: 'opacity 0.8s ease-in-out, visibility 0.8s',
+                    zIndex: currentSlide === index ? 10 : 1,
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center'
@@ -198,8 +200,9 @@ export default function HomeClient({ hospitals, popularServices }) {
                         display: 'flex', 
                         gap: '1.2rem', 
                         overflowX: 'auto', 
-                        paddingBottom: '1rem', 
+                        paddingBottom: '1.5rem', 
                         paddingRight: '2rem',
+                        paddingLeft: '0.5rem',
                         scrollbarWidth: 'none',
                         scrollBehavior: 'smooth',
                         WebkitOverflowScrolling: 'touch'
@@ -250,24 +253,28 @@ export default function HomeClient({ hospitals, popularServices }) {
                                 </div>
                                 
                                 {/* Text Info Below Card */}
-                                <div>
+                                {/* Text Info Below Card */}
+                                <div style={{ 
+                                    paddingRight: '10px',
+                                    marginTop: '5px'
+                                }}>
                                     <h3 style={{ 
-                                        fontSize: '1rem', 
+                                        fontSize: '0.95rem', 
                                         fontWeight: '700', 
                                         margin: '0 0 2px 0', 
-                                        color: '#1f2937', 
-                                        whiteSpace: 'nowrap', 
-                                        overflow: 'hidden', 
-                                        textOverflow: 'ellipsis' 
+                                        color: '#111827',
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis'
                                     }}>
                                         {cat.name}
                                     </h3>
                                     <p style={{ 
-                                        fontSize: '0.85rem', 
+                                        fontSize: '0.8rem', 
                                         color: '#6b7280', 
                                         margin: 0,
-                                        whiteSpace: 'nowrap', 
-                                        overflow: 'hidden', 
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
                                         textOverflow: 'ellipsis'
                                     }}>
                                         {cat.desc}
@@ -283,11 +290,11 @@ export default function HomeClient({ hospitals, popularServices }) {
                     onClick={(e) => { e.preventDefault(); scrollCategory('left'); }}
                     style={{ 
                         position: 'absolute',
-                        left: '-15px',
-                        top: '40%',
+                        left: '-20px',
+                        top: '130px', // Center vertically on the image card (260px / 2)
                         transform: 'translateY(-50%)',
-                        background: 'rgba(0,0,0,0.6)', 
-                        border: 'none', 
+                        background: 'rgba(255,255,255,0.9)', 
+                        border: '1px solid #e5e7eb', 
                         borderRadius: '50%', 
                         width: '40px', 
                         height: '40px', 
@@ -295,14 +302,13 @@ export default function HomeClient({ hospitals, popularServices }) {
                         alignItems: 'center', 
                         justifyContent: 'center',
                         cursor: 'pointer', 
-                        color: 'white',
-                        zIndex: 10,
-                        backdropFilter: 'blur(4px)',
-                        boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
-                        transition: 'background 0.2s'
+                        color: '#111827',
+                        zIndex: 20,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                        transition: 'all 0.2s'
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.8)'}
-                    onMouseOut={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.6)'}
+                    onMouseOver={(e) => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'; }}
+                    onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.9)'; e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; }}
                 >
                     <ChevronLeft size={24} />
                 </button>
@@ -312,11 +318,11 @@ export default function HomeClient({ hospitals, popularServices }) {
                     onClick={(e) => { e.preventDefault(); scrollCategory('right'); }}
                     style={{ 
                         position: 'absolute',
-                        right: '-15px',
-                        top: '40%',
+                        right: '-20px',
+                        top: '130px', // Center vertically on the image card
                         transform: 'translateY(-50%)',
-                        background: 'rgba(0,0,0,0.6)', 
-                        border: 'none', 
+                        background: 'rgba(255,255,255,0.9)', 
+                        border: '1px solid #e5e7eb', 
                         borderRadius: '50%', 
                         width: '40px', 
                         height: '40px', 
@@ -324,14 +330,13 @@ export default function HomeClient({ hospitals, popularServices }) {
                         alignItems: 'center', 
                         justifyContent: 'center',
                         cursor: 'pointer', 
-                        color: 'white',
-                        zIndex: 10,
-                        backdropFilter: 'blur(4px)',
-                        boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
-                        transition: 'background 0.2s'
+                        color: '#111827',
+                        zIndex: 20,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                        transition: 'all 0.2s'
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.8)'}
-                    onMouseOut={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.6)'}
+                    onMouseOver={(e) => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'; }}
+                    onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.9)'; e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; }}
                 >
                     <ChevronRight size={24} />
                 </button>

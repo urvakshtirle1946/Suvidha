@@ -202,6 +202,12 @@ export default function WaitlistLanding() {
             </p>
           </div>
 
+          <div style={{ marginTop: '3rem', marginBottom: '2rem' }}>
+            <a href="https://www.producthunt.com/products/zelp-2?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-zelp-2" target="_blank" rel="noopener noreferrer">
+              <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1094833&amp;theme=light&amp;t=1773186593807" alt="Zelp - Compare prices and book medical tests instantly | Product Hunt" style={{ width: '250px', height: '54px' }} width="250" height="54" />
+            </a>
+          </div>
+
           {/* New Footer for Success Page */}
           <div style={{ 
             marginTop: 'auto', 
@@ -360,6 +366,12 @@ export default function WaitlistLanding() {
               >
                 Get Early Access
               </button>
+            </div>
+
+            <div style={{ marginTop: '2.5rem', display: 'flex', justifyContent: 'center' }}>
+              <a href="https://www.producthunt.com/products/zelp-2?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-zelp-2" target="_blank" rel="noopener noreferrer">
+                <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1094833&amp;theme=light&amp;t=1773186593807" alt="Zelp - Compare prices and book medical tests instantly | Product Hunt" style={{ width: '250px', height: '54px' }} width="250" height="54" />
+              </a>
             </div>
 
             {error && (

@@ -112,7 +112,7 @@ export default function WaitlistLanding() {
             {/* Badge */}
             <div className="badge-text" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.35rem 1rem', borderRadius: '999px', border: '1px solid rgba(60,40,20,0.18)', color: '#5a3e2b', fontSize: '0.82rem', fontWeight: 500, marginBottom: '1.6rem', letterSpacing: '0.01em', fontFamily: 'var(--font-helvetica)', gap: '0.5rem' }}>
               <span style={{ minWidth: '8px', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e', boxShadow: '0 0 10px rgba(34,197,94,0.8)', flexShrink: 0 }}></span>
-              <span>The fastest way to book medical tests • Now live in Indore</span>
+              <span>Fastest Medical Tests Booking | Now in Indore!</span>
             </div>
             <h1 style={{ fontSize: 'clamp(2.6rem, 7vw, 4.8rem)', fontWeight: 500, fontFamily: 'var(--font-cormorant-garamond)', lineHeight: '1.05', color: '#1a120a', marginBottom: '1.1rem', letterSpacing: '-0.03em', textAlign: 'center' }}>
               <span className="hero-heading-line">Compare prices and book</span>

@@ -28,15 +28,12 @@ export default function WaitlistLanding() {
 
   const togglePlay = () => {
     if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
+      if (isPlaying) { videoRef.current.pause(); } else { videoRef.current.play(); }
       setIsPlaying(!isPlaying);
     }
   };
 
+  /* ── Submitted state ── */
   if (submitted) {
     return (
       <div style={{ minHeight: '100vh', backgroundColor: '#0a0b14', color: '#fff', fontFamily: 'var(--font-helvetica)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
@@ -69,6 +66,7 @@ export default function WaitlistLanding() {
     );
   }
 
+  /* ── Main landing page ── */
   return (
     <>
       <style>{`
@@ -89,8 +87,13 @@ export default function WaitlistLanding() {
         }
       `}</style>
 
-      <div style={{ backgroundColor: '#ffffff' }}>
+      {/* ── Outer wrapper — beige background ── */}
+      <div style={{ backgroundColor: '#f5ede0' }}>
+
+        {/* Navbar + hero + video all in one centered flex column */}
         <div style={{ padding: '0.25rem clamp(1rem, 5vw, 2rem) 0', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
+          {/* Navbar */}
           <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.25rem', position: 'relative' }}>
             <img src="/logo.png" alt="Zelp Logo" style={{ height: 'clamp(70px, 10vw, 140px)', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply', marginTop: '-10px' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', flexWrap: 'wrap', justifyContent: 'center', flex: 1 }}>
@@ -100,54 +103,59 @@ export default function WaitlistLanding() {
             </div>
           </div>
 
-          <div id="hero" style={{ textAlign: 'center', maxWidth: '1000px', width: '100%', paddingTop: '3rem', paddingBottom: '3rem' }}>
-            <h1 style={{ fontSize: 'clamp(2rem, 8vw, 4.5rem)', fontWeight: '500', fontFamily: 'var(--font-helvetica)', lineHeight: '1.2', color: '#111', marginBottom: '1rem', letterSpacing: '-0.02em' }}>
-              The fastest way to book medical tests
+          {/* Hero text */}
+          <div id="hero" style={{ textAlign: 'center', maxWidth: '780px', width: '100%', paddingTop: '3.5rem', paddingBottom: '3.5rem' }}>
+            {/* Badge */}
+            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.35rem 1rem', borderRadius: '999px', border: '1px solid rgba(60,40,20,0.18)', color: '#5a3e2b', fontSize: '0.82rem', fontWeight: 500, marginBottom: '1.6rem', letterSpacing: '0.01em', fontFamily: 'var(--font-helvetica)', gap: '0.5rem' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e', boxShadow: '0 0 10px rgba(34,197,94,0.8)' }}></span>
+              The fastest way to book medical tests • Now live in Indore
+            </div>
+            <h1 style={{ fontSize: 'clamp(2.6rem, 7vw, 4.8rem)', fontWeight: 500, fontFamily: 'var(--font-cormorant-garamond)', lineHeight: '1.05', color: '#1a120a', marginBottom: '1.1rem', letterSpacing: '-0.03em', textAlign: 'center' }}>
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Compare prices and book</span>
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>medical tests online</span>
             </h1>
-            <p style={{ color: '#4b5563', fontSize: 'clamp(1.02rem, 4.2vw, 1.18rem)', lineHeight: '1.5', marginBottom: '2rem', maxWidth: '640px', marginInline: 'auto' }}>
-              Compare prices and book MRI, CT scans, X-rays and lab tests near you with instant time slots. No waiting, no hassle.
+            <p style={{ color: '#7a6047', fontSize: 'clamp(0.9rem, 2.5vw, 1.05rem)', lineHeight: '1.65', marginBottom: '2.2rem', maxWidth: '520px', marginInline: 'auto', fontFamily: 'var(--font-helvetica)', fontWeight: 400 }}>
+              <strong>MRI • CT scans • X-rays • Lab tests</strong><br />
+              From nearby hospitals with confirmed time slots
             </p>
             <div className="waitlist-actions" style={{ maxWidth: '560px', margin: '0 auto', position: 'relative', zIndex: 10 }}>
               <button
                 type="button"
                 onClick={openWaitlisterForm}
-                style={{ backgroundColor: '#111827', color: '#fff', padding: '0.8rem 1.5rem', fontSize: '1rem', fontWeight: '500', border: '1px solid #111827', borderRadius: '12px', cursor: 'pointer', height: '56px', whiteSpace: 'nowrap', boxShadow: '0 10px 15px -3px rgba(17,24,39,0.4), 0 4px 6px -2px rgba(17,24,39,0.2)', transition: 'transform 0.2s, box-shadow 0.2s' }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(17,24,39,0.5)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(17,24,39,0.4)';
-                }}
-              >
+                style={{ backgroundColor: '#1a120a', color: '#f5ede0', padding: '0.85rem 2rem', fontSize: '0.95rem', fontWeight: 500, border: 'none', borderRadius: '999px', cursor: 'pointer', height: '52px', whiteSpace: 'nowrap', fontFamily: 'var(--font-helvetica)', letterSpacing: '0.01em', boxShadow: '0 8px 24px rgba(26,18,10,0.22)', transition: 'transform 0.2s, box-shadow 0.2s' }}
+                onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 16px 32px rgba(26,18,10,0.3)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(26,18,10,0.22)'; }}>
                 Get Early Access
               </button>
             </div>
             {error && <p style={{ color: '#dc2626', fontSize: '0.9rem', marginTop: '1rem' }}>{error}</p>}
+          </div>
 
-            <div className="video-wrapper">
-              <div style={{ position: 'absolute', top: '-20%', left: '-15%', right: '-15%', bottom: '-20%', background: 'linear-gradient(to right, #8b5cf6, #3b82f6)', filter: 'blur(120px)', opacity: 0.5, borderRadius: '50%', zIndex: 0, pointerEvents: 'none' }} />
-              <div style={{ position: 'relative', zIndex: 1, width: '100%', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', backgroundColor: '#000' }}>
-                <video ref={videoRef} autoPlay loop muted={isMuted} playsInline style={{ width: '100%', display: 'block' }}>
-                  <source src="/assets/Zelp Launch.mp4" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-                <div style={{ position: 'absolute', bottom: '24px', right: '24px', display: 'flex', gap: '12px' }}>
-                  <button type="button" onClick={togglePlay} style={{ backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '50%', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                    {isPlaying ? <Pause size={24} /> : <Play size={24} />}
-                  </button>
-                  <button type="button" onClick={toggleMute} style={{ backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '50%', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                    {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
-                  </button>
-                </div>
+          {/* Video — max-width 1000px, wider than the 780px hero text */}
+          <div className="video-wrapper" style={{ maxWidth: '1000px', width: '100%' }}>
+            <div style={{ position: 'absolute', top: '-20%', left: '-15%', right: '-15%', bottom: '-20%', background: 'linear-gradient(to right, #8b5cf6, #3b82f6)', filter: 'blur(120px)', opacity: 0.5, borderRadius: '50%', zIndex: 0, pointerEvents: 'none' }} />
+            <div style={{ position: 'relative', zIndex: 1, width: '100%', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', backgroundColor: '#000' }}>
+              <video ref={videoRef} autoPlay loop muted={isMuted} playsInline style={{ width: '100%', display: 'block' }}>
+                <source src="/assets/Zelp Launch.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              <div style={{ position: 'absolute', bottom: '24px', right: '24px', display: 'flex', gap: '12px' }}>
+                <button type="button" onClick={togglePlay} style={{ backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '50%', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                  {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+                </button>
+                <button type="button" onClick={toggleMute} style={{ backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '50%', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                  {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+                </button>
               </div>
             </div>
           </div>
-        </div>
 
+        </div>{/* end flex column */}
+
+        {/* How it works */}
         <DemoOne />
 
+        {/* Footer */}
         <footer style={{ width: '100%', padding: '2rem 0 1.5rem', color: '#111827' }}>
           <div className="footer-content">
             <div className="footer-section footer-left">
@@ -176,43 +184,30 @@ export default function WaitlistLanding() {
             </div>
           </div>
         </footer>
-      </div>
 
+      </div>{/* end outer beige wrapper */}
+
+      {/* Waitlister modal — fixed overlay, sibling to the page content */}
       <div
         style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          backdropFilter: 'blur(4px)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 9999,
-          padding: '1rem',
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          width: '100%', height: '100%',
+          backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
+          display: 'flex', justifyContent: 'center', alignItems: 'center',
+          zIndex: 9999, padding: '1rem',
           transition: 'opacity 0.2s ease-out, visibility 0.2s ease-out',
           opacity: showManualEmailForm ? 1 : 0,
           visibility: showManualEmailForm ? 'visible' : 'hidden',
           pointerEvents: showManualEmailForm ? 'auto' : 'none',
         }}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) setShowManualEmailForm(false);
-        }}
+        onClick={(e) => { if (e.target === e.currentTarget) setShowManualEmailForm(false); }}
       >
         <div style={{ width: '100%', maxWidth: '520px', background: '#fff', borderRadius: '16px', padding: '2rem 1.5rem', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', position: 'relative', transform: showManualEmailForm ? 'scale(1)' : 'scale(0.95)', transition: 'transform 0.2s ease-out' }}>
           <button
             onClick={() => setShowManualEmailForm(false)}
             style={{ position: 'absolute', top: '16px', right: '16px', background: '#f3f4f6', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#4b5563', transition: 'background 0.2s' }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = '#e5e7eb';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = '#f3f4f6';
-            }}
+            onMouseOver={(e) => { e.currentTarget.style.background = '#e5e7eb'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = '#f3f4f6'; }}
             aria-label="Close"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>

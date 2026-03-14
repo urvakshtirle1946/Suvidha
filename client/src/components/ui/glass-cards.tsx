@@ -237,9 +237,9 @@ export const StackedCards: React.FC = () => {
 
     return (
         <main ref={containerRef} style={{ background: 'transparent' }}>
-            <section style={{ width: '100%', padding: '3rem 0 2rem', color: '#0f172a' }}>
-                <div style={{ textAlign: 'center', marginBottom: '1.25rem', padding: '0 2rem' }}>
-                    <h2 style={{ fontSize: 'clamp(2.4rem, 6vw, 4.2rem)', fontWeight: 600, lineHeight: '1.05', letterSpacing: '-0.05em', color: '#0f172a' }}>
+            <section style={{ width: '100%', padding: '8rem 0 0', color: '#0f172a' }}>
+                <div style={{ textAlign: 'center', marginBottom: '0rem', padding: '0 2rem' }}>
+                    <h2 style={{ fontSize: 'clamp(2.4rem, 6vw, 4.2rem)', fontWeight: 500, fontFamily: 'var(--font-cormorant-garamond)', lineHeight: '1.05', letterSpacing: '-0.03em', color: '#1a120a' }}>
                         How it works
                     </h2>
                 </div>

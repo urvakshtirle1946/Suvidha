@@ -237,9 +237,9 @@ export const StackedCards: React.FC = () => {
 
     return (
         <main ref={containerRef} style={{ background: 'transparent' }}>
-            <section style={{ width: '100%', padding: '3rem 0 2rem', color: '#0f172a' }}>
-                <div style={{ textAlign: 'center', marginBottom: '1.25rem', padding: '0 2rem' }}>
-                    <h2 style={{ fontSize: 'clamp(2.4rem, 6vw, 4.2rem)', fontWeight: 600, lineHeight: '1.05', letterSpacing: '-0.05em', color: '#0f172a' }}>
+            <section className="how-it-works-section" style={{ width: '100%', color: '#0f172a' }}>
+                <div style={{ textAlign: 'center', marginBottom: '0rem', padding: '0 2rem' }}>
+                    <h2 style={{ fontSize: 'clamp(2.4rem, 6vw, 4.2rem)', fontWeight: 500, fontFamily: 'var(--font-cormorant-garamond)', lineHeight: '1.05', letterSpacing: '-0.03em', color: '#1a120a' }}>
                         How it works
                     </h2>
                 </div>
@@ -260,6 +260,10 @@ export const StackedCards: React.FC = () => {
                 ))}
             </section>
             <style jsx>{`
+                .how-it-works-section {
+                    padding: 8rem 0 0;
+                }
+                
                 @media (max-width: 900px) {
                     .glass-card-frame {
                         width: min(92vw, 680px) !important;
@@ -287,14 +291,19 @@ export const StackedCards: React.FC = () => {
                 }
 
                 @media (max-width: 640px) {
+                    .how-it-works-section {
+                        padding: 4rem 0 0 !important;
+                    }
                     .glass-card-shell {
-                        height: 100svh !important;
-                        padding: 0 0.5rem;
+                        height: auto !important;
+                        min-height: 100svh !important;
+                        padding: 2rem 0.5rem !important;
                     }
 
                     .glass-card-frame {
                         width: calc(100vw - 1rem) !important;
-                        height: min(82svh, 760px) !important;
+                        height: auto !important;
+                        min-height: min(75svh, 500px) !important;
                         border-radius: 24px !important;
                     }
 

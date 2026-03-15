@@ -78,47 +78,40 @@ export default function WaitlistLanding() {
         .footer-right { justify-content: flex-end; gap: 1.25rem; }
         .video-wrapper { position: relative; margin-top: 3rem; margin-bottom: 1rem; width: 100%; max-width: 1000px; }
         @media (max-width: 640px) {
-          .waitlist-actions { width: 100%; flex-direction: column; }
-          .waitlist-actions > button { width: 100%; }
+          .waitlist-actions { width: 100%; flex-direction: column; align-items: center; }
           .footer-content { flex-direction: column; gap: 2rem; }
           .footer-section { flex: 1 1 auto; width: 100%; }
           .footer-left, .footer-center, .footer-right { justify-content: center; text-align: center; }
           .video-wrapper { margin-bottom: 1rem; }
-          .hero-heading-line { white-space: normal !important; }
-          #hero { padding-top: 2rem !important; padding-bottom: 2rem !important; }
-          .badge-text { font-size: clamp(0.55rem, 2.5vw, 0.75rem) !important; padding: 0.25rem 0.6rem !important; text-align: left; white-space: nowrap !important; }
+          #hero { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+          .badge-text { font-size: 0.9rem !important; padding: 0.4rem 0.8rem !important; white-space: normal !important; }
         }
-        .hero-heading-line { display: block; white-space: nowrap; }
       `}</style>
 
       {/* ── Outer wrapper — beige background ── */}
-      <div style={{ backgroundColor: '#f5ede0' }}>
+      <div style={{ backgroundColor: '#FAF6F0' }}>
 
         {/* Navbar + hero + video all in one centered flex column */}
-        <div style={{ padding: '0.25rem clamp(1rem, 5vw, 2rem) 0', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ padding: '0 clamp(1.5rem, 5vw, 2.5rem)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
           {/* Navbar */}
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.25rem', position: 'relative' }}>
-            <img src="/logo.png" alt="Zelp Logo" style={{ height: 'clamp(70px, 10vw, 140px)', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply', marginTop: '-10px' }} />
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', flexWrap: 'wrap', justifyContent: 'center', flex: 1 }}>
-              <button onClick={openWaitlisterForm} style={{ backgroundColor: '#000', color: '#fff', padding: '0.6rem 1.2rem', fontSize: '0.95rem', fontWeight: '600', border: 'none', borderRadius: '8px', cursor: 'pointer', position: 'absolute', right: 0 }}>
-                Join waitlist
-              </button>
-            </div>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1.5rem', paddingBottom: '1.5rem' }}>
+            <img src="/logo.png" alt="Zelp Logo" style={{ height: 'clamp(80px, 18vw, 250px)', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply', marginTop: '-35px', marginBottom: '-35px' }} />
+            <button onClick={openWaitlisterForm} style={{ backgroundColor: '#2b1b12', color: '#FAF6F0', padding: '0.65rem 1.25rem', fontSize: '0.95rem', fontWeight: '500', border: 'none', borderRadius: '10px', cursor: 'pointer', fontFamily: 'var(--font-helvetica)' }}>
+              Join waitlist
+            </button>
           </div>
 
           {/* Hero text */}
-          <div id="hero" style={{ textAlign: 'center', maxWidth: '780px', width: '100%', paddingTop: '3.5rem', paddingBottom: '3.5rem' }}>
+          <div id="hero" style={{ textAlign: 'center', maxWidth: '840px', width: '100%', paddingTop: '3.5rem', paddingBottom: '3.5rem' }}>
             {/* Badge */}
-            <div className="badge-text" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.35rem 1rem', borderRadius: '999px', border: '1px solid rgba(60,40,20,0.18)', color: '#5a3e2b', fontSize: '0.82rem', fontWeight: 500, marginBottom: '1.6rem', letterSpacing: '0.01em', fontFamily: 'var(--font-helvetica)', gap: '0.5rem' }}>
-              <span style={{ minWidth: '8px', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e', boxShadow: '0 0 10px rgba(34,197,94,0.8)', flexShrink: 0 }}></span>
-              <span>The fastest way to book medical tests • Now live in Indore</span>
+            <div className="badge-text" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.4rem 1rem', borderRadius: '8px', backgroundColor: '#efeae2', color: '#2b1b12', fontSize: '0.95rem', fontWeight: 500, marginBottom: '2rem', fontFamily: 'var(--font-helvetica)' }}>
+              Fastest Medical Tests Booking | Now in Indore!
             </div>
-            <h1 style={{ fontSize: 'clamp(2.6rem, 7vw, 4.8rem)', fontWeight: 500, fontFamily: 'var(--font-cormorant-garamond)', lineHeight: '1.05', color: '#1a120a', marginBottom: '1.1rem', letterSpacing: '-0.03em', textAlign: 'center' }}>
-              <span className="hero-heading-line">Compare prices and book</span>
-              <span className="hero-heading-line">medical tests online</span>
+            <h1 style={{ fontSize: 'clamp(3rem, 11vw, 5.5rem)', fontWeight: 500, fontFamily: 'var(--font-cormorant-garamond)', lineHeight: '1.02', color: '#1a120a', marginBottom: '1.5rem', letterSpacing: '-0.04em', textAlign: 'center' }}>
+              Compare prices and book medical tests online
             </h1>
-            <p style={{ color: '#7a6047', fontSize: 'clamp(0.9rem, 2.5vw, 1.05rem)', lineHeight: '1.65', marginBottom: '2.2rem', maxWidth: '520px', marginInline: 'auto', fontFamily: 'var(--font-helvetica)', fontWeight: 400 }}>
+            <p style={{ color: '#7f7165', fontSize: 'clamp(0.95rem, 3.5vw, 1.15rem)', lineHeight: '1.5', marginBottom: '2.5rem', maxWidth: '600px', marginInline: 'auto', fontFamily: 'var(--font-helvetica)', fontWeight: 400 }}>
               <strong>MRI • CT scans • X-rays • Lab tests</strong><br />
               From nearby hospitals with confirmed time slots
             </p>
@@ -126,9 +119,9 @@ export default function WaitlistLanding() {
               <button
                 type="button"
                 onClick={openWaitlisterForm}
-                style={{ backgroundColor: '#1a120a', color: '#f5ede0', padding: '0.85rem 2rem', fontSize: '0.95rem', fontWeight: 500, border: 'none', borderRadius: '999px', cursor: 'pointer', height: '52px', whiteSpace: 'nowrap', fontFamily: 'var(--font-helvetica)', letterSpacing: '0.01em', boxShadow: '0 8px 24px rgba(26,18,10,0.22)', transition: 'transform 0.2s, box-shadow 0.2s' }}
-                onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 16px 32px rgba(26,18,10,0.3)'; }}
-                onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(26,18,10,0.22)'; }}>
+                style={{ backgroundColor: '#2b1b12', color: '#FAF6F0', padding: '1rem 2.5rem', fontSize: '1.05rem', fontWeight: 500, border: 'none', borderRadius: '16px', cursor: 'pointer', height: '56px', whiteSpace: 'nowrap', fontFamily: 'var(--font-helvetica)', letterSpacing: '0.01em', transition: 'transform 0.2s' }}
+                onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}>
                 Get Early Access
               </button>
             </div>

@@ -105,14 +105,9 @@ export default function WaitlistLanding() {
           {/* Hero text */}
           <div id="hero" style={{ textAlign: 'center', maxWidth: '840px', width: '100%', paddingTop: '3.5rem', paddingBottom: '3.5rem' }}>
             {/* Badge */}
-<<<<<<< HEAD
-            <div className="badge-text" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.4rem 1rem', borderRadius: '8px', backgroundColor: '#efeae2', color: '#2b1b12', fontSize: '0.95rem', fontWeight: 500, marginBottom: '2rem', fontFamily: 'var(--font-helvetica)' }}>
-              Fastest Medical Tests Booking | Now in Indore!
-=======
             <div className="badge-text" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.35rem 1rem', borderRadius: '999px', border: '1px solid rgba(60,40,20,0.18)', color: '#5a3e2b', fontSize: '0.82rem', fontWeight: 500, marginBottom: '1.6rem', letterSpacing: '0.01em', fontFamily: 'var(--font-helvetica)', gap: '0.5rem' }}>
               <span style={{ minWidth: '8px', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e', boxShadow: '0 0 10px rgba(34,197,94,0.8)', flexShrink: 0 }}></span>
               <span>Fastest Medical Tests Booking | Now in Indore!</span>
->>>>>>> 1e29d74323a8fbe52b789d13b45e72a338a94100
             </div>
             <h1 style={{ fontSize: 'clamp(3rem, 11vw, 5.5rem)', fontWeight: 500, fontFamily: 'var(--font-cormorant-garamond)', lineHeight: '1.02', color: '#1a120a', marginBottom: '1.5rem', letterSpacing: '-0.04em', textAlign: 'center' }}>
               Compare prices and book medical tests online

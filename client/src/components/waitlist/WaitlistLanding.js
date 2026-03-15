@@ -78,6 +78,7 @@ export default function WaitlistLanding() {
         .footer-right { justify-content: flex-end; gap: 1.25rem; }
         .video-wrapper { position: relative; margin-top: 3rem; margin-bottom: 1rem; width: 100%; max-width: 1000px; }
         @media (max-width: 640px) {
+          .hero-heading { line-height: 1.15 !important; }
           .waitlist-actions { width: 100%; flex-direction: column; align-items: center; }
           .footer-content { flex-direction: column; gap: 2rem; }
           .footer-section { flex: 1 1 auto; width: 100%; }
@@ -109,7 +110,7 @@ export default function WaitlistLanding() {
               <span style={{ minWidth: '8px', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e', boxShadow: '0 0 10px rgba(34,197,94,0.8)', flexShrink: 0 }}></span>
               <span>Fastest Medical Tests Booking | Now in Indore!</span>
             </div>
-            <h1 style={{ fontSize: 'clamp(3rem, 11vw, 5.5rem)', fontWeight: 500, fontFamily: 'var(--font-cormorant-garamond)', lineHeight: '1.02', color: '#1a120a', marginBottom: '1.5rem', letterSpacing: '-0.04em', textAlign: 'center' }}>
+            <h1 className="hero-heading" style={{ fontSize: 'clamp(3rem, 11vw, 5.5rem)', fontWeight: 500, fontFamily: 'var(--font-cormorant-garamond)', lineHeight: '1.02', color: '#1a120a', marginBottom: '1.5rem', letterSpacing: '-0.04em', textAlign: 'center' }}>
               Compare prices and book medical tests online
             </h1>
             <p style={{ color: '#7f7165', fontSize: 'clamp(0.95rem, 3.5vw, 1.15rem)', lineHeight: '1.5', marginBottom: '2.5rem', maxWidth: '600px', marginInline: 'auto', fontFamily: 'var(--font-helvetica)', fontWeight: 400 }}>

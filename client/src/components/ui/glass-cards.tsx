@@ -114,6 +114,7 @@ const Card: React.FC<CardProps> = ({ title, description, index, totalCards, colo
                         alignItems: 'center',
                         gap: '2rem',
                         borderRadius: '30px',
+                        boxSizing: 'border-box',
                         background: gradient ?? 'linear-gradient(145deg, rgba(255,255,255,0.92), rgba(255,255,255,0.82))',
                         backdropFilter: 'blur(20px) saturate(150%)',
                         border: '1px solid rgba(255, 255, 255, 0.72)',
@@ -276,6 +277,8 @@ export const StackedCards: React.FC = () => {
                         grid-template-rows: auto auto !important;
                         gap: 1.25rem !important;
                         padding: 1.25rem !important;
+                        width: 100% !important;
+                        box-sizing: border-box !important;
                     }
 
                     .glass-card-copy {
@@ -312,6 +315,9 @@ export const StackedCards: React.FC = () => {
                     .glass-card-body {
                         padding: 1rem !important;
                         border-radius: 24px !important;
+                        box-sizing: border-box !important;
+                        width: 100% !important;
+                        overflow: hidden !important;
                     }
 
                     .glass-card-copy h2 {
@@ -324,6 +330,9 @@ export const StackedCards: React.FC = () => {
                         font-size: 0.95rem !important;
                         line-height: 1.65 !important;
                         max-width: 100% !important;
+                        word-break: break-word !important;
+                        overflow-wrap: break-word !important;
+                        white-space: pre-wrap !important;
                     }
 
                     .glass-card-media,

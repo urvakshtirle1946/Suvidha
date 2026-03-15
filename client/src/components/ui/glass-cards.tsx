@@ -273,12 +273,14 @@ export const StackedCards: React.FC = () => {
 
                     .glass-card-body {
                         grid-template-columns: 1fr !important;
+                        grid-template-rows: auto auto !important;
                         gap: 1.25rem !important;
                         padding: 1.25rem !important;
                     }
 
                     .glass-card-copy {
                         justify-content: flex-start !important;
+                        height: auto !important;
                     }
 
                     .glass-card-media-wrap {

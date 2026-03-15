@@ -96,7 +96,7 @@ export default function WaitlistLanding() {
 
           {/* Navbar */}
           <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1.5rem', paddingBottom: '1.5rem' }}>
-            <img src="/logo.png" alt="Zelp Logo" style={{ height: 'clamp(80px, 18vw, 250px)', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply', marginTop: '-35px', marginBottom: '-35px' }} />
+            <img src="/logo.png" alt="Zelp Logo" style={{ height: 'clamp(130px, 12vw, 170px)', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply', marginTop: '-25px', marginBottom: '-25px' }} />
             <button onClick={openWaitlisterForm} style={{ backgroundColor: '#2b1b12', color: '#FAF6F0', padding: '0.65rem 1.25rem', fontSize: '0.95rem', fontWeight: '500', border: 'none', borderRadius: '10px', cursor: 'pointer', fontFamily: 'var(--font-helvetica)' }}>
               Join waitlist
             </button>

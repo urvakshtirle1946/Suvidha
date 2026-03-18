@@ -84,7 +84,7 @@ export default function WaitlistLanding() {
           .footer-section { flex: 1 1 auto; width: 100%; }
           .footer-left, .footer-center, .footer-right { justify-content: center; text-align: center; }
           .video-wrapper { margin-bottom: 1rem; }
-          #hero { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+          #hero { padding-top: 0rem !important; padding-bottom: 1.5rem !important; }
           .badge-text { font-size: 0.9rem !important; padding: 0.4rem 0.8rem !important; white-space: normal !important; }
         }
       `}</style>
@@ -104,7 +104,17 @@ export default function WaitlistLanding() {
           </div>
 
           {/* Hero text */}
-          <div id="hero" style={{ textAlign: 'center', maxWidth: '840px', width: '100%', paddingTop: '3.5rem', paddingBottom: '3.5rem' }}>
+          <div id="hero" style={{ textAlign: 'center', maxWidth: '840px', width: '100%', paddingTop: '0rem', paddingBottom: '1.5rem', marginTop: '-1.5rem' }}>
+            {/* Peerlist Badge */}
+            <div style={{ marginBottom: '0.5rem', display: 'flex', justifyContent: 'center' }}>
+              <a href="https://peerlist.io/anishsarkar/project/zelp" target="_blank" rel="noreferrer" style={{ display: 'inline-block' }}>
+                <img
+                  src="https://peerlist.io/api/v1/projects/embed/PRJH7B8BLKR8GRBQJF96G67AQK8QP8?showUpvote=true&theme=light"
+                  alt="Zelp"
+                  style={{ width: 'auto', height: '72px' }}
+                />
+              </a>
+            </div>
             {/* Badge */}
             <div className="badge-text" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.35rem 1rem', borderRadius: '999px', border: '1px solid rgba(60,40,20,0.18)', color: '#5a3e2b', fontSize: '0.82rem', fontWeight: 500, marginBottom: '1.6rem', letterSpacing: '0.01em', fontFamily: 'var(--font-helvetica)', gap: '0.5rem' }}>
               <span style={{ minWidth: '8px', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e', boxShadow: '0 0 10px rgba(34,197,94,0.8)', flexShrink: 0 }}></span>
@@ -117,7 +127,7 @@ export default function WaitlistLanding() {
               <strong>MRI • CT scans • X-rays • Lab tests</strong><br />
               From nearby hospitals with confirmed time slots
             </p>
-            <div className="waitlist-actions" style={{ maxWidth: '560px', margin: '0 auto', position: 'relative', zIndex: 10 }}>
+            <div className="waitlist-actions" style={{ maxWidth: '600px', margin: '0 auto', position: 'relative', zIndex: 10 }}>
               <button
                 type="button"
                 onClick={openWaitlisterForm}

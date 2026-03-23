@@ -47,10 +47,12 @@ const useScrollAnimation = () => {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setInView(entry.isIntersecting);
+        if (!entry.isIntersecting) return;
+        setInView(true);
+        observer.unobserve(entry.target);
       },
       {
-        threshold: 0.1,
+        threshold: 0.12,
       }
     );
 
@@ -80,7 +82,7 @@ const AnimatedHeader = () => {
 
 export function StickyFeatureSection() {
   return (
-    <div className="bg-white font-sans">
+    <div className="bg-white font-sans scroll-container">
       <div className="px-[5%]">
         <div className="mx-auto max-w-7xl">
           <section className="flex flex-col items-center py-20 md:py-28">
@@ -90,8 +92,12 @@ export function StickyFeatureSection() {
               {features.map((feature, index) => (
                 <div
                   key={index}
-                  className={`${feature.bgColor} sticky mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-8 overflow-hidden rounded-[32px] border border-black/5 p-8 shadow-[0_24px_70px_rgba(0,0,0,0.08)] md:grid-cols-[minmax(280px,0.82fr)_minmax(420px,1fr)] md:gap-14 md:p-12`}
-                  style={{ top: "124px" }}
+                  className={`${feature.bgColor} sticky mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-8 overflow-hidden rounded-[32px] border border-black/5 p-8 shadow-[0_24px_70px_rgba(0,0,0,0.08)] md:grid-cols-[minmax(280px,0.82fr)_minmax(420px,1fr)] md:gap-14 md:p-12 scroll-trigger-element`}
+                  style={{ 
+                    top: "124px",
+                    contain: 'layout style paint',
+                    transform: 'translateZ(0)'
+                  }}
                 >
                   <div className="flex flex-col justify-center md:pl-2 lg:pl-4">
                     <div className="mb-5 inline-flex w-fit rounded-full border border-black/10 bg-white/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-600">
@@ -109,6 +115,7 @@ export function StickyFeatureSection() {
                         src={feature.imageUrl}
                         alt={feature.title}
                         loading="lazy"
+                        decoding="async"
                         className="aspect-[16/10] h-auto w-full rounded-[18px] object-cover"
                         onError={(e) => {
                           const target = e.currentTarget as HTMLImageElement;

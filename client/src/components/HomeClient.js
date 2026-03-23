@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { 
@@ -21,60 +21,118 @@ import HospitalProfileModal from './HospitalProfileModal';
 import PaymentReminder from './PaymentReminder';
 // import AmbulanceRequest from './AmbulanceRequest';
 
+const OFFERS = [
+  {
+    id: 1,
+    title: 'Healthcare at your fingertips.',
+    subtitle: 'Lab Tests | Medicines | Nursing | Doctor Visits',
+    bg: 'linear-gradient(to right, #0c831f, #33b249)',
+    btnText: 'Book Now',
+    btnColor: '#0c831f'
+  },
+  {
+    id: 2,
+    title: '50% OFF on Full Body Checkups',
+    subtitle: 'Includes 80+ Tests. Home Collection Available.',
+    bg: 'linear-gradient(to right, #2563eb, #60a5fa)',
+    btnText: 'View Package',
+    btnColor: '#2563eb'
+  },
+  {
+    id: 3,
+    title: 'Pharmacy: Flat 20% OFF',
+    subtitle: 'On all prescription medicines. fast delivery.',
+    bg: 'linear-gradient(to right, #db2777, #f472b6)',
+    btnText: 'Order Now',
+    btnColor: '#db2777'
+  }
+];
+
+const CATEGORIES = [
+  { name: 'Cardiology', desc: 'Heart & Blood Pressure Care', icon: <Heart size={50} color="rgba(255,255,255,0.3)" />, color: '#ff6b6b', href: '/hospitals?specialty=Cardiologist', img: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Radiology', desc: 'Detailed Scans & X-Rays', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#a55eea', href: '/hospitals?category=Scan', img: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Pathology', desc: 'Precision Lab Tests', icon: <TestTube size={50} color="rgba(255,255,255,0.3)" />, color: '#fd9644', href: '/lab-tests?title=Pathology', img: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Orthopedic', desc: 'Bone & Joint Health', icon: <Bone size={50} color="rgba(255,255,255,0.3)" />, color: '#5f27cd', href: '/hospitals?specialty=Orthopedic', img: 'https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Pediatric', desc: 'Gentle Child Care', icon: <Baby size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9ff3', textColor: '#1f2937', href: '/hospitals?specialty=Pediatrician', img: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Neurology', desc: 'Advanced Brain Care', icon: <Brain size={50} color="rgba(255,255,255,0.3)" />, color: '#54a0ff', href: '/hospitals?specialty=Neurologist', img: '/assets/categories/neurology.png' },
+  { name: 'Eye Care', desc: 'Vision Specialists', icon: <Eye size={50} color="rgba(255,255,255,0.3)" />, color: '#1dd1a1', href: '/hospitals?specialty=Ophthalmologist', img: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Dermatology', desc: 'Skin & Hair Treatments', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#00d2d3', href: '/hospitals?specialty=Dermatologist', img: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Diabetes', desc: 'Sugar Level Management', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ee5253', href: '/hospitals?specialty=Diabetes', img: '/assets/categories/diabetes.png' },
+  { name: 'Surgeries', desc: 'Expert Operations', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9f43', href: '/hospitals?category=Surgery', img: 'https://images.unsplash.com/photo-1583324113626-70df0f4deaab?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Physiotherapy', desc: 'Rehab & Recovery', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#10ac84', href: '/hospitals?specialty=Physiotherapy', img: '/assets/categories/physiotherapy.png' }
+];
+
 export default function HomeClient({ hospitals, popularServices }) {
   const { addToCart } = useCart();
   const [selectedHospitalForProfile, setSelectedHospitalForProfile] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [reduceMotion, setReduceMotion] = useState(false);
   const sliderRef = useRef(null);
   const categorySliderRef = useRef(null);
 
-  const scroll = (direction) => {
-    if (sliderRef.current) {
-      const scrollAmount = direction === 'left' ? -300 : 300;
-      sliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updateReduceMotion = () => setReduceMotion(mediaQuery.matches);
+    updateReduceMotion();
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', updateReduceMotion);
+      return () => mediaQuery.removeEventListener('change', updateReduceMotion);
     }
+
+    mediaQuery.addListener(updateReduceMotion);
+    return () => mediaQuery.removeListener(updateReduceMotion);
+  }, []);
+
+  // Debounced scroll function to prevent multiple rapid scrolls
+  const scrollWithMomentum = (ref, direction) => {
+    if (!ref.current) return;
+    const scrollAmount = direction === 'left' ? -340 : 340;
+    // Use requestAnimationFrame for better performance
+    requestAnimationFrame(() => {
+      ref.current?.scrollBy({ 
+        left: scrollAmount, 
+        behavior: reduceMotion ? 'auto' : 'smooth'
+      });
+    });
   };
 
-  const scrollCategory = (direction) => {
-    if (categorySliderRef.current) {
-      const scrollAmount = direction === 'left' ? -300 : 300;
-      categorySliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  };
-
-  const OFFERS = [
-      {
-          id: 1,
-          title: "Healthcare at your fingertips.",
-          subtitle: "Lab Tests • Medicines • Nursing • Doctor Visits",
-          bg: "linear-gradient(to right, #0c831f, #33b249)", // Green
-          btnText: "Book Now",
-          btnColor: "#0c831f"
-      },
-      {
-          id: 2,
-          title: "50% OFF on Full Body Checkups",
-          subtitle: "Includes 80+ Tests. Home Collection Available.",
-          bg: "linear-gradient(to right, #2563eb, #60a5fa)", // Blue
-          btnText: "View Package",
-          btnColor: "#2563eb"
-      },
-      {
-          id: 3,
-          title: "Pharmacy: Flat 20% OFF",
-          subtitle: "On all prescription medicines. fast delivery.",
-          bg: "linear-gradient(to right, #db2777, #f472b6)", // Pink
-          btnText: "Order Now",
-          btnColor: "#db2777"
-      }
-  ];
+  const scroll = (direction) => scrollWithMomentum(sliderRef, direction);
+  const scrollCategory = (direction) => scrollWithMomentum(categorySliderRef, direction);
 
   useEffect(() => {
-      const timer = setInterval(() => {
-          setCurrentSlide((prev) => (prev + 1) % OFFERS.length);
+    if (reduceMotion) return;
+
+    let timer = null;
+    const start = () => {
+      if (document.visibilityState !== 'visible' || timer) return;
+      timer = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % OFFERS.length);
       }, 5000);
-      return () => clearInterval(timer);
-  }, []);
+    };
+
+    const stop = () => {
+      if (!timer) return;
+      clearInterval(timer);
+      timer = null;
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        stop();
+        return;
+      }
+      start();
+    };
+
+    start();
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      stop();
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [reduceMotion]);
+
 
   const handleHospitalClick = async (hospital) => {
       try {
@@ -93,23 +151,9 @@ export default function HomeClient({ hospitals, popularServices }) {
       }
   };
 
-  // Categories with assigned images to match the movie card aesthetic
-  const CATEGORIES = [
-      { name: 'Cardiology', desc: 'Heart & Blood Pressure Care', icon: <Heart size={50} color="rgba(255,255,255,0.3)" />, color: '#ff6b6b', href: '/hospitals?specialty=Cardiologist', img: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=400&q=80' },
-      { name: 'Radiology', desc: 'Detailed Scans & X-Rays', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#a55eea', href: '/hospitals?category=Scan', img: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=400&q=80' },
-      { name: 'Pathology', desc: 'Precision Lab Tests', icon: <TestTube size={50} color="rgba(255,255,255,0.3)" />, color: '#fd9644', href: '/lab-tests?title=Pathology', img: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=400&q=80' },
-      { name: 'Orthopedic', desc: 'Bone & Joint Health', icon: <Bone size={50} color="rgba(255,255,255,0.3)" />, color: '#5f27cd', href: '/hospitals?specialty=Orthopedic', img: 'https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?auto=format&fit=crop&w=400&q=80' },
-      { name: 'Pediatric', desc: 'Gentle Child Care', icon: <Baby size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9ff3', textColor: '#1f2937', href: '/hospitals?specialty=Pediatrician', img: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=400&q=80' },
-      { name: 'Neurology', desc: 'Advanced Brain Care', icon: <Brain size={50} color="rgba(255,255,255,0.3)" />, color: '#54a0ff', href: '/hospitals?specialty=Neurologist', img: '/assets/categories/neurology.png' },
-      { name: 'Eye Care', desc: 'Vision Specialists', icon: <Eye size={50} color="rgba(255,255,255,0.3)" />, color: '#1dd1a1', href: '/hospitals?specialty=Ophthalmologist', img: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=400&q=80' },
-      { name: 'Dermatology', desc: 'Skin & Hair Treatments', icon: <Smile size={50} color="rgba(255,255,255,0.3)" />, color: '#00d2d3', href: '/hospitals?specialty=Dermatologist', img: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80' },
-      { name: 'Diabetes', desc: 'Sugar Level Management', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ee5253', href: '/hospitals?specialty=Diabetes', img: '/assets/categories/diabetes.png' },
-      { name: 'Surgeries', desc: 'Expert Operations', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#ff9f43', href: '/hospitals?category=Surgery', img: 'https://images.unsplash.com/photo-1583324113626-70df0f4deaab?auto=format&fit=crop&w=400&q=80' },
-      { name: 'Physiotherapy', desc: 'Rehab & Recovery', icon: <Activity size={50} color="rgba(255,255,255,0.3)" />, color: '#10ac84', href: '/hospitals?specialty=Physiotherapy', img: '/assets/categories/physiotherapy.png' }
-  ];
 
   return (
-    <main style={{ paddingBottom: '100px', background: '#f4f6fb', minHeight: '100vh' }}>
+    <main style={{ paddingBottom: '100px', background: '#f4f6fb', minHeight: '100vh' }} className="scroll-container">
       
       <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 2rem)' }}>
 
@@ -132,7 +176,7 @@ export default function HomeClient({ hospitals, popularServices }) {
                     opacity: currentSlide === index ? 1 : 0,
                     visibility: currentSlide === index ? 'visible' : 'hidden',
                     pointerEvents: currentSlide === index ? 'auto' : 'none',
-                    transition: 'opacity 0.8s ease-in-out, visibility 0.8s',
+                    transition: 'opacity 620ms var(--ease-smooth), visibility 620ms linear',
                     zIndex: currentSlide === index ? 10 : 1,
                     display: 'flex',
                     flexDirection: 'column',
@@ -144,7 +188,7 @@ export default function HomeClient({ hospitals, popularServices }) {
                     <p style={{ fontSize: 'clamp(0.9rem, 4vw, 1.2rem)', opacity: 0.9, marginBottom: '1.5rem' }}>
                         {offer.subtitle}
                     </p>
-                    <button className="btn" style={{ background: '#fff', color: offer.btnColor, padding: '0.6rem 1.5rem', fontSize: '1rem', width: 'fit-content' }}>
+                    <button className="btn smooth-interaction smooth-lift" style={{ '--lift-distance': '-2px', background: '#fff', color: offer.btnColor, padding: '0.6rem 1.5rem', fontSize: '1rem', width: 'fit-content' }}>
                         {offer.btnText}
                     </button>
                     {/* Decorative Circles */}
@@ -173,7 +217,7 @@ export default function HomeClient({ hospitals, popularServices }) {
                             borderRadius: '50%',
                             background: currentSlide === index ? '#fff' : 'rgba(255,255,255,0.4)',
                             cursor: 'pointer',
-                            transition: 'all 0.3s'
+                            transition: 'background-color 260ms var(--ease-standard), transform 260ms var(--ease-smooth)'
                         }}
                     />
                 ))}
@@ -202,27 +246,27 @@ export default function HomeClient({ hospitals, popularServices }) {
                         paddingRight: '2rem',
                         paddingLeft: '0.5rem',
                         scrollbarWidth: 'none',
-                        scrollBehavior: 'smooth',
-                        WebkitOverflowScrolling: 'touch'
+                        scrollBehavior: reduceMotion ? 'auto' : 'smooth',
+                        WebkitOverflowScrolling: 'touch',
+                        scrollSnapType: 'x proximity',
+                        contain: 'layout style paint'
                     }}
-                    className="hide-scrollbar"
+                    className="hide-scrollbar momentum-scroll"
                 >
                     {CATEGORIES.map((cat, index) => (
                         <Link key={index} href={cat.href} style={{ textDecoration: 'none', display: 'block' }}>
-                            <div 
+                            <div
+                                className="smooth-lift"
                                 style={{ 
+                                    '--lift-distance': '-4px',
+                                    '--lift-shadow-hover': '0 10px 22px rgba(15, 23, 42, 0.14)',
                                     width: '180px', 
                                     flexShrink: 0, 
                                     display: 'flex', 
                                     flexDirection: 'column', 
                                     cursor: 'pointer',
-                                    transition: 'transform 0.2s ease-out'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-4px)';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    scrollSnapAlign: 'start',
+                                    scrollSnapStop: 'always'
                                 }}
                             >
                                 {/* Image Card with Gradient & Rating Overlay */}
@@ -234,13 +278,20 @@ export default function HomeClient({ hospitals, popularServices }) {
                                     overflow: 'hidden',
                                     backgroundColor: cat.color,
                                     marginBottom: '0.8rem',
-                                    boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
+                                    boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+                                    containIntrinsicSize: '180px 260px'
                                 }}>
                                     {cat.img ? (
                                         <img 
                                             src={cat.img} 
                                             alt={cat.name}
-                                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                            loading="lazy"
+                                            decoding="async"
+                                            style={{ 
+                                                width: '100%', 
+                                                height: '100%', 
+                                                objectFit: 'cover'
+                                            }}
                                         />
                                     ) : (
                                         <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -285,8 +336,11 @@ export default function HomeClient({ hospitals, popularServices }) {
 
                 {/* Floating Left Arrow Overlay */}
                 <button 
+                    className="smooth-icon-button smooth-interaction"
                     onClick={(e) => { e.preventDefault(); scrollCategory('left'); }}
                     style={{ 
+                        '--base-transform': 'translateY(-50%)',
+                        '--hover-transform': 'translateY(-50%) scale(1.08)',
                         position: 'absolute',
                         left: '-20px',
                         top: '130px', // Center vertically on the image card (260px / 2)
@@ -302,19 +356,19 @@ export default function HomeClient({ hospitals, popularServices }) {
                         cursor: 'pointer', 
                         color: '#111827',
                         zIndex: 20,
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                        transition: 'all 0.2s'
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                     }}
-                    onMouseOver={(e) => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'; }}
-                    onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.9)'; e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; }}
                 >
                     <ChevronLeft size={24} />
                 </button>
 
                 {/* Floating Right Arrow Overlay */}
                 <button 
+                    className="smooth-icon-button smooth-interaction"
                     onClick={(e) => { e.preventDefault(); scrollCategory('right'); }}
                     style={{ 
+                        '--base-transform': 'translateY(-50%)',
+                        '--hover-transform': 'translateY(-50%) scale(1.08)',
                         position: 'absolute',
                         right: '-20px',
                         top: '130px', // Center vertically on the image card
@@ -330,11 +384,8 @@ export default function HomeClient({ hospitals, popularServices }) {
                         cursor: 'pointer', 
                         color: '#111827',
                         zIndex: 20,
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                        transition: 'all 0.2s'
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                     }}
-                    onMouseOver={(e) => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'; }}
-                    onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.9)'; e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; }}
                 >
                     <ChevronRight size={24} />
                 </button>
@@ -346,8 +397,10 @@ export default function HomeClient({ hospitals, popularServices }) {
             <h2 style={{ fontSize: 'clamp(1.2rem, 5vw, 1.5rem)', margin: 0 }}>Popular Lab Tests</h2>
             <div style={{ display: 'flex', gap: '8px' }}>
                 <button 
+                    className="smooth-icon-button smooth-interaction"
                     onClick={() => scroll('left')}
                     style={{ 
+                        '--hover-transform': 'translateY(-2px) scale(1.06)',
                         background: '#fff', border: '1px solid #e5e7eb', borderRadius: '50%', 
                         width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                         cursor: 'pointer', color: '#374151'
@@ -356,8 +409,10 @@ export default function HomeClient({ hospitals, popularServices }) {
                     <ChevronLeft size={20} />
                 </button>
                 <button 
+                    className="smooth-icon-button smooth-interaction"
                     onClick={() => scroll('right')}
                     style={{ 
+                        '--hover-transform': 'translateY(-2px) scale(1.06)',
                         background: '#fff', border: '1px solid #e5e7eb', borderRadius: '50%', 
                         width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                         cursor: 'pointer', color: '#374151'
@@ -376,7 +431,7 @@ export default function HomeClient({ hospitals, popularServices }) {
                 overflowX: 'auto', 
                 paddingBottom: '1rem', 
                 scrollbarWidth: 'none',
-                scrollBehavior: 'smooth'
+                scrollBehavior: reduceMotion ? 'auto' : 'smooth'
             }}
         >
             {popularServices.map((service) => (
@@ -385,8 +440,8 @@ export default function HomeClient({ hospitals, popularServices }) {
                     title={service.name} 
                     time="Reports in 24 hrs" 
                     image={getImageUrl(service.image_url || service.hospital_image)}
-                    price={`₹${service.discount_price || service.price}`}
-                    oldPrice={service.discount_price ? `₹${service.price}` : `₹${Math.round(service.price * 1.5)}`}
+                    price={`â‚¹${service.discount_price || service.price}`}
+                    oldPrice={service.discount_price ? `â‚¹${service.price}` : `â‚¹${Math.round(service.price * 1.5)}`}
                     discount={service.discount_price ? `${Math.round(((service.price - service.discount_price) / service.price) * 100)}% OFF` : "Limited Offer"}
                     onAdd={() => {
                         const price = parseFloat(service.discount_price || service.price);
@@ -407,18 +462,19 @@ export default function HomeClient({ hospitals, popularServices }) {
         }}>
             {hospitals.map((hospital) => (
               <div 
+                className="smooth-lift"
                 key={hospital.id} 
                 onClick={() => handleHospitalClick(hospital)}
                 style={{ 
+                  '--lift-distance': '-5px',
+                  '--lift-shadow-hover': '0 14px 28px rgba(15, 23, 42, 0.12)',
                   background: '#fff', 
                   borderRadius: '16px', 
                   overflow: 'hidden', 
                   cursor: 'pointer',
                   border: '1px solid #e5e7eb',
-                  transition: 'transform 0.2s, box-shadow 0.2s'
+                  boxShadow: '0 4px 14px rgba(15, 23, 42, 0.05)'
                 }}
-                onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.05)' }}
-                onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
               >
                   <div style={{ height: '180px', background: '#f3f4f6', overflow: 'hidden' }}>
                        <img 
@@ -477,14 +533,17 @@ export default function HomeClient({ hospitals, popularServices }) {
 
 function ProductCard({ title, time, price, oldPrice, discount, onAdd, image }) {
     return (
-        <div style={{ 
+        <div className="smooth-lift" style={{ 
+            '--lift-distance': '-3px',
+            '--lift-shadow-hover': '0 12px 24px rgba(15, 23, 42, 0.12)',
             minWidth: '220px', 
             background: '#fff', 
             borderRadius: '12px', 
             border: '1px solid #eee', 
             padding: '0', 
             overflow: 'hidden',
-            flexShrink: 0
+            flexShrink: 0,
+            boxShadow: '0 2px 10px rgba(15, 23, 42, 0.04)'
         }}>
             <div style={{ height: '120px', background: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                 {image ? (
@@ -509,8 +568,9 @@ function ProductCard({ title, time, price, oldPrice, discount, onAdd, image }) {
                         <span style={{ fontSize: '0.8rem', textDecoration: 'line-through', color: '#9ca3af' }}>{oldPrice}</span>
                     </div>
                     <button 
+                        className="smooth-interaction smooth-lift"
                         onClick={onAdd}
-                        style={{ border: '1px solid #ff6f61', color: '#ff6f61', background: '#fff', borderRadius: '6px', padding: '6px 16px', fontWeight: '600', cursor: 'pointer' }}
+                        style={{ '--lift-distance': '-2px', border: '1px solid #ff6f61', color: '#ff6f61', background: '#fff', borderRadius: '6px', padding: '6px 16px', fontWeight: '600', cursor: 'pointer' }}
                     >
                         ADD
                     </button>
@@ -519,4 +579,8 @@ function ProductCard({ title, time, price, oldPrice, discount, onAdd, image }) {
         </div>
     );
 }
+
+
+
+
 

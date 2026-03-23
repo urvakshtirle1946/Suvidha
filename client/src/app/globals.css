@@ -3,6 +3,69 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ═══════════════════════════════════════════════════════════════
+   SCROLLING IMPROVEMENTS & PERFORMANCE OPTIMIZATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Smooth scrolling for entire page */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+/* Optimizer for overscroll effect on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+}
+
+/* Hide scrollbar while keeping scrolling functional */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Optimized scrollable containers */
+.scroll-container {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+  contain: layout style paint;
+  will-change: scroll-position;
+}
+
+/* Momentum scrolling for smooth, native-like behavior */
+.momentum-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: scroll;
+  overflow-scrolling: touch;
+}
+
+/* Faster scroll triggered elements */
+.scroll-trigger-element {
+  will-change: opacity, transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Scroll performance optimization */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 /* Zelp Reveal Animation - Overlap & No Zoom */
 @keyframes revealText {
   0% {
@@ -144,6 +207,8 @@
   --primary: oklch(0.205 0 0);
   --brand: #0c831f;
   --brand-yellow: #fec007;
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 
   --bg-dark: #f4f6fb;
   /* Main background */
@@ -645,6 +710,126 @@ body:has(.admin-root) {
 @media (max-width: 900px) {
   .leaderboard-container {
     display: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ADVANCED SCROLL OPTIMIZATION RULES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Smooth scroll snap behavior for sections */
+.scroll-snap-section {
+  scroll-snap-align: start;
+  scroll-snap-type: y mandatory;
+}
+
+/* Optimized horizontal scrolling with snap points */
+.horizontal-scroll {
+  scroll-snap-type: x mandatory;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.horizontal-scroll > * {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  flex-shrink: 0;
+}
+
+/* Reduce scrolling lag with transform3d GPU acceleration */
+.gpu-accelerated {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+}
+
+/* Smooth scroll for all links with hash navigation */
+a[href*="#"] {
+  scroll-behavior: smooth;
+}
+
+/* Prevent layout shift during scroll */
+.prevent-layout-shift {
+  contain: layout style paint;
+  content-visibility: auto;
+}
+
+/* Shared smooth interaction utilities */
+.smooth-interaction {
+  transition:
+    transform 240ms var(--ease-smooth),
+    box-shadow 260ms var(--ease-standard),
+    background-color 220ms var(--ease-standard),
+    color 200ms var(--ease-standard),
+    border-color 200ms var(--ease-standard),
+    opacity 200ms var(--ease-standard);
+}
+
+.smooth-lift {
+  --lift-distance: -4px;
+  --lift-shadow-hover: none;
+  transition:
+    transform 240ms var(--ease-smooth),
+    box-shadow 280ms var(--ease-standard);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .smooth-lift:hover {
+    transform: translateY(var(--lift-distance));
+    box-shadow: var(--lift-shadow-hover);
+  }
+}
+
+.smooth-icon-button {
+  --base-transform: none;
+  --hover-transform: translateY(-2px) scale(1.05);
+  transform: var(--base-transform);
+  transition:
+    transform 220ms var(--ease-smooth),
+    background-color 200ms var(--ease-standard),
+    box-shadow 240ms var(--ease-standard);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .smooth-icon-button:hover {
+    transform: var(--hover-transform);
+  }
+}
+
+/* Mobile scroll optimization */
+@media (max-width: 768px) {
+  .scroll-container {
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+  }
+
+  .momentum-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Enhance momentum scrolling on iOS */
+  body.ios .scroll-container {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .smooth-lift:hover,
+  .smooth-icon-button:hover {
+    transform: none !important;
   }
 }
 

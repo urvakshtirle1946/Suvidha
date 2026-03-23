@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { cardData } from '../../lib/utils';
@@ -17,56 +17,72 @@ interface CardProps {
     image?: string;
     gradient?: string;
     glow?: string;
+    isVisible?: boolean;
+    reduceMotion?: boolean;
 }
 
-const Card: React.FC<CardProps> = ({ title, description, index, totalCards, color, image, gradient, glow }) => {
+const Card: React.FC<CardProps> = ({ title, description, index, totalCards, color, image, gradient, glow, isVisible = true, reduceMotion = false }) => {
     const cardRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const card = cardRef.current;
         const container = containerRef.current;
-        if (!card || !container) return;
+        if (!card || !container || !isVisible) return;
 
         const targetScale = 1 - (totalCards - index) * 0.05;
 
+        if (reduceMotion) {
+            gsap.set(card, {
+                scale: targetScale,
+                transformOrigin: 'center top',
+                force3D: true
+            });
+            return;
+        }
+
         gsap.set(card, {
             scale: 1,
-            transformOrigin: 'center top'
+            transformOrigin: 'center top',
+            willChange: 'transform',
+            force3D: true
         });
 
+        const setScale = gsap.quickSetter(card, 'scale');
         const trigger = ScrollTrigger.create({
             trigger: container,
             start: 'top center',
             end: 'bottom center',
-            scrub: true,
+            scrub: 0.65,
+            fastScrollEnd: true,
+            invalidateOnRefresh: true,
             onUpdate: (self) => {
                 const progress = self.progress;
-                const scale = gsap.utils.interpolate(1, targetScale, progress);
-
-                gsap.set(card, {
-                    scale: Math.max(scale, targetScale),
-                    transformOrigin: 'center top'
-                });
+                const scale = Math.max(gsap.utils.interpolate(1, targetScale, progress), targetScale);
+                setScale(scale);
             }
         });
 
         return () => {
             trigger.kill();
+            gsap.set(card, { willChange: 'auto' });
         };
-    }, [index, totalCards]);
+    }, [index, totalCards, isVisible, reduceMotion]);
 
     return (
         <div
             ref={containerRef}
-            className="glass-card-shell"
+            className="glass-card-shell scroll-trigger-element"
             style={{
                 height: '92vh',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 position: 'sticky',
-                top: 0
+                top: 0,
+                contain: 'layout style paint',
+                backfaceVisibility: 'hidden',
+                perspective: 1000
             }}
         >
             <div
@@ -78,28 +94,21 @@ const Card: React.FC<CardProps> = ({ title, description, index, totalCards, colo
                     borderRadius: '30px',
                     isolation: 'isolate',
                     top: `calc(-3vh + ${index * 22}px)`,
-                    transformOrigin: 'top'
+                    transformOrigin: 'top',
+                    backfaceVisibility: 'hidden',
+                    perspective: 1000
                 }}
                 className="glass-card-frame card-content"
             >
                 <div
                     style={{
                         position: 'absolute',
-                        inset: '-3px',
-                        borderRadius: '33px',
-                        padding: '3px',
-                        background: `conic-gradient(
-                            from 0deg,
-                            transparent 0deg,
-                            ${color} 60deg,
-                            ${color.replace('0.8', '0.6')} 120deg,
-                            transparent 180deg,
-                            ${color.replace('0.8', '0.4')} 240deg,
-                            transparent 360deg
-                        )`,
+                        inset: '-1px',
+                        borderRadius: '30px',
+                        background: `linear-gradient(135deg, ${color} 0%, ${color.replace('0.8', '0.5')} 100%)`,
                         zIndex: -1,
-                        opacity: 0.72,
-                        filter: 'blur(0.4px)'
+                        opacity: 0.4,
+                        filter: 'blur(0.5px)'
                     }}
                 />
 
@@ -115,16 +124,15 @@ const Card: React.FC<CardProps> = ({ title, description, index, totalCards, colo
                         gap: '2rem',
                         borderRadius: '30px',
                         background: gradient ?? 'linear-gradient(145deg, rgba(255,255,255,0.92), rgba(255,255,255,0.82))',
-                        backdropFilter: 'blur(20px) saturate(150%)',
+                        backdropFilter: 'blur(12px) saturate(120%)',
                         border: '1px solid rgba(255, 255, 255, 0.72)',
                         boxShadow: `
-                            0 24px 60px rgba(15, 23, 42, 0.12),
-                            0 10px 28px rgba(15, 23, 42, 0.08),
-                            inset 0 1px 0 rgba(255, 255, 255, 0.72),
-                            inset 0 -1px 0 rgba(255, 255, 255, 0.22)
+                            0 20px 45px rgba(15, 23, 42, 0.08),
+                            inset 0 1px 0 rgba(255, 255, 255, 0.72)
                         `,
                         overflow: 'hidden',
-                        padding: 'clamp(1.6rem, 3vw, 2.75rem)'
+                        padding: 'clamp(1.6rem, 3vw, 2.75rem)',
+                        backfaceVisibility: 'hidden'
                     }}
                 >
                     <div
@@ -134,7 +142,7 @@ const Card: React.FC<CardProps> = ({ title, description, index, totalCards, colo
                             background: glow,
                             pointerEvents: 'none',
                             borderRadius: '30px',
-                            opacity: 1
+                            opacity: 0.5
                         }}
                     />
                     <div
@@ -143,22 +151,10 @@ const Card: React.FC<CardProps> = ({ title, description, index, totalCards, colo
                             top: 0,
                             left: 0,
                             right: 0,
-                            height: '60%',
-                            background: 'linear-gradient(135deg, rgba(255,255,255,0.58) 0%, rgba(255,255,255,0.22) 52%, transparent 100%)',
+                            height: '40%',
+                            background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 52%, transparent 100%)',
                             pointerEvents: 'none',
                             borderRadius: '30px 30px 0 0'
-                        }}
-                    />
-                    <div
-                        style={{
-                            position: 'absolute',
-                            top: '10px',
-                            left: '10px',
-                            right: '10px',
-                            height: '2px',
-                            background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.85) 50%, transparent 100%)',
-                            borderRadius: '1px',
-                            pointerEvents: 'none'
                         }}
                     />
                     <div
@@ -168,27 +164,9 @@ const Card: React.FC<CardProps> = ({ title, description, index, totalCards, colo
                             left: 0,
                             width: '2px',
                             height: '100%',
-                            background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.52) 0%, transparent 50%)',
+                            background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 50%)',
                             borderRadius: '30px 0 0 30px',
                             pointerEvents: 'none'
-                        }}
-                    />
-                    <div
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            backgroundImage: `
-                                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.22) 1px, transparent 2px),
-                                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.16) 1px, transparent 2px),
-                                radial-gradient(circle at 40% 80%, rgba(255,255,255,0.12) 1px, transparent 2px)
-                            `,
-                            backgroundSize: '30px 30px, 25px 25px, 35px 35px',
-                            pointerEvents: 'none',
-                            borderRadius: '30px',
-                            opacity: 0.8
                         }}
                     />
 
@@ -205,10 +183,15 @@ const Card: React.FC<CardProps> = ({ title, description, index, totalCards, colo
                     </div>
 
                     <div className="glass-card-media-wrap" style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                        <div className="glass-card-media" style={{ width: '100%', maxWidth: '520px', borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.72)', boxShadow: '0 24px 50px rgba(15,23,42,0.14)', background: 'rgba(255,255,255,0.56)' }}>
-                            {image ? (
-                                <img src={image} alt={title} style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', aspectRatio: '16 / 10' }} />
-                            ) : null}
+                        <div className="glass-card-media" style={{ width: '100%', maxWidth: '520px', borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.72)', boxShadow: '0 15px 30px rgba(15,23,42,0.08)', background: 'rgba(255,255,255,0.56)' }}>
+                            {image && isVisible ? (
+                                <img 
+                                    src={image} 
+                                    alt={title} 
+                                    style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', aspectRatio: '16 / 10' }}
+                                    loading="lazy"
+                                />
+                            ) : <div style={{ width: '100%', paddingBottom: '62.5%', backgroundColor: 'rgba(200,200,200,0.1)' }} />}
                         </div>
                     </div>
                 </div>
@@ -219,10 +202,51 @@ const Card: React.FC<CardProps> = ({ title, description, index, totalCards, colo
 
 export const StackedCards: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const [isVisible, setIsVisible] = useState(false);
+    const [reduceMotion, setReduceMotion] = useState(false);
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const updateReduceMotion = () => setReduceMotion(mediaQuery.matches);
+        updateReduceMotion();
+
+        if (typeof mediaQuery.addEventListener === 'function') {
+            mediaQuery.addEventListener('change', updateReduceMotion);
+            return () => mediaQuery.removeEventListener('change', updateReduceMotion);
+        }
+
+        mediaQuery.addListener(updateReduceMotion);
+        return () => mediaQuery.removeListener(updateReduceMotion);
+    }, []);
 
     useEffect(() => {
         const container = containerRef.current;
         if (!container) return;
+
+        // Intersection Observer for lazy loading the entire section
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.unobserve(container);
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        observer.observe(container);
+
+        return () => observer.disconnect();
+    }, []);
+
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container || !isVisible) return;
+
+        if (reduceMotion) {
+            gsap.set(container, { opacity: 1 });
+            return;
+        }
 
         gsap.fromTo(
             container,
@@ -233,7 +257,7 @@ export const StackedCards: React.FC = () => {
                 ease: 'power2.out'
             }
         );
-    }, []);
+    }, [isVisible, reduceMotion]);
 
     return (
         <main ref={containerRef} style={{ background: 'transparent' }}>
@@ -244,7 +268,7 @@ export const StackedCards: React.FC = () => {
                     </h2>
                 </div>
 
-                {cardData.map((card, index) => (
+                {isVisible && cardData.map((card, index) => (
                     <Card
                         key={card.id}
                         id={card.id}
@@ -256,6 +280,8 @@ export const StackedCards: React.FC = () => {
                         image={card.image}
                         gradient={card.gradient}
                         glow={card.glow}
+                        isVisible={isVisible}
+                        reduceMotion={reduceMotion}
                     />
                 ))}
             </section>

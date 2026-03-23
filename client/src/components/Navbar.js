@@ -1,25 +1,22 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
 import { useCart } from '@/context/CartContext';
-import { ChevronDown, ShoppingCart, Menu, X, MapPin, Search } from 'lucide-react';
-import { TextReveal } from './ui/text-reveal-animation';
-import { ZelpLogo } from './ui/zelp-text-reveal';
+import { ChevronDown, ShoppingCart, MapPin, Search } from 'lucide-react';
 import LocationModal from './LocationModal';
 import SettingsModal from './SettingsModal';
 import ProfileDropdown from './ProfileDropdown';
 import AuthModal from './AuthModal';
 import SterlingGateKineticNavigation from './ui/SterlingGateKineticNavigation';
-import { getApiUrl } from '@/utils/api';
+import { apiFetch } from '@/utils/api';
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { location, setLocation, detectLocation } = useLocation();
   const { setIsCartOpen, cartCount } = useCart();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [locationModalOpen, setLocationModalOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
@@ -31,7 +28,6 @@ export default function Navbar() {
   const [searchResults, setSearchResults] = useState([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const searchTimeoutRef = useRef(null);
 
   const SUGGESTED_SEARCHES = [
     { name: 'Full Body Checkup', type: 'Package' },
@@ -47,6 +43,46 @@ export default function Navbar() {
     }
   }, [user, authModalOpen]);
 
+  useEffect(() => {
+    if (!searchQuery || searchQuery.length < 2) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return undefined;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(async () => {
+      setIsSearching(true);
+
+      try {
+        const res = await apiFetch(
+          `/api/services?search=${encodeURIComponent(searchQuery)}&limit=5`,
+          { signal: controller.signal }
+        );
+
+        if (!res.ok) {
+          return;
+        }
+
+        const data = await res.json();
+        setSearchResults(Array.isArray(data) ? data : (data.data || []));
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('Search error:', error);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsSearching(false);
+        }
+      }
+    }, 300);
+
+    return () => {
+      controller.abort();
+      clearTimeout(timeoutId);
+    };
+  }, [searchQuery]);
+
 
 
   const handleOpenAuth = () => {
@@ -54,37 +90,8 @@ export default function Navbar() {
     setAuthModalOpen(true);
   };
 
-  const fetchSearchResults = async (query) => {
-    if (!query || query.length < 2) {
-      setSearchResults([]);
-      return;
-    }
-    
-    setIsSearching(true);
-    try {
-      const res = await fetch(`${getApiUrl()}/api/services?search=${encodeURIComponent(query)}&limit=5`);
-      if (res.ok) {
-        const data = await res.json();
-        setSearchResults(Array.isArray(data) ? data : (data.data || []));
-      }
-    } catch (error) {
-      console.error('Search error:', error);
-    } finally {
-      setIsSearching(false);
-    }
-  };
-
   const handleSearchChange = (e) => {
-    const val = e.target.value;
-    setSearchQuery(val);
-    
-    if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-    }
-    
-    searchTimeoutRef.current = setTimeout(() => {
-        fetchSearchResults(val);
-    }, 300);
+    setSearchQuery(e.target.value);
   };
 
   const handleSearchSelect = (serviceName) => {
@@ -246,7 +253,7 @@ export default function Navbar() {
                                     ))
                                 ) : (
                                     <div style={{ padding: '1rem', textAlign: 'center', color: '#6b7280', fontSize: '0.9rem' }}>
-                                        No results found for "{searchQuery}"
+                                        No results found for &quot;{searchQuery}&quot;
                                     </div>
                                 )}
                             </div>

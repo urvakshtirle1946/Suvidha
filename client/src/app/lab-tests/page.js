@@ -1,19 +1,18 @@
 'use client';
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useState, useEffect, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
-import { Search, MapPin, Star, Filter, Activity, Clock, SlidersHorizontal, TestTube } from 'lucide-react';
+import { Clock, SlidersHorizontal, TestTube } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { apiFetch, getImageUrl } from '@/utils/api';
 
 function LabTestsContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const querySearch = searchParams.get('search');
   const queryTitle = searchParams.get('title');
   
   const { addToCart } = useCart();
-  const [searchTerm, setSearchTerm] = useState(querySearch || '');
+  const [searchTerm, setSearchTerm] = useState(querySearch || queryTitle || '');
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -47,11 +46,18 @@ function LabTestsContent() {
      fetchData();
   }, []);
 
-  const filteredTests = tests.filter(h => {
-        const matchesSearch = h.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                              h.location.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesSearch;
-    });
+  useEffect(() => {
+    setSearchTerm(querySearch || queryTitle || '');
+  }, [querySearch, queryTitle]);
+
+  const filteredTests = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+
+    return tests.filter((test) => (
+      test.name.toLowerCase().includes(normalizedSearch) ||
+      test.location.toLowerCase().includes(normalizedSearch)
+    ));
+  }, [tests, searchTerm]);
 
   return (
     <main style={{ paddingBottom: '100px', background: '#f4f6fb', minHeight: '100vh' }}>

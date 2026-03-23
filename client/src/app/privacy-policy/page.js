@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export const metadata = {
   title: "Privacy Policy | Zelp",
-  description: "Zelp Healthcare Access Platform Privacy Policy",
+  description: "Review the Zelp Privacy Policy to learn how we collect, use, share, and protect your personal information and health data when using our healthcare platform.",
 };
 
 export default function PrivacyPolicy() {

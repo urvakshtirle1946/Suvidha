@@ -104,7 +104,7 @@ export default function WaitlistLanding() {
           </div>
 
           {/* Hero text */}
-          <div id="hero" style={{ textAlign: 'center', maxWidth: '840px', width: '100%', paddingTop: '0rem', paddingBottom: '1.5rem', marginTop: '-1.5rem' }}>
+          <div id="hero" style={{ textAlign: 'center', maxWidth: '840px', width: '100%', paddingTop: '0rem', paddingBottom: '1.5rem', marginTop: '-5.5rem' }}>
             {/* Peerlist Badge */}
             <div style={{ marginBottom: '0.5rem', display: 'flex', justifyContent: 'center' }}>
               <a href="https://peerlist.io/anishsarkar/project/zelp" target="_blank" rel="noreferrer" style={{ display: 'inline-block' }}>

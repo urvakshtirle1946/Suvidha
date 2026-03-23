@@ -30,7 +30,7 @@ const baskerville = Libre_Baskerville({
 
 export const metadata = {
   title: "Zelp - Premium Healthcare Simplified",
-  description: "Book verified hospital services and lab tests with best discounts.",
+  description: "Book verified hospital services and lab tests at the best prices with Zelp. Compare options, get exclusive discounts, and schedule appointments instantly.",
   icons: {
     icon: "/zelp-favicon.png",
   },

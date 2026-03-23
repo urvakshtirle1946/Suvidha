@@ -1,17 +1,14 @@
 'use client';
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useState, useEffect, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
-import { Search, MapPin, Filter, Activity, Clock, SlidersHorizontal, ArrowUpDown, X, Lock, ChevronDown, Heart, Smile, Eye, Building2 } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import { Search, MapPin, Activity, ArrowUpDown, X, Heart, Smile, Eye, Building2 } from 'lucide-react';
 import { useLocation } from '@/context/LocationContext';
 import { useCart } from '@/context/CartContext';
 import { apiFetch, getImageUrl } from '@/utils/api';
 
 function HospitalsContent() {
-  const router = useRouter();
   const { city } = useLocation();
-  const { user } = useAuth();
   const { addToCart, setIsCartOpen } = useCart();
   const searchParams = useSearchParams();
   const categoryFilter = searchParams.get('category');
@@ -22,7 +19,6 @@ function HospitalsContent() {
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [expandedId, setExpandedId] = useState(null); 
 
   // Fetch SERVICES
   useEffect(() => {
@@ -52,20 +48,29 @@ function HospitalsContent() {
 
   const [sortOrder, setSortOrder] = useState(null); 
 
-  const filteredHospitals = hospitals
-    .filter(h => {
-        const matchesSearch = h.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesSpecialty = !specialtyFilter || 
-                                 h.name.toLowerCase().includes(specialtyFilter.toLowerCase()) ||
-                                 (h.category && h.category.toLowerCase() === specialtyFilter.toLowerCase());
+  const filteredHospitals = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+    const normalizedSpecialty = specialtyFilter?.toLowerCase();
+
+    return hospitals
+      .filter((hospital) => {
+        const matchesSearch = hospital.name.toLowerCase().includes(normalizedSearch);
+        const matchesSpecialty =
+          !normalizedSpecialty ||
+          hospital.name.toLowerCase().includes(normalizedSpecialty) ||
+          hospital.category?.toLowerCase() === normalizedSpecialty;
+
         return matchesSearch && matchesSpecialty;
-    })
-    .sort((a, b) => {
+      })
+      .sort((a, b) => {
         if (!sortOrder) return 0;
-        const priceA = a.discount_price || a.price;
-        const priceB = b.discount_price || b.price;
+
+        const priceA = Number(a.discount_price || a.price || 0);
+        const priceB = Number(b.discount_price || b.price || 0);
+
         return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
-    });
+      });
+  }, [hospitals, searchTerm, specialtyFilter, sortOrder]);
 
   const toggleSort = () => {
       setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
@@ -250,8 +255,8 @@ function HospitalsContent() {
         
         {filteredHospitals.length === 0 && (
             <div style={{ textAlign: 'center', padding: '4rem', color: '#6b7280' }}>
-                <h3>No services found matching "{searchTerm}".</h3>
-                <p>Try searching for "MRI", "CBC", "X-Ray", etc.</p>
+                <h3>No services found matching &quot;{searchTerm}&quot;.</h3>
+                <p>Try searching for &quot;MRI&quot;, &quot;CBC&quot;, &quot;X-Ray&quot;, etc.</p>
             </div>
         )}
 

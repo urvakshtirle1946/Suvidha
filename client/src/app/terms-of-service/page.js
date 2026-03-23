@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata = {
   title: 'Terms of Service | Zelp',
-  description: 'Zelp Terms of Service and user agreements.',
+  description: 'Read the Zelp Terms of Service and user agreements to understand the rules, guidelines, and policies that govern the use of our healthcare access platform.',
 };
 
 export default function TermsOfService() {

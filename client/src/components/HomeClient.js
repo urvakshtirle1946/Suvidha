@@ -13,11 +13,10 @@ import {
   ChevronLeft, 
   ChevronRight, 
   MapPin, 
-  Star,
-  Ambulance 
+  Star 
 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import { getApiUrl, getImageUrl } from '@/utils/api';
+import { apiFetch, getImageUrl } from '@/utils/api';
 import HospitalProfileModal from './HospitalProfileModal';
 import PaymentReminder from './PaymentReminder';
 // import AmbulanceRequest from './AmbulanceRequest';
@@ -79,10 +78,9 @@ export default function HomeClient({ hospitals, popularServices }) {
 
   const handleHospitalClick = async (hospital) => {
       try {
-          const apiUrl = getApiUrl();
           // Visual feedback
           document.body.style.cursor = 'wait';
-          const res = await fetch(`${apiUrl}/api/hospitals/${hospital.id}`);
+          const res = await apiFetch(`/api/hospitals/${hospital.id}`);
           if (!res.ok) throw new Error('Failed to fetch details');
           const fullData = await res.json();
           setSelectedHospitalForProfile(fullData);

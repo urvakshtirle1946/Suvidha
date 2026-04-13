@@ -126,8 +126,20 @@ export default function WaitlistLanding() {
           .footer-section { flex: 1 1 auto; width: 100%; }
           .footer-left, .footer-center, .footer-right { justify-content: center; text-align: center; }
           .video-wrapper { margin-bottom: 1rem; }
-          #hero { padding-top: 0rem !important; padding-bottom: 1.5rem !important; }
+          #hero { 
+            padding-top: 0.5rem !important; 
+            padding-bottom: 1.5rem !important; 
+            margin-top: 0rem !important; 
+          }
           .badge-text { font-size: 0.9rem !important; padding: 0.4rem 0.8rem !important; white-space: normal !important; }
+          .navbar-logo {
+            height: 110px !important;
+            margin-top: -15px !important;
+            margin-bottom: -15px !important;
+          }
+          .peerlist-badge {
+            height: 56px !important;
+          }
         }
         @media (prefers-reduced-motion: reduce) {
           .waitlist-button, .video-control-btn, .footer-link, .social-link, .modal-panel, .modal-overlay-smooth {
@@ -144,7 +156,7 @@ export default function WaitlistLanding() {
 
           {/* Navbar */}
           <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1.5rem', paddingBottom: '1.5rem' }}>
-            <img src="/logo.png" alt="Zelp Logo" style={{ height: 'clamp(130px, 12vw, 170px)', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply', marginTop: '-25px', marginBottom: '-25px' }} />
+            <img src="/logo.png" alt="Zelp Logo" className="navbar-logo" style={{ height: 'clamp(130px, 12vw, 170px)', objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'multiply', marginTop: '-25px', marginBottom: '-25px' }} />
             <button className="waitlist-button" onClick={openWaitlisterForm} style={{ backgroundColor: '#2b1b12', color: '#FAF6F0', padding: '0.65rem 1.25rem', fontSize: '0.95rem', fontWeight: '500', border: 'none', borderRadius: '10px', cursor: 'pointer', fontFamily: 'var(--font-helvetica)' }}>
               Join waitlist
             </button>
@@ -158,6 +170,7 @@ export default function WaitlistLanding() {
                 <img
                   src="https://peerlist.io/api/v1/projects/embed/PRJH7B8BLKR8GRBQJF96G67AQK8QP8?showUpvote=true&theme=light"
                   alt="Zelp"
+                  className="peerlist-badge"
                   style={{ width: 'auto', height: '72px' }}
                 />
               </a>

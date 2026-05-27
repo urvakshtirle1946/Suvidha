@@ -1,0 +1,177 @@
+'use client';
+import { useState, useEffect, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import Navbar from '@/components/Navbar';
+import { Clock, SlidersHorizontal, TestTube } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
+import { apiFetch, getImageUrl } from '@/utils/api';
+
+function LabTestsContent() {
+  const searchParams = useSearchParams();
+  const querySearch = searchParams.get('search');
+  const queryTitle = searchParams.get('title');
+  
+  const { addToCart } = useCart();
+  const [searchTerm, setSearchTerm] = useState(querySearch || queryTitle || '');
+  const [tests, setTests] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch Services (Real Lab Tests)
+  useEffect(() => {
+     const fetchData = async () => {
+         try {
+             // Fetch both Lab and Scan categories to match the homepage dropdown
+             const [labRes, scanRes] = await Promise.all([
+                 apiFetch('/api/services?category=Lab&limit=100'),
+                 apiFetch('/api/services?category=Scan&limit=100')
+             ]);
+             
+             if (labRes.ok || scanRes.ok) {
+                 const rawLab = labRes.ok ? await labRes.json() : [];
+                 const rawScan = scanRes.ok ? await scanRes.json() : [];
+                 
+                 const labData = Array.isArray(rawLab) ? rawLab : (rawLab?.data || []);
+                 const scanData = Array.isArray(rawScan) ? rawScan : (rawScan?.data || []);
+                 
+                 const combinedData = [...labData, ...scanData];
+                 
+                 const enhancedData = combinedData.map(s => ({
+                     ...s,
+                     reportTime: 'Report within 24 hours',
+                     price: parseFloat(s.discount_price || s.price),
+                     marketPrice: parseFloat(s.price),
+                     discount: s.discount_price ? Math.round(((s.price - s.discount_price) / s.price) * 100) : 0,
+                     image: getImageUrl(s.hospital_image || s.image_url) || null,
+                     location: s.hospital_location || 'Suvidha Partner'
+                 }));
+                 setTests(enhancedData);
+             }
+         } catch (err) {
+             console.error('LabTests fetch error:', err);
+         } finally {
+             setLoading(false);
+         }
+     };
+     fetchData();
+  }, []);
+
+  useEffect(() => {
+    setSearchTerm(querySearch || queryTitle || '');
+  }, [querySearch, queryTitle]);
+
+  const filteredTests = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+
+    return tests
+      .filter((test) => (
+        test.name.toLowerCase().includes(normalizedSearch) ||
+        test.location.toLowerCase().includes(normalizedSearch)
+      ))
+      .sort((a, b) => {
+        const discountDiff = Number(b.discount || 0) - Number(a.discount || 0);
+        if (discountDiff !== 0) return discountDiff;
+
+        return Number(a.price || 0) - Number(b.price || 0);
+      });
+  }, [tests, searchTerm]);
+
+  return (
+    <main style={{ paddingBottom: '100px', background: '#f4f6fb', minHeight: '100vh' }}>
+      <Navbar />
+      
+      <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 2rem)' }}>
+        
+        <div style={{ marginBottom: '1.5rem' }}>
+             <div style={{ fontSize: '0.9rem', color: '#6b7280', marginBottom: '0.5rem' }}>Home &gt; Diagnostics</div>
+             <h1 style={{ fontSize: '1.8rem', color: '#111827' }}>
+                {searchTerm ? `Results for "${searchTerm}"` : 'Popular Diagnostics & Scans'}
+             </h1>
+        </div>
+
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+            <button className="btn" style={{ background: '#fff', border: '1px solid #e5e7eb', padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
+                Sort By <SlidersHorizontal size={14} style={{ marginLeft: '6px' }} />
+            </button>
+            <button className="btn" style={{ background: '#fff', border: '1px solid #e5e7eb', padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
+                Fasting Required
+            </button>
+            <button className="btn" style={{ background: '#fff', border: '1px solid #e5e7eb', padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
+                Home Collection
+            </button>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+          {filteredTests.map((test) => (
+             <div key={test.id} className="glass" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'transform 0.2s', border: '1px solid #e5e7eb' }}>
+                
+                <div style={{ height: '160px', background: '#e0f2fe', position: 'relative', overflow: 'hidden' }}>
+                   {test.image ? (
+                       <img src={test.image} alt={test.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                   ) : (
+                       <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                           <div style={{ width: '60px', height: '60px', background: '#bae6fd', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                               <TestTube size={32} color="#0284c7" />
+                           </div>
+                       </div>
+                   )}
+                </div>
+                
+                <div style={{ padding: '1.2rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem', color: '#111827', lineHeight: '1.4', height: '44px', overflow: 'hidden' }}>{test.name}</h3>
+                    
+                    <div style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Clock size={14} /> {test.reportTime}
+                    </div>
+
+                    <div style={{ marginTop: 'auto' }}>
+                         <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#111827', marginBottom: '1rem' }}>
+                             ₹{test.price}
+                             {test.marketPrice && (
+                                 <span style={{ fontSize: '0.9rem', color: '#9ca3af', textDecoration: 'line-through', marginLeft: '8px', fontWeight: 'normal' }}>
+                                     {test.marketPrice}
+                                 </span>
+                             )}
+                             <span style={{ fontSize: '0.8rem', color: '#059669', marginLeft: '8px', fontWeight: '600' }}>
+
+                             </span>
+                         </div>
+
+                         <button 
+                             className="btn" 
+                             style={{ 
+                                 width: '100%', 
+                                 border: '1px solid #000', 
+                                 color: '#000', 
+                                 background: '#fff', 
+                                 fontWeight: '600',
+                                 padding: '0.8rem'
+                             }}
+                             onClick={() => {
+                                 const price = parseFloat(test.discount_price || test.price);
+                                 const mrp = parseFloat(test.price);
+                                 addToCart({ ...test, price, mrp });
+                             }}
+                             onMouseOver={(e) => { e.currentTarget.style.background = '#000'; e.currentTarget.style.color = '#fff'; }}
+                             onMouseOut={(e) => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#000'; }}
+                         >
+                             ADD TO CART
+                         </button>
+                    </div>
+                </div>
+             </div>
+          ))}
+        </div>
+
+      </div>
+    </main>
+  );
+}
+
+export default function LabTests() {
+  return (
+    <Suspense fallback={<div className="container" style={{ paddingTop: '100px' }}>Loading...</div>}>
+      <LabTestsContent />
+    </Suspense>
+  );
+}
+

@@ -1,0 +1,5 @@
+Testing connection...
+Connection successful: {"now":"2026-02-15T12:31:03.692Z"}
+Hospitals Count: 7
+Services Count: 84
+Hospital Names: Gokuldas Hospital, Bombay Hospital, Eureka Hospital, City Home Pvt. Ltd., Synergy Hospital, Shalby Hospital, CHL Hospital

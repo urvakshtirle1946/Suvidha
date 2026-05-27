@@ -1,0 +1,28 @@
+services:
+  # Backend Server
+  - type: web
+    name: suvidha-server
+    env: node
+    buildCommand: "cd server && npm install"
+    startCommand: "cd server && npm start"
+    envVars:
+      - key: PORT
+        value: "5000"
+      - key: NODE_ENV
+        value: "production"
+      - key: NODE_TLS_REJECT_UNAUTHORIZED
+        value: "0"
+    disk:
+      name: suvidha-uploads
+      mountPath: /opt/render/project/src/server/uploads
+      sizeGB: 1
+
+  # Frontend Client
+  - type: web
+    name: suvidha-client
+    env: node
+    buildCommand: "cd client && npm install && npm run build"
+    startCommand: "cd client && npm start"
+    envVars:
+      - key: NODE_ENV
+        value: "production"

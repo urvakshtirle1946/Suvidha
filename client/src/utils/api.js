@@ -1,6 +1,6 @@
 const FALLBACK_API_URLS = [
-    'https://suvidha-server.onrender.com',
-    'https://suvidha-server-4u66.onrender.com'
+    'https://suvidha-052a.onrender.com',
+    'https://suvidha-server.onrender.com'
 ];
 
 const isLoopbackUrl = (value) => {

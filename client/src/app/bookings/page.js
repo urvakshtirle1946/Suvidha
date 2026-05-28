@@ -336,7 +336,7 @@ export default function Bookings() {
                             Pay <b>₹{paymentBooking.price}</b> to confirm your booking at {paymentBooking.hospital_name || 'Clinic'}
                         </p>
                         <div style={{ width: '220px', height: '220px', margin: '0 auto', background: '#fff', border: '1px solid #f3f4f6', borderRadius: '16px', padding: '10px' }}>
-                             <img src="https://suvidha-server-4u66.onrender.com/uploads/Qr.jpg" alt="QR" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={(e) => e.target.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=upi://pay?pa=suvidha@okaxis&pn=Suvidha&cu=INR"} />
+                             <img src="https://suvidha-052a.onrender.com/uploads/Qr.jpg" alt="QR" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={(e) => e.target.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=upi://pay?pa=suvidha@okaxis&pn=Suvidha&cu=INR"} />
                         </div>
                   </div>
 

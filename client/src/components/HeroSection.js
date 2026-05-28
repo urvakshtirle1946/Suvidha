@@ -129,6 +129,11 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
   const [whichSuggestions, setWhichSuggestions] = useState([]);
   const [citySuggestions, setCitySuggestions] = useState([]);
 
+  // Symptoms & AI Suggest states
+  const [activeTab, setActiveTab] = useState('test');
+  const [symptomsInput, setSymptomsInput] = useState('');
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+
   // ── Only fetch if not preloaded ─────────────────────────────────────────────
   useEffect(() => {
     if (preloadedServices.length > 0) return;
@@ -228,6 +233,39 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
     return () => { ctrl.abort(); clearTimeout(t); };
   }, [which, defaultHospitals]);
 
+  const handleSymptomsSubmit = async () => {
+    if (!symptomsInput.trim() || loadingSuggestions) return;
+
+    setLoadingSuggestions(true);
+    try {
+      const response = await apiFetch('/api/symptoms/suggest', {
+        method: 'POST',
+        body: JSON.stringify({ symptoms: symptomsInput }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch symptom suggestions');
+      }
+
+      const data = await response.json();
+      const suggestions = data.suggestions || [];
+
+      // Store exclusively in sessionStorage
+      sessionStorage.setItem('ai_suggestions', JSON.stringify(suggestions));
+      sessionStorage.setItem('ai_query', symptomsInput);
+
+      // Clean URL redirect
+      router.push(`/search-results?symptoms=${encodeURIComponent(symptomsInput.trim())}`);
+    } catch (err) {
+      console.error('Error fetching symptom suggestions:', err);
+      sessionStorage.setItem('ai_suggestions', JSON.stringify([]));
+      sessionStorage.setItem('ai_query', symptomsInput);
+      router.push(`/search-results?symptoms=${encodeURIComponent(symptomsInput.trim())}`);
+    } finally {
+      setLoadingSuggestions(false);
+    }
+  };
+
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (where) params.set('location', where);
@@ -304,17 +342,135 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
           />
         </div>
 
-        {/* What */}
-        <div style={{ borderRight: '1px solid #e5e7eb', overflow: 'visible', flex: 1 }}>
-          <SearchField
-            label="What"
-            placeholder="Test or treatment"
-            value={what}
-            onChange={e => setWhat(e.target.value)}
-            suggestions={whatSuggestions}
-            onSelect={v => setWhat(typeof v === 'string' ? v : v.name)}
-            loading={loadingServices && whatSuggestions.length === 0}
-          />
+        {/* What - Tabbed (Test / Symptoms) */}
+        <div style={{ borderRight: '1px solid #e5e7eb', overflow: 'visible', flex: 1, display: 'flex', flexDirection: 'column', minWidth: '240px' }}>
+          {/* Tabs */}
+          <div style={{ display: 'flex', gap: '8px', padding: '6px 12px 0 12px', justifyContent: 'flex-start', flexShrink: 0 }}>
+            <button
+              onClick={() => setActiveTab('test')}
+              style={{
+                fontSize: '0.625rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em',
+                padding: '2px 8px', borderRadius: '12px', border: 'none',
+                cursor: 'pointer',
+                background: activeTab === 'test' ? '#000' : '#f3f4f6',
+                color: activeTab === 'test' ? '#fff' : '#6b7280',
+                transition: 'all 0.2s',
+              }}
+            >
+              Test
+            </button>
+            <button
+              onClick={() => setActiveTab('symptoms')}
+              style={{
+                fontSize: '0.625rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em',
+                padding: '2px 8px', borderRadius: '12px', border: 'none',
+                cursor: 'pointer',
+                background: activeTab === 'symptoms' ? 'linear-gradient(135deg, #a855f7 0%, #06b6d4 100%)' : '#f3f4f6',
+                color: activeTab === 'symptoms' ? '#fff' : '#6b7280',
+                transition: 'all 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '2px',
+              }}
+            >
+              ✨ Symptoms
+            </button>
+          </div>
+
+          {activeTab === 'test' ? (
+            <SearchField
+              placeholder="Test or treatment"
+              value={what}
+              onChange={e => setWhat(e.target.value)}
+              suggestions={whatSuggestions}
+              onSelect={v => setWhat(typeof v === 'string' ? v : v.name)}
+              loading={loadingServices && whatSuggestions.length === 0}
+            />
+          ) : (
+            <div style={{ padding: '4px 12px 8px 12px', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
+              <div className={`ai-glow-border-container ${loadingSuggestions ? 'loading' : ''}`} style={{ minHeight: '44px' }}>
+                <div className="ai-glow-border-inner" style={{ background: '#fff' }}>
+                  {loadingSuggestions ? (
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      color: '#8b5cf6',
+                      fontWeight: '600',
+                      fontSize: '0.8rem',
+                      padding: '0 12px',
+                      width: '100%',
+                      height: '100%',
+                      background: '#fafafa',
+                    }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                        Zelp AI is analyzing symptoms
+                      </span>
+                      <span style={{ display: 'inline-flex', gap: '3px', alignItems: 'center' }}>
+                        <span className="ai-loading-dot">.</span>
+                        <span className="ai-loading-dot" style={{ animationDelay: '0.2s' }}>.</span>
+                        <span className="ai-loading-dot" style={{ animationDelay: '0.4s' }}>.</span>
+                      </span>
+                    </div>
+                  ) : (
+                    <>
+                      <textarea
+                        value={symptomsInput}
+                        onChange={e => setSymptomsInput(e.target.value)}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSymptomsSubmit();
+                          }
+                        }}
+                        placeholder="Describe symptoms... e.g. accident & knee hurts"
+                        style={{
+                          border: 'none',
+                          outline: 'none',
+                          width: '100%',
+                          resize: 'none',
+                          fontSize: '0.8rem',
+                          color: '#111827',
+                          padding: '12px 36px 12px 10px',
+                          background: 'transparent',
+                          fontFamily: 'inherit',
+                          lineHeight: '1.4',
+                          height: '40px',
+                        }}
+                      />
+                      <button
+                        onClick={handleSymptomsSubmit}
+                        disabled={!symptomsInput.trim()}
+                        style={{
+                          position: 'absolute',
+                          right: '8px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          background: symptomsInput.trim() ? 'linear-gradient(135deg, #a855f7 0%, #06b6d4 100%)' : '#e5e7eb',
+                          border: 'none',
+                          cursor: symptomsInput.trim() ? 'pointer' : 'not-allowed',
+                          width: '26px',
+                          height: '26px',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#fff',
+                          transition: 'all 0.2s',
+                          boxShadow: symptomsInput.trim() ? '0 2px 8px rgba(168,85,247,0.3)' : 'none',
+                        }}
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="22" y1="2" x2="11" y2="13"></line>
+                          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Hospital */}

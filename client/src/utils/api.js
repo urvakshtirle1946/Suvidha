@@ -67,6 +67,14 @@ const fetchWithFallback = async (baseUrl, endpoint, options = {}) => {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
+        if (options.signal) {
+            if (options.signal.aborted) {
+                controller.abort();
+            } else {
+                options.signal.addEventListener('abort', () => controller.abort());
+            }
+        }
+
         try {
             const response = await fetch(`${candidate}${endpoint}`, {
                 ...options,
@@ -85,6 +93,15 @@ const fetchWithFallback = async (baseUrl, endpoint, options = {}) => {
         } catch (error) {
             clearTimeout(timeoutId);
             lastError = error;
+            
+            if (error.name === 'AbortError') {
+                return new Response(JSON.stringify({ aborted: true }), {
+                    status: 499,
+                    statusText: 'Client Closed Request',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+            }
+
             if (i === candidates.length - 1) {
                 throw error;
             }

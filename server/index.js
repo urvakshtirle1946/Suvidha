@@ -28,6 +28,7 @@ const bookingRoutes = require('./routes/bookingRoutes');
 const hospitalRoutes = require('./routes/hospitalRoutes');
 const locationRoutes = require('./routes/locationRoutes');
 const ambulanceRoutes = require('./routes/ambulanceRoutes');
+const symptomRoutes = require('./routes/symptomRoutes');
 
 // CORS configuration for web and local clients
 const explicitlyAllowedOrigins = new Set([
@@ -101,6 +102,7 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/hospitals', hospitalRoutes);
 app.use('/api/location', locationRoutes);
 app.use('/api/ambulance', ambulanceRoutes);
+app.use('/api/symptoms', symptomRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {

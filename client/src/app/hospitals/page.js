@@ -17,12 +17,19 @@ function HospitalsContent() {
   const specialtyFilter = searchParams.get('specialty');
   const querySearch = searchParams.get('search');
   const queryHospital = searchParams.get('hospital');
+  const testFilter = searchParams.get('test');
   
-  const [searchTerm, setSearchTerm] = useState(querySearch || '');
+  const [searchTerm, setSearchTerm] = useState(querySearch || testFilter || '');
   const [hospitalFilter, setHospitalFilter] = useState(queryHospital || '');
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (testFilter) {
+      setSearchTerm(testFilter);
+    }
+  }, [testFilter]);
 
   const getDiscountPercent = (item) => {
     const originalPrice = Number(item?.price || 0);

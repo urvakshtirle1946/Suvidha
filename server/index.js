@@ -36,6 +36,8 @@ const explicitlyAllowedOrigins = new Set([
   'https://admin.tryzelp.app',
   'https://tryzelp.app',
   'https://waitlist.tryzelp.app',
+  'https://beta.tryzelp.app',
+  'https://suvidha-agnc-git-dev-urvakshtirle-gmailcoms-projects.vercel.app',
   'http://localhost:3000',
   'http://127.0.0.1:3000',
   'http://localhost:5173',

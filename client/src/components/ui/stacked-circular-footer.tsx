@@ -89,8 +89,8 @@ export function StackedCircularFooter() {
               ].map((link, i) => (
                 <li key={i}>
                   <Link href={link.path} style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.2s ease' }}
-                    onMouseOver={(e) => e.target.style.color = '#fff'}
-                    onMouseOut={(e) => e.target.style.color = 'rgba(255,255,255,0.6)'}
+                    onMouseOver={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#fff'}
+                    onMouseOut={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(255,255,255,0.6)'}
                   >
                     {link.name}
                   </Link>
@@ -117,15 +117,15 @@ export function StackedCircularFooter() {
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.2s ease' }}
-                      onMouseOver={(e) => e.target.style.color = '#fff'}
-                      onMouseOut={(e) => e.target.style.color = 'rgba(255,255,255,0.6)'}
+                      onMouseOver={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#fff'}
+                      onMouseOut={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(255,255,255,0.6)'}
                     >
                       {link.name}
                     </a>
                   ) : (
                     <Link href={link.path} style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.2s ease' }}
-                      onMouseOver={(e) => e.target.style.color = '#fff'}
-                      onMouseOut={(e) => e.target.style.color = 'rgba(255,255,255,0.6)'}
+                      onMouseOver={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#fff'}
+                      onMouseOut={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(255,255,255,0.6)'}
                     >
                       {link.name}
                     </Link>

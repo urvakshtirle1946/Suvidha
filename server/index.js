@@ -1,8 +1,16 @@
 const path = require('path');
 const fs = require('fs');
-const rootEnvPath = path.resolve(__dirname, '../.env');
+const rootEnvPath = path.resolve(__dirname, '../../.env');
 const localEnvPath = path.resolve(__dirname, '.env');
-require('dotenv').config({ path: fs.existsSync(localEnvPath) ? localEnvPath : rootEnvPath });
+const fallbackEnvPath = path.resolve(__dirname, '../.env');
+
+let envPathToUse = localEnvPath;
+if (!fs.existsSync(localEnvPath)) {
+  if (fs.existsSync(rootEnvPath)) envPathToUse = rootEnvPath;
+  else if (fs.existsSync(fallbackEnvPath)) envPathToUse = fallbackEnvPath;
+}
+
+require('dotenv').config({ path: envPathToUse });
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -20,6 +28,7 @@ const bookingRoutes = require('./routes/bookingRoutes');
 const hospitalRoutes = require('./routes/hospitalRoutes');
 const locationRoutes = require('./routes/locationRoutes');
 const ambulanceRoutes = require('./routes/ambulanceRoutes');
+const symptomRoutes = require('./routes/symptomRoutes');
 
 // CORS configuration for web and local clients
 const explicitlyAllowedOrigins = new Set([
@@ -27,6 +36,8 @@ const explicitlyAllowedOrigins = new Set([
   'https://admin.tryzelp.app',
   'https://tryzelp.app',
   'https://waitlist.tryzelp.app',
+  'https://beta.tryzelp.app',
+  'https://suvidha-agnc-git-dev-urvakshtirle-gmailcoms-projects.vercel.app',
   'http://localhost:3000',
   'http://127.0.0.1:3000',
   'http://localhost:5173',
@@ -54,14 +65,18 @@ const corsOptions = {
     if (isOriginAllowed(origin)) {
       return callback(null, true);
     }
-    return callback(null, false);
+    console.warn('[CORS] Blocked origin:', origin);
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With', 'X-HTTP-Method-Override'],
+  exposedHeaders: ['Set-Cookie'],
   optionsSuccessStatus: 200
 };
 
+// Handle preflight for all routes explicitly
+app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
 
 app.use(morgan('dev'));
@@ -93,6 +108,7 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/hospitals', hospitalRoutes);
 app.use('/api/location', locationRoutes);
 app.use('/api/ambulance', ambulanceRoutes);
+app.use('/api/symptoms', symptomRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {

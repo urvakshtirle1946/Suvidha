@@ -75,8 +75,8 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
-// Handle preflight for all routes explicitly
-app.options('*', cors(corsOptions));
+// Handle preflight for all routes explicitly (regex avoids path-to-regexp * issue in Express 5)
+app.options(/.*/, cors(corsOptions));
 app.use(cors(corsOptions));
 
 app.use(morgan('dev'));

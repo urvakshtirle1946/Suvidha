@@ -42,15 +42,15 @@ export default function HospitalManagement() {
 
   // Standard Services List
   const STANDARD_SERVICES = [
-      { name: 'MRI Scan', category: 'Radiology', price: '4500' },
-      { name: 'CT Scan', category: 'Radiology', price: '3500' },
-      { name: 'X-Ray', category: 'Radiology', price: '500' },
-      { name: 'Ultrasound', category: 'Radiology', price: '1200' },
-      { name: 'CBC Test', category: 'Pathology', price: '350' },
-      { name: 'Lipid Profile', category: 'Pathology', price: '800' },
-      { name: 'Liver Function Test', category: 'Pathology', price: '900' },
-      { name: 'Thyroid Profile', category: 'Pathology', price: '600' },
-      { name: 'Consultation', category: 'Consultation', price: '500' }
+      { name: 'MRI Scan', category: 'Scan', price: '4500' },
+      { name: 'CT Scan', category: 'Scan', price: '3500' },
+      { name: 'X-Ray', category: 'Scan', price: '500' },
+      { name: 'Ultrasound', category: 'Scan', price: '1200' },
+      { name: 'CBC Test', category: 'Lab', price: '350' },
+      { name: 'Lipid Profile', category: 'Lab', price: '800' },
+      { name: 'Liver Function Test', category: 'Lab', price: '900' },
+      { name: 'Thyroid Profile', category: 'Lab', price: '600' },
+      { name: 'Consultation', category: 'OPD', price: '500' }
   ];
 
   const autofillServices = () => {
@@ -390,10 +390,10 @@ export default function HospitalManagement() {
                             ))}
                           </div>
                           <datalist id="categories">
-                              <option value="Radiology" />
-                              <option value="Pathology" />
-                              <option value="Cardiology" />
-                              <option value="Consultation" />
+                              <option value="Scan" />
+                              <option value="Lab" />
+                              <option value="OPD" />
+                              <option value="Surgery" />
                           </datalist>
                       </div>
 

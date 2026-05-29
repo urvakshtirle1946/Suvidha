@@ -107,11 +107,10 @@ export function StackedCircularFooter() {
                 { name: 'Terms of Service', path: '/terms-of-service' },
                 { name: 'Privacy Policy', path: '/privacy-policy' },
                 { name: 'Refund Policy', path: '/terms-of-service#refund' },
-                { name: 'Contact Support', path: 'https://cal.com/urvakshtirle/30min' },
-                { name: 'Partner with Us', path: 'https://tally.so/r/Y5OjLz' }
+                { name: 'Contact Support', path: 'https://cal.com/urvakshtirle/30min' }
               ].map((link, i) => (
                 <li key={i}>
-                  {link.name === 'Partner with Us' || link.name === 'Contact Support' ? (
+                  {link.name === 'Contact Support' ? (
                     <a 
                       href={link.path}
                       target="_blank"

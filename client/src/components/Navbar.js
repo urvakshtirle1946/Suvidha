@@ -129,18 +129,7 @@ export default function Navbar() {
                 </Link>
 
                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                  <a 
-                      href="https://tally.so/r/Y5OjLz"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ 
-                          background: '#000', color: '#fff', border: '1px solid #333', 
-                          padding: '4px 10px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', fontSize: '0.75rem',
-                          textDecoration: 'none', display: 'flex', alignItems: 'center'
-                      }}
-                  >
-                      Join Us
-                  </a>
+
                   {user ? (
                       <div 
                         onClick={() => setSettingsModalOpen(true)}
@@ -249,21 +238,7 @@ export default function Navbar() {
           
           {/* Right Actions (Desktop) */}
           <div className="hide-on-mobile desktop-header-elements" style={{ display: 'flex', gap: '1rem', alignItems: 'center', paddingRight: '1rem' }}>
-              <a 
-                  href="https://tally.so/r/Y5OjLz"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ 
-                      background: '#000', color: '#fff', border: '1px solid #333', 
-                      padding: '8px 20px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer',
-                      boxShadow: '0 4px 14px rgba(0, 0, 0, 0.1)', transition: 'all 0.2s',
-                      textDecoration: 'none'
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.2)'; e.currentTarget.style.background = '#222'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(0, 0, 0, 0.1)'; e.currentTarget.style.background = '#000'; }}
-              >
-                  Join Us
-              </a>
+
 
               <div className="hide-on-mobile" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                   {user ? (

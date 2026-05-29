@@ -1,10 +1,13 @@
 const db = require('../db');
 const { mockHospitals } = require('../mockData');
 
+const normalizeDuplicateKeyPart = (value) =>
+  String(value || '').trim().replace(/\s+/g, ' ').toLowerCase();
+
 exports.getAllHospitals = async (req, res) => {
   try {
     const query = `
-      SELECT * FROM hospitals 
+      SELECT * FROM hospitals
       ORDER BY created_at DESC
     `;
     const result = await db.query(query);
@@ -20,7 +23,7 @@ exports.getHospitalById = async (req, res) => {
   const { id } = req.params;
   try {
     const query = `
-      SELECT h.*, 
+      SELECT h.*,
              COALESCE(json_agg(s.*) FILTER (WHERE s.id IS NOT NULL), '[]') as services
       FROM hospitals h
       LEFT JOIN services s ON h.id = s.hospital_id
@@ -65,6 +68,33 @@ exports.createHospital = async (req, res) => {
 
   try {
     await client.query('BEGIN');
+
+    const duplicateKey = [
+      'hospital',
+      normalizeDuplicateKeyPart(name),
+      normalizeDuplicateKeyPart(location)
+    ].join(':');
+
+    await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [duplicateKey]);
+
+    const existingHospital = await client.query(
+      `
+        SELECT id
+        FROM hospitals
+        WHERE lower(trim(regexp_replace(name, '[[:space:]]+', ' ', 'g'))) = $1
+          AND lower(trim(regexp_replace(location, '[[:space:]]+', ' ', 'g'))) = $2
+        LIMIT 1
+      `,
+      [normalizeDuplicateKeyPart(name), normalizeDuplicateKeyPart(location)]
+    );
+
+    if (existingHospital.rows.length > 0) {
+      await client.query('ROLLBACK');
+      return res.status(409).json({
+        success: false,
+        message: 'This hospital already exists. Please edit the existing entry instead.'
+      });
+    }
 
     // 1. Insert Hospital
     const hospitalQuery = `
@@ -138,7 +168,7 @@ exports.updateHospital = async (req, res) => {
 
     // 1. Update Hospital
     const query = `
-      UPDATE hospitals 
+      UPDATE hospitals
       SET name = $1, location = $2, rating = $3, discount_percentage = $4, discount_description = $5, image_url = $6, phone_number = $7, map_url = $8
       WHERE id = $9
       RETURNING *
@@ -152,7 +182,7 @@ exports.updateHospital = async (req, res) => {
     }
 
     // 2. Update Services (Delete All + Insert New)
-    // Note: This might fail if services are validated against bookings. 
+    // Note: This might fail if services are validated against bookings.
     // For now, we assume simple replacement is desired.
     if (services && Array.isArray(services)) {
       const incomingIds = services.filter(s => s.id).map(s => s.id);
@@ -176,7 +206,7 @@ exports.updateHospital = async (req, res) => {
 
         if (service.id) {
            await client.query(`
-              UPDATE services 
+              UPDATE services
               SET name = $1, category = $2, price = $3, discount_price = $4, description = $5
               WHERE id = $6 AND hospital_id = $7
            `, [
@@ -235,7 +265,7 @@ exports.deleteHospital = async (req, res) => {
         await client.query('DELETE FROM bookings WHERE hospital_id = $1', [id]);
       } catch (bookingErr) {
         console.warn('Could not delete bookings or hospital_id column missing in bookings:', bookingErr.message);
-        // non-fatal if column missing, but fatal if constraint exists and we didn't delete. 
+        // non-fatal if column missing, but fatal if constraint exists and we didn't delete.
         // We'll proceed and let the hospital delete fail if constraint blocks it.
       }
 

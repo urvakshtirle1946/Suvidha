@@ -9,6 +9,7 @@ export default function ServiceManagement() {
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { addToast } = useToast();
 
@@ -76,12 +77,15 @@ export default function ServiceManagement() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
     try {
         const apiUrl = getApiUrl();
         const token = localStorage.getItem('admin_token');
         const res = await fetch(`${apiUrl}/api/services`, {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
@@ -92,13 +96,16 @@ export default function ServiceManagement() {
             addToast('Service Added Successfully!', 'success');
             setShowForm(false);
             setFormData({ hospital_id: '', name: '', category: 'Lab', price: '', discount_price: '', description: '' });
-            fetchServices(); 
+            fetchServices();
         } else {
-            addToast('Failed to add service', 'error');
+            const data = await res.json().catch(() => null);
+            addToast(data?.message || 'Failed to add service', 'error');
         }
     } catch (err) {
         console.error(err);
         addToast('Error adding service', 'error');
+    } finally {
+        setIsSubmitting(false);
     }
   };
 
@@ -111,9 +118,9 @@ export default function ServiceManagement() {
   };
 
   const inputStyle = {
-    width: '100%', padding: '0.9rem', 
-    background: 'var(--bg-primary)', 
-    border: '1px solid var(--border)', 
+    width: '100%', padding: '0.9rem',
+    background: 'var(--bg-primary)',
+    border: '1px solid var(--border)',
     color: 'var(--text-primary)', borderRadius: '12px',
     outline: 'none', transition: 'border-color 0.2s',
     fontSize: '0.95rem'
@@ -126,13 +133,13 @@ export default function ServiceManagement() {
                   <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--text-primary)' }}>Add New Service</h1>
                   <button className="btn" onClick={() => setShowForm(false)} style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>Cancel</button>
               </div>
-              
+
               <div style={{ ...cardStyle, padding: '2.5rem', maxWidth: '700px', margin: '0 auto' }}>
                   <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                      
+
                       <div>
                           <label style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Service Name</label>
-                          <input 
+                          <input
                             type="text" required placeholder="e.g. MRI Scan, CBC Test"
                             value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
                             style={inputStyle}
@@ -142,7 +149,7 @@ export default function ServiceManagement() {
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                           <div>
                               <label style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Category</label>
-                              <select 
+                              <select
                                 value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}
                                 style={inputStyle}
                               >
@@ -154,7 +161,7 @@ export default function ServiceManagement() {
                           </div>
                           <div>
                               <label style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Assign To Hospital</label>
-                              <select 
+                              <select
                                 value={formData.hospital_id} onChange={e => setFormData({...formData, hospital_id: e.target.value})}
                                 style={inputStyle}
                               >
@@ -169,7 +176,7 @@ export default function ServiceManagement() {
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                           <div>
                               <label style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Original Price (₹)</label>
-                              <input 
+                              <input
                                 type="number" required
                                 value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})}
                                 style={inputStyle}
@@ -177,7 +184,7 @@ export default function ServiceManagement() {
                           </div>
                           <div>
                               <label style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Discounted Price (₹)</label>
-                              <input 
+                              <input
                                 type="number" required
                                 value={formData.discount_price} onChange={e => setFormData({...formData, discount_price: e.target.value})}
                                 style={inputStyle}
@@ -187,21 +194,22 @@ export default function ServiceManagement() {
 
                       <div>
                           <label style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Description (Optional)</label>
-                          <textarea 
+                          <textarea
                             rows="3"
                             value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})}
                             style={{ ...inputStyle, resize: 'vertical' }}
                           />
                       </div>
 
-                      <button className="btn" style={{ 
-                          marginTop: '1rem', padding: '1rem', 
-                          background: 'var(--accent)', 
+                      <button className="btn" disabled={isSubmitting} style={{
+                          marginTop: '1rem', padding: '1rem',
+                          background: 'var(--accent)',
                           color: 'var(--accent-text)', border: 'none', fontSize: '1rem', fontWeight: '600',
                           boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-                          cursor: 'pointer', borderRadius: '12px'
+                          cursor: isSubmitting ? 'not-allowed' : 'pointer', borderRadius: '12px',
+                          opacity: isSubmitting ? 0.7 : 1
                       }}>
-                          Add Service
+                          {isSubmitting ? 'Saving...' : 'Add Service'}
                       </button>
 
                   </form>
@@ -217,8 +225,8 @@ export default function ServiceManagement() {
                 <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--text-primary)' }}>Service Management</h1>
                 <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Configure medical services and pricing.</p>
             </div>
-            <button className="btn" onClick={() => setShowForm(true)} style={{ 
-                background: 'var(--accent)', 
+            <button className="btn" onClick={() => setShowForm(true)} style={{
+                background: 'var(--accent)',
                 color: 'var(--accent-text)', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                 padding: '0.8rem 1.5rem', cursor: 'pointer', borderRadius: '12px',
                 display: 'flex', alignItems: 'center', fontWeight: '600'
@@ -230,9 +238,9 @@ export default function ServiceManagement() {
         {/* Filters */}
         <div style={{ ...cardStyle, padding: '1rem', display: 'flex', gap: '1rem', marginBottom: '2rem', alignItems: 'center' }}>
             <Search size={20} style={{ color: 'var(--text-secondary)' }} />
-            <input 
-                type="text" placeholder="Search services..." 
-                style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', flex: 1, outline: 'none', fontSize: '0.95rem' }} 
+            <input
+                type="text" placeholder="Search services..."
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', flex: 1, outline: 'none', fontSize: '0.95rem' }}
             />
             <div style={{ width: '1px', height: '24px', background: 'var(--border)' }}></div>
             <button style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', display: 'flex', gap: '6px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: '500' }}>
@@ -261,7 +269,7 @@ export default function ServiceManagement() {
                                     <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{service.description}</div>
                                 </td>
                                 <td style={{ padding: '1.2rem 1.5rem' }}>
-                                    <span style={{ 
+                                    <span style={{
                                         padding: '5px 12px', borderRadius: '20px', fontSize: '0.8rem',
                                         background: service.category === 'Lab' ? 'rgba(2, 132, 199, 0.1)' : 'rgba(147, 51, 234, 0.1)',
                                         color: service.category === 'Lab' ? '#0284c7' : '#9333ea',
@@ -302,17 +310,17 @@ export default function ServiceManagement() {
                         <p>Add one to get started.</p>
                     </div>
                 )}
-                
+
                 {/* Pagination Controls */}
                 {services.length > 0 && totalPages > 1 && (
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', padding: '1.5rem', borderTop: '1px solid var(--border)' }}>
-                        <button 
+                        <button
                             disabled={page === 1}
                             onClick={() => setPage(p => Math.max(1, p - 1))}
                             className="btn"
-                            style={{ 
-                                background: 'var(--bg-primary)', 
-                                border: '1px solid var(--border)', 
+                            style={{
+                                background: 'var(--bg-primary)',
+                                border: '1px solid var(--border)',
                                 color: page === 1 ? 'var(--text-secondary)' : 'var(--text-primary)',
                                 cursor: page === 1 ? 'not-allowed' : 'pointer',
                                 padding: '8px 16px', borderRadius: '8px'
@@ -321,13 +329,13 @@ export default function ServiceManagement() {
                             Previous
                         </button>
                         <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Page {page} of {totalPages}</span>
-                        <button 
+                        <button
                             disabled={page === totalPages}
                             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                             className="btn"
-                            style={{ 
-                                background: 'var(--bg-primary)', 
-                                border: '1px solid var(--border)', 
+                            style={{
+                                background: 'var(--bg-primary)',
+                                border: '1px solid var(--border)',
                                 color: page === totalPages ? 'var(--text-secondary)' : 'var(--text-primary)',
                                 cursor: page === totalPages ? 'not-allowed' : 'pointer',
                                 padding: '8px 16px', borderRadius: '8px'

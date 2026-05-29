@@ -9,10 +9,10 @@ export default function HospitalManagement() {
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  
+
   const [editMode, setEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
-  
+
   // Form State
   const initialForm = {
     name: '',
@@ -29,6 +29,7 @@ export default function HospitalManagement() {
 
   const [formData, setFormData] = useState(initialForm);
   const [services, setServices] = useState([{ name: '', category: '', price: '', discount_price: '' }]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const addServiceRow = () => {
       setServices([...services, { name: '', category: '', price: '', discount_price: '' }]);
@@ -59,12 +60,12 @@ export default function HospitalManagement() {
       if (currentServices.length === 1 && currentServices[0].name === '') {
           currentServices = [];
       }
-      
+
       const newServices = [...currentServices, ...STANDARD_SERVICES.map(s => ({
           ...s,
           discount_price: '' // Discount left empty for user to fill if needed
       }))];
-      
+
       setServices(newServices);
   };
 
@@ -81,7 +82,7 @@ export default function HospitalManagement() {
   const fetchHospitals = async () => {
     try {
       const token = localStorage.getItem('admin_token');
-      const res = await fetch(`${apiUrl}/api/hospitals`, { 
+      const res = await fetch(`${apiUrl}/api/hospitals`, {
         cache: 'no-store',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -117,7 +118,7 @@ export default function HospitalManagement() {
       setShowForm(true);
       setEditMode(true);
       setEditId(hospital.id);
-      
+
       // Pre-fill basic data
       setFormData({
           name: hospital.name,
@@ -129,7 +130,7 @@ export default function HospitalManagement() {
           phone_number: hospital.phone_number || '',
           map_url: hospital.map_url || ''
       });
-      
+
       // Fetch Services
       try {
           const token = localStorage.getItem('admin_token');
@@ -171,11 +172,14 @@ export default function HospitalManagement() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
     try {
-        const url = editMode 
-            ? `${apiUrl}/api/hospitals/${editId}` 
+        const url = editMode
+            ? `${apiUrl}/api/hospitals/${editId}`
             : `${apiUrl}/api/hospitals`;
-        
+
     const method = editMode ? 'PUT' : 'POST';
 
     const data = new FormData();
@@ -209,10 +213,14 @@ export default function HospitalManagement() {
             resetForm();
             fetchHospitals(); // Refresh list
         } else {
-            addToast('Failed to save hospital', 'error');
+            const data = await res.json().catch(() => null);
+            addToast(data?.message || 'Failed to save hospital', 'error');
         }
     } catch (err) {
         console.error(err);
+        addToast('Error saving hospital', 'error');
+    } finally {
+        setIsSubmitting(false);
     }
   };
 
@@ -225,9 +233,9 @@ export default function HospitalManagement() {
   };
 
   const inputStyle = {
-    width: '100%', padding: '1rem', 
-    background: 'var(--bg-primary)', 
-    border: '1px solid var(--border)', 
+    width: '100%', padding: '1rem',
+    background: 'var(--bg-primary)',
+    border: '1px solid var(--border)',
     color: 'var(--text-primary)', borderRadius: '12px',
     outline: 'none', transition: 'border-color 0.2s'
   };
@@ -241,22 +249,22 @@ export default function HospitalManagement() {
                   </h1>
                   <button className="btn" onClick={() => { setShowForm(false); resetForm(); }} style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>Cancel</button>
               </div>
-              
+
               <div style={{ ...cardStyle, padding: '2.5rem', maxWidth: '700px', margin: '0 auto' }}>
-                  
+
                   {/* Image Preview at the Top */}
                   {(formData.image_file || formData.image_url) && (
                       <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
-                          <div style={{ 
-                              width: '100%', height: '200px', 
-                              borderRadius: '16px', overflow: 'hidden', 
+                          <div style={{
+                              width: '100%', height: '200px',
+                              borderRadius: '16px', overflow: 'hidden',
                               border: '1px solid var(--border)',
                               background: 'var(--bg-primary)',
                               display: 'flex', alignItems: 'center', justifyContent: 'center'
                           }}>
-                              <img 
-                                  src={formData.image_file ? URL.createObjectURL(formData.image_file) : (formData.image_url.startsWith('data:') || formData.image_url.startsWith('http') ? formData.image_url : apiUrl + formData.image_url)} 
-                                  alt="Hospital Preview" 
+                              <img
+                                  src={formData.image_file ? URL.createObjectURL(formData.image_file) : (formData.image_url.startsWith('data:') || formData.image_url.startsWith('http') ? formData.image_url : apiUrl + formData.image_url)}
+                                  alt="Hospital Preview"
                                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                               />
                           </div>
@@ -264,11 +272,11 @@ export default function HospitalManagement() {
                   )}
 
                   <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                      
+
                       <div>
                           <label style={{ display: 'block', marginBottom: '0.8rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Hospital Name</label>
-                          <input 
-                            type="text" required 
+                          <input
+                            type="text" required
                             value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
                             style={inputStyle}
                             placeholder="e.g. Apollo International"
@@ -279,8 +287,8 @@ export default function HospitalManagement() {
                           <label style={{ display: 'block', marginBottom: '0.8rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Location (City, Area)</label>
                           <div style={{ position: 'relative' }}>
                              <MapPin size={20} style={{ position: 'absolute', left: '16px', top: '16px', color: 'var(--text-secondary)' }} />
-                             <input 
-                                type="text" required 
+                             <input
+                                type="text" required
                                 value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})}
                                 style={{ ...inputStyle, paddingLeft: '3rem' }}
                                 placeholder="e.g. Bandra West, Mumbai"
@@ -290,8 +298,8 @@ export default function HospitalManagement() {
 
                       <div>
                           <label style={{ display: 'block', marginBottom: '0.8rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Google Maps Link</label>
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             value={formData.map_url} onChange={e => setFormData({...formData, map_url: e.target.value})}
                             style={inputStyle}
                             placeholder="Paste Google Maps URL here"
@@ -300,8 +308,8 @@ export default function HospitalManagement() {
 
                       <div>
                           <label style={{ display: 'block', marginBottom: '0.8rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Hospital Image (Upload)</label>
-                          <input 
-                            type="file" 
+                          <input
+                            type="file"
                             accept="image/*"
                             onChange={e => setFormData({...formData, image_file: e.target.files[0]})}
                             style={inputStyle}
@@ -318,8 +326,8 @@ export default function HospitalManagement() {
                               <label style={{ display: 'block', marginBottom: '0.8rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Rating</label>
                               <div style={{ position: 'relative' }}>
                                 <Star size={20} style={{ position: 'absolute', left: '16px', top: '16px', color: '#fbbf24' }} />
-                                <input 
-                                    type="number" step="0.1" max="5" 
+                                <input
+                                    type="number" step="0.1" max="5"
                                     value={formData.rating} onChange={e => setFormData({...formData, rating: e.target.value})}
                                     style={{ ...inputStyle, paddingLeft: '3rem' }}
                                 />
@@ -329,7 +337,7 @@ export default function HospitalManagement() {
 
                       <div>
                           <label style={{ display: 'block', marginBottom: '0.8rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Offer Headline</label>
-                          <input 
+                          <input
                             type="text" placeholder="e.g. Flat 20% OFF on First Consult"
                             value={formData.discount_description} onChange={e => setFormData({...formData, discount_description: e.target.value})}
                             style={inputStyle}
@@ -338,7 +346,7 @@ export default function HospitalManagement() {
 
                       <div>
                           <label style={{ display: 'block', marginBottom: '0.8rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>WhatsApp Number (for Notifications)</label>
-                          <input 
+                          <input
                             type="text" placeholder="e.g. +919876543210"
                             value={formData.phone_number} onChange={e => setFormData({...formData, phone_number: e.target.value})}
                             style={inputStyle}
@@ -354,34 +362,34 @@ export default function HospitalManagement() {
                                 <button type="button" onClick={addServiceRow} style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#059669', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem', cursor: 'pointer', fontWeight: '500' }}>+ Add Row</button>
                               </div>
                           </div>
-                          
+
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             {services.map((service, index) => (
                                 <div key={index} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 30px', gap: '10px', alignItems: 'center', background: 'var(--bg-primary)', border: '1px solid var(--border)', padding: '10px', borderRadius: '8px' }}>
-                                    <input 
-                                        type="text" placeholder="Service Name (e.g. MRI Brain)" 
-                                        value={service.name} 
+                                    <input
+                                        type="text" placeholder="Service Name (e.g. MRI Brain)"
+                                        value={service.name}
                                         onChange={e => updateService(index, 'name', e.target.value)}
                                         style={{ ...inputStyle, padding: '8px', fontSize: '0.9rem' }}
                                         required
                                     />
-                                    <input 
-                                        type="text" placeholder="Category" 
-                                        value={service.category} 
+                                    <input
+                                        type="text" placeholder="Category"
+                                        value={service.category}
                                         onChange={e => updateService(index, 'category', e.target.value)}
                                         style={{ ...inputStyle, padding: '8px', fontSize: '0.9rem' }}
                                         list="categories"
                                     />
-                                    <input 
-                                        type="number" placeholder="Price" 
-                                        value={service.price} 
+                                    <input
+                                        type="number" placeholder="Price"
+                                        value={service.price}
                                         onChange={e => updateService(index, 'price', e.target.value)}
                                         style={{ ...inputStyle, padding: '8px', fontSize: '0.9rem' }}
                                         required
                                     />
-                                    <input 
-                                        type="number" placeholder="Disc. Price" 
-                                        value={service.discount_price} 
+                                    <input
+                                        type="number" placeholder="Disc. Price"
+                                        value={service.discount_price}
                                         onChange={e => updateService(index, 'discount_price', e.target.value)}
                                         style={{ ...inputStyle, padding: '8px', fontSize: '0.9rem' }}
                                     />
@@ -397,13 +405,15 @@ export default function HospitalManagement() {
                           </datalist>
                       </div>
 
-                      <button className="btn" style={{ 
-                          marginTop: '1rem', padding: '1rem', 
-                          background: 'var(--accent)', 
+                      <button className="btn" disabled={isSubmitting} style={{
+                          marginTop: '1rem', padding: '1rem',
+                          background: 'var(--accent)',
                           color: 'var(--accent-text)', border: 'none', fontSize: '1rem',
-                          boxShadow: '0 4px 15px rgba(0,0,0,0.1)', fontWeight: 'bold'
+                          boxShadow: '0 4px 15px rgba(0,0,0,0.1)', fontWeight: 'bold',
+                          opacity: isSubmitting ? 0.7 : 1,
+                          cursor: isSubmitting ? 'not-allowed' : 'pointer'
                       }}>
-                          {editMode ? 'Update Hospital' : 'Add Hospital & Services'}
+                          {isSubmitting ? 'Saving...' : (editMode ? 'Update Hospital' : 'Add Hospital & Services')}
                       </button>
 
                   </form>
@@ -419,8 +429,8 @@ export default function HospitalManagement() {
                 <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--text-primary)' }}>Hospital Partners</h1>
                 <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Manage your network of healthcare providers.</p>
             </div>
-            <button className="btn" onClick={() => { resetForm(); setShowForm(true); }} style={{ 
-                background: 'var(--accent)', 
+            <button className="btn" onClick={() => { resetForm(); setShowForm(true); }} style={{
+                background: 'var(--accent)',
                 color: 'var(--accent-text)', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                 padding: '0.8rem 1.5rem', fontWeight: 'bold'
             }}>
@@ -440,10 +450,10 @@ export default function HospitalManagement() {
 
                 return (
                 <div key={hospital.id} style={{ ...cardStyle, overflow: 'hidden', transition: 'transform 0.3s' }} className="hover:scale-[1.02]">
-                    <div style={{ 
-                        height: '160px', 
-                        background: `url('${bgImage}') center/cover no-repeat`, 
-                        position: 'relative' 
+                    <div style={{
+                        height: '160px',
+                        background: `url('${bgImage}') center/cover no-repeat`,
+                        position: 'relative'
                     }}>
                         <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', color: '#fbbf24', padding: '6px 10px', borderRadius: '8px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 'bold' }}>
                             <Star size={14} fill="#fbbf24" stroke="none" /> {hospital.rating}
@@ -452,7 +462,7 @@ export default function HospitalManagement() {
                     <div style={{ padding: '1.5rem' }}>
                         <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem', color: 'var(--text-primary)', fontWeight: '700' }}>{hospital.name}</h3>
                         <div style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                           <MapPin size={16} color="var(--text-secondary)" /> 
+                           <MapPin size={16} color="var(--text-secondary)" />
                            {hospital.map_url ? (
                                <a href={hospital.map_url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none' }} className="hover:underline">
                                    {hospital.location}
@@ -461,11 +471,11 @@ export default function HospitalManagement() {
                                <span>{hospital.location}</span>
                            )}
                         </div>
-                        
+
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                              {/* Badge removed */}
                         </div>
-                        
+
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                             <button onClick={() => handleEdit(hospital)} className="btn" style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>Edit</button>
                             <button onClick={() => handleDelete(hospital.id)} className="btn" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#f87171' }}>Remove</button>

@@ -65,14 +65,18 @@ const corsOptions = {
     if (isOriginAllowed(origin)) {
       return callback(null, true);
     }
-    return callback(null, false);
+    console.warn('[CORS] Blocked origin:', origin);
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With', 'X-HTTP-Method-Override'],
+  exposedHeaders: ['Set-Cookie'],
   optionsSuccessStatus: 200
 };
 
+// Handle preflight for all routes explicitly
+app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
 
 app.use(morgan('dev'));

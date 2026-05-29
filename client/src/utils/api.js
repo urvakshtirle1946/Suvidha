@@ -1,7 +1,11 @@
 const FALLBACK_API_URLS = [
-    'https://suvidha-server.onrender.com',
-    'https://suvidha-server-4u66.onrender.com'
+    'https://suvidha-052a.onrender.com'
 ];
+
+const LEGACY_API_URL_REPLACEMENTS = {
+    'https://suvidha-server.onrender.com': 'https://suvidha-052a.onrender.com',
+    'https://suvidha-server-4u66.onrender.com': 'https://suvidha-052a.onrender.com'
+};
 
 const isLoopbackUrl = (value) => {
     try {
@@ -13,6 +17,11 @@ const isLoopbackUrl = (value) => {
 };
 
 const normalizeApiUrl = (value) => value.replace(/\/+$/, '');
+
+const resolveApiUrl = (value) => {
+    const normalized = normalizeApiUrl(value);
+    return LEGACY_API_URL_REPLACEMENTS[normalized] || normalized;
+};
 
 const dedupeUrls = (urls) => {
     const seen = new Set();
@@ -34,17 +43,17 @@ export const getApiUrl = () => {
     const configuredUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
 
     if (!configuredUrl) {
-        return normalizeApiUrl(FALLBACK_API_URLS[0]);
+        return resolveApiUrl(FALLBACK_API_URLS[0]);
     }
 
     if (typeof window !== 'undefined') {
         const isLocalAppHost = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
         if (!isLocalAppHost && isLoopbackUrl(configuredUrl)) {
-            return normalizeApiUrl(FALLBACK_API_URLS[0]);
+            return resolveApiUrl(FALLBACK_API_URLS[0]);
         }
     }
 
-    return normalizeApiUrl(configuredUrl);
+    return resolveApiUrl(configuredUrl);
 };
 
 const buildCandidateUrls = (baseUrl) => {

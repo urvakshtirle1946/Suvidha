@@ -31,7 +31,7 @@ const CAROUSEL_ITEMS = [
 ];
 
 export default function FutureExperience() {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(1);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
 
   useEffect(() => {

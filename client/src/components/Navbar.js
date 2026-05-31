@@ -109,14 +109,14 @@ export default function Navbar() {
         height: 'var(--header-height)', background: '#fff', borderBottom: '1px solid #e5e7eb',
         display: 'flex', alignItems: 'center'
       }}>
-        <div className="container nav-content" style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%', padding: '0 2rem' }}>
+        <div className="container nav-content" style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%' }}>
           
           {/* Kinetic Navigation Trigger (Desktop) */}
           <div className="hide-on-mobile" style={{ marginRight: '1rem' }}>
             <SterlingGateKineticNavigation onOpenAuth={handleOpenAuth} />
           </div>
 
-          <div className="mobile-header-stack show-on-mobile" style={{ width: '100%', flexDirection: 'column' }}>
+          <div className="mobile-header-stack show-on-mobile" style={{ width: '100%', flexDirection: 'column', padding: '12px 0' }}>
             {/* Top Row: Logo & Profile */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '8px' }}>
                 <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>

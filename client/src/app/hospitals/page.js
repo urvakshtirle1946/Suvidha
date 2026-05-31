@@ -141,7 +141,7 @@ function HospitalsContent() {
 
              {/* Search Input Field */}
              <div className="search-bar-container">
-                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderRight: '1px solid #e5e7eb', paddingRight: '1rem', color: '#374151', minWidth: '120px' }}>
+                 <div className="hide-on-mobile" style={{ display: 'flex', alignItems: 'center', gap: '8px', borderRight: '1px solid #e5e7eb', paddingRight: '1rem', color: '#374151', minWidth: '120px' }}>
                     <MapPin size={18} color="#db2777" /> {city || 'Detecting'}
                  </div>
                  <Search size={20} color="#9ca3af" />

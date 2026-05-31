@@ -65,7 +65,7 @@ export default function HomeClient({ hospitals, loading = false, defaultServices
 
       <PaymentReminder />
 
-      {/* Footer */}
+      {/* Footer (contains Circular Footer + Performer Illustration) */}
       <Footer />
     </main>
   );

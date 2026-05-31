@@ -3,19 +3,27 @@
 import React from "react";
 import Link from "next/link";
 import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from "lucide-react";
+import FooterIllustration from "../FooterIllustration";
 
 export function StackedCircularFooter() {
   return (
-    <footer style={{
-      width: '100%',
-      padding: '2rem 1rem',
+    <div style={{
       display: 'flex',
-      justifyContent: 'center',
-      background: '#f4f6fb',
+      flexDirection: 'column',
+      width: '100%',
+      background: '#0f0f0f',
       position: 'relative',
-      zIndex: 10,
     }}>
-      <div style={{
+      <footer style={{
+        width: '100%',
+        padding: '2rem 1rem',
+        display: 'flex',
+        justifyContent: 'center',
+        background: '#0f0f0f',
+        position: 'relative',
+        zIndex: 10,
+      }}>
+        <div style={{
         width: '100%',
         maxWidth: '1200px',
         background: '#020202',
@@ -175,7 +183,9 @@ export function StackedCircularFooter() {
           </div>
         </div>
 
-      </div>
-    </footer>
+        </div>
+      </footer>
+      <FooterIllustration />
+    </div>
   );
 }

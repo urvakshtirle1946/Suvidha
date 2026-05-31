@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
-import { X, Calendar, User, MapPin, CheckCircle, Home, Plus, ArrowUpDown, Clock } from 'lucide-react';
+import { X, Calendar, User, MapPin, CheckCircle, Home, Plus, ArrowUpDown, Clock, AlertCircle } from 'lucide-react';
 import AuthModal from './AuthModal';
 import { apiFetch, getImageUrl } from '@/utils/api';
 
@@ -20,6 +20,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
   const [labs, setLabs] = useState([]);
   const [fetchingLabs, setFetchingLabs] = useState(false);
   const [bookingId, setBookingId] = useState(null);
+  const [error, setError] = useState(null);
 
   // Patient Details State
   const [patientName, setPatientName] = useState('');
@@ -38,6 +39,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
      if (isOpen && service) {
          setStep(1);
          setSelectedTime(null);
+         setError(null);
          
          if (service.directBooking) {
              setSelectedLab(service);
@@ -181,8 +183,9 @@ export default function BookingModal({ isOpen, onClose, service }) {
   };
 
   const handlePayOnline = () => {
+        setError(null);
         if (!user) { 
-            alert('Please login to continue.'); 
+            setError('Please login to continue with your booking.'); 
             setAuthModalOpen(true);
             return; 
         }
@@ -193,8 +196,9 @@ export default function BookingModal({ isOpen, onClose, service }) {
   };
   
   const handlePayAtHospital = () => {
+        setError(null);
         if (!user) { 
-             alert('Please login to continue.'); 
+             setError('Please login to continue with your booking.'); 
              setAuthModalOpen(true);
              return; 
         }
@@ -487,11 +491,17 @@ export default function BookingModal({ isOpen, onClose, service }) {
         {/* Footer Action */}
         {step < 3 && (
             <div style={{ padding: '1.5rem', borderTop: '1px solid #f3f4f6', background: '#fff' }}>
+                {error && (
+                    <div style={{ background: '#fef2f2', color: '#991b1b', padding: '0.8rem 1rem', borderRadius: '10px', marginBottom: '1rem', fontSize: '0.85rem', border: '1px solid #fee2e2', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}>
+                        <AlertCircle size={16} color="#dc2626" />
+                        <span>{error}</span>
+                    </div>
+                )}
                 {step === 1 ? (
                     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                         <button 
                             onClick={handlePayAtHospital}
-                            disabled={loading || !selectedTime || !selectedLab || !user}
+                            disabled={loading || !selectedTime || !selectedLab}
                             style={{ 
                                 flex: 1,
                                 background: '#fff',
@@ -509,7 +519,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                         </button>
                         <button 
                             onClick={handlePayOnline}
-                            disabled={loading || !selectedTime || !selectedLab || !user}
+                            disabled={loading || !selectedTime || !selectedLab}
                             style={{ 
                                 flex: 1,
                                 background: (selectedTime && selectedLab) ? '#000' : '#e5e7eb', 

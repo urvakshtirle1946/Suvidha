@@ -12,16 +12,6 @@ const hospitals = [
         map_url: 'https://maps.google.com/?q=Gokuldas+Hospital+Indore'
     },
     {
-        name: 'Bombay Hospital',
-        location: 'Ring Road, Indore',
-        rating: 4.8,
-        discount_percentage: 20,
-        discount_description: 'Special weekend health package',
-        image_url: 'https://images.unsplash.com/photo-1586773860418-d3b97898c75c?auto=format&fit=crop&w=800&q=80',
-        phone_number: '9999999999',
-        map_url: 'https://maps.google.com/?q=Bombay+Hospital+Indore'
-    },
-    {
         name: 'Eureka Hospital',
         location: 'New Palasia, Indore',
         rating: 4.2,
@@ -59,16 +49,6 @@ const hospitals = [
         discount_description: 'Joint Replacement Special',
         image_url: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80',
         phone_number: '5555555555',
-        map_url: 'https://maps.google.com'
-    },
-    {
-        name: 'CHL Hospital',
-        location: 'AB Road, Indore',
-        rating: 4.9,
-        discount_percentage: 25,
-        discount_description: 'Cardiac Care Package',
-        image_url: 'https://images.unsplash.com/photo-1512678080530-7760d81faba6?auto=format&fit=crop&w=800&q=80',
-        phone_number: '4444444444',
         map_url: 'https://maps.google.com'
     }
 ];

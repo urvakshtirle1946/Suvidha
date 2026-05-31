@@ -6,8 +6,6 @@ const fixImages = async () => {
     const hospitalImages = [
         { name: 'Synergy Hospital', url: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80' },
         { name: 'Shalby Hospital', url: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80' },
-        { name: 'CHL Hospital', url: 'https://images.unsplash.com/photo-1512678080530-7760d81faba6?auto=format&fit=crop&w=800&q=80' },
-        { name: 'Bombay', url: 'https://images.unsplash.com/photo-1586773860418-d3b97898c75c?auto=format&fit=crop&w=800&q=80' },
         { name: 'Gokuldas Hospital', url: '/uploads/Gokuldas.jpg' }
     ];
 

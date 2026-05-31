@@ -277,15 +277,7 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
   return (
     <div style={{ position: 'relative', flex: '0 0 auto' }}>
       {/* Mosaic */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1.5fr 1fr',
-        gridTemplateRows: '160px 160px',
-        gap: '6px',
-        borderRadius: '20px',
-        overflow: 'hidden',
-        height: '320px',
-      }}>
+      <div className="hero-mosaic">
         {MOSAIC.map(([src, col, row], i) => (
           <div key={i} style={{ gridColumn: col, gridRow: row, overflow: 'hidden' }}>
             <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
@@ -302,11 +294,7 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
       }} />
 
       {/* Text */}
-      <div style={{
-        position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-        padding: '1rem 2rem', paddingBottom: '5rem',
-      }}>
+      <div className="hero-text-overlay">
         <h1 style={{
           color: '#fff', fontSize: 'clamp(1.5rem, 4.5vw, 2.8rem)', fontWeight: '800',
           textAlign: 'center', textShadow: '0 2px 20px rgba(0,0,0,0.5)',
@@ -323,14 +311,9 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
       </div>
 
       {/* Search bar */}
-      <div style={{
-        position: 'absolute', bottom: '-28px', left: '50%', transform: 'translateX(-50%)',
-        width: 'min(700px, 90%)', background: '#fff', borderRadius: '16px',
-        boxShadow: '0 8px 40px rgba(0,0,0,0.18)', display: 'flex', alignItems: 'stretch',
-        border: '1px solid #e5e7eb', overflow: 'visible', zIndex: 20,
-      }}>
+      <div className="hero-search-bar-container">
         {/* Where */}
-        <div style={{ borderRight: '1px solid #e5e7eb', overflow: 'visible' }}>
+        <div className="hero-search-field-wrapper">
           <SearchField
             label="Where"
             placeholder="City or area"
@@ -343,7 +326,7 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
         </div>
 
         {/* What - Tabbed (Test / Symptoms) */}
-        <div style={{ borderRight: '1px solid #e5e7eb', overflow: 'visible', flex: 1, display: 'flex', flexDirection: 'column', minWidth: '240px' }}>
+        <div className="hero-search-field-wrapper what-field">
           {/* Tabs */}
           <div style={{ display: 'flex', gap: '8px', padding: '6px 12px 0 12px', justifyContent: 'flex-start', flexShrink: 0 }}>
             <button
@@ -474,7 +457,7 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
         </div>
 
         {/* Hospital */}
-        <div style={{ overflow: 'visible', flex: 1 }}>
+        <div className="hero-search-field-wrapper hospital-field">
           <SearchField
             label="Hospital"
             placeholder="Hospital name"
@@ -487,12 +470,12 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
         </div>
 
         {/* Search button */}
-        <div style={{ padding: '0.5rem', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+        <div className="hero-search-button-wrapper">
           <button
             onClick={handleSearch}
             style={{
               background: '#000', border: 'none', cursor: 'pointer',
-              width: '44px', height: '44px', borderRadius: '12px',
+              borderRadius: '12px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               transition: 'background 0.2s',
             }}

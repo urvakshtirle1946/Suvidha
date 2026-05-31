@@ -32,6 +32,13 @@ const CAROUSEL_ITEMS = [
 
 export default function FutureExperience() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handlePrev = () => {
     setActiveIndex((prev) => (prev > 0 ? prev - 1 : CAROUSEL_ITEMS.length - 1));
@@ -41,21 +48,25 @@ export default function FutureExperience() {
     setActiveIndex((prev) => (prev < CAROUSEL_ITEMS.length - 1 ? prev + 1 : 0));
   };
 
+  const isMobile = windowWidth < 768;
+  const cardWidth = isMobile ? Math.min(320, windowWidth * 0.85) : 380;
+  const translateStep = isMobile ? Math.min(270, windowWidth * 0.72) : 320;
+
   return (
     <section style={{
       width: '100%',
-      padding: '6rem 0',
+      padding: isMobile ? '3rem 0' : '6rem 0',
       background: 'transparent', // Removed white background
       fontFamily: 'Inter, sans-serif',
       overflow: 'hidden'
     }}>
-      <div className="container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
+      <div className="container" style={{ maxWidth: '1400px', margin: '0 auto', padding: isMobile ? '0 1rem' : '0 2rem' }}>
         
         {/* Header Section */}
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center', marginBottom: '4rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center', marginBottom: isMobile ? '2.5rem' : '4rem' }}>
           <div style={{ maxWidth: '700px' }}>
             <h2 style={{ 
-              fontSize: '3rem', 
+              fontSize: isMobile ? '2rem' : '3rem', 
               fontWeight: '900', 
               color: '#111827', 
               marginBottom: '1rem', 
@@ -66,7 +77,7 @@ export default function FutureExperience() {
             }}>
               Discover Future Experience
             </h2>
-            <p style={{ fontSize: '1.1rem', color: '#6b7280', lineHeight: '1.7', fontWeight: '500' }}>
+            <p style={{ fontSize: isMobile ? '0.95rem' : '1.1rem', color: '#6b7280', lineHeight: '1.7', fontWeight: '500' }}>
               We are building the next generation of healthcare technology. 
               Explore upcoming features that will transform your medical experience.
             </p>
@@ -77,7 +88,7 @@ export default function FutureExperience() {
         <div style={{
           position: 'relative',
           width: '100%',
-          height: '650px',
+          height: isMobile ? '500px' : '650px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'
@@ -90,7 +101,7 @@ export default function FutureExperience() {
             const isActive = diff === 0;
             const isVisible = Math.abs(diff) <= 2;
 
-            const translateX = diff * 320; 
+            const translateX = diff * translateStep; 
             const scale = isActive ? 1.1 : 0.85;
             const opacity = isActive ? 1 : (Math.abs(diff) === 1 ? 0.7 : 0);
             const zIndex = 10 - Math.abs(diff);
@@ -103,8 +114,8 @@ export default function FutureExperience() {
                 onClick={() => setActiveIndex(index)}
                 style={{
                   position: 'absolute',
-                  width: '380px',
-                  height: isActive ? '540px' : '440px',
+                  width: `${cardWidth}px`,
+                  height: isActive ? (isMobile ? '450px' : '540px') : (isMobile ? '360px' : '440px'),
                   borderRadius: '32px',
                   overflow: 'hidden',
                   transition: 'all 0.8s cubic-bezier(0.2, 1, 0.3, 1)',
@@ -134,13 +145,13 @@ export default function FutureExperience() {
                 {/* Overlay Card */}
                 <div style={{
                   position: 'absolute',
-                  bottom: '30px',
-                  left: '24px',
-                  right: '24px',
+                  bottom: isMobile ? '16px' : '30px',
+                  left: isMobile ? '12px' : '24px',
+                  right: isMobile ? '12px' : '24px',
                   background: 'rgba(255, 255, 255, 0.95)',
                   backdropFilter: 'blur(20px)',
-                  borderRadius: '24px',
-                  padding: '2rem',
+                  borderRadius: isMobile ? '18px' : '24px',
+                  padding: isMobile ? '1.2rem' : '2rem',
                   boxShadow: '0 15px 40px rgba(0,0,0,0.12)',
                   opacity: isActive ? 1 : 0,
                   transform: isActive ? 'translateY(0)' : 'translateY(30px)',
@@ -148,14 +159,14 @@ export default function FutureExperience() {
                   pointerEvents: isActive ? 'auto' : 'none'
                 }}>
                   
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.2rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: isMobile ? '0.8rem' : '1.2rem' }}>
                     <div>
-                      <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#111827', marginBottom: '6px' }}>{item.title}</h3>
-                      <p style={{ fontSize: '0.9rem', color: '#111827', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{item.subtitle}</p>
+                      <h3 style={{ fontSize: isMobile ? '1.15rem' : '1.4rem', fontWeight: '800', color: '#111827', marginBottom: '4px' }}>{item.title}</h3>
+                      <p style={{ fontSize: isMobile ? '0.8rem' : '0.9rem', color: '#111827', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{item.subtitle}</p>
                     </div>
                     <div style={{
-                      width: '44px',
-                      height: '44px',
+                      width: isMobile ? '36px' : '44px',
+                      height: isMobile ? '36px' : '44px',
                       borderRadius: '50%',
                       background: '#111827',
                       display: 'flex',
@@ -164,22 +175,22 @@ export default function FutureExperience() {
                       cursor: 'pointer',
                       boxShadow: '0 5px 15px rgba(0,0,0,0.2)'
                     }}>
-                      <ArrowRight size={18} color="#fff" />
+                      <ArrowRight size={isMobile ? 14 : 18} color="#fff" />
                     </div>
                   </div>
 
-                  <p style={{ fontSize: '0.9rem', color: '#4b5563', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+                  <p style={{ fontSize: isMobile ? '0.8rem' : '0.9rem', color: '#4b5563', lineHeight: '1.5', marginBottom: isMobile ? '1rem' : '1.5rem' }}>
                     {item.description}
                   </p>
 
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                     {item.tags.map((tag, i) => (
                       <span key={i} style={{
                         background: i === 0 ? '#111827' : '#f3f4f6',
                         color: i === 0 ? '#fff' : '#4b5563',
-                        padding: '6px 14px',
+                        padding: isMobile ? '4px 10px' : '6px 14px',
                         borderRadius: '100px',
-                        fontSize: '0.75rem',
+                        fontSize: '0.7rem',
                         fontWeight: '700'
                       }}>
                         {tag}

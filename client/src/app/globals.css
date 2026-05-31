@@ -1041,3 +1041,123 @@ a[href*="#"] {
   vertical-align: middle;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   HERO SEARCH BAR RESPONSIVENESS AND MOSAIC OPTIMIZATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+.hero-search-bar-container {
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(700px, 90%);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #e5e7eb;
+  overflow: visible;
+  z-index: 20;
+  transition: all 0.3s ease;
+}
+
+.hero-search-field-wrapper {
+  border-right: 1px solid #e5e7eb;
+  overflow: visible;
+  flex: 1;
+}
+
+.hero-search-field-wrapper.what-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 240px;
+}
+
+.hero-search-field-wrapper.hospital-field {
+  border-right: none;
+}
+
+.hero-search-button-wrapper {
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  justify-content: center;
+}
+
+.hero-search-button-wrapper button {
+  width: 44px;
+  height: 44px;
+}
+
+.hero-mosaic {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  grid-template-rows: 160px 160px;
+  gap: 6px;
+  border-radius: 20px;
+  overflow: hidden;
+  height: 320px;
+}
+
+.hero-text-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  padding-bottom: 5rem;
+}
+
+@media (max-width: 768px) {
+  .hero-search-bar-container {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    width: 100%;
+    margin-top: 1.5rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .hero-search-field-wrapper {
+    border-right: none !important;
+    border-bottom: 1px solid #e5e7eb;
+    width: 100%;
+  }
+
+  .hero-search-field-wrapper.what-field {
+    min-width: 0 !important;
+    width: 100%;
+  }
+
+  .hero-search-field-wrapper.hospital-field {
+    border-bottom: none !important;
+  }
+  
+  .hero-search-button-wrapper {
+    padding: 1rem;
+    width: 100%;
+  }
+  
+  .hero-search-button-wrapper button {
+    width: 100% !important;
+    border-radius: 12px;
+  }
+
+  .hero-mosaic {
+    grid-template-rows: 100px 100px;
+    height: 200px;
+  }
+
+  .hero-text-overlay {
+    padding-bottom: 1rem;
+  }
+}
+

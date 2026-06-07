@@ -4,6 +4,7 @@ const smtpHost = process.env.SMTP_HOST;
 const smtpPort = process.env.SMTP_PORT || 587;
 const smtpUser = process.env.SMTP_USER;
 const smtpPass = process.env.SMTP_PASS;
+const smtpFrom = process.env.SMTP_FROM || smtpUser;
 
 let transporter;
 
@@ -40,7 +41,7 @@ if (smtpHost && smtpUser && smtpPass) {
  */
 exports.sendWaitlistConfirmation = async (email, name) => {
   const mailOptions = {
-    from: `"The Zelp Team" <${smtpUser}>`,
+    from: `"The Zelp Team" <${smtpFrom}>`,
     to: email,
     subject: 'Welcome to the Zelp Waitlist! 🚀',
     html: `
@@ -103,7 +104,7 @@ exports.sendWelcomeEmail = async (email, name) => {
   const firstName = (name || 'there').split(' ')[0];
 
   const mailOptions = {
-    from: `"Suvidha Health" <${smtpUser}>`,
+    from: `"Suvidha Health" <${smtpFrom}>`,
     to: email,
     subject: `Welcome to Suvidha, ${firstName}! 🎉 Your account is ready`,
     html: `
@@ -227,7 +228,7 @@ exports.sendBookingConfirmation = async (email, booking) => {
   } = booking;
 
   const mailOptions = {
-    from: `"Suvidha Health" <${smtpUser}>`,
+    from: `"Suvidha Health" <${smtpFrom}>`,
     to: email,
     subject: `Booking Confirmed ✅ – ${serviceName} on ${date}`,
     html: `

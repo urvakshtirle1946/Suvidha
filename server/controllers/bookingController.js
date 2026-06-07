@@ -3,6 +3,7 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 
 const smsService = require('../services/smsService');
+const { sendBookingConfirmation } = require('../services/mailService');
 
 exports.createBooking = async (req, res) => {
   const { name, age, gender, date, time, address, serviceName, price, userPhone, userEmail, hospitalId, transactionId } = req.body;
@@ -72,6 +73,29 @@ Thank you for choosing Suvidha!`;
         }
     }
     
+    // 3. Send booking confirmation email (fire-and-forget)
+    if (userEmail) {
+      let resolvedHospitalName = null;
+      try {
+        if (hospitalId) {
+          const hRes = await db.query('SELECT name FROM hospitals WHERE id = $1', [hospitalId]);
+          resolvedHospitalName = hRes.rows[0]?.name || null;
+        }
+      } catch (_) {}
+
+      sendBookingConfirmation(userEmail, {
+        patientName: name,
+        serviceName,
+        hospitalName: resolvedHospitalName,
+        date,
+        time,
+        address,
+        price,
+        transactionId: transactionId || null,
+        bookingId: result.rows[0].id,
+      }).catch((err) => console.error('[Booking Email] Failed to send:', err.message));
+    }
+
     res.status(201).json({ 
       success: true, 
       message: 'Booking created successfully',

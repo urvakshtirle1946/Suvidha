@@ -163,7 +163,7 @@ exports.sendWelcomeEmail = async (email, name) => {
                     <table width="100%" cellpadding="0" cellspacing="0">
                       <tr>
                         <td align="center" style="padding:8px 0 32px;">
-                          <a href="http://localhost:3000" style="display:inline-block;background:linear-gradient(135deg,#1a6b5a,#25a585);color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 36px;border-radius:50px;letter-spacing:0.3px;">Get Started →</a>
+                          <a href="https://suvidha-client.onrender.com" style="display:inline-block;background:linear-gradient(135deg,#1a6b5a,#25a585);color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 36px;border-radius:50px;letter-spacing:0.3px;">Get Started →</a>
                         </td>
                       </tr>
                     </table>
@@ -201,6 +201,136 @@ exports.sendWelcomeEmail = async (email, name) => {
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('[Nodemailer] Error sending welcome email:', error.message);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Sends a booking confirmation email to the user.
+ * @param {string} email       - Recipient email
+ * @param {Object} booking     - Booking details
+ */
+exports.sendBookingConfirmation = async (email, booking) => {
+  const {
+    patientName,
+    serviceName,
+    hospitalName,
+    date,
+    time,
+    address,
+    transactionId,
+    bookingId,
+    price,
+  } = booking;
+
+  const mailOptions = {
+    from: `"Suvidha Health" <${smtpUser}>`,
+    to: email,
+    subject: `Booking Confirmed ✅ – ${serviceName} on ${date}`,
+    html: `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Booking Confirmation</title>
+      </head>
+      <body style="margin:0;padding:0;background:#f4f7fb;font-family:'Segoe UI',Arial,sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7fb;padding:40px 0;">
+          <tr>
+            <td align="center">
+              <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+                <!-- Header -->
+                <tr>
+                  <td style="background:linear-gradient(135deg,#1a6b5a 0%,#25a585 100%);border-radius:16px 16px 0 0;padding:36px 48px 28px;text-align:center;">
+                    <div style="font-size:40px;margin-bottom:12px;">✅</div>
+                    <h1 style="margin:0;color:#ffffff;font-size:26px;font-weight:700;">Booking Confirmed!</h1>
+                    <p style="margin:8px 0 0;color:rgba(255,255,255,0.85);font-size:14px;">Your appointment has been successfully booked.</p>
+                  </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                  <td style="background:#ffffff;padding:36px 48px;">
+                    <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.6;">Hi <strong>${patientName || 'there'}</strong>, here are your booking details:</p>
+
+                    <!-- Details Table -->
+                    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:28px;">
+                      <tr style="background:#f0faf6;">
+                        <td style="padding:12px 20px;font-size:13px;color:#6b7280;width:40%;">🩺 Service</td>
+                        <td style="padding:12px 20px;font-size:14px;color:#111827;font-weight:600;">${serviceName || '—'}</td>
+                      </tr>
+                      <tr style="background:#ffffff;">
+                        <td style="padding:12px 20px;font-size:13px;color:#6b7280;">🏥 Hospital</td>
+                        <td style="padding:12px 20px;font-size:14px;color:#111827;">${hospitalName || address || '—'}</td>
+                      </tr>
+                      <tr style="background:#f0faf6;">
+                        <td style="padding:12px 20px;font-size:13px;color:#6b7280;">📅 Date</td>
+                        <td style="padding:12px 20px;font-size:14px;color:#111827;">${date || '—'}</td>
+                      </tr>
+                      <tr style="background:#ffffff;">
+                        <td style="padding:12px 20px;font-size:13px;color:#6b7280;">⏰ Time</td>
+                        <td style="padding:12px 20px;font-size:14px;color:#111827;">${time || '—'}</td>
+                      </tr>
+                      ${price ? `
+                      <tr style="background:#f0faf6;">
+                        <td style="padding:12px 20px;font-size:13px;color:#6b7280;">💰 Amount</td>
+                        <td style="padding:12px 20px;font-size:14px;color:#111827;font-weight:600;">₹${price}</td>
+                      </tr>` : ''}
+                      ${transactionId ? `
+                      <tr style="background:#ffffff;">
+                        <td style="padding:12px 20px;font-size:13px;color:#6b7280;">🧾 Transaction ID</td>
+                        <td style="padding:12px 20px;font-size:13px;color:#6b7280;word-break:break-all;">${transactionId}</td>
+                      </tr>` : ''}
+                      ${bookingId ? `
+                      <tr style="background:#f0faf6;">
+                        <td style="padding:12px 20px;font-size:13px;color:#6b7280;">🔖 Booking ID</td>
+                        <td style="padding:12px 20px;font-size:13px;color:#6b7280;">#${bookingId}</td>
+                      </tr>` : ''}
+                    </table>
+
+                    <!-- CTA -->
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td align="center" style="padding:0 0 28px;">
+                          <a href="https://suvidha-client.onrender.com" style="display:inline-block;background:linear-gradient(135deg,#1a6b5a,#25a585);color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:13px 32px;border-radius:50px;">View My Bookings →</a>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p style="margin:0;font-size:13px;color:#6b7280;line-height:1.6;">Please arrive 10 minutes before your scheduled time. If you need to reschedule, contact us by replying to this email.</p>
+                    <p style="margin:24px 0 0;font-size:15px;color:#374151;">Stay healthy,<br /><strong>The Suvidha Team</strong><br /><span style="font-size:12px;color:#9ca3af;">Built with ❤️ in Indore</span></p>
+                  </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                  <td style="background:#f9fafb;border-radius:0 0 16px 16px;padding:20px 48px;text-align:center;border-top:1px solid #e5e7eb;">
+                    <p style="margin:0;font-size:12px;color:#9ca3af;">© 2025 Suvidha Health. All rights reserved.</p>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>
+    `,
+  };
+
+  if (!transporter) {
+    console.log(`[MOCK BOOKING EMAIL] To: ${email}, Subject: ${mailOptions.subject}`);
+    return { success: true, mock: true };
+  }
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`[Nodemailer] Booking confirmation sent to ${email}: ${info.messageId}`);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('[Nodemailer] Error sending booking confirmation:', error.message);
     return { success: false, error: error.message };
   }
 };

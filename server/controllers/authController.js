@@ -814,7 +814,7 @@ exports.testEmail = async (req, res) => {
   const testTransporter = nodemailer.createTransport({
     host: smtpHost,
     port: parseInt(smtpPort),
-    secure: smtpPort == 465,
+    secure: parseInt(smtpPort) === 465,
     auth: {
       user: smtpUser,
       pass: smtpPass,

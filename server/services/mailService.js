@@ -90,3 +90,117 @@ exports.sendWaitlistConfirmation = async (email, name) => {
     return { success: true, mock: true, error: error.message };
   }
 };
+
+/**
+ * Sends a welcome email to a newly registered user.
+ * @param {string} email - Recipient email
+ * @param {string} name  - Recipient name
+ */
+exports.sendWelcomeEmail = async (email, name) => {
+  const firstName = (name || 'there').split(' ')[0];
+
+  const mailOptions = {
+    from: `"Suvidha Health" <${smtpUser}>`,
+    to: email,
+    subject: `Welcome to Suvidha, ${firstName}! 🎉 Your account is ready`,
+    html: `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Welcome to Suvidha</title>
+      </head>
+      <body style="margin:0;padding:0;background:#f4f7fb;font-family:'Segoe UI',Arial,sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7fb;padding:40px 0;">
+          <tr>
+            <td align="center">
+              <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+                <!-- Header -->
+                <tr>
+                  <td style="background:linear-gradient(135deg,#1a6b5a 0%,#25a585 100%);border-radius:16px 16px 0 0;padding:40px 48px 32px;text-align:center;">
+                    <div style="display:inline-block;background:rgba(255,255,255,0.18);border-radius:50%;width:64px;height:64px;line-height:64px;font-size:32px;margin-bottom:16px;">🏥</div>
+                    <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;letter-spacing:-0.5px;">Welcome to Suvidha</h1>
+                    <p style="margin:8px 0 0;color:rgba(255,255,255,0.85);font-size:15px;">Healthcare, simplified for you.</p>
+                  </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                  <td style="background:#ffffff;padding:40px 48px;">
+                    <p style="margin:0 0 20px;font-size:16px;color:#1a2433;line-height:1.6;">Hi <strong>${firstName}</strong>,</p>
+                    <p style="margin:0 0 20px;font-size:15px;color:#374151;line-height:1.7;">
+                      Your Suvidha account is now set up and ready to go! We're thrilled to have you on board.
+                      Here's what you can do right from the start:
+                    </p>
+
+                    <!-- Feature Cards -->
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+                      <tr>
+                        <td style="background:#f0faf6;border-left:4px solid #25a585;border-radius:8px;padding:16px 20px;margin-bottom:12px;">
+                          <p style="margin:0;font-size:14px;color:#1a6b5a;"><strong>🔍 Find Hospitals & Clinics</strong></p>
+                          <p style="margin:4px 0 0;font-size:13px;color:#4b5563;">Search nearby healthcare providers and view ratings, services, and availability.</p>
+                        </td>
+                      </tr>
+                      <tr><td style="height:10px;"></td></tr>
+                      <tr>
+                        <td style="background:#f0faf6;border-left:4px solid #25a585;border-radius:8px;padding:16px 20px;">
+                          <p style="margin:0;font-size:14px;color:#1a6b5a;"><strong>📅 Book Appointments Instantly</strong></p>
+                          <p style="margin:4px 0 0;font-size:13px;color:#4b5563;">Schedule lab tests, doctor visits, and more — all in a few taps.</p>
+                        </td>
+                      </tr>
+                      <tr><td style="height:10px;"></td></tr>
+                      <tr>
+                        <td style="background:#f0faf6;border-left:4px solid #25a585;border-radius:8px;padding:16px 20px;">
+                          <p style="margin:0;font-size:14px;color:#1a6b5a;"><strong>🚑 Request an Ambulance</strong></p>
+                          <p style="margin:4px 0 0;font-size:13px;color:#4b5563;">Get emergency medical transport quickly when every second counts.</p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- CTA Button -->
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td align="center" style="padding:8px 0 32px;">
+                          <a href="http://localhost:3000" style="display:inline-block;background:linear-gradient(135deg,#1a6b5a,#25a585);color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 36px;border-radius:50px;letter-spacing:0.3px;">Get Started →</a>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p style="margin:0;font-size:14px;color:#6b7280;line-height:1.6;">If you have any questions, simply reply to this email — we're always happy to help.</p>
+                    <p style="margin:24px 0 0;font-size:15px;color:#374151;">Stay healthy,<br /><strong>The Suvidha Team</strong><br /><span style="font-size:12px;color:#9ca3af;">Built with ❤️ in Indore</span></p>
+                  </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                  <td style="background:#f9fafb;border-radius:0 0 16px 16px;padding:24px 48px;text-align:center;border-top:1px solid #e5e7eb;">
+                    <p style="margin:0;font-size:12px;color:#9ca3af;">© 2025 Suvidha Health. All rights reserved.</p>
+                    <p style="margin:6px 0 0;font-size:12px;color:#9ca3af;">You received this email because you signed up for a Suvidha account.</p>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>
+    `,
+  };
+
+  if (!transporter) {
+    console.log(`[MOCK WELCOME EMAIL] To: ${email}, Subject: ${mailOptions.subject}`);
+    return { success: true, mock: true };
+  }
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`[Nodemailer] Welcome email sent to ${email}: ${info.messageId}`);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('[Nodemailer] Error sending welcome email:', error.message);
+    return { success: false, error: error.message };
+  }
+};

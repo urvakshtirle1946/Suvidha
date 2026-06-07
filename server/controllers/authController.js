@@ -2,6 +2,7 @@ const db = require('../db');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { getMockUsers } = require('../mock_persistence');
+const { sendWelcomeEmail } = require('../services/mailService');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'zelp_secret_key_2024';
 const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
@@ -178,7 +179,12 @@ exports.register = async (req, res) => {
          RETURNING id, name, email, role, created_at`,
         [cleanName, cleanEmail, hashedPassword, cleanPhone, 'user']
       );
-      return issueUserSession(req, res, insertResult.rows[0], 201, 'Registration successful.');
+      const newUser = insertResult.rows[0];
+      // Fire-and-forget: send welcome email without blocking the response
+      sendWelcomeEmail(newUser.email, newUser.name).catch((err) =>
+        console.error('[Welcome Email] Failed to send:', err.message)
+      );
+      return issueUserSession(req, res, newUser, 201, 'Registration successful.');
     } catch (dbErr) {
        // If column 'phone' does not exist error code is 42703
        if (dbErr.code === '42703') {
@@ -192,7 +198,11 @@ exports.register = async (req, res) => {
               RETURNING id, name, email, role, created_at`,
              [cleanName, cleanEmail, hashedPassword, cleanPhone, 'user']
            );
-           return issueUserSession(req, res, retryInsertResult.rows[0], 201, 'Registration successful.');
+           const retryUser = retryInsertResult.rows[0];
+           sendWelcomeEmail(retryUser.email, retryUser.name).catch((err) =>
+             console.error('[Welcome Email] Failed to send (retry path):', err.message)
+           );
+           return issueUserSession(req, res, retryUser, 201, 'Registration successful.');
        } else {
            throw dbErr;
        }
@@ -378,7 +388,12 @@ exports.completeGoogleRegistration = async (req, res) => {
       [cleanName, cleanEmail, cleanPhone, 'user']
     );
 
-    return issueUserSession(req, res, insertResult.rows[0], 201, 'Google registration successful.');
+    const googleUser = insertResult.rows[0];
+    // Fire-and-forget: send welcome email without blocking the response
+    sendWelcomeEmail(googleUser.email, googleUser.name).catch((err) =>
+      console.error('[Welcome Email] Failed to send (Google signup):', err.message)
+    );
+    return issueUserSession(req, res, googleUser, 201, 'Google registration successful.');
   } catch (error) {
     console.error('Google Registration Error:', error);
     if (error.code === '23505') {

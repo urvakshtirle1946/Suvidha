@@ -139,6 +139,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                 const bookingData = {
                     name: patientName || user?.name || 'Unknown',
                     userPhone: patientPhone || 'Unknown',
+                    userEmail: user?.email,
                     age: parseInt(patientAge) || 0,
                     gender: patientGender || 'Not Specified',
                     date: (new Date(Date.now() + 86400000).toISOString() || '').split('T')[0],

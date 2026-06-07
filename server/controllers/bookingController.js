@@ -8,6 +8,9 @@ const { sendBookingConfirmation } = require('../services/mailService');
 exports.createBooking = async (req, res) => {
   const { name, age, gender, date, time, address, serviceName, price, userPhone, userEmail, hospitalId, transactionId } = req.body;
   
+  const finalEmail = userEmail || req.user?.email || null;
+  const finalPhone = userPhone || req.user?.phone || 'Unknown';
+  
   try {
     // 1. Create Booking
     const query = `
@@ -15,7 +18,7 @@ exports.createBooking = async (req, res) => {
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
       RETURNING id, status
     `;
-    const values = [name, age, gender, date, time, address, serviceName, price, userPhone, userEmail, hospitalId || null, transactionId || null];
+    const values = [name, age, gender, date, time, address, serviceName, price, finalPhone, finalEmail, hospitalId || null, transactionId || null];
     
     const result = await db.query(query, values);
     
@@ -44,8 +47,8 @@ Please confirm availability.`;
                 await smsService.sendWhatsapp(adminPhone, message);
 
                 // 3. Notify Patient (User) via WhatsApp
-                if (userPhone) {
-                    let formattedUserPhone = userPhone;
+                if (finalPhone && finalPhone !== 'Unknown') {
+                    let formattedUserPhone = finalPhone;
                     if (/^\d{10}$/.test(formattedUserPhone)) {
                         formattedUserPhone = '+91' + formattedUserPhone;
                     }
@@ -74,7 +77,7 @@ Thank you for choosing Suvidha!`;
     }
     
     // 3. Send booking confirmation email (fire-and-forget)
-    if (userEmail) {
+    if (finalEmail) {
       let resolvedHospitalName = null;
       try {
         if (hospitalId) {
@@ -83,7 +86,7 @@ Thank you for choosing Suvidha!`;
         }
       } catch (_) {}
 
-      sendBookingConfirmation(userEmail, {
+      sendBookingConfirmation(finalEmail, {
         patientName: name,
         serviceName,
         hospitalName: resolvedHospitalName,

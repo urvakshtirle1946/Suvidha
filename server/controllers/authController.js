@@ -787,4 +787,71 @@ exports.logout = (req, res) => {
   return res.json({ success: true, message: 'Logged out successfully.' });
 };
 
+exports.testEmail = async (req, res) => {
+  const nodemailer = require('nodemailer');
+
+  const smtpHost = process.env.SMTP_HOST;
+  const smtpPort = process.env.SMTP_PORT || 587;
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+
+  const diagnostics = {
+    smtpHost: smtpHost || 'NOT_SET',
+    smtpPort: smtpPort || 'NOT_SET',
+    smtpUser: smtpUser || 'NOT_SET',
+    smtpPassLength: smtpPass ? smtpPass.length : 0,
+    nodeEnv: process.env.NODE_ENV || 'NOT_SET',
+  };
+
+  if (!smtpHost || !smtpUser || !smtpPass) {
+    return res.status(400).json({
+      success: false,
+      message: 'SMTP configuration is incomplete in environment variables.',
+      diagnostics,
+    });
+  }
+
+  const testTransporter = nodemailer.createTransport({
+    host: smtpHost,
+    port: parseInt(smtpPort),
+    secure: smtpPort == 465,
+    auth: {
+      user: smtpUser,
+      pass: smtpPass,
+    },
+  });
+
+  try {
+    await testTransporter.verify();
+    
+    const info = await testTransporter.sendMail({
+      from: `"Suvidha SMTP Diagnostics" <${smtpUser}>`,
+      to: smtpUser,
+      subject: 'Suvidha SMTP Diagnostics Test Email 🚀',
+      html: `
+        <h3>Suvidha SMTP Diagnostics</h3>
+        <p>Nodemailer is working successfully on your server!</p>
+        <p><strong>Server Time:</strong> ${new Date().toISOString()}</p>
+        <p><strong>Environment:</strong> ${process.env.NODE_ENV || 'production'}</p>
+      `,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'SMTP test succeeded. Connection verified and test email sent to SMTP_USER.',
+      messageId: info.messageId,
+      diagnostics,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: 'SMTP test failed.',
+      error: err.message,
+      stack: err.stack,
+      diagnostics,
+    });
+  }
+};
+
+
 

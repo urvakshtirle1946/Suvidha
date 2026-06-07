@@ -22,6 +22,7 @@ const adminLoginLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+router.get('/test-email', authController.testEmail);
 router.post('/register', authLimiter, authController.register);
 router.post('/login', authLimiter, authController.login);
 router.post('/google', authLimiter, authController.googleLogin);

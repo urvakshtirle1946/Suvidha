@@ -790,10 +790,10 @@ exports.logout = (req, res) => {
 exports.testEmail = async (req, res) => {
   const nodemailer = require('nodemailer');
 
-  const smtpHost = process.env.SMTP_HOST;
-  const smtpPort = process.env.SMTP_PORT || 587;
-  const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASS;
+  const smtpHost = req.query.host || process.env.SMTP_HOST;
+  const smtpPort = req.query.port || process.env.SMTP_PORT || 587;
+  const smtpUser = req.query.user || process.env.SMTP_USER;
+  const smtpPass = req.query.pass || process.env.SMTP_PASS;
 
   const diagnostics = {
     smtpHost: smtpHost || 'NOT_SET',
@@ -806,7 +806,7 @@ exports.testEmail = async (req, res) => {
   if (!smtpHost || !smtpUser || !smtpPass) {
     return res.status(400).json({
       success: false,
-      message: 'SMTP configuration is incomplete in environment variables.',
+      message: 'SMTP configuration is incomplete.',
       diagnostics,
     });
   }

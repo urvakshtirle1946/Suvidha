@@ -819,6 +819,9 @@ exports.testEmail = async (req, res) => {
       user: smtpUser,
       pass: smtpPass,
     },
+    connectionTimeout: 5000, // 5 seconds
+    greetingTimeout: 5000,   // 5 seconds
+    socketTimeout: 5000,     // 5 seconds
   });
 
   try {

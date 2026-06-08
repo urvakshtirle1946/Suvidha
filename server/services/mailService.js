@@ -7,6 +7,9 @@ const SMTP_USER = process.env.SMTP_USER || process.env.GMAIL_USER;
 const SMTP_PASS = (process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || '').replace(/\s+/g, '');
 const FROM_EMAIL = process.env.SMTP_FROM || SMTP_USER;
 const FROM_NAME = process.env.SMTP_FROM_NAME || 'Zelp';
+const SMTP_CONNECTION_TIMEOUT = Number(process.env.SMTP_CONNECTION_TIMEOUT || 10000);
+const SMTP_GREETING_TIMEOUT = Number(process.env.SMTP_GREETING_TIMEOUT || 10000);
+const SMTP_SOCKET_TIMEOUT = Number(process.env.SMTP_SOCKET_TIMEOUT || 15000);
 
 let transporter;
 
@@ -30,9 +33,15 @@ const getTransporter = () => {
       host: SMTP_HOST,
       port: SMTP_PORT,
       secure: SMTP_SECURE,
+      connectionTimeout: SMTP_CONNECTION_TIMEOUT,
+      greetingTimeout: SMTP_GREETING_TIMEOUT,
+      socketTimeout: SMTP_SOCKET_TIMEOUT,
       auth: {
         user: SMTP_USER,
         pass: SMTP_PASS
+      },
+      tls: {
+        servername: SMTP_HOST
       }
     });
   }
@@ -175,4 +184,21 @@ exports.verifyMailTransport = async () => {
 
   await activeTransporter.verify();
   return { success: true };
+};
+
+exports.sendSmtpTestEmail = async () => {
+  const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+  return sendMail({
+    to: SMTP_USER,
+    subject: 'Zelp SMTP test email',
+    text: `Zelp SMTP is working from Render/local server.\n\nTime: ${timestamp} IST`,
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
+        <h2>Zelp SMTP is working</h2>
+        <p>This test email was sent by the backend mail diagnostic endpoint.</p>
+        <p><strong>Time:</strong> ${escapeHtml(timestamp)} IST</p>
+      </div>
+    `
+  });
 };

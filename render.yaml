@@ -24,6 +24,12 @@ services:
         value: "urvakshtirle@gmail.com"
       - key: SMTP_FROM_NAME
         value: "Zelp"
+      - key: SMTP_CONNECTION_TIMEOUT
+        value: "10000"
+      - key: SMTP_GREETING_TIMEOUT
+        value: "10000"
+      - key: SMTP_SOCKET_TIMEOUT
+        value: "15000"
       - key: SMTP_PASS
         sync: false
     disk:

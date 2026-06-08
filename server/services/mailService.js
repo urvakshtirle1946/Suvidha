@@ -1,92 +1,178 @@
 const nodemailer = require('nodemailer');
 
-const smtpHost = process.env.SMTP_HOST;
-const smtpPort = process.env.SMTP_PORT || 587;
-const smtpUser = process.env.SMTP_USER;
-const smtpPass = process.env.SMTP_PASS;
+const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
+const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
+const SMTP_SECURE = String(process.env.SMTP_SECURE || 'true').toLowerCase() !== 'false';
+const SMTP_USER = process.env.SMTP_USER || process.env.GMAIL_USER;
+const SMTP_PASS = (process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || '').replace(/\s+/g, '');
+const FROM_EMAIL = process.env.SMTP_FROM || SMTP_USER;
+const FROM_NAME = process.env.SMTP_FROM_NAME || 'Zelp';
 
 let transporter;
 
-if (smtpHost && smtpUser && smtpPass) {
-  transporter = nodemailer.createTransport({
-    host: smtpHost,
-    port: parseInt(smtpPort),
-    secure: smtpPort == 465, // true for 465, false for other ports
-    auth: {
-      user: smtpUser,
-      pass: smtpPass,
-    },
-  });
-  
-  // Verify connection configuration
-  transporter.verify((error, success) => {
-    if (error) {
-      console.warn('[Nodemailer] Warning: Connection verification failed:', error.message);
-    } else {
-      console.log('[Nodemailer] Server is ready to take our messages');
-    }
-  });
-} else {
-  console.warn('[Nodemailer] Missing or invalid SMTP credentials. Emails will NOT be sent.');
-}
+const escapeHtml = (value) =>
+  String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 
-/**
- * Sends a waitlist confirmation email.
- * @param {string} email - Recipient email
- * @param {string} name - Recipient name
- */
-exports.sendWaitlistConfirmation = async (email, name) => {
-  const mailOptions = {
-    from: `"The Zelp Team" <${smtpUser}>`,
-    to: email,
-    subject: 'Welcome to the Zelp Waitlist! 🚀',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; line-height: 1.6;">
-        <div style="text-align: center; padding: 20px 0;">
-          <h1 style="color: #1a120a; font-size: 24px; margin: 0;">Welcome to Zelp</h1>
-        </div>
-        
-        <div style="padding: 20px; background-color: #fff; border: 1px solid #eee; border-radius: 8px;">
-          <p>Hi <strong>${name || 'there'}</strong>,</p>
-          
-          <p>You're officially on the waitlist for <strong>Zelp</strong>! 🎉</p>
-          
-          <p>We're building the future of healthcare booking, and we're thrilled to have you with us from the start. As an early supporter, you'll get:</p>
-          
-          <ul style="padding-left: 20px;">
-            <li><strong>Priority access</strong> when we launch in your area.</li>
-            <li><strong>Exclusive early-bird discounts</strong> on medical tests.</li>
-            <li><strong>Direct updates</strong> on our progress and new features.</li>
-          </ul>
-          
-          <p>We'll notify you the moment a slot becomes available. In the meantime, feel free to follow us on <a href="https://x.com/tryzelp" style="color: #2b1b12; font-weight: bold; text-decoration: none;">X/Twitter</a> for the latest updates.</p>
-          
-          <p style="margin-top: 30px;">Stay healthy,<br>
-          <strong>The Zelp Team</strong><br>
-          <small>Built with ❤️ in Indore</small></p>
-        </div>
-        
-        <div style="text-align: center; padding: 20px; font-size: 12px; color: #999;">
-          &copy; 2024 Zelp. All rights reserved.
-        </div>
-      </div>
-    `,
-  };
+const isConfigured = () => Boolean(SMTP_USER && SMTP_PASS && FROM_EMAIL);
+
+const getTransporter = () => {
+  if (!isConfigured()) {
+    return null;
+  }
 
   if (!transporter) {
-    console.log(`[MOCK EMAIL] To: ${email}, Subject: ${mailOptions.subject}`);
-    console.log(`[MOCK EMAIL] Body excerpt: "Hi ${name}, You're officially on the waitlist..."`);
-    return { success: true, mock: true };
+    transporter = nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      secure: SMTP_SECURE,
+      auth: {
+        user: SMTP_USER,
+        pass: SMTP_PASS
+      }
+    });
   }
 
-  try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`[Nodemailer] Email sent: ${info.messageId}`);
-    return { success: true, messageId: info.messageId };
-  } catch (error) {
-    console.error('[Nodemailer] Error sending email:', error.message);
-    console.warn('[Nodemailer] Falling back to MOCK EMAIL due to error.');
-    console.log(`[MOCK EMAIL (Fallback)] To: ${email}, Subject: ${mailOptions.subject}`);
-    return { success: true, mock: true, error: error.message };
+  return transporter;
+};
+
+const sendMail = async ({ to, subject, text, html }) => {
+  if (!to) {
+    return { success: false, skipped: true, reason: 'missing_recipient' };
   }
+
+  const activeTransporter = getTransporter();
+  if (!activeTransporter) {
+    console.warn('[Mail] SMTP is not configured. Skipping email:', subject);
+    return { success: false, skipped: true, reason: 'smtp_not_configured' };
+  }
+
+  const info = await activeTransporter.sendMail({
+    from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
+    to,
+    subject,
+    text,
+    html
+  });
+
+  return { success: true, messageId: info.messageId };
+};
+
+exports.sendWaitlistConfirmation = async (email, name) => {
+  const displayName = escapeHtml(name || 'there');
+
+  return sendMail({
+    to: email,
+    subject: 'Welcome to the Zelp waitlist',
+    text: `Hi ${name || 'there'},\n\nThanks for joining the Zelp waitlist. We will notify you when your slot opens.\n\nTeam Zelp`,
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
+        <h2>Welcome to Zelp, ${displayName}</h2>
+        <p>Thanks for joining the waitlist. We will notify you when your slot opens.</p>
+        <p>Team Zelp</p>
+      </div>
+    `
+  });
+};
+
+exports.sendWelcomeEmail = async (email, name) => {
+  const firstName = String(name || 'there').split(' ')[0];
+
+  return sendMail({
+    to: email,
+    subject: `Welcome to Zelp, ${firstName}`,
+    text: `Hi ${firstName},\n\nYour Zelp account is ready. You can now book verified healthcare services and manage your bookings from your account.\n\nTeam Zelp`,
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
+        <h2>Welcome to Zelp, ${escapeHtml(firstName)}</h2>
+        <p>Your account is ready. You can now book verified healthcare services and manage your bookings from your account.</p>
+        <p>Team Zelp</p>
+      </div>
+    `
+  });
+};
+
+exports.sendSignInEmail = async (email, name) => {
+  const firstName = String(name || 'there').split(' ')[0];
+  const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+  return sendMail({
+    to: email,
+    subject: 'New sign-in to your Zelp account',
+    text: `Hi ${firstName},\n\nYour Zelp account was just signed in on ${timestamp} IST. If this was you, no action is needed. If this was not you, please change your password.\n\nTeam Zelp`,
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
+        <h2>New sign-in detected</h2>
+        <p>Hi ${escapeHtml(firstName)}, your Zelp account was just signed in.</p>
+        <p><strong>Time:</strong> ${escapeHtml(timestamp)} IST</p>
+        <p>If this was you, no action is needed. If this was not you, please change your password.</p>
+        <p>Team Zelp</p>
+      </div>
+    `
+  });
+};
+
+exports.sendBookingConfirmation = async (email, booking) => {
+  const {
+    patientName,
+    serviceName,
+    hospitalName,
+    date,
+    time,
+    address,
+    transactionId,
+    bookingId,
+    price
+  } = booking;
+
+  const location = hospitalName || address || 'Zelp partner location';
+
+  return sendMail({
+    to: email,
+    subject: `Booking confirmed: ${serviceName || 'Healthcare service'}`,
+    text: [
+      `Hi ${patientName || 'there'},`,
+      '',
+      'Your booking has been confirmed.',
+      `Service: ${serviceName || '-'}`,
+      `Provider: ${location}`,
+      `Date: ${date || '-'}`,
+      `Time: ${time || '-'}`,
+      `Amount: INR ${price || 0}`,
+      `Booking ID: ${bookingId || '-'}`,
+      `Transaction ID: ${transactionId || '-'}`,
+      '',
+      'Team Zelp'
+    ].join('\n'),
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
+        <h2>Booking confirmed</h2>
+        <p>Hi ${escapeHtml(patientName || 'there')}, your booking has been confirmed.</p>
+        <table style="border-collapse:collapse;width:100%;max-width:520px">
+          <tr><td style="padding:8px;border:1px solid #e5e7eb">Service</td><td style="padding:8px;border:1px solid #e5e7eb">${escapeHtml(serviceName || '-')}</td></tr>
+          <tr><td style="padding:8px;border:1px solid #e5e7eb">Provider</td><td style="padding:8px;border:1px solid #e5e7eb">${escapeHtml(location)}</td></tr>
+          <tr><td style="padding:8px;border:1px solid #e5e7eb">Date</td><td style="padding:8px;border:1px solid #e5e7eb">${escapeHtml(date || '-')}</td></tr>
+          <tr><td style="padding:8px;border:1px solid #e5e7eb">Time</td><td style="padding:8px;border:1px solid #e5e7eb">${escapeHtml(time || '-')}</td></tr>
+          <tr><td style="padding:8px;border:1px solid #e5e7eb">Amount</td><td style="padding:8px;border:1px solid #e5e7eb">INR ${escapeHtml(price || 0)}</td></tr>
+          <tr><td style="padding:8px;border:1px solid #e5e7eb">Booking ID</td><td style="padding:8px;border:1px solid #e5e7eb">${escapeHtml(bookingId || '-')}</td></tr>
+          <tr><td style="padding:8px;border:1px solid #e5e7eb">Transaction ID</td><td style="padding:8px;border:1px solid #e5e7eb">${escapeHtml(transactionId || '-')}</td></tr>
+        </table>
+        <p>Team Zelp</p>
+      </div>
+    `
+  });
+};
+
+exports.verifyMailTransport = async () => {
+  const activeTransporter = getTransporter();
+  if (!activeTransporter) {
+    return { success: false, reason: 'smtp_not_configured' };
+  }
+
+  await activeTransporter.verify();
+  return { success: true };
 };

@@ -2,6 +2,7 @@ const db = require('../db');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { getMockUsers } = require('../mock_persistence');
+const { sendWelcomeEmail, sendSignInEmail, verifyMailTransport } = require('../services/mailService');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'zelp_secret_key_2024';
 const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
@@ -178,7 +179,11 @@ exports.register = async (req, res) => {
          RETURNING id, name, email, role, created_at`,
         [cleanName, cleanEmail, hashedPassword, cleanPhone, 'user']
       );
-      return issueUserSession(req, res, insertResult.rows[0], 201, 'Registration successful.');
+      const newUser = insertResult.rows[0];
+      sendWelcomeEmail(newUser.email, newUser.name).catch((err) =>
+        console.error('[Welcome Email] Failed to send:', err.message)
+      );
+      return issueUserSession(req, res, newUser, 201, 'Registration successful.');
     } catch (dbErr) {
        // If column 'phone' does not exist error code is 42703
        if (dbErr.code === '42703') {
@@ -192,7 +197,11 @@ exports.register = async (req, res) => {
               RETURNING id, name, email, role, created_at`,
              [cleanName, cleanEmail, hashedPassword, cleanPhone, 'user']
            );
-           return issueUserSession(req, res, retryInsertResult.rows[0], 201, 'Registration successful.');
+           const retryUser = retryInsertResult.rows[0];
+           sendWelcomeEmail(retryUser.email, retryUser.name).catch((err) =>
+             console.error('[Welcome Email] Failed to send (retry path):', err.message)
+           );
+           return issueUserSession(req, res, retryUser, 201, 'Registration successful.');
        } else {
            throw dbErr;
        }
@@ -255,6 +264,10 @@ exports.login = async (req, res) => {
       });
     }
 
+    sendSignInEmail(user.email, user.name).catch((err) =>
+      console.error('[Sign-in Email] Failed to send:', err.message)
+    );
+
     return issueUserSession(req, res, user, 200, 'Login successful.');
   } catch (error) {
     console.error('Login Error:', error);
@@ -316,6 +329,9 @@ exports.googleLogin = async (req, res) => {
       });
     } else {
       // User exists, login normally
+      sendSignInEmail(result.rows[0].email, result.rows[0].name).catch((err) =>
+        console.error('[Sign-in Email] Failed to send (Google login):', err.message)
+      );
       return issueUserSession(req, res, result.rows[0], 200, 'Google login successful.');
     }
   } catch (error) {
@@ -378,7 +394,11 @@ exports.completeGoogleRegistration = async (req, res) => {
       [cleanName, cleanEmail, cleanPhone, 'user']
     );
 
-    return issueUserSession(req, res, insertResult.rows[0], 201, 'Google registration successful.');
+    const googleUser = insertResult.rows[0];
+    sendWelcomeEmail(googleUser.email, googleUser.name).catch((err) =>
+      console.error('[Welcome Email] Failed to send (Google signup):', err.message)
+    );
+    return issueUserSession(req, res, googleUser, 201, 'Google registration successful.');
   } catch (error) {
     console.error('Google Registration Error:', error);
     if (error.code === '23505') {
@@ -772,4 +792,32 @@ exports.logout = (req, res) => {
   return res.json({ success: true, message: 'Logged out successfully.' });
 };
 
+exports.testEmail = async (req, res) => {
+  const diagnostics = {
+    smtpHost: process.env.SMTP_HOST || 'NOT_SET',
+    smtpPort: process.env.SMTP_PORT || 'NOT_SET',
+    smtpUser: process.env.SMTP_USER || 'NOT_SET',
+    nodeEnv: process.env.NODE_ENV || 'NOT_SET',
+    status: 'checking',
+    smtpConfigured: Boolean(process.env.SMTP_USER && process.env.SMTP_PASS),
+  };
 
+  try {
+    const result = await verifyMailTransport();
+    diagnostics.status = result.success ? 'ready' : 'not_configured';
+
+    return res.status(result.success ? 200 : 503).json({
+      success: result.success,
+      message: result.success ? 'SMTP transport is ready.' : 'SMTP is not configured.',
+      diagnostics,
+    });
+  } catch (error) {
+    diagnostics.status = 'failed';
+    return res.status(500).json({
+      success: false,
+      message: 'SMTP transport check failed.',
+      diagnostics,
+      error: error.message
+    });
+  }
+};

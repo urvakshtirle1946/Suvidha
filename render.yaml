@@ -12,6 +12,20 @@ services:
         value: "production"
       - key: NODE_TLS_REJECT_UNAUTHORIZED
         value: "0"
+      - key: SMTP_HOST
+        value: "smtp.gmail.com"
+      - key: SMTP_PORT
+        value: "465"
+      - key: SMTP_SECURE
+        value: "true"
+      - key: SMTP_USER
+        value: "urvakshtirle@gmail.com"
+      - key: SMTP_FROM
+        value: "urvakshtirle@gmail.com"
+      - key: SMTP_FROM_NAME
+        value: "Zelp"
+      - key: SMTP_PASS
+        sync: false
     disk:
       name: suvidha-uploads
       mountPath: /opt/render/project/src/server/uploads

@@ -2,7 +2,7 @@ const db = require('../db');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { getMockUsers } = require('../mock_persistence');
-const { sendWelcomeEmail, sendSignInEmail, verifyMailTransport } = require('../services/mailService');
+const { sendWelcomeEmail, sendSignInEmail, verifyMailTransport, sendSmtpTestEmail } = require('../services/mailService');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'zelp_secret_key_2024';
 const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
@@ -798,6 +798,9 @@ exports.testEmail = async (req, res) => {
     smtpPort: process.env.SMTP_PORT || 'NOT_SET',
     smtpUser: process.env.SMTP_USER || 'NOT_SET',
     nodeEnv: process.env.NODE_ENV || 'NOT_SET',
+    connectionTimeout: process.env.SMTP_CONNECTION_TIMEOUT || '10000',
+    greetingTimeout: process.env.SMTP_GREETING_TIMEOUT || '10000',
+    socketTimeout: process.env.SMTP_SOCKET_TIMEOUT || '15000',
     status: 'checking',
     smtpConfigured: Boolean(process.env.SMTP_USER && process.env.SMTP_PASS),
   };
@@ -805,11 +808,13 @@ exports.testEmail = async (req, res) => {
   try {
     const result = await verifyMailTransport();
     diagnostics.status = result.success ? 'ready' : 'not_configured';
+    const testEmailResult = result.success ? await sendSmtpTestEmail() : null;
 
     return res.status(result.success ? 200 : 503).json({
       success: result.success,
-      message: result.success ? 'SMTP transport is ready.' : 'SMTP is not configured.',
+      message: result.success ? 'SMTP transport is ready and test email was sent.' : 'SMTP is not configured.',
       diagnostics,
+      testEmail: testEmailResult,
     });
   } catch (error) {
     diagnostics.status = 'failed';

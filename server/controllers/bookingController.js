@@ -5,6 +5,35 @@ const crypto = require('crypto');
 const smsService = require('../services/smsService');
 const { sendBookingConfirmation } = require('../services/mailService');
 
+const sendPaymentBookingEmail = async (booking) => {
+  if (!booking?.user_email) {
+    return { success: false, skipped: true, reason: 'missing_recipient' };
+  }
+
+  let hospitalName = booking.hospital_name || null;
+  try {
+    if (!hospitalName && booking.hospital_id) {
+      const hospitalRes = await db.query('SELECT name FROM hospitals WHERE id = $1', [booking.hospital_id]);
+      hospitalName = hospitalRes.rows[0]?.name || null;
+    }
+
+    return await sendBookingConfirmation(booking.user_email, {
+      patientName: booking.patient_name,
+      serviceName: booking.service_name,
+      hospitalName,
+      date: booking.booking_date,
+      time: booking.booking_time,
+      address: booking.address,
+      price: booking.price,
+      transactionId: booking.transaction_id,
+      bookingId: booking.id,
+    });
+  } catch (error) {
+    console.error('[Booking Email] Failed to send payment confirmation:', error.message);
+    return { success: false, error: error.message };
+  }
+};
+
 exports.createBooking = async (req, res) => {
   const { name, age, gender, date, time, address, serviceName, price, userPhone, userEmail, hospitalId, transactionId } = req.body;
   
@@ -198,7 +227,14 @@ exports.payBooking = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Booking not found' });
         }
 
-        res.json({ success: true, booking: result.rows[0], message: 'Payment recorded successfully' });
+        const emailResult = await sendPaymentBookingEmail(result.rows[0]);
+
+        res.json({
+            success: true,
+            booking: result.rows[0],
+            message: 'Payment recorded successfully',
+            email: emailResult
+        });
     } catch (error) {
         console.error('Database Error:', error);
         res.status(500).json({ success: false, message: 'Failed to record payment' });
@@ -259,13 +295,23 @@ exports.verifyRazorpayPayment = async (req, res) => {
             if (bookingIds && bookingIds.length > 0) {
                  const updatePromises = bookingIds.map(id =>
                     db.query(
-                        "UPDATE bookings SET transaction_id = $1, status = 'Confirmed' WHERE id = $2",
+                        "UPDATE bookings SET transaction_id = $1, status = 'Confirmed' WHERE id = $2 RETURNING *",
                         [razorpay_payment_id, id]
                     )
                  );
-                 await Promise.all(updatePromises);
+                 const updateResults = await Promise.all(updatePromises);
+                 const updatedBookings = updateResults.flatMap(result => result.rows);
+                 const emailResults = await Promise.all(
+                    updatedBookings.map(booking => sendPaymentBookingEmail(booking))
+                 );
+
+                 return res.status(200).json({
+                    success: true,
+                    message: "Payment verified successfully",
+                    email: emailResults
+                 });
             }
-            
+
             return res.status(200).json({ success: true, message: "Payment verified successfully" });
         } else {
             return res.status(400).json({ success: false, message: "Invalid signature sent!" });

@@ -2,7 +2,7 @@ const db = require('../db');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { getMockUsers } = require('../mock_persistence');
-const { sendWelcomeEmail } = require('../services/mailService');
+const { sendWelcomeEmail, sendSignInEmail, verifyMailTransport } = require('../services/mailService');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'zelp_secret_key_2024';
 const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
@@ -265,6 +265,10 @@ exports.login = async (req, res) => {
       });
     }
 
+    sendSignInEmail(user.email, user.name).catch((err) =>
+      console.error('[Sign-in Email] Failed to send:', err.message)
+    );
+
     return issueUserSession(req, res, user, 200, 'Login successful.');
   } catch (error) {
     console.error('Login Error:', error);
@@ -326,6 +330,9 @@ exports.googleLogin = async (req, res) => {
       });
     } else {
       // User exists, login normally
+      sendSignInEmail(result.rows[0].email, result.rows[0].name).catch((err) =>
+        console.error('[Sign-in Email] Failed to send (Google login):', err.message)
+      );
       return issueUserSession(req, res, result.rows[0], 200, 'Google login successful.');
     }
   } catch (error) {
@@ -793,15 +800,28 @@ exports.testEmail = async (req, res) => {
     smtpPort: process.env.SMTP_PORT || 'NOT_SET',
     smtpUser: process.env.SMTP_USER || 'NOT_SET',
     nodeEnv: process.env.NODE_ENV || 'NOT_SET',
-    status: 'disabled',
-    nodemailerRemoved: true,
+    status: 'checking',
+    smtpConfigured: Boolean(process.env.SMTP_USER && process.env.SMTP_PASS),
   };
 
-  return res.status(200).json({
-    success: true,
-    message: 'Nodemailer has been removed. All emails are mocked and logged to the console.',
-    diagnostics,
-  });
+  try {
+    const result = await verifyMailTransport();
+    diagnostics.status = result.success ? 'ready' : 'not_configured';
+
+    return res.status(result.success ? 200 : 503).json({
+      success: result.success,
+      message: result.success ? 'SMTP transport is ready.' : 'SMTP is not configured.',
+      diagnostics,
+    });
+  } catch (error) {
+    diagnostics.status = 'failed';
+    return res.status(500).json({
+      success: false,
+      message: 'SMTP transport check failed.',
+      diagnostics,
+      error: error.message
+    });
+  }
 };
 
 

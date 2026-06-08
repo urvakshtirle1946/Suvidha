@@ -10,6 +10,7 @@ const FROM_NAME = process.env.SMTP_FROM_NAME || 'Zelp';
 const SMTP_CONNECTION_TIMEOUT = Number(process.env.SMTP_CONNECTION_TIMEOUT || 10000);
 const SMTP_GREETING_TIMEOUT = Number(process.env.SMTP_GREETING_TIMEOUT || 10000);
 const SMTP_SOCKET_TIMEOUT = Number(process.env.SMTP_SOCKET_TIMEOUT || 15000);
+const SMTP_FAMILY = Number(process.env.SMTP_FAMILY || 4);
 
 let transporter;
 
@@ -33,6 +34,7 @@ const getTransporter = () => {
       host: SMTP_HOST,
       port: SMTP_PORT,
       secure: SMTP_SECURE,
+      family: SMTP_FAMILY,
       connectionTimeout: SMTP_CONNECTION_TIMEOUT,
       greetingTimeout: SMTP_GREETING_TIMEOUT,
       socketTimeout: SMTP_SOCKET_TIMEOUT,

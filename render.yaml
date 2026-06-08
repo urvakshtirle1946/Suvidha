@@ -30,6 +30,8 @@ services:
         value: "10000"
       - key: SMTP_SOCKET_TIMEOUT
         value: "15000"
+      - key: SMTP_FAMILY
+        value: "4"
       - key: SMTP_PASS
         sync: false
     disk:

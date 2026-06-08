@@ -794,6 +794,21 @@ exports.logout = (req, res) => {
   return res.json({ success: true, message: 'Logged out successfully.' });
 };
 
+exports.mailStatus = (req, res) => {
+  return res.json({
+    success: true,
+    smtpHost: process.env.SMTP_HOST || 'NOT_SET',
+    smtpPort: process.env.SMTP_PORT || 'NOT_SET',
+    smtpSecure: process.env.SMTP_SECURE || 'NOT_SET',
+    smtpUserConfigured: Boolean(process.env.SMTP_USER),
+    smtpPassConfigured: Boolean(process.env.SMTP_PASS),
+    smtpFrom: process.env.SMTP_FROM || 'NOT_SET',
+    smtpFromName: process.env.SMTP_FROM_NAME || 'NOT_SET',
+    nodeEnv: process.env.NODE_ENV || 'NOT_SET',
+    mailDiagnosticVersion: '2026-06-08-smtp-starttls'
+  });
+};
+
 exports.testEmail = async (req, res) => {
   const diagnostics = {
     smtpHost: process.env.SMTP_HOST || 'NOT_SET',

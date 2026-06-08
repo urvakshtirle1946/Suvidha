@@ -800,6 +800,7 @@ exports.mailStatus = (req, res) => {
     smtpHost: process.env.SMTP_HOST || 'NOT_SET',
     smtpPort: process.env.SMTP_PORT || 'NOT_SET',
     smtpSecure: process.env.SMTP_SECURE || 'NOT_SET',
+    smtpFamily: process.env.SMTP_FAMILY || '4',
     smtpUserConfigured: Boolean(process.env.SMTP_USER),
     smtpPassConfigured: Boolean(process.env.SMTP_PASS),
     smtpFrom: process.env.SMTP_FROM || 'NOT_SET',
@@ -818,6 +819,7 @@ exports.testEmail = async (req, res) => {
     connectionTimeout: process.env.SMTP_CONNECTION_TIMEOUT || '10000',
     greetingTimeout: process.env.SMTP_GREETING_TIMEOUT || '10000',
     socketTimeout: process.env.SMTP_SOCKET_TIMEOUT || '15000',
+    smtpFamily: process.env.SMTP_FAMILY || '4',
     status: 'checking',
     smtpConfigured: Boolean(process.env.SMTP_USER && process.env.SMTP_PASS),
   };

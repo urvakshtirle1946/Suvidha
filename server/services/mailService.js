@@ -1,18 +1,14 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
-const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
-const SMTP_SECURE = String(process.env.SMTP_SECURE || 'true').toLowerCase() !== 'false';
-const SMTP_USER = process.env.SMTP_USER || process.env.GMAIL_USER;
-const SMTP_PASS = (process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || '').replace(/\s+/g, '');
-const FROM_EMAIL = process.env.SMTP_FROM || SMTP_USER;
+const resendApiKey = process.env.RESEND_API_KEY;
+let resendInstance = null;
+
+if (resendApiKey) {
+  resendInstance = new Resend(resendApiKey);
+}
+
+const FROM_EMAIL = process.env.SMTP_FROM || 'onboarding@resend.dev';
 const FROM_NAME = process.env.SMTP_FROM_NAME || 'Zelp';
-const SMTP_CONNECTION_TIMEOUT = Number(process.env.SMTP_CONNECTION_TIMEOUT || 10000);
-const SMTP_GREETING_TIMEOUT = Number(process.env.SMTP_GREETING_TIMEOUT || 10000);
-const SMTP_SOCKET_TIMEOUT = Number(process.env.SMTP_SOCKET_TIMEOUT || 15000);
-const SMTP_FAMILY = Number(process.env.SMTP_FAMILY || 4);
-
-let transporter;
 
 const escapeHtml = (value) =>
   String(value ?? '')
@@ -22,55 +18,37 @@ const escapeHtml = (value) =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 
-const isConfigured = () => Boolean(SMTP_USER && SMTP_PASS && FROM_EMAIL);
-
-const getTransporter = () => {
-  if (!isConfigured()) {
-    return null;
-  }
-
-  if (!transporter) {
-    transporter = nodemailer.createTransport({
-      host: SMTP_HOST,
-      port: SMTP_PORT,
-      secure: SMTP_SECURE,
-      family: SMTP_FAMILY,
-      connectionTimeout: SMTP_CONNECTION_TIMEOUT,
-      greetingTimeout: SMTP_GREETING_TIMEOUT,
-      socketTimeout: SMTP_SOCKET_TIMEOUT,
-      auth: {
-        user: SMTP_USER,
-        pass: SMTP_PASS
-      },
-      tls: {
-        servername: SMTP_HOST
-      }
-    });
-  }
-
-  return transporter;
-};
+const isConfigured = () => Boolean(resendApiKey);
 
 const sendMail = async ({ to, subject, text, html }) => {
   if (!to) {
     return { success: false, skipped: true, reason: 'missing_recipient' };
   }
 
-  const activeTransporter = getTransporter();
-  if (!activeTransporter) {
-    console.warn('[Mail] SMTP is not configured. Skipping email:', subject);
-    return { success: false, skipped: true, reason: 'smtp_not_configured' };
+  if (!resendInstance) {
+    console.warn('[Mail] Resend is not configured (missing RESEND_API_KEY). Skipping email:', subject);
+    return { success: false, skipped: true, reason: 'resend_not_configured' };
   }
 
-  const info = await activeTransporter.sendMail({
-    from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
-    to,
-    subject,
-    text,
-    html
-  });
+  try {
+    const { data, error } = await resendInstance.emails.send({
+      from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
+      to,
+      subject,
+      text,
+      html,
+    });
 
-  return { success: true, messageId: info.messageId };
+    if (error) {
+      console.error('[Mail] Resend API error sending email:', error.message || error);
+      return { success: false, error: error.message || error };
+    }
+
+    return { success: true, messageId: data.id };
+  } catch (error) {
+    console.error('[Mail] Exception sending email via Resend:', error.message);
+    return { success: false, error: error.message };
+  }
 };
 
 exports.sendWaitlistConfirmation = async (email, name) => {
@@ -179,25 +157,23 @@ exports.sendBookingConfirmation = async (email, booking) => {
 };
 
 exports.verifyMailTransport = async () => {
-  const activeTransporter = getTransporter();
-  if (!activeTransporter) {
-    return { success: false, reason: 'smtp_not_configured' };
+  if (!resendInstance) {
+    return { success: false, reason: 'resend_not_configured' };
   }
-
-  await activeTransporter.verify();
   return { success: true };
 };
 
 exports.sendSmtpTestEmail = async () => {
   const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+  const targetEmail = process.env.SMTP_FROM || 'urvakshtirle54@gmail.com';
 
   return sendMail({
-    to: SMTP_USER,
-    subject: 'Zelp SMTP test email',
-    text: `Zelp SMTP is working from Render/local server.\n\nTime: ${timestamp} IST`,
+    to: targetEmail,
+    subject: 'Zelp Resend test email',
+    text: `Zelp Resend is working from Render/local server.\n\nTime: ${timestamp} IST`,
     html: `
       <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
-        <h2>Zelp SMTP is working</h2>
+        <h2>Zelp Resend is working</h2>
         <p>This test email was sent by the backend mail diagnostic endpoint.</p>
         <p><strong>Time:</strong> ${escapeHtml(timestamp)} IST</p>
       </div>

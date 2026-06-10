@@ -797,31 +797,20 @@ exports.logout = (req, res) => {
 exports.mailStatus = (req, res) => {
   return res.json({
     success: true,
-    smtpHost: process.env.SMTP_HOST || 'NOT_SET',
-    smtpPort: process.env.SMTP_PORT || 'NOT_SET',
-    smtpSecure: process.env.SMTP_SECURE || 'NOT_SET',
-    smtpFamily: process.env.SMTP_FAMILY || '4',
-    smtpUserConfigured: Boolean(process.env.SMTP_USER),
-    smtpPassConfigured: Boolean(process.env.SMTP_PASS),
-    smtpFrom: process.env.SMTP_FROM || 'NOT_SET',
-    smtpFromName: process.env.SMTP_FROM_NAME || 'NOT_SET',
+    resendConfigured: Boolean(process.env.RESEND_API_KEY),
+    resendFrom: process.env.SMTP_FROM || 'onboarding@resend.dev',
+    resendFromName: process.env.SMTP_FROM_NAME || 'Zelp',
     nodeEnv: process.env.NODE_ENV || 'NOT_SET',
-    mailDiagnosticVersion: '2026-06-08-smtp-starttls'
+    mailDiagnosticVersion: '2026-06-10-resend'
   });
 };
 
 exports.testEmail = async (req, res) => {
   const diagnostics = {
-    smtpHost: process.env.SMTP_HOST || 'NOT_SET',
-    smtpPort: process.env.SMTP_PORT || 'NOT_SET',
-    smtpUser: process.env.SMTP_USER || 'NOT_SET',
+    resendConfigured: Boolean(process.env.RESEND_API_KEY),
+    resendFrom: process.env.SMTP_FROM || 'onboarding@resend.dev',
     nodeEnv: process.env.NODE_ENV || 'NOT_SET',
-    connectionTimeout: process.env.SMTP_CONNECTION_TIMEOUT || '10000',
-    greetingTimeout: process.env.SMTP_GREETING_TIMEOUT || '10000',
-    socketTimeout: process.env.SMTP_SOCKET_TIMEOUT || '15000',
-    smtpFamily: process.env.SMTP_FAMILY || '4',
     status: 'checking',
-    smtpConfigured: Boolean(process.env.SMTP_USER && process.env.SMTP_PASS),
   };
 
   try {
@@ -831,7 +820,7 @@ exports.testEmail = async (req, res) => {
 
     return res.status(result.success ? 200 : 503).json({
       success: result.success,
-      message: result.success ? 'SMTP transport is ready and test email was sent.' : 'SMTP is not configured.',
+      message: result.success ? 'Resend transport is ready and test email was sent.' : 'Resend is not configured.',
       diagnostics,
       testEmail: testEmailResult,
     });
@@ -839,7 +828,7 @@ exports.testEmail = async (req, res) => {
     diagnostics.status = 'failed';
     return res.status(500).json({
       success: false,
-      message: 'SMTP transport check failed.',
+      message: 'Resend transport check failed.',
       diagnostics,
       error: error.message
     });

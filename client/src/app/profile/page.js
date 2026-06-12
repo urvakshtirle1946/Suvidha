@@ -48,7 +48,7 @@ export default function Profile() {
             display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap'
           }}>
             <div style={{
-              width: '80px', height: '80px', borderRadius: '50%', background: '#0c831f', color: '#fff',
+              width: '80px', height: '80px', borderRadius: '50%', background: '#000000', color: '#fff',
               display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 'bold'
             }}>
               {(user.name || 'U').charAt(0).toUpperCase()}
@@ -61,7 +61,7 @@ export default function Profile() {
                 {user.email && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div style={{ background: '#f3f4f6', padding: '6px', borderRadius: '50%' }}>
-                      <User size={16} color="#0c831f" />
+                      <User size={16} color="#000000" />
                     </div>
                     <span>{user.email}</span>
                   </div>
@@ -91,10 +91,10 @@ export default function Profile() {
                 <button 
                     onClick={() => setAuthModalOpen(true)}
                     style={{ 
-                        background: '#0c831f', color: '#fff', border: 'none', 
+                        background: '#000000', color: '#fff', border: 'none', 
                         padding: '1rem 2.5rem', borderRadius: '12px', fontWeight: 'bold', 
                         fontSize: '1rem', cursor: 'pointer', transition: 'transform 0.2s',
-                        boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)'
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                     }}
                 >
                     Login / Sign Up
@@ -112,21 +112,21 @@ export default function Profile() {
                 {bookings.map((booking) => (
                     <div key={booking.id} style={{ 
                         padding: '1.5rem', background: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb',
-                        display: 'flex', gap: '1.5rem', flexWrap: 'wrap', borderLeft: '4px solid #0c831f' 
+                        display: 'flex', gap: '1.5rem', flexWrap: 'wrap', borderLeft: '4px solid #000000' 
                     }}>
                         <div style={{ flex: 1, minWidth: '250px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                                 <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{booking.service_name}</h3>
-                                <span style={{ color: '#0c831f', fontWeight: 'bold', fontSize: '0.9rem' }}>{booking.status}</span>
+                                <span style={{ color: '#000000', fontWeight: 'bold', fontSize: '0.9rem' }}>{booking.status}</span>
                             </div>
                             <p style={{ color: '#6b7280', marginBottom: '1rem', fontSize: '0.85rem' }}>Booking ID: #ZELP-{booking.id}</p>
                             
                             <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', color: '#374151', fontSize: '0.9rem' }}>
                                 <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <Calendar size={14} color="#0c831f" /> {new Date(booking.booking_date).toLocaleDateString()}
+                                    <Calendar size={14} color="#000000" /> {new Date(booking.booking_date).toLocaleDateString()}
                                 </span>
                                 <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <Clock size={14} color="#0c831f" /> {booking.booking_time}
+                                    <Clock size={14} color="#000000" /> {booking.booking_time}
                                 </span>
                             </div>
                         </div>

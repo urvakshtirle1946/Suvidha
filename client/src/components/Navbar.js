@@ -11,6 +11,7 @@ import SettingsModal from './SettingsModal';
 import ProfileDropdown from './ProfileDropdown';
 import AuthModal from './AuthModal';
 import SterlingGateKineticNavigation from './ui/SterlingGateKineticNavigation';
+import PartnerModal from './PartnerModal';
 import { apiFetch } from '@/utils/api';
 
 export default function Navbar() {
@@ -20,7 +21,14 @@ export default function Navbar() {
   const [locationModalOpen, setLocationModalOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [partnerModalOpen, setPartnerModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login');
+
+  useEffect(() => {
+    const handler = () => setPartnerModalOpen(true);
+    window.addEventListener('open-partner-modal', handler);
+    return () => window.removeEventListener('open-partner-modal', handler);
+  }, []);
 
   // Search State
   const router = useRouter();
@@ -102,6 +110,32 @@ export default function Navbar() {
     router.push(`/hospitals?search=${encodeURIComponent(serviceName)}`);
   };
 
+  const handleAISearchClick = async (query) => {
+    if (!query || !query.trim()) return;
+    setIsSearching(true);
+    try {
+      const response = await apiFetch('/api/symptoms/suggest', {
+        method: 'POST',
+        body: JSON.stringify({ symptoms: query }),
+      });
+      if (!response.ok) throw new Error('Failed to fetch symptom suggestions');
+      const data = await response.json();
+      const suggestions = data.suggestions || [];
+      sessionStorage.setItem('ai_suggestions', JSON.stringify(suggestions));
+      sessionStorage.setItem('ai_query', query);
+      router.push(`/search-results?symptoms=${encodeURIComponent(query.trim())}`);
+    } catch (err) {
+      console.error('Error fetching symptom suggestions:', err);
+      sessionStorage.setItem('ai_suggestions', JSON.stringify([]));
+      sessionStorage.setItem('ai_query', query);
+      router.push(`/search-results?symptoms=${encodeURIComponent(query.trim())}`);
+    } finally {
+      setIsSearching(false);
+      setSearchQuery('');
+      setIsSearchFocused(false);
+    }
+  };
+
   return (
     <>
       <nav style={{ 
@@ -113,7 +147,7 @@ export default function Navbar() {
           
           {/* Kinetic Navigation Trigger (Desktop) */}
           <div className="hide-on-mobile" style={{ marginRight: '1rem' }}>
-            <SterlingGateKineticNavigation onOpenAuth={handleOpenAuth} />
+            <SterlingGateKineticNavigation onOpenAuth={handleOpenAuth} onOpenPartner={() => setPartnerModalOpen(true)} />
           </div>
 
           <div className="mobile-header-stack show-on-mobile" style={{ width: '100%', flexDirection: 'column', padding: '12px 0' }}>
@@ -145,7 +179,7 @@ export default function Navbar() {
                       <button 
                           onClick={handleOpenAuth}
                           style={{ 
-                              background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', 
+                              background: 'transparent', border: '1px solid #000000', color: '#000000', 
                               padding: '4px 12px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '0.85rem'
                           }}
                       >
@@ -195,6 +229,108 @@ export default function Navbar() {
                         }}
                     />
                 </div>
+
+                {/* Dropdown for search suggestions */}
+                {isSearchFocused && (
+                  <div 
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 8px)',
+                      left: 0,
+                      right: 0,
+                      background: '#ffffff',
+                      borderRadius: '16px',
+                      boxShadow: '0 12px 36px rgba(0, 0, 0, 0.15)',
+                      border: '1px solid #e5e7eb',
+                      zIndex: 2000,
+                      overflow: 'hidden',
+                      maxHeight: '320px',
+                      overflowY: 'auto',
+                    }}
+                  >
+                    {isSearching ? (
+                      <div style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px', color: '#6b7280', fontSize: '0.85rem' }}>
+                        <div style={{ width: '16px', height: '16px', border: '2px solid #e5e7eb', borderTopColor: '#000', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                        Searching services...
+                      </div>
+                    ) : (
+                      <>
+                        {searchQuery.length < 2 ? (
+                          <div>
+                            <div style={{ padding: '8px 16px 4px 16px', fontSize: '0.7rem', fontWeight: '800', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                              Suggested Searches
+                            </div>
+                            {SUGGESTED_SEARCHES.map((item, idx) => (
+                              <div
+                                key={idx}
+                                onMouseDown={() => handleSearchSelect(item.name)}
+                                style={{ padding: '10px 16px', fontSize: '0.9rem', color: '#374151', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                                onMouseEnter={e => e.currentTarget.style.background = '#f9fafb'}
+                                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                              >
+                                <span>{item.name}</span>
+                                <span style={{ fontSize: '0.7rem', background: '#f3f4f6', color: '#6b7280', padding: '2px 6px', borderRadius: '4px' }}>{item.type}</span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div>
+                            {searchResults.length > 0 ? (
+                              <div>
+                                <div style={{ padding: '8px 16px 4px 16px', fontSize: '0.7rem', fontWeight: '800', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                  Services Found
+                                </div>
+                                {searchResults.map((item, idx) => (
+                                  <div
+                                    key={idx}
+                                    onMouseDown={() => handleSearchSelect(item.name)}
+                                    style={{ padding: '10px 16px', fontSize: '0.9rem', color: '#374151', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                                    onMouseEnter={e => e.currentTarget.style.background = '#f9fafb'}
+                                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                                  >
+                                    <span>{item.name}</span>
+                                    <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>{item.category}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <div style={{ padding: '12px 16px', fontSize: '0.85rem', color: '#6b7280' }}>
+                                No standard services found.
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {searchQuery.trim().length > 0 && (
+                      <div
+                        onMouseDown={() => handleAISearchClick(searchQuery)}
+                        style={{
+                          padding: '12px 16px',
+                          fontSize: '0.85rem',
+                          fontWeight: '700',
+                          background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(6, 182, 212, 0.08) 100%)',
+                          borderTop: '1px solid #f3f4f6',
+                          color: '#7c3aed',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          transition: 'all 0.2s',
+                        }}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.background = 'linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%)';
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.background = 'linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(6, 182, 212, 0.08) 100%)';
+                        }}
+                      >
+                        <span>✨ Ask Zelp AI to suggest tests for &ldquo;{searchQuery}&rdquo;</span>
+                      </div>
+                    )}
+                  </div>
+                )}
             </div>
           </div>
 
@@ -234,6 +370,7 @@ export default function Navbar() {
           <div className="hide-on-mobile" style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginRight: '1rem', height: '100%' }}>
              <Link href="/" style={{ fontWeight: '500', color: '#1f2937', height: '100%', display: 'flex', alignItems: 'center', textDecoration: 'none' }}>Home</Link>
              <Link href="/hospitals" style={{ fontWeight: '500', color: '#1f2937', height: '100%', display: 'flex', alignItems: 'center', textDecoration: 'none' }}>Services</Link>
+             <span onClick={() => setPartnerModalOpen(true)} style={{ fontWeight: '500', color: '#1f2937', height: '100%', display: 'flex', alignItems: 'center', textDecoration: 'none', cursor: 'pointer' }}>Partner with Us</span>
           </div>
           
           {/* Right Actions (Desktop) */}
@@ -247,12 +384,12 @@ export default function Navbar() {
                       <button 
                           onClick={handleOpenAuth}
                           style={{ 
-                              background: 'transparent', border: '1px solid #0c831f', color: '#0c831f', 
+                              background: 'transparent', border: '1px solid #000000', color: '#000000', 
                               padding: '8px 20px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer',
                               transition: 'all 0.2s'
                           }}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = '#0c831f'; e.currentTarget.style.color = '#fff'; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#0c831f'; }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = '#000000'; e.currentTarget.style.color = '#fff'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#000000'; }}
                       >
                           Login / Sign Up
                       </button>
@@ -300,6 +437,12 @@ export default function Navbar() {
       <SettingsModal
         isOpen={settingsModalOpen}
         onClose={() => setSettingsModalOpen(false)}
+      />
+
+      {/* Partner Modal */}
+      <PartnerModal
+        isOpen={partnerModalOpen}
+        onClose={() => setPartnerModalOpen(false)}
       />
 
     </>

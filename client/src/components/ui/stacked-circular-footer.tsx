@@ -93,15 +93,27 @@ export function StackedCircularFooter() {
                 { name: 'Hospitals', path: '/hospitals' },
                 { name: 'Lab Tests', path: '/lab-tests' },
                 { name: 'Scans & MRI', path: '/hospitals?category=Scan' },
+                { name: 'Partner with Us', action: () => window.dispatchEvent(new CustomEvent('open-partner-modal')) },
                 { name: 'About Us', path: '/about' }
               ].map((link, i) => (
                 <li key={i}>
-                  <Link href={link.path} style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.2s ease' }}
-                    onMouseOver={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#fff'}
-                    onMouseOut={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(255,255,255,0.6)'}
-                  >
-                    {link.name}
-                  </Link>
+                  {link.action ? (
+                    <span 
+                      onClick={link.action} 
+                      style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.2s ease', cursor: 'pointer' }}
+                      onMouseOver={(e) => e.currentTarget.style.color = '#fff'}
+                      onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}
+                    >
+                      {link.name}
+                    </span>
+                  ) : (
+                    <Link href={link.path} style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.2s ease' }}
+                      onMouseOver={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#fff'}
+                      onMouseOut={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(255,255,255,0.6)'}
+                    >
+                      {link.name}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

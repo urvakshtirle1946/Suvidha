@@ -97,7 +97,7 @@ function ProviderList({ serviceName, currentHospitalId, onSelect }) {
                             gap: '14px', 
                             alignItems: 'center',
                             transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                            boxShadow: isSelected ? '0 4px 14px rgba(12, 131, 31, 0.1)' : '0 2px 4px rgba(0,0,0,0.02)',
+                            boxShadow: isSelected ? '0 4px 14px rgba(0, 0, 0, 0.08)' : '0 2px 4px rgba(0,0,0,0.02)',
                             overflow: 'hidden'
                         }}
                         onMouseEnter={e => { if(!isSelected) e.currentTarget.style.borderColor = '#94a3b8'; }}
@@ -474,7 +474,7 @@ export default function Checkout() {
                                     setPaymentMode('online');
                                     processRazorpayPayment();
                                 }}
-                                style={{ background: '#000', color: '#fff', border: 'none', padding: '12px 30px', borderRadius: '12px', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)' }}
+                                style={{ background: '#000', color: '#fff', border: 'none', padding: '12px 30px', borderRadius: '12px', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)' }}
                             >
                                 Pay Online Now
                             </button>
@@ -697,7 +697,7 @@ export default function Checkout() {
                                     padding: '1.2rem', borderRadius: '12px', fontWeight: 'bold', fontSize: '1.1rem', 
                                     cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, 
                                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                                    boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)'
+                                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                                 }}
                             >
                                 <span>{loading ? 'Processing...' : user ? `Place Order` : 'Login required'}</span>
@@ -841,7 +841,7 @@ export default function Checkout() {
             border-radius: 12px;
             font-weight: 800;
             font-size: 1rem;
-            box-shadow: 0 4px 10px rgba(12, 131, 31, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
         .show-on-mobile {

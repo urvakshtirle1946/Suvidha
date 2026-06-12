@@ -65,6 +65,7 @@ export default function SterlingGateKineticNavigation(props) {
             <div className="menu-links">
                 <Link href="/" className="nav-link" onClick={closeMenu}>Home</Link>
                 <Link href="/hospitals" className="nav-link" onClick={closeMenu}>Services</Link>
+                <span className="nav-link" style={{ cursor: 'pointer' }} onClick={() => { if (typeof props.onOpenPartner === 'function') { props.onOpenPartner(); } else { window.dispatchEvent(new CustomEvent('open-partner-modal')); } closeMenu(); }}>Partner with Us</span>
                 
                 {user ? (
                    <>
@@ -96,7 +97,7 @@ export default function SterlingGateKineticNavigation(props) {
       <style jsx>{`
         .login-btn {
             text-align: left;
-            color: #0c831f;
+            color: #000000;
             background: none;
             border: none;
             border-bottom: 1px solid #f3f4f6;

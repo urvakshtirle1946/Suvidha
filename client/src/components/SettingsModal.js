@@ -254,7 +254,7 @@ export default function SettingsModal({ isOpen, onClose }) {
               padding: '12px',
               borderRadius: '12px',
               border: 'none',
-              background: loading ? '#9ca3af' : '#0c831f',
+              background: loading ? '#9ca3af' : '#000000',
               color: '#fff',
               fontWeight: 'bold',
               fontSize: '1rem',

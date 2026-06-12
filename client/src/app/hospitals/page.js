@@ -209,11 +209,11 @@ function HospitalsContent() {
                  </p>
              </div>
              <div className="filters-actions">
-                 <button 
-                    className="btn" 
-                    onClick={toggleSort}
-                    style={{ background: sortOrder ? '#f0fdf4' : '#fff', border: sortOrder ? '1px solid #0c831f' : '1px solid #e5e7eb', borderRadius: '20px', padding: '6px 16px', fontSize: '0.85rem', color: sortOrder ? '#0c831f' : '#374151' }}
-                 >
+                  <button 
+                     className="btn" 
+                     onClick={toggleSort}
+                     style={{ background: sortOrder ? '#000000' : '#fff', border: sortOrder ? '1px solid #000000' : '1px solid #e5e7eb', borderRadius: '20px', padding: '6px 16px', fontSize: '0.85rem', color: sortOrder ? '#ffffff' : '#374151' }}
+                  >
                      Sort By Price {sortOrder === 'asc' ? '(Low to High)' : sortOrder === 'desc' ? '(High to Low)' : ''} <ArrowUpDown size={12} style={{ marginLeft: '6px' }} />
                  </button>
              </div>

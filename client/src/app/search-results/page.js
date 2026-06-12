@@ -337,8 +337,8 @@ function SearchResultsContent() {
               width: '60px',
               height: '60px',
               borderRadius: '50%',
-              background: '#f0fdf4',
-              color: '#0c831f',
+              background: '#f3f4f6',
+              color: '#000000',
               marginBottom: '1.5rem',
             }}>
               <Stethoscope size={28} />

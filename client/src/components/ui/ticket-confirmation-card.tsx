@@ -203,8 +203,8 @@ const AnimatedTicket = React.forwardRef<HTMLDivElement, TicketProps>(
           <div className="absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background" style={{ background: '#f4f6fb' }} />
 
           <div className="p-8 flex flex-col items-center text-center" style={{ padding: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-              <div className="p-3 bg-primary/10 rounded-full animate-in zoom-in-50 delay-300 duration-500" style={{ background: '#dcfce7', padding: '12px' }}>
-                  <CheckCircleIcon className="w-10 h-10 text-primary animate-in zoom-in-75 delay-500 duration-500" style={{ color: '#0c831f' }} />
+              <div className="p-3 bg-primary/10 rounded-full animate-in zoom-in-50 delay-300 duration-500" style={{ background: '#f3f4f6', padding: '12px' }}>
+                  <CheckCircleIcon className="w-10 h-10 text-primary animate-in zoom-in-75 delay-500 duration-500" style={{ color: '#000000' }} />
               </div>
               <h1 className="text-2xl font-semibold mt-4" style={{ color: '#111827', margin: '16px 0 0 0' }}>Payment Successful!</h1>
               <p className="text-muted-foreground mt-1" style={{ color: '#6b7280', margin: '4px 0 0 0' }}>

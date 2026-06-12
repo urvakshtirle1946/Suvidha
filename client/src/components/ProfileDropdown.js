@@ -37,7 +37,7 @@ export default function ProfileDropdown({ onOpenSettings }) {
                 onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
             >
                 <div style={{ 
-                    width: '32px', height: '32px', borderRadius: '50%', background: '#0c831f', color: '#fff',
+                    width: '32px', height: '32px', borderRadius: '50%', background: '#000000', color: '#fff',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '14px'
                 }}>
                     {(user.name || 'User').charAt(0).toUpperCase()}

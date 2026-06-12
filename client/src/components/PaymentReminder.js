@@ -110,9 +110,9 @@ export default function PaymentReminder() {
                 }}>
                     {/* Header */}
                     <div style={{ 
-                        background: '#0c831f', padding: '14px 18px', color: '#fff', 
+                        background: '#000000', padding: '14px 18px', color: '#fff', 
                         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                        boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)'
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                     }}>
                         <div style={{ fontWeight: '800', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <div style={{ background: 'rgba(255,255,255,0.2)', padding: '5px', borderRadius: '8px' }}>
@@ -205,12 +205,12 @@ export default function PaymentReminder() {
                                     <div style={{ borderTop: '1px dashed #e5e7eb', margin: '8px 0' }}></div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '1.1rem', fontWeight: 'bold' }}>
                                         <span>Total Amount</span>
-                                        <span style={{ color: '#0c831f' }}>₹{currentBooking.price}</span>
+                                        <span style={{ color: '#000000' }}>₹{currentBooking.price}</span>
                                     </div>
                                 </div>
                                 <button 
                                     onClick={() => setViewLink('pay')}
-                                    style={{ width: '100%', marginTop: '24px', padding: '12px', background: '#0c831f', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer' }}
+                                    style={{ width: '100%', marginTop: '24px', padding: '12px', background: '#000000', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer' }}
                                 >
                                     Proceed to Pay
                                 </button>
@@ -247,7 +247,7 @@ export default function PaymentReminder() {
                                     onClick={handlePayNow}
                                     disabled={paying || !txnId}
                                     style={{ 
-                                        width: '100%', padding: '1rem', background: txnId ? '#0c831f' : '#e5e7eb', 
+                                        width: '100%', padding: '1rem', background: txnId ? '#000000' : '#e5e7eb', 
                                         color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '1.1rem',
                                         cursor: txnId ? 'pointer' : 'not-allowed'
                                     }}

@@ -31,7 +31,39 @@ exports.suggestTests = async (req, res) => {
           messages: [
             {
               role: 'system',
-              content: `You are an expert medical assistant for ZELP, a diagnostic booking platform in India. Given the user's symptoms, analyze them and suggest 2-4 highly relevant diagnostic tests they should consider. Recommend symptom-specific tests based on clinical relevance (e.g., ECG or Lipid Profile for chest tightness, CBC or Liver Function Test for fever/jaundice, Ultrasound for stomach pain, X-Ray or CT for trauma, HbA1c for diabetes tracking). Return ONLY a JSON array containing the test suggestions. Do NOT output markdown formatting, code blocks, or extra text. Format example: [{"test": "CBC", "reason": "To check for infection markers"}, {"test": "Thyroid Profile", "reason": "To evaluate hormone levels"}]`
+              content: `You are an expert medical assistant for ZELP, a diagnostic booking platform in India. Given the user's symptoms, analyze them and suggest 2-4 highly relevant diagnostic tests they should consider. You MUST ONLY recommend tests from the following list of available tests:
+- Complete Blood Count (CBC)
+- Lipid Profile (Cholesterol)
+- Liver Function Test (LFT)
+- Diabetes Screen (HbA1c + Glucose)
+- Thyroid Profile (T3, T4, TSH)
+- Kidney Function Test (KFT)
+- Vitamin D (25-OH)
+- Vitamin B12
+- Full Body Health Checkup
+- Urine Routine & Microscopy
+- X-Ray Chest PA View
+- Ultrasound Whole Abdomen
+- MRI Brain (Plain)
+- MRI Spine (Lumbar)
+- MRI Knee Joint
+- CT Scan Head (Plain)
+- CT Scan Abdomen & Pelvis
+- HRCT Chest (for Lungs)
+- PET CT Scan (Whole Body)
+- ECG (Resting)
+- 2D Echocardiography
+- Digital Mammography
+- Color Doppler (Renal)
+- DEXA Bone Density Scan
+- Ultrasound Thyroid
+- Ultrasound Pelvis (Female)
+- X-Ray KUB (Kidney, Ureter, Bladder)
+- Stress Test (TMT)
+- Holter Monitoring (24hr)
+- Spirometry (Lung Function)
+
+Return ONLY a JSON array containing the test suggestions. Do NOT output markdown formatting, code blocks, or extra text. Format example: [{"test": "Complete Blood Count (CBC)", "reason": "To check for infection markers or anemia"}, {"test": "Thyroid Profile (T3, T4, TSH)", "reason": "To evaluate hormone levels"}]`
             },
             {
               role: 'user',
@@ -74,7 +106,39 @@ exports.suggestTests = async (req, res) => {
       const response = await anthropic.messages.create({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
-        system: `You are an expert medical assistant for ZELP, a diagnostic booking platform in India. Given the user's symptoms, analyze them and suggest 2-4 highly relevant diagnostic tests they should consider. Recommend symptom-specific tests based on clinical relevance (e.g., ECG or Lipid Profile for chest tightness, CBC or Liver Function Test for fever/jaundice, Ultrasound for stomach pain, X-Ray or CT for trauma, HbA1c for diabetes tracking). Return ONLY a JSON array containing the test suggestions. Do NOT output markdown formatting, code blocks, or extra text. Format example: [{"test": "CBC", "reason": "To check for infection markers"}, {"test": "Thyroid Profile", "reason": "To evaluate hormone levels"}]`,
+        system: `You are an expert medical assistant for ZELP, a diagnostic booking platform in India. Given the user's symptoms, analyze them and suggest 2-4 highly relevant diagnostic tests they should consider. You MUST ONLY recommend tests from the following list of available tests:
+- Complete Blood Count (CBC)
+- Lipid Profile (Cholesterol)
+- Liver Function Test (LFT)
+- Diabetes Screen (HbA1c + Glucose)
+- Thyroid Profile (T3, T4, TSH)
+- Kidney Function Test (KFT)
+- Vitamin D (25-OH)
+- Vitamin B12
+- Full Body Health Checkup
+- Urine Routine & Microscopy
+- X-Ray Chest PA View
+- Ultrasound Whole Abdomen
+- MRI Brain (Plain)
+- MRI Spine (Lumbar)
+- MRI Knee Joint
+- CT Scan Head (Plain)
+- CT Scan Abdomen & Pelvis
+- HRCT Chest (for Lungs)
+- PET CT Scan (Whole Body)
+- ECG (Resting)
+- 2D Echocardiography
+- Digital Mammography
+- Color Doppler (Renal)
+- DEXA Bone Density Scan
+- Ultrasound Thyroid
+- Ultrasound Pelvis (Female)
+- X-Ray KUB (Kidney, Ureter, Bladder)
+- Stress Test (TMT)
+- Holter Monitoring (24hr)
+- Spirometry (Lung Function)
+
+Return ONLY a JSON array containing the test suggestions. Do NOT output markdown formatting, code blocks, or extra text. Format example: [{"test": "Complete Blood Count (CBC)", "reason": "To check for infection markers or anemia"}, {"test": "Thyroid Profile (T3, T4, TSH)", "reason": "To evaluate hormone levels"}]`,
         messages: [
           {
             role: 'user',

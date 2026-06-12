@@ -114,10 +114,10 @@ export default function Bookings() {
                 <button 
                     onClick={() => setAuthModalOpen(true)}
                     style={{ 
-                        background: '#0c831f', color: '#fff', border: 'none', 
+                        background: '#000000', color: '#fff', border: 'none', 
                         padding: '1rem 2.5rem', borderRadius: '12px', fontWeight: 'bold', 
                         fontSize: '1rem', cursor: 'pointer', transition: 'transform 0.2s',
-                        boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)'
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                     }}
                 >
                     Login / Sign Up
@@ -262,7 +262,7 @@ export default function Bookings() {
                       <div style={{ padding: '1.2rem', background: '#f9fafb', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
                           <div style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '8px' }}>Service Requested</div>
                           <div style={{ fontWeight: '800', fontSize: '1.2rem', color: '#111827', marginBottom: '4px' }}>{selectedBooking.service_name}</div>
-                          <div style={{ fontSize: '0.9rem', color: '#0c831f', fontWeight: '600' }}>At {selectedBooking.hospital_name || 'Clinic'}</div>
+                          <div style={{ fontSize: '0.9rem', color: '#000000', fontWeight: '600' }}>At {selectedBooking.hospital_name || 'Clinic'}</div>
                       </div>
 
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
@@ -359,7 +359,7 @@ export default function Bookings() {
                     onClick={confirmPayment}
                     disabled={paying || !txnId}
                     style={{ 
-                        width: '100%', padding: '1rem', background: txnId ? '#0c831f' : '#e5e7eb', 
+                        width: '100%', padding: '1rem', background: txnId ? '#000000' : '#e5e7eb', 
                         color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '1.1rem',
                         cursor: txnId ? 'pointer' : 'not-allowed'
                     }}

@@ -188,7 +188,7 @@ export default function CartDrawer() {
                 width: '100%', padding: '1.2rem 1.5rem', background: '#000', color: '#fff',
                 border: 'none', borderRadius: '18px', fontWeight: '900', fontSize: '1.2rem',
                 cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                boxShadow: '0 8px 24px rgba(12, 131, 31, 0.25)',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
                 transition: 'all 0.2s'
               }}
             >

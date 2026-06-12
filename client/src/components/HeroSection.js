@@ -1,7 +1,7 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, MapPin } from 'lucide-react';
+import { Search, MapPin, Sparkles, Target, X } from 'lucide-react';
 import { useLocation } from '@/context/LocationContext';
 import { apiFetch } from '@/utils/api';
 
@@ -84,22 +84,29 @@ function SearchField({ label, placeholder, value, onChange, suggestions = [], on
               style={{
                 padding: '0.7rem 1rem',
                 fontSize: '0.875rem',
-                color: '#374151',
+                color: s && s.isAISuggest ? '#7c3aed' : '#374151',
+                background: s && s.isAISuggest ? 'linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%)' : 'transparent',
                 cursor: 'pointer',
                 borderBottom: i < suggestions.length - 1 ? '1px solid #f3f4f6' : 'none',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
               }}
-              onMouseEnter={e => e.currentTarget.style.background = '#f9fafb'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              onMouseEnter={e => e.currentTarget.style.background = s && s.isAISuggest ? 'linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)' : '#f9fafb'}
+              onMouseLeave={e => e.currentTarget.style.background = s && s.isAISuggest ? 'linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%)' : 'transparent'}
             >
               {icon && <span style={{ color: '#9ca3af', flexShrink: 0 }}>{icon}</span>}
               {typeof s === 'string' ? s : (
-                <span>
-                  <span style={{ fontWeight: '600', color: '#111827' }}>{s.name}</span>
-                  {s.sub && <span style={{ color: '#9ca3af', fontSize: '0.78rem', marginLeft: '6px' }}>{s.sub}</span>}
-                </span>
+                s.isAISuggest ? (
+                  <span style={{ fontWeight: '700', color: '#7c3aed' }}>
+                    {s.name}
+                  </span>
+                ) : (
+                  <span>
+                    <span style={{ fontWeight: '600', color: '#111827' }}>{s.name}</span>
+                    {s.sub && <span style={{ color: '#9ca3af', fontSize: '0.78rem', marginLeft: '6px' }}>{s.sub}</span>}
+                  </span>
+                )
               )}
             </div>
           ))}
@@ -112,11 +119,30 @@ function SearchField({ label, placeholder, value, onChange, suggestions = [], on
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function HeroSection({ defaultServices: preloadedServices = [], defaultHospitals: preloadedHospitals = [] }) {
   const router = useRouter();
-  const { location } = useLocation();
+  const { location: ctxLocation, setLocation: setCtxLocation, detectLocation } = useLocation();
 
-  const [where, setWhere] = useState(location || '');
+  const [where, setWhere] = useState(ctxLocation || '');
   const [what, setWhat] = useState('');
   const [which, setWhich] = useState('');
+
+  // AI Mode states
+  const [isAiMode, setIsAiMode] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
+  const [placeholderText, setPlaceholderText] = useState("Search tests or full body checkups");
+  const [isTransitioningPlaceholder, setIsTransitioningPlaceholder] = useState(false);
+  const [btnScale, setBtnScale] = useState(1);
+  const searchBarRef = useRef(null);
+
+  // Close suggestions when clicking outside the search pill container
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
+        setFocusedField(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Default lists — use preloaded data if available, else fetch on mount
   const [loadingServices, setLoadingServices] = useState(preloadedServices.length === 0);
@@ -130,9 +156,38 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
   const [citySuggestions, setCitySuggestions] = useState([]);
 
   // Symptoms & AI Suggest states
-  const [activeTab, setActiveTab] = useState('test');
   const [symptomsInput, setSymptomsInput] = useState('');
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+
+  // Synchronize input with context location when it changes
+  useEffect(() => {
+    if (ctxLocation) {
+      setWhere(ctxLocation);
+    }
+  }, [ctxLocation]);
+
+  // Google search bar style transition for placeholder
+  useEffect(() => {
+    setIsTransitioningPlaceholder(true);
+    const timer = setTimeout(() => {
+      setPlaceholderText(
+        isAiMode
+          ? "Describe your symptoms or ask anything..."
+          : "Search tests or full body checkups"
+      );
+      setIsTransitioningPlaceholder(false);
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [isAiMode]);
+
+  // Google search bar style bounce/scale morph for button
+  useEffect(() => {
+    setBtnScale(0.8);
+    const timer = setTimeout(() => {
+      setBtnScale(1);
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [isAiMode]);
 
   // ── Only fetch if not preloaded ─────────────────────────────────────────────
   useEffect(() => {
@@ -195,7 +250,6 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
     setCitySuggestions(CITIES.filter(c => c.toLowerCase().startsWith(where.toLowerCase())));
   }, [where]);
 
-  // ── Live service search ─────────────────────────────────────────────────────
   useEffect(() => {
     if (!what || what.length < 2) {
       setWhatSuggestions(defaultServices);
@@ -208,7 +262,17 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
         if (!res.ok) return;
         const data = await res.json();
         const list = Array.isArray(data) ? data : (data.data || []);
-        setWhatSuggestions(list.map(s => ({ name: s.name, sub: s.category || s.hospital_name })));
+        const formatted = list.map(s => ({ name: s.name, sub: s.category || s.hospital_name }));
+        
+        if (what.trim().length > 0) {
+          formatted.push({
+            name: `✨ Analyze symptoms for "${what}" with Zelp AI`,
+            isAISuggest: true,
+            originalQuery: what
+          });
+        }
+        
+        setWhatSuggestions(formatted);
       } catch { /* ignore abort */ }
     }, 280);
     return () => { ctrl.abort(); clearTimeout(t); };
@@ -233,14 +297,15 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
     return () => { ctrl.abort(); clearTimeout(t); };
   }, [which, defaultHospitals]);
 
-  const handleSymptomsSubmit = async () => {
-    if (!symptomsInput.trim() || loadingSuggestions) return;
+  const handleSymptomsSubmit = async (overrideSymptoms) => {
+    const input = typeof overrideSymptoms === 'string' ? overrideSymptoms : symptomsInput;
+    if (!input.trim() || loadingSuggestions) return;
 
     setLoadingSuggestions(true);
     try {
       const response = await apiFetch('/api/symptoms/suggest', {
         method: 'POST',
-        body: JSON.stringify({ symptoms: symptomsInput }),
+        body: JSON.stringify({ symptoms: input }),
       });
 
       if (!response.ok) {
@@ -252,15 +317,15 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
 
       // Store exclusively in sessionStorage
       sessionStorage.setItem('ai_suggestions', JSON.stringify(suggestions));
-      sessionStorage.setItem('ai_query', symptomsInput);
+      sessionStorage.setItem('ai_query', input);
 
       // Clean URL redirect
-      router.push(`/search-results?symptoms=${encodeURIComponent(symptomsInput.trim())}`);
+      router.push(`/search-results?symptoms=${encodeURIComponent(input.trim())}`);
     } catch (err) {
       console.error('Error fetching symptom suggestions:', err);
       sessionStorage.setItem('ai_suggestions', JSON.stringify([]));
-      sessionStorage.setItem('ai_query', symptomsInput);
-      router.push(`/search-results?symptoms=${encodeURIComponent(symptomsInput.trim())}`);
+      sessionStorage.setItem('ai_query', input);
+      router.push(`/search-results?symptoms=${encodeURIComponent(input.trim())}`);
     } finally {
       setLoadingSuggestions(false);
     }
@@ -310,181 +375,228 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
         </p>
       </div>
 
-      {/* Search bar */}
-      <div className="hero-search-bar-container">
-        {/* Where */}
-        <div className="hero-search-field-wrapper">
-          <SearchField
-            label="Where"
-            placeholder="City or area"
+      {/* Unified Pill Search Bar (Uber/1mg Style) */}
+      <div ref={searchBarRef} className="search-bar-pill">
+        
+        {/* 1. Location Section (Left Side) */}
+        <div className="search-bar-location">
+          <MapPin size={18} color="#000000" style={{ flexShrink: 0 }} />
+          <input
+            type="text"
             value={where}
-            onChange={e => setWhere(e.target.value)}
-            suggestions={citySuggestions}
-            onSelect={v => setWhere(v)}
-            icon={<MapPin size={14} color="#000" />}
+            onChange={e => {
+              setWhere(e.target.value);
+              setFocusedField('location');
+            }}
+            onFocus={() => setFocusedField('location')}
+            placeholder="City or area"
           />
-        </div>
+          <button 
+            type="button" 
+            onClick={detectLocation}
+            className="gps-detect-btn"
+            title="Auto-detect Location"
+          >
+            <Target size={18} className={ctxLocation === 'Detecting...' ? 'gps-spin' : ''} />
+          </button>
 
-        {/* What - Tabbed (Test / Symptoms) */}
-        <div className="hero-search-field-wrapper what-field">
-          {/* Tabs */}
-          <div style={{ display: 'flex', gap: '8px', padding: '6px 12px 0 12px', justifyContent: 'flex-start', flexShrink: 0 }}>
-            <button
-              onClick={() => setActiveTab('test')}
-              style={{
-                fontSize: '0.625rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em',
-                padding: '2px 8px', borderRadius: '12px', border: 'none',
-                cursor: 'pointer',
-                background: activeTab === 'test' ? '#000' : '#f3f4f6',
-                color: activeTab === 'test' ? '#fff' : '#6b7280',
-                transition: 'all 0.2s',
-              }}
-            >
-              Test
-            </button>
-            <button
-              onClick={() => setActiveTab('symptoms')}
-              style={{
-                fontSize: '0.625rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em',
-                padding: '2px 8px', borderRadius: '12px', border: 'none',
-                cursor: 'pointer',
-                background: activeTab === 'symptoms' ? 'linear-gradient(135deg, #a855f7 0%, #06b6d4 100%)' : '#f3f4f6',
-                color: activeTab === 'symptoms' ? '#fff' : '#6b7280',
-                transition: 'all 0.2s',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '2px',
-              }}
-            >
-              ✨ Symptoms
-            </button>
-          </div>
-
-          {activeTab === 'test' ? (
-            <SearchField
-              placeholder="Test or treatment"
-              value={what}
-              onChange={e => setWhat(e.target.value)}
-              suggestions={whatSuggestions}
-              onSelect={v => setWhat(typeof v === 'string' ? v : v.name)}
-              loading={loadingServices && whatSuggestions.length === 0}
-            />
-          ) : (
-            <div style={{ padding: '4px 12px 8px 12px', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
-              <div className={`ai-glow-border-container ${loadingSuggestions ? 'loading' : ''}`} style={{ minHeight: '44px' }}>
-                <div className="ai-glow-border-inner" style={{ background: '#fff' }}>
-                  {loadingSuggestions ? (
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      color: '#8b5cf6',
-                      fontWeight: '600',
-                      fontSize: '0.8rem',
-                      padding: '0 12px',
-                      width: '100%',
-                      height: '100%',
-                      background: '#fafafa',
-                    }}>
-                      <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                        Zelp AI is analyzing symptoms
-                      </span>
-                      <span style={{ display: 'inline-flex', gap: '3px', alignItems: 'center' }}>
-                        <span className="ai-loading-dot">.</span>
-                        <span className="ai-loading-dot" style={{ animationDelay: '0.2s' }}>.</span>
-                        <span className="ai-loading-dot" style={{ animationDelay: '0.4s' }}>.</span>
-                      </span>
-                    </div>
-                  ) : (
-                    <>
-                      <textarea
-                        value={symptomsInput}
-                        onChange={e => setSymptomsInput(e.target.value)}
-                        onKeyDown={e => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            handleSymptomsSubmit();
-                          }
-                        }}
-                        placeholder="Describe symptoms... e.g. accident & knee hurts"
-                        style={{
-                          border: 'none',
-                          outline: 'none',
-                          width: '100%',
-                          resize: 'none',
-                          fontSize: '0.8rem',
-                          color: '#111827',
-                          padding: '12px 36px 12px 10px',
-                          background: 'transparent',
-                          fontFamily: 'inherit',
-                          lineHeight: '1.4',
-                          height: '40px',
-                        }}
-                      />
-                      <button
-                        onClick={handleSymptomsSubmit}
-                        disabled={!symptomsInput.trim()}
-                        style={{
-                          position: 'absolute',
-                          right: '8px',
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          background: symptomsInput.trim() ? 'linear-gradient(135deg, #a855f7 0%, #06b6d4 100%)' : '#e5e7eb',
-                          border: 'none',
-                          cursor: symptomsInput.trim() ? 'pointer' : 'not-allowed',
-                          width: '26px',
-                          height: '26px',
-                          borderRadius: '50%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: '#fff',
-                          transition: 'all 0.2s',
-                          boxShadow: symptomsInput.trim() ? '0 2px 8px rgba(168,85,247,0.3)' : 'none',
-                        }}
-                      >
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="22" y1="2" x2="11" y2="13"></line>
-                          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
-                      </button>
-                    </>
-                  )}
+          {/* Location Suggestions Dropdown */}
+          {focusedField === 'location' && citySuggestions.length > 0 && (
+            <div className="pill-suggestions-dropdown">
+              {citySuggestions.map((city, idx) => (
+                <div 
+                  key={idx} 
+                  onMouseDown={() => {
+                    setWhere(city);
+                    setFocusedField(null);
+                  }} 
+                  className="pill-suggestion-item"
+                >
+                  <MapPin size={14} color="#9ca3af" />
+                  <span>{city}</span>
                 </div>
-              </div>
+              ))}
             </div>
           )}
         </div>
 
-        {/* Hospital */}
-        <div className="hero-search-field-wrapper hospital-field">
-          <SearchField
-            label="Hospital"
-            placeholder="Hospital name"
-            value={which}
-            onChange={e => setWhich(e.target.value)}
-            suggestions={whichSuggestions}
-            onSelect={v => setWhich(typeof v === 'string' ? v : v.name)}
-            loading={loadingHospitals && whichSuggestions.length === 0}
-          />
+        <div className="search-bar-divider" />
+
+        {/* 2. Search Input Section (What) */}
+        <div className="search-bar-input-wrap">
+          <div className={`ai-input-wrapper ${isAiMode ? 'ai-active' : ''}`}>
+            <div className="ai-input-inner">
+              <input
+                type="text"
+                value={isAiMode ? symptomsInput : what}
+                onChange={e => {
+                  if (isAiMode) {
+                    setSymptomsInput(e.target.value);
+                  } else {
+                    setWhat(e.target.value);
+                    setFocusedField('search');
+                  }
+                }}
+                onFocus={() => {
+                  if (!isAiMode) setFocusedField('search');
+                }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (isAiMode) {
+                      handleSymptomsSubmit();
+                    } else {
+                      handleSearch();
+                    }
+                    setFocusedField(null);
+                  }
+                }}
+                placeholder={placeholderText}
+                className={isTransitioningPlaceholder ? 'placeholder-fade' : 'placeholder-normal'}
+              />
+              
+              {/* Clear button if text exists */}
+              {((isAiMode && symptomsInput) || (!isAiMode && what)) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isAiMode) {
+                      setSymptomsInput('');
+                    } else {
+                      setWhat('');
+                    }
+                  }}
+                  className="clear-input-btn"
+                  title="Clear input"
+                >
+                  <X size={14} />
+                </button>
+              )}
+
+              {/* Custom AI Mode capsule toggler */}
+              <div 
+                onClick={() => setIsAiMode(!isAiMode)}
+                className={`ai-mode-toggle-wrap ${isAiMode ? 'active' : ''}`}
+                title={isAiMode ? "Switch to Normal Search" : "Switch to AI Mode"}
+              >
+                <div className="ai-mode-toggle-inner">
+                  <div style={{ position: 'relative', width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Search size={14} color={isAiMode ? "#ffffff" : "#000000"} strokeWidth={2.5} />
+                    <Sparkles size={8} color={isAiMode ? "#ffffff" : "#000000"} style={{ position: 'absolute', top: '-3px', right: '-3px' }} />
+                  </div>
+                  <span className="ai-mode-toggle-text">AI Mode</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Search Suggestions Dropdown */}
+          {focusedField === 'search' && !isAiMode && whatSuggestions.length > 0 && (
+            <div className="pill-suggestions-dropdown">
+              {whatSuggestions.map((s, idx) => (
+                <div 
+                  key={idx}
+                  onMouseDown={() => {
+                    if (s && s.isAISuggest) {
+                      setIsAiMode(true);
+                      setSymptomsInput(s.originalQuery);
+                      handleSymptomsSubmit(s.originalQuery);
+                    } else {
+                      setWhat(typeof s === 'string' ? s : s.name);
+                    }
+                    setFocusedField(null);
+                  }}
+                  className={`pill-suggestion-item ${s && s.isAISuggest ? 'ai-suggest' : ''}`}
+                >
+                  {s && s.isAISuggest ? (
+                    <>
+                      <Sparkles size={14} />
+                      <span>{s.name}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Search size={14} color="#9ca3af" />
+                      <div>
+                        <span style={{ fontWeight: '600', color: '#111827' }}>{typeof s === 'string' ? s : s.name}</span>
+                        {s.sub && <span style={{ color: '#9ca3af', fontSize: '0.78rem', marginLeft: '8px' }}>{s.sub}</span>}
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Search button */}
-        <div className="hero-search-button-wrapper">
-          <button
-            onClick={handleSearch}
-            style={{
-              background: '#000', border: 'none', cursor: 'pointer',
-              borderRadius: '12px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'background 0.2s',
+        <div className="search-bar-divider" />
+
+        {/* 3. Hospital Section (Which) */}
+        <div className="search-bar-hospital">
+          <input
+            type="text"
+            value={which}
+            onChange={e => {
+              setWhich(e.target.value);
+              setFocusedField('hospital');
             }}
-            onMouseEnter={e => e.currentTarget.style.background = '#333'}
-            onMouseLeave={e => e.currentTarget.style.background = '#000'}
+            onFocus={() => setFocusedField('hospital')}
+            placeholder="Hospital name"
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSearch();
+                setFocusedField(null);
+              }
+            }}
+          />
+
+          {/* Hospital Suggestions Dropdown */}
+          {focusedField === 'hospital' && whichSuggestions.length > 0 && (
+            <div className="pill-suggestions-dropdown">
+              {whichSuggestions.map((h, idx) => (
+                <div 
+                  key={idx}
+                  onMouseDown={() => {
+                    setWhich(typeof h === 'string' ? h : h.name);
+                    setFocusedField(null);
+                  }}
+                  className="pill-suggestion-item"
+                >
+                  <Search size={14} color="#9ca3af" />
+                  <div>
+                    <span style={{ fontWeight: '600', color: '#111827' }}>{typeof h === 'string' ? h : h.name}</span>
+                    {h.sub && <span style={{ color: '#9ca3af', fontSize: '0.78rem', marginLeft: '8px' }}>{h.sub}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* 4. AI / Search Button Section (Far Right) */}
+        <div className="search-bar-button-wrap">
+          <button
+            onClick={() => {
+              const currentQuery = isAiMode ? symptomsInput : what;
+              if (!currentQuery.trim()) {
+                setIsAiMode(!isAiMode);
+              } else {
+                if (isAiMode) {
+                  handleSymptomsSubmit();
+                } else {
+                  handleSearch();
+                }
+              }
+            }}
+            style={{
+              transform: `scale(${btnScale})`,
+            }}
+            title={isAiMode ? "Analyze Symptoms with AI" : "Search"}
           >
-            <Search size={18} color="#fff" />
+            <Search size={18} color="#ffffff" />
           </button>
         </div>
+
       </div>
     </div>
   );

@@ -143,7 +143,7 @@ export const DeliveryScheduler: React.FC<DeliverySchedulerProps> = ({
                       <motion.div
                         layoutId="date-selector"
                         className="absolute inset-0 z-0 rounded-lg bg-primary"
-                        style={{ background: '#0c831f' }}
+                        style={{ background: '#000000' }}
                         initial={{ scale: 0.5, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.5, opacity: 0 }}
@@ -179,7 +179,7 @@ export const DeliveryScheduler: React.FC<DeliverySchedulerProps> = ({
                       <motion.div
                         layoutId="time-selector"
                         className="absolute inset-0 z-0 rounded-lg bg-primary"
-                        style={{ background: '#0c831f' }}
+                        style={{ background: '#000000' }}
                         initial={{ scale: 0.5, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.5, opacity: 0 }}
@@ -197,7 +197,7 @@ export const DeliveryScheduler: React.FC<DeliverySchedulerProps> = ({
         {/* Action Buttons */}
         <div className="flex items-center justify-end border-t pt-4" style={{ borderTop: '1px solid #f3f4f6', paddingTop: '16px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
            <button onClick={onCancel} className={cn(scheduleButtonVariants({variant: 'default'}))} style={{ background: '#f3f4f6', border: 'none', padding: '10px 24px', borderRadius: '8px', color: '#374151', fontWeight: 'bold', cursor: 'pointer' }}>Cancel</button>
-           <button onClick={handleSchedule} className={cn(scheduleButtonVariants({variant: 'selected'}))} style={{ background: '#0c831f', border: 'none', padding: '10px 24px', borderRadius: '8px', color: '#fff', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 12px rgba(12, 131, 31, 0.2)' }}>Schedule</button>
+           <button onClick={handleSchedule} className={cn(scheduleButtonVariants({variant: 'selected'}))} style={{ background: '#000000', border: 'none', padding: '10px 24px', borderRadius: '8px', color: '#fff', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)' }}>Schedule</button>
         </div>
       </div>
     </div>

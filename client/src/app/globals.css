@@ -569,7 +569,7 @@ body:has(.admin-root) {
 
 .search-input:focus {
   border-color: var(--brand);
-  box-shadow: 0 0 0 2px rgba(12, 131, 31, 0.1);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
 }
 
 .detect-btn {
@@ -1160,4 +1160,406 @@ a[href*="#"] {
     padding-bottom: 1rem;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   UNIFIED PILL SEARCH BAR (UBER/1MG STYLE)
+   ═══════════════════════════════════════════════════════════════ */
+
+.search-bar-pill {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(850px, 95%);
+  background: #ffffff;
+  border-radius: 50px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  z-index: 100;
+  height: 60px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-bar-pill:focus-within {
+  border-color: #000000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.search-bar-location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  flex: 0 0 190px;
+  position: relative;
+  min-width: 0;
+}
+
+.search-bar-location input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  min-width: 0;
+  font-size: 0.9rem;
+  color: #000000;
+  font-weight: 500;
+}
+
+.search-bar-location input::placeholder {
+  color: #9ca3af;
+}
+
+.gps-detect-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+  color: #000000;
+}
+
+.gps-detect-btn:hover {
+  background-color: #f3f4f6;
+}
+
+@keyframes spin-gps {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.gps-spin {
+  animation: spin-gps 1.2s linear infinite;
+}
+
+.search-bar-divider {
+  width: 1px;
+  height: 28px;
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
+
+.search-bar-input-wrap {
+  flex: 1;
+  padding: 0 16px;
+  min-width: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ai-input-wrapper {
+  position: relative;
+  border-radius: 30px;
+  padding: 2px;
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+  background: transparent;
+  transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  min-width: 0;
+}
+
+.ai-input-wrapper.ai-active {
+  background: conic-gradient(from var(--angle), #ea4335, #fbbc05, #34a853, #4285f4, #a855f7, #ea4335);
+  animation: rotate-gradient 3s linear infinite;
+  box-shadow: 0 4px 15px rgba(66, 133, 244, 0.15);
+}
+
+.ai-input-inner {
+  background: transparent;
+  border-radius: 28px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  padding: 0 8px;
+}
+
+.ai-input-wrapper.ai-active .ai-input-inner {
+  background: #ffffff;
+}
+
+.ai-input-inner input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  min-width: 0;
+  font-size: 0.9rem;
+  color: #000000;
+  padding: 8px 4px;
+}
+
+.ai-input-inner input::placeholder {
+  color: #9ca3af;
+  transition: opacity 150ms ease-in-out;
+}
+
+.placeholder-fade::placeholder {
+  opacity: 0 !important;
+}
+
+.search-bar-hospital {
+  flex: 0 0 170px;
+  padding: 0 16px;
+  position: relative;
+  min-width: 0;
+}
+
+.search-bar-hospital input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  min-width: 0;
+  font-size: 0.9rem;
+  color: #000000;
+}
+
+.search-bar-hospital input::placeholder {
+  color: #9ca3af;
+}
+
+.search-bar-button-wrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 2px;
+}
+
+.search-bar-button-wrap button {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #000000;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s;
+  color: #ffffff;
+}
+
+.search-bar-button-wrap button:hover {
+  background-color: #222222;
+}
+
+.ai-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #000000;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  pointer-events: none;
+  letter-spacing: 0.05em;
+  font-family: var(--font-outfit), sans-serif;
+}
+
+/* Clear icon */
+.clear-input-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.clear-input-btn:hover {
+  color: #4b5563;
+  background-color: #f3f4f6;
+}
+
+/* Suggestions Dropdowns styling */
+.pill-suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 12px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e5e7eb;
+  z-index: 1000;
+  overflow: hidden;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.pill-suggestion-item {
+  padding: 12px 16px;
+  font-size: 0.875rem;
+  color: #374151;
+  cursor: pointer;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.15s ease;
+  text-align: left;
+}
+
+.pill-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.pill-suggestion-item:hover {
+  background: #f9fafb;
+}
+
+.pill-suggestion-item.ai-suggest {
+  color: #7c3aed;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.04) 0%, rgba(6, 182, 212, 0.04) 100%);
+  font-weight: 600;
+}
+
+.pill-suggestion-item.ai-suggest:hover {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(6, 182, 212, 0.08) 100%);
+}
+
+.search-bar-location .pill-suggestions-dropdown {
+  min-width: 260px;
+}
+
+.search-bar-hospital .pill-suggestions-dropdown {
+  min-width: 260px;
+  right: 0;
+  left: auto;
+}
+
+/* Custom AI Mode Capsule Toggler */
+.ai-mode-toggle-wrap {
+  --angle: 0deg;
+  position: relative;
+  border-radius: 24px;
+  padding: 1.5px;
+  display: flex;
+  align-items: center;
+  background: conic-gradient(from var(--angle), #ea4335, #fbbc05, #34a853, #4285f4, #a855f7, #ea4335);
+  animation: rotate-gradient 3s linear infinite;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.ai-mode-toggle-wrap:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+}
+
+.ai-mode-toggle-inner {
+  background: #ffffff;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  height: 32px;
+  transition: background-color 0.3s ease;
+}
+
+.ai-mode-toggle-inner svg,
+.ai-mode-toggle-inner svg path {
+  transition: stroke 0.3s ease, fill 0.3s ease;
+}
+
+.ai-mode-toggle-text {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #000000;
+  font-family: var(--font-outfit), sans-serif;
+  letter-spacing: 0.02em;
+  transition: color 0.3s ease;
+}
+
+/* Active State Capsule Toggler Overrides */
+.ai-mode-toggle-wrap.active .ai-mode-toggle-inner {
+  background: #000000;
+}
+
+.ai-mode-toggle-wrap.active .ai-mode-toggle-text {
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .search-bar-pill {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    width: 100%;
+    margin-top: 1.5rem;
+    flex-direction: column;
+    align-items: stretch;
+    border-radius: 24px;
+    padding: 12px;
+    height: auto;
+    gap: 12px;
+  }
+
+  .search-bar-location,
+  .search-bar-input-wrap,
+  .search-bar-hospital {
+    flex: none;
+    width: 100%;
+    padding: 8px 4px;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .search-bar-hospital {
+    border-bottom: none;
+  }
+
+  .search-bar-divider {
+    display: none;
+  }
+
+  .search-bar-button-wrap {
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .search-bar-button-wrap button {
+    width: 100% !important;
+    height: 48px !important;
+    border-radius: 12px !important;
+  }
+
+  .search-bar-location .pill-suggestions-dropdown,
+  .search-bar-hospital .pill-suggestions-dropdown {
+    min-width: 0 !important;
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+}
+
 

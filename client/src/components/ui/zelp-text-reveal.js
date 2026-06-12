@@ -9,7 +9,7 @@ export function ZelpLogo({ className }) {
       <div className="wordmark">
         {/* Replaced Daybreak Paths with Zelp Text SVG */}
         <svg viewBox="0 0 210 110" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ height: '100%', width: 'auto' }}>
-            <text x="0" y="85" fontFamily="var(--font-outfit), sans-serif" fontWeight="bold" fontSize="90" fill="#0c831f" textAnchor="start">
+            <text x="0" y="85" fontFamily="var(--font-outfit), sans-serif" fontWeight="bold" fontSize="90" fill="#000000" textAnchor="start">
                Zelp
             </text>
         </svg>

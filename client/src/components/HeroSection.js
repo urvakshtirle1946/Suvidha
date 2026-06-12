@@ -123,7 +123,6 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
 
   const [where, setWhere] = useState(ctxLocation || '');
   const [what, setWhat] = useState('');
-  const [which, setWhich] = useState('');
 
   // AI Mode states
   const [isAiMode, setIsAiMode] = useState(false);
@@ -146,13 +145,10 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
 
   // Default lists — use preloaded data if available, else fetch on mount
   const [loadingServices, setLoadingServices] = useState(preloadedServices.length === 0);
-  const [loadingHospitals, setLoadingHospitals] = useState(preloadedHospitals.length === 0);
   const [defaultServices, setDefaultServices] = useState(preloadedServices);
-  const [defaultHospitals, setDefaultHospitals] = useState(preloadedHospitals);
 
   // Live-filtered lists (shown when typing)
   const [whatSuggestions, setWhatSuggestions] = useState([]);
-  const [whichSuggestions, setWhichSuggestions] = useState([]);
   const [citySuggestions, setCitySuggestions] = useState([]);
 
   // Symptoms & AI Suggest states
@@ -232,17 +228,6 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
   }, [preloadedServices.length]);
 
 
-  useEffect(() => {
-    if (preloadedHospitals.length > 0) return;
-    apiFetch('/api/hospitals?limit=8')
-      .then(r => r.ok ? r.json() : [])
-      .then(data => {
-        const list = Array.isArray(data) ? data : (data.data || []);
-        setDefaultHospitals(list.map(h => ({ name: h.name, sub: h.location })));
-      })
-      .catch(() => {})
-      .finally(() => setLoadingHospitals(false));
-  }, [preloadedHospitals.length]);
 
   // ── City filter ─────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -278,24 +263,7 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
     return () => { ctrl.abort(); clearTimeout(t); };
   }, [what, defaultServices]);
 
-  // ── Live hospital search ────────────────────────────────────────────────────
-  useEffect(() => {
-    if (!which || which.length < 2) {
-      setWhichSuggestions(defaultHospitals);
-      return;
-    }
-    const ctrl = new AbortController();
-    const t = setTimeout(async () => {
-      try {
-        const res = await apiFetch(`/api/hospitals?search=${encodeURIComponent(which)}&limit=8`, { signal: ctrl.signal });
-        if (!res.ok) return;
-        const data = await res.json();
-        const list = Array.isArray(data) ? data : (data.data || []);
-        setWhichSuggestions(list.map(h => ({ name: h.name, sub: h.location })));
-      } catch { /* ignore abort */ }
-    }, 280);
-    return () => { ctrl.abort(); clearTimeout(t); };
-  }, [which, defaultHospitals]);
+
 
   const handleSymptomsSubmit = async (overrideSymptoms) => {
     const input = typeof overrideSymptoms === 'string' ? overrideSymptoms : symptomsInput;
@@ -335,7 +303,6 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
     const params = new URLSearchParams();
     if (where) params.set('location', where);
     if (what) params.set('search', what);
-    if (which) params.set('hospital', which);
     router.push(`/hospitals?${params.toString()}`);
   };
 
@@ -529,50 +496,7 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
             )}
           </div>
 
-          <div className="search-bar-divider" />
 
-          {/* 3. Hospital Section (Which) */}
-          <div className="search-bar-hospital">
-            <input
-              type="text"
-              value={which}
-              onChange={e => {
-                setWhich(e.target.value);
-                setFocusedField('hospital');
-              }}
-              onFocus={() => setFocusedField('hospital')}
-              placeholder="Hospital name"
-              onKeyDown={e => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  handleSearch();
-                  setFocusedField(null);
-                }
-              }}
-            />
-
-            {/* Hospital Suggestions Dropdown */}
-            {focusedField === 'hospital' && whichSuggestions.length > 0 && (
-              <div className="pill-suggestions-dropdown">
-                {whichSuggestions.map((h, idx) => (
-                  <div 
-                    key={idx}
-                    onMouseDown={() => {
-                      setWhich(typeof h === 'string' ? h : h.name);
-                      setFocusedField(null);
-                    }}
-                    className="pill-suggestion-item"
-                  >
-                    <Search size={14} color="#9ca3af" />
-                    <div>
-                      <span style={{ fontWeight: '600', color: '#111827' }}>{typeof h === 'string' ? h : h.name}</span>
-                      {h.sub && <span style={{ color: '#9ca3af', fontSize: '0.78rem', marginLeft: '8px' }}>{h.sub}</span>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
 
           {/* 4. AI / Search Button Section (Far Right) */}
           <div className="search-bar-button-wrap">

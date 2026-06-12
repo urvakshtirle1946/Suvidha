@@ -40,7 +40,7 @@ export default function HomePage() {
     const loadHomeData = async () => {
       try {
         const [hospitalsRes, servicesRes, scanServicesRes, labServicesRes] = await Promise.all([
-          safeFetch(`/api/hospitals?sort=price_asc&limit=${HOME_HOSPITAL_LIMIT}`),
+          safeFetch(`/api/hospitals?limit=${HOME_HOSPITAL_LIMIT}`),
           safeFetch(`/api/services?category=Lab&limit=${HOME_LAB_LIMIT}`),
           safeFetch(`/api/services?category=Scan&limit=50`),
           safeFetch(`/api/services?category=Lab&limit=50`),
@@ -65,8 +65,9 @@ export default function HomePage() {
             ? servicesData.data
             : [];
 
-        const rankedServices = [...serviceList].sort(
-          (a, b) => Number(a.discount_price || a.price || 0) - Number(b.discount_price || b.price || 0)
+        const rankedServices = [...serviceList].sort((a, b) =>
+          (Number(b.hospital_rating || 0) - Number(a.hospital_rating || 0)) ||
+          (Number(a.discount_price || a.price || 0) - Number(b.discount_price || b.price || 0))
         );
 
         const scanList = Array.isArray(scanServicesData) ? scanServicesData : (scanServicesData?.data || []);

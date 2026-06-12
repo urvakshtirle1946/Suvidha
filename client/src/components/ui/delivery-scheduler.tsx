@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -78,6 +78,13 @@ export const DeliveryScheduler: React.FC<DeliverySchedulerProps> = ({
   const [currentDate, setCurrentDate] = useState(initialDate);
   const [selectedDate, setSelectedDate] = useState<Date>(initialDate);
   const [selectedTime, setSelectedTime] = useState<string | null>(timeSlots[0] || null);
+
+  useEffect(() => {
+    setSelectedTime((current) => {
+      if (current && timeSlots.includes(current)) return current;
+      return timeSlots[0] || null;
+    });
+  }, [timeSlots]);
   
   const weekDays = getWeekDays(currentDate);
   const monthYear = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
@@ -162,6 +169,11 @@ export const DeliveryScheduler: React.FC<DeliverySchedulerProps> = ({
         <div>
           <p className="text-sm font-medium" style={{ color: '#6b7280', fontSize: '0.9rem', margin: 0, marginBottom: '8px' }}>{timeZone}</p>
           <div className="mt-2 grid grid-cols-3 gap-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginTop: '8px' }}>
+            {timeSlots.length === 0 && (
+              <div style={{ gridColumn: '1 / -1', color: '#b91c1c', background: '#fef2f2', border: '1px solid #fee2e2', padding: '10px', borderRadius: '8px', fontSize: '0.85rem' }}>
+                No slots are available for this date.
+              </div>
+            )}
             {timeSlots.map((time) => {
               const isSelected = selectedTime === time;
               return (
@@ -197,7 +209,7 @@ export const DeliveryScheduler: React.FC<DeliverySchedulerProps> = ({
         {/* Action Buttons */}
         <div className="flex items-center justify-end border-t pt-4" style={{ borderTop: '1px solid #f3f4f6', paddingTop: '16px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
            <button onClick={onCancel} className={cn(scheduleButtonVariants({variant: 'default'}))} style={{ background: '#f3f4f6', border: 'none', padding: '10px 24px', borderRadius: '8px', color: '#374151', fontWeight: 'bold', cursor: 'pointer' }}>Cancel</button>
-           <button onClick={handleSchedule} className={cn(scheduleButtonVariants({variant: 'selected'}))} style={{ background: '#000000', border: 'none', padding: '10px 24px', borderRadius: '8px', color: '#fff', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)' }}>Schedule</button>
+           <button onClick={handleSchedule} disabled={!selectedTime} className={cn(scheduleButtonVariants({variant: 'selected'}))} style={{ background: '#000000', border: 'none', padding: '10px 24px', borderRadius: '8px', color: '#fff', fontWeight: 'bold', cursor: selectedTime ? 'pointer' : 'not-allowed', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)', opacity: selectedTime ? 1 : 0.5 }}>Schedule</button>
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname, useParams } from 'next/navigation';
 import { 
-  LayoutDashboard, Building2, Calendar, 
+  LayoutDashboard, Building2, Calendar, Stethoscope,
   Users, UserPlus, ShieldCheck, LogOut, Menu, User, CheckCircle, Bell, 
   Sun, Moon, ChevronLeft, ChevronRight 
 } from 'lucide-react';
@@ -235,6 +235,7 @@ function AdminLayoutContent({ children }) {
           <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
              <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" href={`${basePath}`} active={pathname === basePath} darkMode={darkMode} />
              <NavItem icon={<Building2 size={20} />} label="Hospitals" href={`${basePath}/hospitals`} active={pathname === `${basePath}/hospitals`} darkMode={darkMode} />
+             <NavItem icon={<Stethoscope size={20} />} label="Services" href={`${basePath}/services`} active={pathname === `${basePath}/services`} darkMode={darkMode} />
              <NavItem icon={<Calendar size={20} />} label="Bookings" href={`${basePath}/bookings`} active={pathname === `${basePath}/bookings`} darkMode={darkMode} />
              <NavItem icon={<Users size={20} />} label="Users" href={`${basePath}/users`} active={pathname === `${basePath}/users`} darkMode={darkMode} />
              <NavItem icon={<UserPlus size={20} />} label="Waitlist" href={`${basePath}/waitlist`} active={pathname === `${basePath}/waitlist`} darkMode={darkMode} />

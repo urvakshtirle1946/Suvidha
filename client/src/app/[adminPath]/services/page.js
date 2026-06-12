@@ -7,10 +7,12 @@ import { getApiUrl } from '@/utils/api';
 export default function ServiceManagement() {
   const [services, setServices] = useState([]);
   const [hospitals, setHospitals] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
 
   const { addToast } = useToast();
+  const isPartner = currentUser?.role === 'hospital_partner';
 
   // Form State
   const [formData, setFormData] = useState({
@@ -19,7 +21,9 @@ export default function ServiceManagement() {
     category: 'Lab', // Default
     price: '',
     discount_price: '',
-    description: ''
+    description: '',
+    slot_capacity: 1,
+    is_active: true
   });
 
   // Pagination State
@@ -28,16 +32,37 @@ export default function ServiceManagement() {
   const LIMIT = 10;
 
   useEffect(() => {
+    fetchCurrentUser();
     fetchServices(page);
     fetchHospitals();
   }, [page]); // Re-fetch on page change
+
+  const fetchCurrentUser = async () => {
+    try {
+      const apiUrl = getApiUrl();
+      const token = localStorage.getItem('admin_token');
+      const res = await fetch(`${apiUrl}/api/auth/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data?.user) {
+        setCurrentUser(data.user);
+        if (data.user.role === 'hospital_partner' && data.user.hospital_id) {
+          setFormData(prev => ({ ...prev, hospital_id: data.user.hospital_id }));
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetchServices = async (currentPage = 1) => {
     setLoading(true);
     try {
       const apiUrl = getApiUrl();
       const token = localStorage.getItem('admin_token');
-      const res = await fetch(`${apiUrl}/api/services?page=${currentPage}&limit=${LIMIT}`, {
+      const res = await fetch(`${apiUrl}/api/services/manage`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -48,6 +73,7 @@ export default function ServiceManagement() {
             setTotalPages(result.meta.totalPages);
         } else {
             setServices(result); // Fallback
+            setTotalPages(1);
         }
       }
     } catch (err) {
@@ -62,7 +88,7 @@ export default function ServiceManagement() {
       try {
         const apiUrl = getApiUrl();
         const token = localStorage.getItem('admin_token');
-        const res = await fetch(`${apiUrl}/api/hospitals`, {
+        const res = await fetch(`${apiUrl}/api/hospitals/manage`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {
@@ -76,6 +102,10 @@ export default function ServiceManagement() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!currentUser) {
+        addToast('Please wait while your admin session loads.', 'error');
+        return;
+    }
     try {
         const apiUrl = getApiUrl();
         const token = localStorage.getItem('admin_token');
@@ -85,13 +115,16 @@ export default function ServiceManagement() {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify(formData)
+            body: JSON.stringify({
+              ...formData,
+              hospital_id: isPartner ? currentUser.hospital_id : formData.hospital_id
+            })
         });
 
         if (res.ok) {
             addToast('Service Added Successfully!', 'success');
             setShowForm(false);
-            setFormData({ hospital_id: '', name: '', category: 'Lab', price: '', discount_price: '', description: '' });
+            setFormData({ hospital_id: isPartner ? currentUser.hospital_id : '', name: '', category: 'Lab', price: '', discount_price: '', description: '', slot_capacity: 1, is_active: true });
             fetchServices(); 
         } else {
             addToast('Failed to add service', 'error');
@@ -99,6 +132,24 @@ export default function ServiceManagement() {
     } catch (err) {
         console.error(err);
         addToast('Error adding service', 'error');
+    }
+  };
+
+  const toggleService = async (service) => {
+    try {
+      const apiUrl = getApiUrl();
+      const token = localStorage.getItem('admin_token');
+      const res = await fetch(`${apiUrl}/api/services/${service.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ ...service, is_active: !service.is_active })
+      });
+      if (!res.ok) throw new Error('Update failed');
+      addToast(service.is_active ? 'Service paused' : 'Service activated', 'success');
+      fetchServices(page);
+    } catch (err) {
+      console.error(err);
+      addToast('Failed to update service', 'error');
     }
   };
 
@@ -139,6 +190,16 @@ export default function ServiceManagement() {
                           />
                       </div>
 
+                      <div>
+                          <label style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Bookings Per Time Slot</label>
+                          <input
+                            type="number" min="1" required
+                            value={formData.slot_capacity}
+                            onChange={e => setFormData({...formData, slot_capacity: e.target.value})}
+                            style={inputStyle}
+                          />
+                      </div>
+
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                           <div>
                               <label style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Category</label>
@@ -154,11 +215,12 @@ export default function ServiceManagement() {
                           </div>
                           <div>
                               <label style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Assign To Hospital</label>
-                              <select 
+                              <select
                                 value={formData.hospital_id} onChange={e => setFormData({...formData, hospital_id: e.target.value})}
+                                disabled={!currentUser || isPartner}
                                 style={inputStyle}
                               >
-                                  <option value="">-- Global / Independent --</option>
+                                  {!isPartner && <option value="">-- Global / Independent --</option>}
                                   {hospitals.map(h => (
                                       <option key={h.id} value={h.id}>{h.name}</option>
                                   ))}
@@ -250,7 +312,7 @@ export default function ServiceManagement() {
                             <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Category</th>
                             <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Hospital</th>
                             <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Price</th>
-                            <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Actions</th>
+                            <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Capacity / Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -287,7 +349,10 @@ export default function ServiceManagement() {
                                     </div>
                                 </td>
                                 <td style={{ padding: '1.2rem 1.5rem' }}>
-                                    <button className="btn-link" style={{ color: '#f87171', fontSize: '0.9rem', fontWeight: '500', background: 'transparent', border: 'none', cursor: 'pointer' }}>Delete</button>
+                                    <div style={{ marginBottom: '6px', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{service.slot_capacity || 1} per slot</div>
+                                    <button onClick={() => toggleService(service)} className="btn-link" style={{ color: service.is_active ? '#f87171' : '#22c55e', fontSize: '0.9rem', fontWeight: '500', background: 'transparent', border: 'none', cursor: 'pointer' }}>
+                                      {service.is_active ? 'Pause' : 'Activate'}
+                                    </button>
                                 </td>
                             </tr>
                         ))}

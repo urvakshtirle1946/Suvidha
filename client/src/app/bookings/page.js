@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import AuthModal from '@/components/AuthModal';
-import { Calendar, Clock, MapPin, CheckCircle, ChevronRight, Package, Lock, X, User as UserIcon, Phone, Hash } from 'lucide-react';
+import { Calendar, Clock, MapPin, CheckCircle, ChevronRight, Package, Lock, X, User as UserIcon, Phone, Hash, Ban } from 'lucide-react';
 import { getApiUrl, apiFetch } from '@/utils/api';
 
 import { useAuth } from '@/context/AuthContext';
@@ -20,6 +20,7 @@ export default function Bookings() {
   const [paymentBooking, setPaymentBooking] = useState(null);
   const [txnId, setTxnId] = useState('');
   const [paying, setPaying] = useState(false);
+  const [cancellingId, setCancellingId] = useState(null);
 
   useEffect(() => {
     if (isLoaded && !user) {
@@ -84,6 +85,30 @@ export default function Bookings() {
           alert("Error processing payment");
       } finally {
           setPaying(false);
+      }
+  };
+
+  const cancelBooking = async (e, booking) => {
+      e.stopPropagation();
+      if (!window.confirm('Cancel this booking? Paid bookings may move to refund review.')) return;
+
+      setCancellingId(booking.id);
+      try {
+          const res = await apiFetch(`/api/bookings/${booking.id}/cancel`, {
+              method: 'PATCH'
+          });
+
+          if (res.ok) {
+              fetchBookings();
+          } else {
+              const payload = await res.json().catch(() => null);
+              alert(payload?.message || 'Unable to cancel booking');
+          }
+      } catch (err) {
+          console.error(err);
+          alert('Error cancelling booking');
+      } finally {
+          setCancellingId(null);
       }
   };
 
@@ -189,6 +214,19 @@ export default function Bookings() {
                                 }}
                             >
                                 Pay Now
+                            </button>
+                        )}
+                        {['PendingPayment', 'PendingVerification', 'Confirmed'].includes(booking.status) && (
+                            <button
+                                onClick={(e) => cancelBooking(e, booking)}
+                                disabled={cancellingId === booking.id}
+                                style={{
+                                    background: '#fff', color: '#991b1b', border: '1px solid #fecaca',
+                                    padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: '600',
+                                    cursor: cancellingId === booking.id ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '4px'
+                                }}
+                            >
+                                <Ban size={14} /> {cancellingId === booking.id ? 'Cancelling...' : 'Cancel'}
                             </button>
                         )}
                         <button 

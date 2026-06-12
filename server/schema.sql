@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS hospitals (
   map_url TEXT,
   latitude DECIMAL(10, 8),
   longitude DECIMAL(11, 8),
+  is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -43,22 +44,55 @@ CREATE TABLE IF NOT EXISTS services (
   discount_price DECIMAL(10, 2),
   description TEXT,
   is_active BOOLEAN DEFAULT TRUE,
+  slot_capacity INT DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+ALTER TABLE users ADD COLUMN IF NOT EXISTS hospital_id INT REFERENCES hospitals(id);
+
 CREATE TABLE IF NOT EXISTS bookings (
   id SERIAL PRIMARY KEY,
-  user_phone VARCHAR(20),
-  patient_name VARCHAR(100),
-  patient_age INT,
-  patient_gender VARCHAR(20),
+  user_phone TEXT,
+  patient_name TEXT,
+  patient_age TEXT,
+  patient_gender TEXT,
   booking_date DATE,
   booking_time VARCHAR(20),
   address TEXT,
-  service_name VARCHAR(255),
+  service_name TEXT,
+  service_id INT REFERENCES services(id),
   price DECIMAL(10, 2),
-  status VARCHAR(50) DEFAULT 'Confirmed',
+  status VARCHAR(50) DEFAULT 'PendingPayment',
+  user_email TEXT,
+  hospital_id INT REFERENCES hospitals(id),
+  transaction_id VARCHAR(255),
+  patient_name_hash VARCHAR(80),
+  user_phone_hash VARCHAR(80),
+  user_email_hash VARCHAR(80),
+  service_name_hash VARCHAR(80),
+  cancelled_at TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_bookings_slot_status
+  ON bookings (hospital_id, booking_date, booking_time, status);
+CREATE INDEX IF NOT EXISTS idx_bookings_service_slot_status
+  ON bookings (service_id, booking_date, booking_time, status);
+CREATE INDEX IF NOT EXISTS idx_bookings_user_email_hash ON bookings(user_email_hash);
+CREATE INDEX IF NOT EXISTS idx_bookings_user_phone_hash ON bookings(user_phone_hash);
+CREATE INDEX IF NOT EXISTS idx_bookings_service_name_hash ON bookings(service_name_hash);
+
+CREATE TABLE IF NOT EXISTS payment_orders (
+  id SERIAL PRIMARY KEY,
+  razorpay_order_id VARCHAR(255) UNIQUE NOT NULL,
+  razorpay_payment_id VARCHAR(255),
+  user_email_hash VARCHAR(80) NOT NULL,
+  amount_paise INT NOT NULL,
+  items JSONB NOT NULL,
+  status VARCHAR(50) NOT NULL DEFAULT 'Created',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS otp_codes (

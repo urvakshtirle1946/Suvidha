@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import Script from 'next/script';
 import { DeliveryScheduler } from '@/components/ui/delivery-scheduler';
 import { AnimatedTicket } from '@/components/ui/ticket-confirmation-card';
+import { PROVIDER_SORT_OPTIONS, getProviderRating, sortProviders } from '@/utils/providerRanking';
 
 function loadRazorpay() {
     return new Promise((resolve) => {
@@ -27,6 +28,7 @@ function loadRazorpay() {
 function ProviderList({ serviceName, currentHospitalId, onSelect }) {
     const [labs, setLabs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sortBy, setSortBy] = useState('recommended');
 
     useEffect(() => {
         const fetchProviders = async () => {
@@ -37,14 +39,12 @@ function ProviderList({ serviceName, currentHospitalId, onSelect }) {
                     const data = await res.json();
                     const list = Array.isArray(data) ? data : (data.data || []);
                     
-                    // Deduplicate by hospital_id while preserving the lowest-priced provider
                     const uniqueProviders = [];
                     const seenHospitals = new Set();
                     
-                    // Sort by price first so we keep the cheapest version of a service at a hospital
-                    const sortedByPrice = [...list].sort((a,b) => (a.discount_price || a.price) - (b.discount_price || b.price));
+                    const sortedForDeduplication = sortProviders(list, 'highest_rated');
                     
-                    for (const item of sortedByPrice) {
+                    for (const item of sortedForDeduplication) {
                         const hId = item.hospital_id || item.id;
                         if (!seenHospitals.has(hId)) {
                             uniqueProviders.push(item);
@@ -52,9 +52,7 @@ function ProviderList({ serviceName, currentHospitalId, onSelect }) {
                         }
                     }
 
-                    // Final ranking is strict best-price-first across providers
-                    const sorted = uniqueProviders.sort((a,b) => (a.discount_price || a.price) - (b.discount_price || b.price));
-                    setLabs(sorted);
+                    setLabs(uniqueProviders);
                 }
             } catch (err) {
                 console.error(err);
@@ -65,11 +63,22 @@ function ProviderList({ serviceName, currentHospitalId, onSelect }) {
         fetchProviders();
     }, [serviceName]);
 
+    const sortedLabs = sortProviders(labs, sortBy);
+
     if (loading) return <div style={{ fontSize: '0.8rem', color: '#9ca3af' }}>Finding providers...</div>;
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
-            {labs.map((lab, index) => {
+            <select
+                value={sortBy}
+                onChange={(event) => setSortBy(event.target.value)}
+                style={{ alignSelf: 'flex-start', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '999px', padding: '7px 12px', fontSize: '0.8rem', color: '#475569', outline: 'none' }}
+            >
+                {PROVIDER_SORT_OPTIONS.map(option => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+            </select>
+            {sortedLabs.map((lab, index) => {
                 const isSelected = (lab.hospital_id || lab.id) === currentHospitalId;
                 const discountPercent = (lab.price && lab.discount_price && lab.price > lab.discount_price) 
                     ? Math.round(((lab.price - lab.discount_price) / lab.price) * 100) 
@@ -80,7 +89,7 @@ function ProviderList({ serviceName, currentHospitalId, onSelect }) {
                     ? Math.round(lab.price - (lab.price * discountPercent / 100)) 
                     : (lab.discount_price || lab.price);
 
-                const isBestPrice = index === 0;
+                const isRecommended = sortBy === 'recommended' && index === 0;
                 
                 return (
                     <div 
@@ -103,7 +112,7 @@ function ProviderList({ serviceName, currentHospitalId, onSelect }) {
                         onMouseEnter={e => { if(!isSelected) e.currentTarget.style.borderColor = '#94a3b8'; }}
                         onMouseLeave={e => { if(!isSelected) e.currentTarget.style.borderColor = '#e2e8f0'; }}
                     >
-                        {isBestPrice && (
+                        {isRecommended && (
                             <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: '#000' }}></div>
                         )}
                         <div style={{ width: '48px', height: '48px', borderRadius: '12px', overflow: 'hidden', background: '#f3f4f6', flexShrink: 0, border: '1px solid #e5e7eb' }}>
@@ -117,10 +126,13 @@ function ProviderList({ serviceName, currentHospitalId, onSelect }) {
                         <div style={{ flex: 1 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                                 <div style={{ fontWeight: '700', fontSize: '0.95rem', color: isSelected ? '#000' : '#1e293b' }}>{lab.hospital_name}</div>
-                                {isBestPrice && (
-                                    <span style={{ fontSize: '0.65rem', background: '#e5e7eb', color: '#000', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Best Price</span>
+                                {isRecommended && (
+                                    <span style={{ fontSize: '0.65rem', background: '#e5e7eb', color: '#000', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Recommended</span>
                                 )}
                             </div>
+                            {getProviderRating(lab) > 0 && (
+                                <div style={{ fontSize: '0.75rem', color: '#92400e', marginBottom: '4px' }}>Rated {getProviderRating(lab).toFixed(1)}</div>
+                            )}
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <span style={{ fontWeight: '800', fontSize: '1.05rem', color: '#0f172a' }}>₹{finalPrice}</span>
                                 {discountPercent > 0 && (
@@ -158,9 +170,36 @@ export default function Checkout() {
   
   // Schedule State
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedTime, setSelectedTime] = useState('10:00 AM');
+  const [selectedTime, setSelectedTime] = useState('');
+  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
   const [isCalendarModalOpen, setCalendarModalOpen] = useState(false);
-  const [paymentMode, setPaymentMode] = useState('hospital'); // 'hospital' or 'online'
+
+  useEffect(() => {
+    const loadAvailability = async () => {
+      if (!selectedDate || cart.length === 0) return;
+      const date = selectedDate instanceof Date ? selectedDate.toISOString().split('T')[0] : selectedDate;
+      const serviceIds = [...new Set(cart.map(item => item.serviceId || item.id).filter(Boolean))];
+      try {
+        const responses = await Promise.all(serviceIds.map(id =>
+          apiFetch(`/api/bookings/availability?serviceId=${id}&date=${date}`)
+        ));
+        const payloads = await Promise.all(responses.filter(res => res.ok).map(res => res.json()));
+        if (payloads.length !== serviceIds.length) return;
+        const common = payloads[0]?.slots
+          ?.filter(slot => slot.available && payloads.every(payload => payload.slots.some(other => other.time === slot.time && other.available)))
+          .map(slot => slot.time) || [];
+        setAvailableTimeSlots(common);
+        setSelectedTime(current => {
+          if (current && common.includes(current)) return current;
+          return '';
+        });
+      } catch (err) {
+        console.error('Failed to load checkout availability', err);
+      }
+    };
+    loadAvailability();
+  }, [cart, selectedDate]);
+  const [paymentMode, setPaymentMode] = useState('online');
   const [bookingIds, setBookingIds] = useState([]);
   const [ticketData, setTicketData] = useState(null);
 
@@ -210,12 +249,7 @@ export default function Checkout() {
         return;
     }
 
-    if (paymentMode === 'online') {
-        processRazorpayPayment(); 
-    } else {
-        // Pay at Hospital - finalize immediately
-        finalizeCheckout('PAY_AT_HOSPITAL'); 
-    }
+    processRazorpayPayment();
   };
 
   const processRazorpayPayment = async () => {
@@ -235,7 +269,12 @@ export default function Checkout() {
           // Get order from backend
           const orderRes = await apiFetch('/api/bookings/razorpay-order', {
               method: 'POST',
-              body: JSON.stringify({ amount: amountToPay })
+              body: JSON.stringify({
+                  items: cart.map(item => ({
+                      serviceId: item.serviceId || item.id,
+                      quantity: item.quantity || 1
+                  }))
+              })
           });
           
           if (!orderRes.ok) {
@@ -368,9 +407,7 @@ export default function Checkout() {
                         date: selectedDate instanceof Date ? selectedDate.toISOString().split('T')[0] : selectedDate,
                         time: selectedTime,
                         address: location || 'New Delhi, India',
-                        serviceName: item.name,
-                        price: item.price,
-                        hospitalId: item.hospitalId,
+                        serviceId: item.serviceId || item.id,
                         transactionId: currentTxnId,
                         original_price: item.mrp || item.price,
                         coupon_code: appliedCoupon ? appliedCoupon.code : null,
@@ -394,8 +431,26 @@ export default function Checkout() {
                 return requests;
             });
 
-            await Promise.all(bookingPromises);
+            const bookingResponses = await Promise.all(bookingPromises);
             setBookingIds(createdIds);
+
+            const failedBooking = bookingResponses.find(res => !res.ok);
+            if (failedBooking) {
+                if (!isHospitalPay && razorpayResponse) {
+                    await apiFetch(`/api/bookings/verify-payment`, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            razorpay_order_id: razorpayResponse.razorpay_order_id,
+                            razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+                            razorpay_signature: razorpayResponse.razorpay_signature,
+                            bookingIds: createdIds
+                        })
+                    }).catch(() => null);
+                }
+                const payload = await failedBooking.json().catch(() => null);
+                setError(payload?.message || 'One or more selected slots are no longer available. Any captured payment will be refunded.');
+                return;
+            }
             
             // If they paid online directly from cart, verify payment
             if (!isHospitalPay && razorpayResponse) {
@@ -410,7 +465,9 @@ export default function Checkout() {
                 });
 
                 if (!verifyRes.ok) {
-                     setError("Payment was successful but verification failed during booking creation.");
+                     const payload = await verifyRes.json().catch(() => null);
+                     setError(payload?.message || "Payment was successful but verification failed during booking creation.");
+                     return;
                 }
             }
 
@@ -541,7 +598,7 @@ export default function Checkout() {
                                 <div style={{ marginTop: '1.5rem' }}>
                                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                                          <div style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e293b' }}>Available Providers</div>
-                                         <div style={{ fontSize: '0.75rem', color: '#64748b', background: '#f1f5f9', padding: '4px 10px', borderRadius: '20px', fontWeight: '600' }}>Sorted by lowest price</div>
+                                         <div style={{ fontSize: '0.75rem', color: '#64748b', background: '#f1f5f9', padding: '4px 10px', borderRadius: '20px', fontWeight: '600' }}>Quality-first ranking</div>
                                      </div>
                                      <ProviderList 
                                         serviceName={item.name} 
@@ -550,6 +607,7 @@ export default function Checkout() {
                                             // Update cart item with new provider details
                                             const updatedItem = {
                                                 ...item,
+                                                serviceId: newProvider.id,
                                                 hospitalId: newProvider.hospital_id || newProvider.id,
                                                 hospital_name: newProvider.hospital_name,
                                                 price: parseFloat(newProvider.discount_price || newProvider.price),
@@ -640,31 +698,11 @@ export default function Checkout() {
                             )}
                         </div>
 
-                        {/* Payment Mode */}
-                        <div style={{ padding: '1.5rem' }}>
-                            <h4 style={{ fontSize: '0.95rem', fontWeight: 'bold', marginBottom: '1.2rem', color: '#374151' }}>Payment Options</h4>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.9rem', cursor: 'pointer' }}>
-                                    <input 
-                                      type="radio" 
-                                      name="payment" 
-                                      checked={paymentMode === 'hospital'} 
-                                      onChange={() => setPaymentMode('hospital')}
-                                      style={{ width: '18px', height: '18px', accentColor: '#000' }} 
-                                    />
-                                    <span style={{ fontWeight: '500' }}>Pay at Hospital / Clinic</span>
-                                </label>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.9rem', cursor: 'pointer' }}>
-                                    <input 
-                                      type="radio" 
-                                      name="payment" 
-                                      checked={paymentMode === 'online'}
-                                      onChange={() => setPaymentMode('online')}
-                                      style={{ width: '18px', height: '18px', accentColor: '#000' }} 
-                                    />
-                                    <span style={{ fontWeight: '500' }}>Pay Online</span>
-                                </label>
-                            </div>
+                        <div style={{ padding: '1.5rem', borderBottom: '1px solid #f3f4f6' }}>
+                            <h4 style={{ fontSize: '0.95rem', fontWeight: 'bold', marginBottom: '0.6rem', color: '#374151' }}>Payment</h4>
+                            <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem', lineHeight: 1.5 }}>
+                                Online payment is required to reserve confirmed slots and avoid unpaid no-shows.
+                            </p>
                         </div>
 
                         <div className="hide-on-mobile" style={{ padding: '0 1.5rem 1.5rem' }}>
@@ -740,11 +778,7 @@ export default function Checkout() {
               <div style={{ position: 'relative' }}>
                   <DeliveryScheduler 
                       initialDate={selectedDate}
-                      timeSlots={[
-                          "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", 
-                          "11:00 AM", "11:30 AM", "12:00 PM", "04:00 PM", 
-                          "04:30 PM", "05:00 PM"
-                      ]}
+                      timeSlots={availableTimeSlots}
                       timeZone="IST (GMT +5:30)"
                       onSchedule={(dateTime) => {
                           setSelectedDate(dateTime.date);
@@ -903,6 +937,3 @@ export default function Checkout() {
     </main>
   );
 }
-
-
-

@@ -2,9 +2,10 @@
 import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
-import { Clock, SlidersHorizontal, TestTube } from 'lucide-react';
+import { Clock, TestTube } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { apiFetch, getImageUrl } from '@/utils/api';
+import { PROVIDER_SORT_OPTIONS, sortProviders } from '@/utils/providerRanking';
 
 function LabTestsContent() {
   const searchParams = useSearchParams();
@@ -15,6 +16,7 @@ function LabTestsContent() {
   const [searchTerm, setSearchTerm] = useState(querySearch || queryTitle || '');
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState('recommended');
 
   // Fetch Services (Real Lab Tests)
   useEffect(() => {
@@ -67,13 +69,8 @@ function LabTestsContent() {
         test.name.toLowerCase().includes(normalizedSearch) ||
         test.location.toLowerCase().includes(normalizedSearch)
       ))
-      .sort((a, b) => {
-        const discountDiff = Number(b.discount || 0) - Number(a.discount || 0);
-        if (discountDiff !== 0) return discountDiff;
-
-        return Number(a.price || 0) - Number(b.price || 0);
-      });
-  }, [tests, searchTerm]);
+      .sort((a, b) => sortProviders([a, b], sortBy)[0] === a ? -1 : 1);
+  }, [tests, searchTerm, sortBy]);
 
   return (
     <main style={{ paddingBottom: '100px', background: '#f4f6fb', minHeight: '100vh' }}>
@@ -89,9 +86,15 @@ function LabTestsContent() {
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-            <button className="btn" style={{ background: '#fff', border: '1px solid #e5e7eb', padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
-                Sort By <SlidersHorizontal size={14} style={{ marginLeft: '6px' }} />
-            </button>
+            <select
+              value={sortBy}
+              onChange={(event) => setSortBy(event.target.value)}
+              style={{ background: '#fff', border: '1px solid #e5e7eb', padding: '0.55rem 1rem', fontSize: '0.9rem', borderRadius: '999px', outline: 'none' }}
+            >
+              {PROVIDER_SORT_OPTIONS.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
             <button className="btn" style={{ background: '#fff', border: '1px solid #e5e7eb', padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
                 Fasting Required
             </button>
@@ -174,4 +177,3 @@ export default function LabTests() {
     </Suspense>
   );
 }
-

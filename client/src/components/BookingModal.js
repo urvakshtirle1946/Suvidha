@@ -5,6 +5,7 @@ import { useLocation } from '@/context/LocationContext';
 import { X, Calendar, User, MapPin, CheckCircle, Home, Plus, ArrowUpDown, Clock, AlertCircle } from 'lucide-react';
 import AuthModal from './AuthModal';
 import { apiFetch, getImageUrl } from '@/utils/api';
+import { PROVIDER_SORT_OPTIONS, getProviderRating, sortProviders } from '@/utils/providerRanking';
 
 export default function BookingModal({ isOpen, onClose, service }) {
   const { user } = useAuth();
@@ -21,6 +22,8 @@ export default function BookingModal({ isOpen, onClose, service }) {
   const [fetchingLabs, setFetchingLabs] = useState(false);
   const [bookingId, setBookingId] = useState(null);
   const [error, setError] = useState(null);
+  const [timeSlots, setTimeSlots] = useState([]);
+  const [providerSort, setProviderSort] = useState('recommended');
 
   // Patient Details State
   const [patientName, setPatientName] = useState('');
@@ -50,6 +53,25 @@ export default function BookingModal({ isOpen, onClose, service }) {
      }
   }, [isOpen, service]);
 
+  useEffect(() => {
+      const loadAvailability = async () => {
+          if (!selectedLab?.id) return;
+          const date = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+          try {
+              const res = await apiFetch(`/api/bookings/availability?serviceId=${selectedLab.id}&date=${date}`);
+              if (!res.ok) return;
+              const data = await res.json();
+              setTimeSlots(data.slots || []);
+              if (selectedTime && !data.slots?.some(slot => slot.time === selectedTime && slot.available)) {
+                  setSelectedTime(null);
+              }
+          } catch (err) {
+              console.error('Failed to load availability', err);
+          }
+      };
+      loadAvailability();
+  }, [selectedLab, selectedTime]);
+
   const fetchLabs = async (serviceName, preselectedId) => {
       setFetchingLabs(true);
       try {
@@ -59,8 +81,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
               const data = await res.json();
               const list = Array.isArray(data) ? data : (data.data || []);
               
-              // Sort by lowest effective price so the cheapest hospital is ranked first
-              const sorted = list.sort((a,b) => (a.discount_price || a.price) - (b.discount_price || b.price));
+              const sorted = sortProviders(list, 'highest_rated');
 
               // Deduplicate
               const uniqueLabs = [];
@@ -110,11 +131,6 @@ export default function BookingModal({ isOpen, onClose, service }) {
   const displayPrice = currentService ? (currentService.price) : 0; 
   const displayMrp = currentService ? (currentService.mrp || currentService.price) : 0; 
   
-  const TIME_SLOTS = [
-      "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
-      "04:00 PM", "05:00 PM", "06:00 PM", "07:00 PM"
-  ];
-
   const finalizeBooking = async (paymentMethod = 'online') => {
         const currentTxnId = paymentMethod === 'hospital' ? 'PAY_AT_HOSPITAL' : transactionId;
 
@@ -145,9 +161,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                     date: (new Date(Date.now() + 86400000).toISOString() || '').split('T')[0],
                     time: selectedTime,
                     address: location || 'India',
-                    serviceName: currentService.name,
-                    price: displayPrice,
-                    hospitalId: currentService.hospital_id || currentService.id,
+                    serviceId: currentService.id,
                     transactionId: currentTxnId
                 };
 
@@ -205,8 +219,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
         }
         if (!selectedLab || !selectedTime) return;
         if (!validatePatientDetails()) return;
-        setPaymentMode('hospital');
-        finalizeBooking('hospital');
+        setError('Pay at Hospital is disabled for confirmed reservations. Please pay online to reserve this slot.');
   };
 
   return (
@@ -288,20 +301,21 @@ export default function BookingModal({ isOpen, onClose, service }) {
                         </div>
                         
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '8px' }}>
-                            {TIME_SLOTS.map(slot => (
+                            {timeSlots.map(slot => (
                                 <button 
-                                    key={slot}
-                                    onClick={() => setSelectedTime(slot)}
+                                    key={slot.time}
+                                    disabled={!slot.available}
+                                    onClick={() => setSelectedTime(slot.time)}
                                     style={{
                                         padding: '10px 5px', borderRadius: '10px', 
-                                        border: selectedTime === slot ? '2px solid #000' : '1px solid #e5e7eb',
-                                        background: selectedTime === slot ? '#f9fafb' : '#fff', 
-                                        color: selectedTime === slot ? '#000' : '#4b5563',
-                                        fontWeight: '600', cursor: 'pointer', fontSize: '0.85rem',
+                                        border: selectedTime === slot.time ? '2px solid #000' : '1px solid #e5e7eb',
+                                        background: selectedTime === slot.time ? '#f9fafb' : '#fff', 
+                                        color: slot.available ? (selectedTime === slot.time ? '#000' : '#4b5563') : '#9ca3af',
+                                        fontWeight: '600', cursor: slot.available ? 'pointer' : 'not-allowed', fontSize: '0.85rem',
                                         transition: 'all 0.2s'
                                     }}
                                 >
-                                    {slot}
+                                    {slot.time}
                                 </button>
                             ))}
                         </div>
@@ -312,16 +326,26 @@ export default function BookingModal({ isOpen, onClose, service }) {
                         <div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
                                  <Home size={18} color="#000" />
-                                 <span style={{ fontWeight: '700', color: '#374151' }}>Select Hospital (Lowest Price First)</span>
+                                 <span style={{ fontWeight: '700', color: '#374151' }}>Select Hospital</span>
                             </div>
 
                             {fetchingLabs ? (
-                                <div style={{ textAlign: 'center', padding: '1.5rem', color: '#9ca3af' }}>Finding best deals...</div>
+                                <div style={{ textAlign: 'center', padding: '1.5rem', color: '#9ca3af' }}>Finding recommended providers...</div>
                             ) : (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                    {labs.map(lab => {
+                                    <select
+                                        value={providerSort}
+                                        onChange={(event) => setProviderSort(event.target.value)}
+                                        style={{ alignSelf: 'flex-start', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '999px', padding: '7px 12px', fontSize: '0.8rem', color: '#4b5563', outline: 'none' }}
+                                    >
+                                        {PROVIDER_SORT_OPTIONS.map(option => (
+                                            <option key={option.value} value={option.value}>{option.label}</option>
+                                        ))}
+                                    </select>
+                                    {sortProviders(labs, providerSort).map((lab, index) => {
                                         const isSelected = selectedLab?.id === lab.id || selectedLab?.hospital_id === lab.hospital_id;
                                         const discountPercent = Math.round(((lab.mrp - lab.price) / lab.mrp) * 100);
+                                        const isRecommended = providerSort === 'recommended' && index === 0;
                                         
                                         return (
                                             <div 
@@ -346,9 +370,15 @@ export default function BookingModal({ isOpen, onClose, service }) {
 
                                                 <div style={{ flex: 1 }}>
                                                     <div style={{ fontWeight: '800', fontSize: '0.95rem', color: '#111827', marginBottom: '2px' }}>{lab.hospital_name}</div>
+                                                    {isRecommended && (
+                                                        <div style={{ display: 'inline-block', background: '#e5e7eb', color: '#000', padding: '2px 8px', borderRadius: '999px', fontSize: '0.68rem', fontWeight: '800', marginBottom: '4px', textTransform: 'uppercase' }}>Recommended</div>
+                                                    )}
                                                     <div style={{ fontSize: '0.8rem', color: '#6b7280', display: 'flex', alignItems: 'center', gap: '4px' }}>
                                                         <MapPin size={12} /> {lab.hospital_location}
                                                     </div>
+                                                    {getProviderRating(lab) > 0 && (
+                                                        <div style={{ fontSize: '0.75rem', color: '#92400e', marginTop: '4px' }}>Rated {getProviderRating(lab).toFixed(1)}</div>
+                                                    )}
 
                                                         <div style={{ marginTop: '6px', width: 'fit-content', background: '#f3f4f6', color: '#166534', px: '8px', py: '2px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '700', padding: '2px 8px' }}>
 {/* Discount OFF removed */}
@@ -455,9 +485,9 @@ export default function BookingModal({ isOpen, onClose, service }) {
                     <div style={{ width: '80px', height: '80px', background: '#f3f4f6', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
                         <CheckCircle size={48} color="#000" />
                     </div>
-                    <h2 style={{ fontSize: '1.8rem', fontWeight: '900', marginBottom: '1rem', color: '#111827' }}>Confirmed!</h2>
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: '900', marginBottom: '1rem', color: '#111827' }}>Payment Submitted</h2>
                     <p style={{ color: '#64748b', lineHeight: '1.6', fontSize: '1rem' }}>
-                        Your appointment at <b>{selectedLab?.hospital_name}</b> is scheduled for {selectedTime}, tomorrow.
+                        Your appointment request at <b>{selectedLab?.hospital_name}</b> is reserved for {selectedTime}, tomorrow while payment is verified.
                     </p>
                     
                     {paymentMode === 'hospital' && transactionId !== 'PAY_AT_HOSPITAL' ? (
@@ -501,28 +531,10 @@ export default function BookingModal({ isOpen, onClose, service }) {
                 {step === 1 ? (
                     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                         <button 
-                            onClick={handlePayAtHospital}
-                            disabled={loading || !selectedTime || !selectedLab}
-                            style={{ 
-                                flex: 1,
-                                background: '#fff',
-                                color: (selectedTime && selectedLab) ? '#000' : '#e5e7eb', 
-                                border: `2px solid ${(selectedTime && selectedLab) ? '#000' : '#e5e7eb'}`, 
-                                padding: '1rem', 
-                                borderRadius: '16px', 
-                                fontWeight: '800', 
-                                fontSize: '1rem', 
-                                cursor: (selectedTime && selectedLab) ? 'pointer' : 'not-allowed',
-                                transition: 'all 0.3s'
-                            }}
-                        >
-                            Pay at Hospital
-                        </button>
-                        <button 
                             onClick={handlePayOnline}
                             disabled={loading || !selectedTime || !selectedLab}
                             style={{ 
-                                flex: 1,
+                                width: '100%',
                                 background: (selectedTime && selectedLab) ? '#000' : '#e5e7eb', 
                                 color: '#fff', 
                                 border: 'none', 
@@ -535,7 +547,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                                 transition: 'all 0.3s'
                             }}
                         >
-                            Pay Online
+                            Pay Online & Reserve Slot
                         </button>
                     </div>
                 ) : (
@@ -561,7 +573,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
                 )}
                 
                 <p style={{ textAlign: 'center', fontSize: '0.75rem', color: '#9ca3af', marginTop: '12px' }}>
-                    {step === 1 ? 'Select payment method to proceed' : 'Step 2 of 2 • Secure payment verification'}
+                    {step === 1 ? 'Online payment is required to reserve the slot' : 'Step 2 of 2 - Secure payment verification'}
                 </p>
             </div>
         )}
@@ -571,6 +583,3 @@ export default function BookingModal({ isOpen, onClose, service }) {
     </>
   );
 }
-
-
-

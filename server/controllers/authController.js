@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { getMockUsers } = require('../mock_persistence');
 const { sendWelcomeEmail, sendSignInEmail, verifyMailTransport, sendSmtpTestEmail } = require('../services/mailService');
+const { hashValue } = require('../utils/bookingPrivacy');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'zelp_secret_key_2024';
 const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
@@ -76,6 +77,7 @@ const sanitizeUser = (user) => ({
   email: user.email,
   phone: user.phone,
   role: user.role,
+  hospital_id: user.hospital_id,
   created_at: user.created_at
 });
 
@@ -106,7 +108,8 @@ const signUserToken = (user, expiresIn = '2d') => {
       name: user.name,
       email: user.email,
       phone: user.phone,
-      role: user.role
+      role: user.role,
+      hospital_id: user.hospital_id
     },
     JWT_SECRET,
     { expiresIn }
@@ -244,7 +247,7 @@ exports.login = async (req, res) => {
 
   try {
     const result = await db.query(
-      'SELECT id, name, email, phone, password, role, created_at FROM users WHERE email = $1 LIMIT 1',
+      'SELECT id, name, email, phone, password, role, hospital_id, created_at FROM users WHERE email = $1 LIMIT 1',
       [email]
     );
 
@@ -303,7 +306,7 @@ exports.googleLogin = async (req, res) => {
     let result;
     try {
         result = await db.query(
-          'SELECT id, name, email, phone, role, created_at FROM users WHERE email = $1 LIMIT 1',
+          'SELECT id, name, email, phone, role, hospital_id, created_at FROM users WHERE email = $1 LIMIT 1',
           [cleanEmail]
         );
     } catch (dbErr) {
@@ -311,7 +314,7 @@ exports.googleLogin = async (req, res) => {
         if (dbErr.code === '42703') {
            await db.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)`);
            result = await db.query(
-             'SELECT id, name, email, phone, role, created_at FROM users WHERE email = $1 LIMIT 1',
+             'SELECT id, name, email, phone, role, hospital_id, created_at FROM users WHERE email = $1 LIMIT 1',
              [cleanEmail]
            );
         } else {
@@ -544,7 +547,7 @@ exports.adminLogin = async (req, res) => {
 
   try {
     const checkUser = await db.query(
-      "SELECT id, name, email, phone, password, role FROM users WHERE email = $1 AND role IN ('admin', 'super_admin') LIMIT 1",
+      "SELECT id, name, email, phone, password, role, hospital_id FROM users WHERE email = $1 AND role IN ('admin', 'super_admin', 'hospital_partner') LIMIT 1",
       [email]
     );
 
@@ -603,14 +606,18 @@ exports.getAllUsers = async (req, res) => {
         u.name,
         u.email,
         u.role,
-        u.created_at,
-        (SELECT COUNT(*) FROM bookings b WHERE b.user_email = u.email) AS booking_count
+        u.created_at
       FROM users u
       ORDER BY u.created_at DESC
     `;
 
     const result = await db.query(query);
-    return res.json(result.rows);
+    const counts = await db.query('SELECT user_email_hash, COUNT(*)::int AS booking_count FROM bookings GROUP BY user_email_hash');
+    const countByHash = new Map(counts.rows.map(row => [row.user_email_hash, row.booking_count]));
+    return res.json(result.rows.map(user => ({
+      ...user,
+      booking_count: countByHash.get(hashValue(user.email)) || 0,
+    })));
   } catch (error) {
     console.error('Database Error in getAllUsers:', error);
     const mockUsers = getMockUsers().map((u) => ({
@@ -656,7 +663,7 @@ exports.updateProfile = async (req, res) => {
 
   try {
     const currentResult = await db.query(
-      'SELECT id, name, email, phone, password, role, created_at FROM users WHERE id = $1 LIMIT 1',
+      'SELECT id, name, email, phone, password, role, hospital_id, created_at FROM users WHERE id = $1 LIMIT 1',
       [authUserId]
     );
 
@@ -689,7 +696,7 @@ exports.updateProfile = async (req, res) => {
       `UPDATE users
        SET name = $1, email = $2, password = $3
        WHERE id = $4
-       RETURNING id, name, email, role, created_at`,
+       RETURNING id, name, email, role, hospital_id, created_at`,
       [cleanName, cleanEmail, hashedPassword, authUserId]
     );
 
@@ -749,14 +756,14 @@ exports.getMe = async (req, res) => {
 
   // Intercept demo admin
   if (authUserId === 0) {
-      const demoAdmin = { id: 0, email: 'urvaksh@tryzelp.app', name: 'Urvaksh Admin', role: 'admin' };
+      const demoAdmin = { id: 0, email: 'urvaksh@tryzelp.app', name: 'Urvaksh Admin', role: 'admin', hospital_id: null };
       const token = signUserToken(demoAdmin, '2d');
       return res.json({ success: true, user: demoAdmin, token });
   }
 
   try {
     const result = await db.query(
-      'SELECT id, name, email, phone, role, created_at FROM users WHERE id = $1 LIMIT 1',
+      'SELECT id, name, email, phone, role, hospital_id, created_at FROM users WHERE id = $1 LIMIT 1',
       [authUserId]
     );
 

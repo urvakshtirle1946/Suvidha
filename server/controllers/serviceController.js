@@ -7,12 +7,20 @@ exports.getAllServices = async (req, res) => {
     const limit = req.query.limit ? parseInt(req.query.limit) : null;
     const category = req.query.category;
     const hospital_id = req.query.hospital_id;
+    const sort = req.query.sort || 'recommended';
+    const orderBy = {
+      lowest_price: 'COALESCE(s.discount_price, s.price) ASC NULLS LAST, h.rating DESC NULLS LAST, s.created_at DESC',
+      highest_rated: 'h.rating DESC NULLS LAST, COALESCE(s.discount_price, s.price) ASC NULLS LAST, s.created_at DESC',
+      premium: 'h.rating DESC NULLS LAST, COALESCE(s.discount_price, s.price) DESC NULLS LAST, s.created_at DESC',
+      fastest: 's.slot_capacity DESC NULLS LAST, h.rating DESC NULLS LAST, COALESCE(s.discount_price, s.price) ASC NULLS LAST',
+      recommended: 'h.rating DESC NULLS LAST, s.created_at DESC, COALESCE(s.discount_price, s.price) ASC NULLS LAST'
+    }[sort] || 'h.rating DESC NULLS LAST, s.created_at DESC, COALESCE(s.discount_price, s.price) ASC NULLS LAST';
 
     let queryText = `
-      SELECT s.*, h.name as hospital_name, h.location as hospital_location, h.image_url as hospital_image
+      SELECT s.*, h.name as hospital_name, h.location as hospital_location, h.image_url as hospital_image, h.rating as hospital_rating
       FROM services s 
       LEFT JOIN hospitals h ON s.hospital_id = h.id 
-      WHERE 1=1
+      WHERE s.is_active = TRUE
     `;
     const values = [];
     let placeholderIndex = 1;
@@ -37,11 +45,11 @@ exports.getAllServices = async (req, res) => {
       const offset = (page - 1) * limit;
 
       // Get Total Count
-      const countRes = await db.query(`SELECT COUNT(*) FROM services s WHERE 1=1 ${category ? 'AND category = $1' : ''} ${hospital_id ? (category ? 'AND hospital_id = $2' : 'AND hospital_id = $1') : ''}`, values);
+      const countRes = await db.query(`SELECT COUNT(*) FROM services s WHERE s.is_active = TRUE ${category ? 'AND category = $1' : ''} ${hospital_id ? (category ? 'AND hospital_id = $2' : 'AND hospital_id = $1') : ''}`, values);
       const total = parseInt(countRes.rows[0].count);
 
       // Get Paginated Data
-      queryText += ` ORDER BY s.created_at DESC LIMIT $${placeholderIndex++} OFFSET $${placeholderIndex++}`;
+      queryText += ` ORDER BY ${orderBy} LIMIT $${placeholderIndex++} OFFSET $${placeholderIndex++}`;
       values.push(limit, offset);
 
       const result = await db.query(queryText, values);
@@ -58,7 +66,7 @@ exports.getAllServices = async (req, res) => {
     }
 
     // Legacy / Non-paginated (but limit supported) behavior
-    queryText += ` ORDER BY s.created_at DESC`;
+    queryText += ` ORDER BY ${orderBy}`;
     if (limit) {
       queryText += ` LIMIT $${placeholderIndex++}`;
       values.push(limit);
@@ -87,20 +95,108 @@ exports.getAllServices = async (req, res) => {
   }
 };
 
+exports.getManagedServices = async (req, res) => {
+  try {
+    const isAdmin = ['admin', 'super_admin'].includes(req.user?.role);
+    const partnerHospitalId = req.user?.hospital_id;
+    if (!isAdmin && !partnerHospitalId) {
+      return res.status(403).json({ success: false, message: 'Partner account is not assigned to a hospital.' });
+    }
+
+    const result = await db.query(
+      `SELECT s.*, h.name AS hospital_name, h.location AS hospital_location
+       FROM services s
+       LEFT JOIN hospitals h ON h.id = s.hospital_id
+       WHERE ($1::boolean = TRUE OR s.hospital_id = $2)
+       ORDER BY s.created_at DESC`,
+      [isAdmin, partnerHospitalId || null]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Database Error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch managed services.' });
+  }
+};
+
 exports.createService = async (req, res) => {
-  const { hospital_id, name, category, price, discount_price, description } = req.body;
+  const { hospital_id, name, category, price, discount_price, description, is_active = true, slot_capacity = 1 } = req.body;
+  const isAdmin = ['admin', 'super_admin'].includes(req.user?.role);
+  const partnerHospitalId = req.user?.hospital_id || req.user?.hospitalId;
+
+  if (!isAdmin && (!partnerHospitalId || String(partnerHospitalId) !== String(hospital_id))) {
+    return res.status(403).json({ success: false, message: 'Partners can only create services for their own hospital.' });
+  }
+  if (!name?.trim() || !Number.isFinite(Number(price)) || Number(price) < 0 ||
+      (discount_price !== null && discount_price !== '' && (!Number.isFinite(Number(discount_price)) || Number(discount_price) < 0 || Number(discount_price) > Number(price)))) {
+    return res.status(400).json({ success: false, message: 'Provide valid non-negative prices; discounted price cannot exceed original price.' });
+  }
+
   try {
     const query = `
-      INSERT INTO services (hospital_id, name, category, price, discount_price, description)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO services (hospital_id, name, category, price, discount_price, description, is_active, slot_capacity)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *
     `;
-    const values = [hospital_id || null, name, category, price, discount_price, description];
+    const values = [hospital_id || null, name, category, price, discount_price, description, is_active, Math.max(1, parseInt(slot_capacity, 10) || 1)];
     const result = await db.query(query, values);
 
     res.status(201).json({ success: true, service: result.rows[0] });
   } catch (error) {
     console.error('Database Error:', error);
     res.status(500).json({ success: false, message: 'Failed to create service' });
+  }
+};
+
+exports.updateService = async (req, res) => {
+  const { id } = req.params;
+  const { hospital_id, name, category, price, discount_price, description, is_active = true, slot_capacity = 1 } = req.body;
+  const isAdmin = ['admin', 'super_admin'].includes(req.user?.role);
+  const partnerHospitalId = req.user?.hospital_id || req.user?.hospitalId;
+
+  if (!isAdmin && (!partnerHospitalId || String(partnerHospitalId) !== String(hospital_id))) {
+    return res.status(403).json({ success: false, message: 'Partners can only update services for their own hospital.' });
+  }
+  if (!name?.trim() || !Number.isFinite(Number(price)) || Number(price) < 0 ||
+      (discount_price !== null && discount_price !== '' && (!Number.isFinite(Number(discount_price)) || Number(discount_price) < 0 || Number(discount_price) > Number(price)))) {
+    return res.status(400).json({ success: false, message: 'Provide valid non-negative prices; discounted price cannot exceed original price.' });
+  }
+
+  try {
+    const result = await db.query(
+      `UPDATE services
+       SET hospital_id = $1,
+           name = $2,
+           category = $3,
+           price = $4,
+           discount_price = $5,
+           description = $6,
+           is_active = $7,
+           slot_capacity = $8
+       WHERE id = $9
+         AND ($10::boolean = TRUE OR hospital_id = $11)
+       RETURNING *`,
+      [
+        hospital_id || null,
+        name,
+        category,
+        price,
+        discount_price,
+        description,
+        is_active,
+        Math.max(1, parseInt(slot_capacity, 10) || 1),
+        id,
+        isAdmin,
+        partnerHospitalId || null,
+      ]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Service not found' });
+    }
+
+    res.json({ success: true, service: result.rows[0] });
+  } catch (error) {
+    console.error('Database Error:', error);
+    res.status(500).json({ success: false, message: 'Failed to update service' });
   }
 };

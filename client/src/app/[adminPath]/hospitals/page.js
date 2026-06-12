@@ -7,6 +7,7 @@ import { getApiUrl } from '@/utils/api';
 export default function HospitalManagement() {
   const apiUrl = getApiUrl();
   const [hospitals, setHospitals] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   
@@ -26,6 +27,7 @@ export default function HospitalManagement() {
   };
 
   const DEFAULT_HOSPITAL_IMAGE = 'https://images.unsplash.com/photo-1587351021759-3e566b9af955?auto=format&fit=crop&q=80&w=800';
+  const canManageHospitalNetwork = currentUser && currentUser.role !== 'hospital_partner';
 
   const [formData, setFormData] = useState(initialForm);
   const [services, setServices] = useState([{ name: '', category: '', price: '', discount_price: '' }]);
@@ -75,13 +77,28 @@ export default function HospitalManagement() {
   };
 
   useEffect(() => {
+    fetchCurrentUser();
     fetchHospitals();
   }, []);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const token = localStorage.getItem('admin_token');
+      const res = await fetch(`${apiUrl}/api/auth/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data?.user) setCurrentUser(data.user);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetchHospitals = async () => {
     try {
       const token = localStorage.getItem('admin_token');
-      const res = await fetch(`${apiUrl}/api/hospitals`, { 
+      const res = await fetch(`${apiUrl}/api/hospitals/manage`, {
         cache: 'no-store',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -419,13 +436,13 @@ export default function HospitalManagement() {
                 <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--text-primary)' }}>Hospital Partners</h1>
                 <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Manage your network of healthcare providers.</p>
             </div>
-            <button className="btn" onClick={() => { resetForm(); setShowForm(true); }} style={{ 
+            {canManageHospitalNetwork && <button className="btn" onClick={() => { resetForm(); setShowForm(true); }} style={{
                 background: 'var(--accent)', 
                 color: 'var(--accent-text)', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                 padding: '0.8rem 1.5rem', fontWeight: 'bold'
             }}>
                 <Plus size={20} style={{ marginRight: '8px' }} /> Add Hospital
-            </button>
+            </button>}
         </div>
 
         <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
@@ -468,7 +485,7 @@ export default function HospitalManagement() {
                         
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                             <button onClick={() => handleEdit(hospital)} className="btn" style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>Edit</button>
-                            <button onClick={() => handleDelete(hospital.id)} className="btn" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#f87171' }}>Remove</button>
+                            {canManageHospitalNetwork && <button onClick={() => handleDelete(hospital.id)} className="btn" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#f87171' }}>Remove</button>}
                         </div>
                     </div>
                 </div>

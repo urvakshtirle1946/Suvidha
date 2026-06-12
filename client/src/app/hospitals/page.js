@@ -2,10 +2,11 @@
 import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
-import { Search, MapPin, Activity, ArrowUpDown, X, Heart, Smile, Eye, Building2 } from 'lucide-react';
+import { Search, MapPin, Activity, X, Heart, Smile, Eye, Building2 } from 'lucide-react';
 import { useLocation } from '@/context/LocationContext';
 import { useCart } from '@/context/CartContext';
 import { apiFetch, getImageUrl } from '@/utils/api';
+import { PROVIDER_SORT_OPTIONS, getProviderRating, sortProviders } from '@/utils/providerRanking';
 
 const INITIAL_SERVICES_LIMIT = 500;
 
@@ -30,17 +31,6 @@ function HospitalsContent() {
       setSearchTerm(testFilter);
     }
   }, [testFilter]);
-
-  const getDiscountPercent = (item) => {
-    const originalPrice = Number(item?.price || 0);
-    const effectivePrice = Number(item?.discount_price || item?.price || 0);
-
-    if (!originalPrice || effectivePrice >= originalPrice) {
-      return 0;
-    }
-
-    return Math.round(((originalPrice - effectivePrice) / originalPrice) * 100);
-  };
 
   // Fetch SERVICES
   useEffect(() => {
@@ -68,7 +58,7 @@ function HospitalsContent() {
     fetchServices();
   }, [categoryFilter]);
 
-  const [sortOrder, setSortOrder] = useState(null); 
+  const [sortBy, setSortBy] = useState('recommended'); 
 
   const filteredHospitals = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
@@ -88,26 +78,8 @@ function HospitalsContent() {
 
         return matchesSearch && matchesSpecialty && matchesHospital;
       })
-      .sort((a, b) => {
-        const priceA = Number(a.discount_price || a.price || 0);
-        const priceB = Number(b.discount_price || b.price || 0);
-
-        if (!sortOrder) {
-          const discountDiff = getDiscountPercent(b) - getDiscountPercent(a);
-          if (discountDiff !== 0) return discountDiff;
-
-          if (priceA !== priceB) return priceA - priceB;
-
-          return a.name.localeCompare(b.name);
-        }
-
-        return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
-      });
-  }, [hospitals, searchTerm, specialtyFilter, hospitalFilter, sortOrder]);
-
-  const toggleSort = () => {
-      setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
-  };
+      .sort((a, b) => sortProviders([a, b], sortBy)[0] === a ? -1 : 1);
+  }, [hospitals, searchTerm, specialtyFilter, hospitalFilter, sortBy]);
 
   return (
     <main style={{ paddingBottom: '100px', background: '#fff', minHeight: '100vh', fontFamily: 'var(--font-outfit)' }}>
@@ -209,13 +181,15 @@ function HospitalsContent() {
                  </p>
              </div>
              <div className="filters-actions">
-                  <button 
-                     className="btn" 
-                     onClick={toggleSort}
-                     style={{ background: sortOrder ? '#000000' : '#fff', border: sortOrder ? '1px solid #000000' : '1px solid #e5e7eb', borderRadius: '20px', padding: '6px 16px', fontSize: '0.85rem', color: sortOrder ? '#ffffff' : '#374151' }}
+                  <select
+                     value={sortBy}
+                     onChange={(event) => setSortBy(event.target.value)}
+                     style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '20px', padding: '7px 16px', fontSize: '0.85rem', color: '#374151', outline: 'none' }}
                   >
-                     Sort By Price {sortOrder === 'asc' ? '(Low to High)' : sortOrder === 'desc' ? '(High to Low)' : ''} <ArrowUpDown size={12} style={{ marginLeft: '6px' }} />
-                 </button>
+                    {PROVIDER_SORT_OPTIONS.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                 </select>
              </div>
         </div>
 
@@ -290,6 +264,9 @@ function HospitalsContent() {
                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem', color: '#6b7280', marginBottom: '1.5rem' }}>
                          <span style={{ background: '#f3f4f6', padding: '4px 8px', borderRadius: '4px' }}>Reports in 24hrs</span>
                          <span style={{ background: '#f3f4f6', padding: '4px 8px', borderRadius: '4px' }}>E-Report Available</span>
+                         {getProviderRating(item) > 0 && (
+                           <span style={{ background: '#fef3c7', color: '#92400e', padding: '4px 8px', borderRadius: '4px' }}>Rated {getProviderRating(item).toFixed(1)}</span>
+                         )}
                      </div>
                      
                      <div style={{ borderTop: '1px dashed #e5e7eb', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -356,6 +333,4 @@ export default function Hospitals() {
     </Suspense>
   );
 }
-
-
 

@@ -376,7 +376,11 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
       </div>
 
       {/* Unified Pill Search Bar (Uber/1mg Style) */}
-      <div ref={searchBarRef} className="search-bar-pill">
+      <div 
+        ref={searchBarRef} 
+        className={`search-bar-pill-outer ${isAiMode ? 'ai-active' : ''}`}
+      >
+        <div className={`search-bar-pill ${isAiMode ? 'ai-mode-active' : ''}`}>
         
         {/* 1. Location Section (Left Side) */}
         <div className="search-bar-location">
@@ -424,7 +428,7 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
 
         {/* 2. Search Input Section (What) */}
         <div className="search-bar-input-wrap">
-          <div className={`ai-input-wrapper ${isAiMode ? 'ai-active' : ''}`}>
+          <div className="ai-input-wrapper">
             <div className="ai-input-inner">
               <input
                 type="text"
@@ -597,6 +601,7 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
           </button>
         </div>
 
+        </div>
       </div>
     </div>
   );

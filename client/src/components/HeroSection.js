@@ -377,226 +377,228 @@ export default function HeroSection({ defaultServices: preloadedServices = [], d
 
       {/* Unified Pill Search Bar (Uber/1mg Style) */}
       <div ref={searchBarRef} className={`search-bar-pill ${isAiMode ? 'ai-mode-active' : ''}`}>
-        
-        {/* 1. Location Section (Left Side) */}
-        <div className="search-bar-location">
-          <MapPin size={18} color="#000000" style={{ flexShrink: 0 }} />
-          <input
-            type="text"
-            value={where}
-            onChange={e => {
-              setWhere(e.target.value);
-              setFocusedField('location');
-            }}
-            onFocus={() => setFocusedField('location')}
-            placeholder="City or area"
-          />
-          <button 
-            type="button" 
-            onClick={detectLocation}
-            className="gps-detect-btn"
-            title="Auto-detect Location"
-          >
-            <Target size={18} className={ctxLocation === 'Detecting...' ? 'gps-spin' : ''} />
-          </button>
+        <div className="search-bar-pill-inner">
+          
+          {/* 1. Location Section (Left Side) */}
+          <div className="search-bar-location">
+            <MapPin size={18} color="#000000" style={{ flexShrink: 0 }} />
+            <input
+              type="text"
+              value={where}
+              onChange={e => {
+                setWhere(e.target.value);
+                setFocusedField('location');
+              }}
+              onFocus={() => setFocusedField('location')}
+              placeholder="City or area"
+            />
+            <button 
+              type="button" 
+              onClick={detectLocation}
+              className="gps-detect-btn"
+              title="Auto-detect Location"
+            >
+              <Target size={18} className={ctxLocation === 'Detecting...' ? 'gps-spin' : ''} />
+            </button>
 
-          {/* Location Suggestions Dropdown */}
-          {focusedField === 'location' && citySuggestions.length > 0 && (
-            <div className="pill-suggestions-dropdown">
-              {citySuggestions.map((city, idx) => (
-                <div 
-                  key={idx} 
-                  onMouseDown={() => {
-                    setWhere(city);
-                    setFocusedField(null);
-                  }} 
-                  className="pill-suggestion-item"
-                >
-                  <MapPin size={14} color="#9ca3af" />
-                  <span>{city}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+            {/* Location Suggestions Dropdown */}
+            {focusedField === 'location' && citySuggestions.length > 0 && (
+              <div className="pill-suggestions-dropdown">
+                {citySuggestions.map((city, idx) => (
+                  <div 
+                    key={idx} 
+                    onMouseDown={() => {
+                      setWhere(city);
+                      setFocusedField(null);
+                    }} 
+                    className="pill-suggestion-item"
+                  >
+                    <MapPin size={14} color="#9ca3af" />
+                    <span>{city}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-        <div className="search-bar-divider" />
+          <div className="search-bar-divider" />
 
-        {/* 2. Search Input Section (What) */}
-        <div className="search-bar-input-wrap">
-          <div className={`ai-input-wrapper ${isAiMode ? 'ai-active' : ''}`}>
-            <div className="ai-input-inner">
-              <input
-                type="text"
-                value={isAiMode ? symptomsInput : what}
-                onChange={e => {
-                  if (isAiMode) {
-                    setSymptomsInput(e.target.value);
-                  } else {
-                    setWhat(e.target.value);
-                    setFocusedField('search');
-                  }
-                }}
-                onFocus={() => {
-                  if (!isAiMode) setFocusedField('search');
-                }}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
+          {/* 2. Search Input Section (What) */}
+          <div className="search-bar-input-wrap">
+            <div className={`ai-input-wrapper ${isAiMode ? 'ai-active' : ''}`}>
+              <div className="ai-input-inner">
+                <input
+                  type="text"
+                  value={isAiMode ? symptomsInput : what}
+                  onChange={e => {
                     if (isAiMode) {
-                      handleSymptomsSubmit();
+                      setSymptomsInput(e.target.value);
                     } else {
-                      handleSearch();
-                    }
-                    setFocusedField(null);
-                  }
-                }}
-                placeholder={placeholderText}
-                className={isTransitioningPlaceholder ? 'placeholder-fade' : 'placeholder-normal'}
-              />
-              
-              {/* Clear button if text exists */}
-              {((isAiMode && symptomsInput) || (!isAiMode && what)) && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (isAiMode) {
-                      setSymptomsInput('');
-                    } else {
-                      setWhat('');
+                      setWhat(e.target.value);
+                      setFocusedField('search');
                     }
                   }}
-                  className="clear-input-btn"
-                  title="Clear input"
-                >
-                  <X size={14} />
-                </button>
-              )}
+                  onFocus={() => {
+                    if (!isAiMode) setFocusedField('search');
+                  }}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      if (isAiMode) {
+                        handleSymptomsSubmit();
+                      } else {
+                        handleSearch();
+                      }
+                      setFocusedField(null);
+                    }
+                  }}
+                  placeholder={placeholderText}
+                  className={isTransitioningPlaceholder ? 'placeholder-fade' : 'placeholder-normal'}
+                />
+                
+                {/* Clear button if text exists */}
+                {((isAiMode && symptomsInput) || (!isAiMode && what)) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (isAiMode) {
+                        setSymptomsInput('');
+                      } else {
+                        setWhat('');
+                      }
+                    }}
+                    className="clear-input-btn"
+                    title="Clear input"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
 
-              {/* Custom AI Mode capsule toggler */}
-              <div 
-                onClick={() => setIsAiMode(!isAiMode)}
-                className={`ai-mode-toggle-wrap ${isAiMode ? 'active' : ''}`}
-                title={isAiMode ? "Switch to Normal Search" : "Switch to AI Mode"}
-              >
-                <div className="ai-mode-toggle-inner">
-                  <div style={{ position: 'relative', width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Search size={14} color={isAiMode ? "#ffffff" : "#000000"} strokeWidth={2.5} />
-                    <Sparkles size={8} color={isAiMode ? "#ffffff" : "#000000"} style={{ position: 'absolute', top: '-3px', right: '-3px' }} />
+                {/* Custom AI Mode capsule toggler */}
+                <div 
+                  onClick={() => setIsAiMode(!isAiMode)}
+                  className={`ai-mode-toggle-wrap ${isAiMode ? 'active' : ''}`}
+                  title={isAiMode ? "Switch to Normal Search" : "Switch to AI Mode"}
+                >
+                  <div className="ai-mode-toggle-inner">
+                    <div style={{ position: 'relative', width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Search size={14} color={isAiMode ? "#ffffff" : "#000000"} strokeWidth={2.5} />
+                      <Sparkles size={8} color={isAiMode ? "#ffffff" : "#000000"} style={{ position: 'absolute', top: '-3px', right: '-3px' }} />
+                    </div>
+                    <span className="ai-mode-toggle-text">AI Mode</span>
                   </div>
-                  <span className="ai-mode-toggle-text">AI Mode</span>
                 </div>
               </div>
             </div>
+
+            {/* Search Suggestions Dropdown */}
+            {focusedField === 'search' && !isAiMode && whatSuggestions.length > 0 && (
+              <div className="pill-suggestions-dropdown">
+                {whatSuggestions.map((s, idx) => (
+                  <div 
+                    key={idx}
+                    onMouseDown={() => {
+                      if (s && s.isAISuggest) {
+                        setIsAiMode(true);
+                        setSymptomsInput(s.originalQuery);
+                        handleSymptomsSubmit(s.originalQuery);
+                      } else {
+                        setWhat(typeof s === 'string' ? s : s.name);
+                      }
+                      setFocusedField(null);
+                    }}
+                    className={`pill-suggestion-item ${s && s.isAISuggest ? 'ai-suggest' : ''}`}
+                  >
+                    {s && s.isAISuggest ? (
+                      <>
+                        <Sparkles size={14} />
+                        <span>{s.name}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Search size={14} color="#9ca3af" />
+                        <div>
+                          <span style={{ fontWeight: '600', color: '#111827' }}>{typeof s === 'string' ? s : s.name}</span>
+                          {s.sub && <span style={{ color: '#9ca3af', fontSize: '0.78rem', marginLeft: '8px' }}>{s.sub}</span>}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Search Suggestions Dropdown */}
-          {focusedField === 'search' && !isAiMode && whatSuggestions.length > 0 && (
-            <div className="pill-suggestions-dropdown">
-              {whatSuggestions.map((s, idx) => (
-                <div 
-                  key={idx}
-                  onMouseDown={() => {
-                    if (s && s.isAISuggest) {
-                      setIsAiMode(true);
-                      setSymptomsInput(s.originalQuery);
-                      handleSymptomsSubmit(s.originalQuery);
-                    } else {
-                      setWhat(typeof s === 'string' ? s : s.name);
-                    }
-                    setFocusedField(null);
-                  }}
-                  className={`pill-suggestion-item ${s && s.isAISuggest ? 'ai-suggest' : ''}`}
-                >
-                  {s && s.isAISuggest ? (
-                    <>
-                      <Sparkles size={14} />
-                      <span>{s.name}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Search size={14} color="#9ca3af" />
-                      <div>
-                        <span style={{ fontWeight: '600', color: '#111827' }}>{typeof s === 'string' ? s : s.name}</span>
-                        {s.sub && <span style={{ color: '#9ca3af', fontSize: '0.78rem', marginLeft: '8px' }}>{s.sub}</span>}
-                      </div>
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+          <div className="search-bar-divider" />
 
-        <div className="search-bar-divider" />
-
-        {/* 3. Hospital Section (Which) */}
-        <div className="search-bar-hospital">
-          <input
-            type="text"
-            value={which}
-            onChange={e => {
-              setWhich(e.target.value);
-              setFocusedField('hospital');
-            }}
-            onFocus={() => setFocusedField('hospital')}
-            placeholder="Hospital name"
-            onKeyDown={e => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                handleSearch();
-                setFocusedField(null);
-              }
-            }}
-          />
-
-          {/* Hospital Suggestions Dropdown */}
-          {focusedField === 'hospital' && whichSuggestions.length > 0 && (
-            <div className="pill-suggestions-dropdown">
-              {whichSuggestions.map((h, idx) => (
-                <div 
-                  key={idx}
-                  onMouseDown={() => {
-                    setWhich(typeof h === 'string' ? h : h.name);
-                    setFocusedField(null);
-                  }}
-                  className="pill-suggestion-item"
-                >
-                  <Search size={14} color="#9ca3af" />
-                  <div>
-                    <span style={{ fontWeight: '600', color: '#111827' }}>{typeof h === 'string' ? h : h.name}</span>
-                    {h.sub && <span style={{ color: '#9ca3af', fontSize: '0.78rem', marginLeft: '8px' }}>{h.sub}</span>}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* 4. AI / Search Button Section (Far Right) */}
-        <div className="search-bar-button-wrap">
-          <button
-            onClick={() => {
-              const currentQuery = isAiMode ? symptomsInput : what;
-              if (!currentQuery.trim()) {
-                setIsAiMode(!isAiMode);
-              } else {
-                if (isAiMode) {
-                  handleSymptomsSubmit();
-                } else {
+          {/* 3. Hospital Section (Which) */}
+          <div className="search-bar-hospital">
+            <input
+              type="text"
+              value={which}
+              onChange={e => {
+                setWhich(e.target.value);
+                setFocusedField('hospital');
+              }}
+              onFocus={() => setFocusedField('hospital')}
+              placeholder="Hospital name"
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
                   handleSearch();
+                  setFocusedField(null);
                 }
-              }
-            }}
-            style={{
-              transform: `scale(${btnScale})`,
-            }}
-            title={isAiMode ? "Analyze Symptoms with AI" : "Search"}
-          >
-            <Search size={18} color="#ffffff" />
-          </button>
-        </div>
+              }}
+            />
 
+            {/* Hospital Suggestions Dropdown */}
+            {focusedField === 'hospital' && whichSuggestions.length > 0 && (
+              <div className="pill-suggestions-dropdown">
+                {whichSuggestions.map((h, idx) => (
+                  <div 
+                    key={idx}
+                    onMouseDown={() => {
+                      setWhich(typeof h === 'string' ? h : h.name);
+                      setFocusedField(null);
+                    }}
+                    className="pill-suggestion-item"
+                  >
+                    <Search size={14} color="#9ca3af" />
+                    <div>
+                      <span style={{ fontWeight: '600', color: '#111827' }}>{typeof h === 'string' ? h : h.name}</span>
+                      {h.sub && <span style={{ color: '#9ca3af', fontSize: '0.78rem', marginLeft: '8px' }}>{h.sub}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 4. AI / Search Button Section (Far Right) */}
+          <div className="search-bar-button-wrap">
+            <button
+              onClick={() => {
+                const currentQuery = isAiMode ? symptomsInput : what;
+                if (!currentQuery.trim()) {
+                  setIsAiMode(!isAiMode);
+                } else {
+                  if (isAiMode) {
+                    handleSymptomsSubmit();
+                  } else {
+                    handleSearch();
+                  }
+                }
+              }}
+              style={{
+                transform: `scale(${btnScale})`,
+              }}
+              title={isAiMode ? "Analyze Symptoms with AI" : "Search"}
+            >
+              <Search size={18} color="#ffffff" />
+            </button>
+          </div>
+
+        </div>
       </div>
     </div>
   );

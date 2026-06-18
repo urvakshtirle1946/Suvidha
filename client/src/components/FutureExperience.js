@@ -32,9 +32,12 @@ const CAROUSEL_ITEMS = [
 
 export default function FutureExperience() {
   const [activeIndex, setActiveIndex] = useState(1);
-  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+  const [windowWidth, setWindowWidth] = useState(1200);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+    setWindowWidth(window.innerWidth);
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -48,7 +51,7 @@ export default function FutureExperience() {
     setActiveIndex((prev) => (prev < CAROUSEL_ITEMS.length - 1 ? prev + 1 : 0));
   };
 
-  const isMobile = windowWidth < 768;
+  const isMobile = isMounted ? windowWidth < 768 : false;
   const cardWidth = isMobile ? Math.min(320, windowWidth * 0.85) : 380;
   const translateStep = isMobile ? Math.min(270, windowWidth * 0.72) : 320;
 

@@ -72,57 +72,79 @@ export default function Chatbot() {
 
   return (
     <>
+      <style>{`
+        .chatbot-toggle-btn {
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          background: #000;
+          color: white;
+          border: 1px solid #333;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+          cursor: pointer;
+          z-index: 2000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          transform: ${isOpen ? 'rotate(90deg)' : 'rotate(0deg)'};
+        }
+        .chatbot-toggle-btn:hover {
+          transform: ${isOpen ? 'rotate(90deg) scale(1.1)' : 'scale(1.1)'};
+        }
+        .chatbot-window {
+          position: fixed;
+          bottom: 100px;
+          right: 30px;
+          width: 380px;
+          height: 500px;
+          background: white;
+          border-radius: 24px;
+          box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+          display: flex;
+          flex-direction: column;
+          z-index: 2000;
+          overflow: hidden;
+          animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes slideUp {
+          from { transform: translateY(20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        @media (max-width: 640px) {
+          .chatbot-toggle-btn {
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+          }
+          .chatbot-window {
+            bottom: 80px;
+            right: 15px;
+            left: 15px;
+            width: auto;
+            height: calc(100% - 100px);
+            max-height: 520px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+          }
+        }
+      `}</style>
+
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        style={{
-          position: 'fixed',
-          bottom: '30px',
-          right: '30px',
-          width: '60px',
-          height: '60px',
-          borderRadius: '50%',
-          background: '#000',
-          color: 'white',
-          border: '1px solid #333',
-          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
-          cursor: 'pointer',
-          zIndex: 2000,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-          transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)'
-        }}
-        onMouseEnter={e => e.currentTarget.style.transform = isOpen ? 'rotate(90deg) scale(1.1)' : 'scale(1.1)'}
-        onMouseLeave={e => e.currentTarget.style.transform = isOpen ? 'rotate(90deg)' : 'scale(1)'}
+        className="chatbot-toggle-btn"
       >
         {isOpen ? <X size={28} /> : <MessageCircle size={28} />}
       </button>
 
       {/* Chat Window */}
       {isOpen && (
-        <div style={{
-          position: 'fixed',
-          bottom: '100px',
-          right: '30px',
-          width: '380px',
-          height: '500px',
-          background: 'white',
-          borderRadius: '24px',
-          boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
-          display: 'flex',
-          flexDirection: 'column',
-          zIndex: 2000,
-          overflow: 'hidden',
-          animation: 'slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
-        }}>
-          <style>{`
-            @keyframes slideUp {
-              from { transform: translateY(20px); opacity: 0; }
-              to { transform: translateY(0); opacity: 1; }
-            }
-          `}</style>
+        <div className="chatbot-window">
 
           {/* Header */}
           <div style={{

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter, usePathname, useParams } from 'next/navigation';
 import { 
   LayoutDashboard, Building2, Calendar, Stethoscope,
-  Users, UserPlus, ShieldCheck, LogOut, Menu, User, CheckCircle, Bell, 
+  Users, UserPlus, ShieldCheck, LogOut, Menu, X, User, CheckCircle, Bell, 
   Sun, Moon, ChevronLeft, ChevronRight 
 } from 'lucide-react';
 import { Outfit } from 'next/font/google';
@@ -21,6 +21,20 @@ function AdminLayoutContent({ children }) {
   const params = useParams(); 
   
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // Handle sidebar responsiveness based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setSidebarOpen(false);
+      } else {
+        setSidebarOpen(true);
+      }
+    };
+    handleResize(); // Set initial state on mount
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -197,25 +211,235 @@ function AdminLayoutContent({ children }) {
         fontFamily: 'var(--font-outfit)',
         transition: 'background 0.3s, color 0.3s'
       }}>
+        <style>{`
+          .admin-sidebar {
+            width: 320px; 
+            background: var(--bg-sidebar); 
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            gap: 2rem;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            border-right: ${darkMode ? '1px solid var(--border)' : 'none'};
+            overflow-y: auto;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          
+          .admin-main {
+            margin-left: 320px; 
+            width: calc(100% - 320px);
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          
+          .admin-header {
+            padding: 2rem 3rem;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            background: var(--bg-primary); 
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            transition: background 0.3s;
+            border-bottom: ${darkMode ? '1px solid var(--border)' : 'none'};
+          }
+          
+          .admin-content-main {
+            padding: 0 3rem 3rem 3rem; 
+            flex: 1;
+          }
+          
+          .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            animation: fadeIn 0.2s ease-out;
+          }
+          
+          .sidebar-toggle-btn {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            color: var(--text-primary);
+            margin-right: 1rem;
+            transition: all 0.2s;
+          }
+          
+          .sidebar-close-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 1010;
+          }
+          
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          
+          @media (max-width: 1024px) {
+            .admin-sidebar {
+              width: 280px;
+              transform: ${sidebarOpen ? 'translateX(0)' : 'translateX(-100%)'};
+              box-shadow: ${sidebarOpen ? '0 0 30px rgba(0,0,0,0.5)' : 'none'};
+            }
+            .admin-main {
+              margin-left: 0;
+              width: 100%;
+            }
+            .admin-header {
+              padding: 1.5rem 1.5rem;
+            }
+            .admin-content-main {
+              padding: 0 1.5rem 1.5rem 1.5rem;
+            }
+            .sidebar-overlay.open {
+              display: block;
+            }
+            .sidebar-toggle-btn {
+              display: flex;
+            }
+            .sidebar-close-btn {
+              display: block;
+            }
+          }
+
+          /* Global responsive classes helper for subpages */
+          .admin-two-cols {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+          }
+          @media (max-width: 1024px) {
+            .admin-two-cols {
+              grid-template-columns: 1fr;
+              gap: 1.5rem;
+            }
+          }
+          
+          .admin-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+          }
+          @media (max-width: 768px) {
+            .admin-header-row {
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 1rem;
+              margin-bottom: 1.5rem;
+            }
+            .admin-header-row > button {
+              width: 100%;
+              justify-content: center;
+            }
+          }
+          
+          .admin-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+          }
+          @media (max-width: 640px) {
+            .admin-form-grid {
+              grid-template-columns: 1fr;
+              gap: 1rem;
+            }
+          }
+          
+          .admin-card-padding {
+            padding: 2.5rem;
+          }
+          @media (max-width: 640px) {
+            .admin-card-padding {
+              padding: 1.2rem;
+            }
+          }
+          
+          .admin-table-container {
+            overflow-x: auto;
+            width: 100%;
+            -webkit-overflow-scrolling: touch;
+          }
+
+          .admin-btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+          }
+          @media (max-width: 480px) {
+            .admin-btn-grid {
+              grid-template-columns: 1fr;
+            }
+          }
+
+          /* Hospital Service Row Stack on Mobile */
+          .hospital-service-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 30px;
+            gap: 10px;
+            align-items: center;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 8px;
+          }
+          @media (max-width: 640px) {
+            .hospital-service-row {
+              grid-template-columns: 1fr;
+              gap: 8px;
+              position: relative;
+              padding-right: 40px;
+            }
+            .hospital-service-row > svg {
+              position: absolute;
+              right: 10px;
+              top: 50%;
+              transform: translateY(-50%);
+            }
+          }
+        `}</style>
+        
+        {/* Sidebar Backdrop Overlay on Mobile */}
+        {!isLoginPage && (
+          <div 
+            className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} 
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
         
         {/* Sidebar - Fixed Position */}
         {!isLoginPage && (
-        <aside className="custom-scrollbar" style={{ 
-          width: '320px', 
-          background: 'var(--bg-sidebar)', 
-          color: '#fff',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '1.5rem',
-          gap: '2rem',
-          height: '100vh',
-          position: 'fixed',
-          left: 0,
-          top: 0,
-          zIndex: 50,
-          borderRight: darkMode ? '1px solid var(--border)' : 'none',
-          overflowY: 'auto'
-        }}>
+        <aside className="admin-sidebar custom-scrollbar">
+          {/* Close Button on Mobile */}
+          <button className="sidebar-close-btn" onClick={() => setSidebarOpen(false)}>
+             <X size={20} />
+          </button>
+
           {/* Logo Area */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', paddingBottom: '1rem' }}>
              <div style={{ 
@@ -291,27 +515,18 @@ function AdminLayoutContent({ children }) {
         )}
 
         {/* Main Content Area - Offset by Sidebar Width */}
-        <div style={{ 
-            marginLeft: !isLoginPage ? '320px' : '0', 
-            width: !isLoginPage ? 'calc(100% - 320px)' : '100%',
-            display: 'flex', flexDirection: 'column', minHeight: '100vh',
-            transition: 'all 0.3s ease'
-        }}>
+        <div className="admin-main">
           
           {!isLoginPage && (
-          <header style={{ 
-             padding: '2rem 3rem',
-             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-             background: 'var(--bg-primary)', 
-             position: 'sticky',
-             top: 0,
-             zIndex: 40,
-             transition: 'background 0.3s',
-             borderBottom: darkMode ? '1px solid var(--border)' : 'none'
-          }}>
-             <div>
-                 <h2 style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--text-primary)' }}>Hello, Admin!</h2>
-                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Here's what's happening in Zelp today.</p>
+          <header className="admin-header">
+             <div style={{ display: 'flex', alignItems: 'center' }}>
+                 <button className="sidebar-toggle-btn" onClick={() => setSidebarOpen(true)}>
+                     <Menu size={20} />
+                 </button>
+                 <div>
+                     <h2 style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--text-primary)', margin: 0 }}>Hello, Admin!</h2>
+                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>Here's what's happening in Zelp today.</p>
+                 </div>
              </div>
              
              <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', position: 'relative' }}>
@@ -391,20 +606,19 @@ function AdminLayoutContent({ children }) {
                      }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
                          <User size={20} color="#fff" />
                      </div>
-                 </Link>
+                  </Link>
              </div>
           </header>
           )}
           
-          <main style={{ padding: '0 3rem 3rem 3rem', flex: 1 }}>
+          <main className="admin-content-main">
              <div key={pathname} className="animate-fade-in" style={{ height: '100%' }}>
                  {children}
              </div>
           </main>
         </div>
 
-      </div>
-  );
+      </div>);
 }
 
 export default function AdminLayout({ children }) {

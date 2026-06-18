@@ -117,7 +117,7 @@ export default function AdminDashboard() {
             <WhiteStatCard title="Total Revenue" value={`₹${(totalRevenue/1000).toFixed(1)}k`} sub="Gross Income" color="var(--accent)" />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
+        <div className="admin-two-cols" style={{ marginBottom: '2rem' }}>
             
             {/* Chart Section */}
             <div style={{ background: 'var(--bg-card)', borderRadius: '20px', padding: '1.5rem', boxShadow: '0 5px 20px rgba(0,0,0,0.05)', border: '1px solid var(--border)' }}>
@@ -227,7 +227,8 @@ export default function AdminDashboard() {
                 </div>
             </div>
             
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div className="admin-table-container">
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                     <tr style={{ textAlign: 'left', color: 'var(--text-secondary)', fontSize: '0.8rem', borderBottom: '1px solid var(--border)' }}>
                         <th style={{ paddingBottom: '1rem', fontWeight: '500' }}>Name</th>
@@ -270,6 +271,7 @@ export default function AdminDashboard() {
                     )}
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
   );

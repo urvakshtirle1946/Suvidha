@@ -173,12 +173,12 @@ export default function ServiceManagement() {
   if (showForm) {
       return (
           <div className="animate-fade-in">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <div className="admin-header-row">
                   <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--text-primary)' }}>Add New Service</h1>
                   <button className="btn" onClick={() => setShowForm(false)} style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>Cancel</button>
               </div>
               
-              <div style={{ ...cardStyle, padding: '2.5rem', maxWidth: '700px', margin: '0 auto' }}>
+              <div className="admin-card-padding" style={{ ...cardStyle, maxWidth: '700px', margin: '0 auto' }}>
                   <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                       
                       <div>
@@ -200,7 +200,7 @@ export default function ServiceManagement() {
                           />
                       </div>
 
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                      <div className="admin-form-grid">
                           <div>
                               <label style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Category</label>
                               <select 
@@ -228,7 +228,7 @@ export default function ServiceManagement() {
                           </div>
                       </div>
 
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                      <div className="admin-form-grid">
                           <div>
                               <label style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Original Price (₹)</label>
                               <input 
@@ -274,7 +274,7 @@ export default function ServiceManagement() {
 
   return (
     <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
+        <div className="admin-header-row">
             <div>
                 <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--text-primary)' }}>Service Management</h1>
                 <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Configure medical services and pricing.</p>
@@ -290,7 +290,7 @@ export default function ServiceManagement() {
         </div>
 
         {/* Filters */}
-        <div style={{ ...cardStyle, padding: '1rem', display: 'flex', gap: '1rem', marginBottom: '2rem', alignItems: 'center' }}>
+        <div style={{ ...cardStyle, padding: '1rem', display: 'flex', gap: '1rem', marginBottom: '2rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <Search size={20} style={{ color: 'var(--text-secondary)' }} />
             <input 
                 type="text" placeholder="Search services..." 

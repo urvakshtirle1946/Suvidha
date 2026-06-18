@@ -252,14 +252,14 @@ export default function HospitalManagement() {
   if (showForm) {
       return (
           <div className="animate-fade-in">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <div className="admin-header-row">
                   <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--text-primary)' }}>
                       {editMode ? 'Edit Hospital' : 'Add New Hospital'}
                   </h1>
                   <button className="btn" onClick={() => { setShowForm(false); resetForm(); }} style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>Cancel</button>
               </div>
               
-              <div style={{ ...cardStyle, padding: '2.5rem', maxWidth: '700px', margin: '0 auto' }}>
+              <div className="admin-card-padding" style={{ ...cardStyle, maxWidth: '700px', margin: '0 auto' }}>
                   
                   {/* Image Preview at the Top */}
                   {(formData.image_file || formData.image_url) && (
@@ -374,7 +374,7 @@ export default function HospitalManagement() {
                           
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             {services.map((service, index) => (
-                                <div key={index} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 30px', gap: '10px', alignItems: 'center', background: 'var(--bg-primary)', border: '1px solid var(--border)', padding: '10px', borderRadius: '8px' }}>
+                                <div key={index} className="hospital-service-row">
                                     <input 
                                         type="text" placeholder="Service Name (e.g. MRI Brain)" 
                                         value={service.name} 
@@ -431,7 +431,7 @@ export default function HospitalManagement() {
 
   return (
     <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
+        <div className="admin-header-row">
             <div>
                 <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--text-primary)' }}>Hospital Partners</h1>
                 <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Manage your network of healthcare providers.</p>
@@ -445,7 +445,7 @@ export default function HospitalManagement() {
             </button>}
         </div>
 
-        <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
+        <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
             {hospitals.map((hospital) => {
                 // Determine Background Image
                 let bgImage = DEFAULT_HOSPITAL_IMAGE;
@@ -483,7 +483,7 @@ export default function HospitalManagement() {
                              {/* Badge removed */}
                         </div>
                         
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div className="admin-btn-grid">
                             <button onClick={() => handleEdit(hospital)} className="btn" style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>Edit</button>
                             {canManageHospitalNetwork && <button onClick={() => handleDelete(hospital.id)} className="btn" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#f87171' }}>Remove</button>}
                         </div>
@@ -493,14 +493,14 @@ export default function HospitalManagement() {
         </div>
 
         {loading && (
-             <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
+             <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
                  {[1, 2, 3, 4, 5, 6].map((n) => (
                      <div key={n} style={{ ...cardStyle, height: '350px', background: 'var(--bg-card)', position: 'relative', overflow: 'hidden' }}>
                          <div style={{ height: '160px', background: 'var(--border)', opacity: 0.1 }}></div>
                          <div style={{ padding: '1.5rem' }}>
                              <div style={{ height: '24px', width: '60%', background: 'var(--border)', marginBottom: '1rem', borderRadius: '4px', opacity: 0.1 }}></div>
                              <div style={{ height: '16px', width: '40%', background: 'var(--border)', marginBottom: '1.5rem', borderRadius: '4px', opacity: 0.1 }}></div>
-                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                             <div className="admin-btn-grid">
                                  <div style={{ height: '40px', background: 'var(--border)', borderRadius: '8px', opacity: 0.1 }}></div>
                                  <div style={{ height: '40px', background: 'var(--border)', borderRadius: '8px', opacity: 0.1 }}></div>
                              </div>

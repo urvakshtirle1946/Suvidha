@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
@@ -36,6 +36,23 @@ export default function Navbar() {
   const [searchResults, setSearchResults] = useState([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+
+  const navbarSearchRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (navbarSearchRef.current && !navbarSearchRef.current.contains(event.target)) {
+        setIsSearchFocused(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, []);
+
 
   const SUGGESTED_SEARCHES = [
     { name: 'Full Body Checkup', type: 'Package' },
@@ -150,82 +167,60 @@ export default function Navbar() {
             <SterlingGateKineticNavigation onOpenAuth={handleOpenAuth} onOpenPartner={() => setPartnerModalOpen(true)} />
           </div>
 
-          <div className="mobile-header-stack show-on-mobile" style={{ width: '100%', flexDirection: 'column', padding: '12px 0' }}>
-            {/* Top Row: Logo & Profile */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '8px' }}>
-                <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ 
-                        fontSize: '1.8rem', fontWeight: '800', color: '#000', 
-                        letterSpacing: '-1.5px', fontFamily: 'var(--font-outfit), sans-serif', lineHeight: 1
-                    }}>
-                        Zelp
-                    </span>
-                </Link>
+          <div className="mobile-header-stack show-on-mobile" style={{ 
+              width: '100%', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between', 
+              padding: '8px 0',
+              gap: '8px'
+          }}>
+            {/* 1. Logo */}
+            <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                <span style={{ 
+                    fontSize: '1.4rem', fontWeight: '800', color: '#000', 
+                    letterSpacing: '-1px', fontFamily: 'var(--font-outfit), sans-serif', lineHeight: 1
+                }}>
+                    Zelp
+                </span>
+            </Link>
 
-               <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-
-                  {user ? (
-                      <div 
-                        onClick={() => setSettingsModalOpen(true)}
-                        style={{ 
-                            fontSize: '1rem', color: '#ef4444', fontWeight: '600', cursor: 'pointer',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            width: '32px', height: '32px', borderRadius: '50%', border: '2px solid #ef4444'
-                        }}
-                      >
-                          {(user.name || 'User').charAt(0).toUpperCase()}
-                      </div>
-                  ) : (
-                      <button 
-                          onClick={handleOpenAuth}
-                          style={{ 
-                              background: 'transparent', border: '1px solid #000000', color: '#000000', 
-                              padding: '4px 12px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '0.85rem'
-                          }}
-                      >
-                          Sign In
-                      </button>
-                  )}
-               </div>
+            {/* 2. Location Selector (Compact) */}
+            <div 
+                onClick={() => setLocationModalOpen(true)}
+                style={{ 
+                    display: 'flex', alignItems: 'center', gap: '3px', cursor: 'pointer',
+                    flexShrink: 0, background: 'transparent'
+                }}
+            >
+                <MapPin size={14} color="#000" />
+                <span style={{ 
+                    fontWeight: 'bold', fontSize: '0.78rem', color: '#374151', 
+                    maxWidth: '60px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' 
+                }}>
+                    {location ? location.split(',')[0] : 'Location'}
+                </span>
+                <ChevronDown size={12} color="#374151" />
             </div>
 
-            {/* Middle Row: Location */}
-            <div style={{ position: 'relative', width: '100%', marginBottom: '12px' }}>
-                 <div 
-                    onClick={() => setLocationModalOpen(true)}
-                    style={{ 
-                        display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer',
-                        padding: '0.2rem 0', background: 'transparent'
-                    }}
-                 >
-                      <MapPin size={16} color="#000" />
-                      <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: '#374151', maxWidth: '80%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {location || 'Select Location'}
-                      </span>
-                      <ChevronDown size={14} color="#374151" />
-                 </div>
-            </div>
-
-            {/* Bottom Row: Search Bar */}
-            <div style={{ position: 'relative', width: '100%' }}>
+            {/* 3. Search Bar */}
+            <div ref={navbarSearchRef} style={{ position: 'relative', flex: 1, minWidth: 0 }}>
                 <div style={{
-                    display: 'flex', alignItems: 'center', gap: '8px',
-                    background: '#fff', borderRadius: '12px', padding: '10px 16px',
-                    border: isSearchFocused ? '1px solid #000' : '1px solid #e5e7eb', 
-                    boxShadow: isSearchFocused ? '0 0 0 2px rgba(0, 0, 0, 0.1)' : '0 2px 5px rgba(0,0,0,0.05)',
+                    display: 'flex', alignItems: 'center', gap: '6px',
+                    background: '#f3f4f6', borderRadius: '20px', padding: '6px 10px',
+                    border: isSearchFocused ? '1px solid #000' : '1px solid transparent', 
                     transition: 'all 0.2s'
                 }}>
-                    <Search size={18} color={isSearchFocused ? '#000' : '#000'} />
+                    <Search size={14} color="#6b7280" />
                     <input 
                         type="text" 
-                        placeholder="Search for tests, services..." 
+                        placeholder="Search..." 
                         value={searchQuery}
                         onChange={handleSearchChange}
                         onFocus={() => setIsSearchFocused(true)}
-                        onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                         style={{
                             background: 'transparent', border: 'none', outline: 'none',
-                            width: '100%', fontSize: '0.95rem', color: '#374151'
+                            width: '100%', fontSize: '0.8rem', color: '#374151'
                         }}
                     />
                 </div>
@@ -236,8 +231,8 @@ export default function Navbar() {
                     style={{
                       position: 'absolute',
                       top: 'calc(100% + 8px)',
-                      left: 0,
-                      right: 0,
+                      left: '-40px',
+                      right: '-40px',
                       background: '#ffffff',
                       borderRadius: '16px',
                       boxShadow: '0 12px 36px rgba(0, 0, 0, 0.15)',
@@ -249,27 +244,27 @@ export default function Navbar() {
                     }}
                   >
                     {isSearching ? (
-                      <div style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px', color: '#6b7280', fontSize: '0.85rem' }}>
-                        <div style={{ width: '16px', height: '16px', border: '2px solid #e5e7eb', borderTopColor: '#000', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-                        Searching services...
+                      <div style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '8px', color: '#6b7280', fontSize: '0.8rem' }}>
+                        <div style={{ width: '14px', height: '14px', border: '2px solid #e5e7eb', borderTopColor: '#000', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                        Searching...
                       </div>
                     ) : (
                       <>
                         {searchQuery.length < 2 ? (
                           <div>
-                            <div style={{ padding: '8px 16px 4px 16px', fontSize: '0.7rem', fontWeight: '800', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                              Suggested Searches
+                            <div style={{ padding: '8px 12px 4px 12px', fontSize: '0.65rem', fontWeight: '800', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                              Suggested
                             </div>
                             {SUGGESTED_SEARCHES.map((item, idx) => (
                               <div
                                 key={idx}
                                 onMouseDown={() => handleSearchSelect(item.name)}
-                                style={{ padding: '10px 16px', fontSize: '0.9rem', color: '#374151', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                                style={{ padding: '8px 12px', fontSize: '0.8rem', color: '#374151', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                                 onMouseEnter={e => e.currentTarget.style.background = '#f9fafb'}
                                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                               >
                                 <span>{item.name}</span>
-                                <span style={{ fontSize: '0.7rem', background: '#f3f4f6', color: '#6b7280', padding: '2px 6px', borderRadius: '4px' }}>{item.type}</span>
+                                <span style={{ fontSize: '0.65rem', background: '#f3f4f6', color: '#6b7280', padding: '1px 5px', borderRadius: '3px' }}>{item.type}</span>
                               </div>
                             ))}
                           </div>
@@ -277,25 +272,25 @@ export default function Navbar() {
                           <div>
                             {searchResults.length > 0 ? (
                               <div>
-                                <div style={{ padding: '8px 16px 4px 16px', fontSize: '0.7rem', fontWeight: '800', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                  Services Found
+                                <div style={{ padding: '8px 12px 4px 12px', fontSize: '0.65rem', fontWeight: '800', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                  Services
                                 </div>
                                 {searchResults.map((item, idx) => (
                                   <div
                                     key={idx}
                                     onMouseDown={() => handleSearchSelect(item.name)}
-                                    style={{ padding: '10px 16px', fontSize: '0.9rem', color: '#374151', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                                    style={{ padding: '8px 12px', fontSize: '0.8rem', color: '#374151', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                                     onMouseEnter={e => e.currentTarget.style.background = '#f9fafb'}
                                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                                   >
                                     <span>{item.name}</span>
-                                    <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>{item.category}</span>
+                                    <span style={{ fontSize: '0.65rem', color: '#9ca3af' }}>{item.category}</span>
                                   </div>
                                 ))}
                               </div>
                             ) : (
-                              <div style={{ padding: '12px 16px', fontSize: '0.85rem', color: '#6b7280' }}>
-                                No standard services found.
+                              <div style={{ padding: '10px 12px', fontSize: '0.8rem', color: '#6b7280' }}>
+                                No results.
                               </div>
                             )}
                           </div>
@@ -307,8 +302,8 @@ export default function Navbar() {
                       <div
                         onMouseDown={() => handleAISearchClick(searchQuery)}
                         style={{
-                          padding: '12px 16px',
-                          fontSize: '0.85rem',
+                          padding: '10px 12px',
+                          fontSize: '0.78rem',
                           fontWeight: '700',
                           background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(6, 182, 212, 0.08) 100%)',
                           borderTop: '1px solid #f3f4f6',
@@ -316,21 +311,40 @@ export default function Navbar() {
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '8px',
-                          transition: 'all 0.2s',
-                        }}
-                        onMouseEnter={e => {
-                          e.currentTarget.style.background = 'linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%)';
-                        }}
-                        onMouseLeave={e => {
-                          e.currentTarget.style.background = 'linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(6, 182, 212, 0.08) 100%)';
+                          gap: '6px',
                         }}
                       >
-                        <span>✨ Ask Zelp AI to suggest tests for &ldquo;{searchQuery}&rdquo;</span>
+                        <span>✨ Ask AI: &ldquo;{searchQuery}&rdquo;</span>
                       </div>
                     )}
                   </div>
                 )}
+            </div>
+
+            {/* 4. Profile Button */}
+            <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+              {user ? (
+                  <div 
+                    onClick={() => setSettingsModalOpen(true)}
+                    style={{ 
+                        fontSize: '0.9rem', color: '#ef4444', fontWeight: '600', cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        width: '30px', height: '30px', borderRadius: '50%', border: '2px solid #ef4444'
+                    }}
+                  >
+                      {(user.name || 'User').charAt(0).toUpperCase()}
+                  </div>
+              ) : (
+                  <button 
+                      onClick={handleOpenAuth}
+                      style={{ 
+                          background: 'transparent', border: '1px solid #000000', color: '#000000', 
+                          padding: '4px 10px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '0.78rem'
+                      }}
+                  >
+                      Sign In
+                  </button>
+              )}
             </div>
           </div>
 

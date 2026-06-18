@@ -458,7 +458,7 @@ body:has(.admin-root) {
 /* Mobile Media Query (< 768px) */
 @media (max-width: 768px) {
   :root {
-    --header-height: 150px;
+    --header-height: 60px;
   }
 
   body {
@@ -1619,6 +1619,34 @@ a[href*="#"] {
     left: 0 !important;
     right: 0 !important;
   }
+
+  /* Sleek rotating gradient border in AI Mode for mobile */
+  .search-bar-pill.ai-mode-active {
+    padding: 2.5px;
+    border-radius: 9999px;
+  }
+
+  .search-bar-pill.ai-mode-active .search-bar-pill-inner {
+    background: #ffffff;
+    border-radius: 9999px;
+    padding: 2px 4px;
+    gap: 0;
+  }
+
+  .search-bar-pill.ai-mode-active .search-bar-input-wrap {
+    padding: 0;
+    border: none;
+  }
+
+  .search-bar-pill.ai-mode-active .ai-input-wrapper {
+    padding: 0;
+  }
+
+  .search-bar-pill.ai-mode-active .ai-input-wrapper.ai-active .ai-input-inner {
+    background: transparent;
+    padding: 4px 8px;
+  }
 }
+
 
 

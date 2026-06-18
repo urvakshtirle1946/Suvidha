@@ -41,35 +41,6 @@ const refundUnmatchedPayment = async (paymentId, order) => {
   }
 };
 
-const sendPaymentBookingEmail = async (booking) => {
-  if (!booking?.user_email) {
-    return { success: false, skipped: true, reason: 'missing_recipient' };
-  }
-
-  let hospitalName = booking.hospital_name || null;
-  try {
-    if (!hospitalName && booking.hospital_id) {
-      const hospitalRes = await db.query('SELECT name FROM hospitals WHERE id = $1', [booking.hospital_id]);
-      hospitalName = hospitalRes.rows[0]?.name || null;
-    }
-
-    return await sendBookingConfirmation(booking.user_email, {
-      patientName: booking.patient_name,
-      serviceName: booking.service_name,
-      hospitalName,
-      date: booking.booking_date,
-      time: booking.booking_time,
-      address: booking.address,
-      price: booking.price,
-      transactionId: booking.transaction_id,
-      bookingId: booking.id,
-    });
-  } catch (error) {
-    console.error('[Booking Email] Failed to send payment confirmation:', error.message);
-    return { success: false, error: error.message };
-  }
-};
-
 const getInitialStatus = (transactionId) => {
   if (transactionId === 'PAY_AT_HOSPITAL') return 'PendingPayment';
   if (transactionId) return 'PendingVerification';

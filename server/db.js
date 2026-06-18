@@ -17,7 +17,25 @@ const pool = new Pool({
   }
 });
 
+const initDbSchema = async () => {
+  try {
+    const schemaPath = path.resolve(__dirname, 'schema.sql');
+    if (fs.existsSync(schemaPath)) {
+      const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+      console.log('[Database] Running automatic schema migration check...');
+      await pool.query(schemaSql);
+      console.log('[Database] Schema sync complete.');
+    } else {
+      console.warn('[Database] schema.sql not found, skipping schema check.');
+    }
+  } catch (err) {
+    console.error('[Database] Schema initialization failed:', err.message);
+    throw err;
+  }
+};
+
 module.exports = {
   query: (text, params) => pool.query(text, params),
-  pool: pool
+  pool: pool,
+  initDbSchema
 };

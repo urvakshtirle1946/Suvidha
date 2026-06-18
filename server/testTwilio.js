@@ -5,7 +5,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const fromPhone = process.env.TWILIO_PHONE_NUMBER;
-const toPhone = '+919329017929'; 
+const toPhone = process.env.ADMIN_PHONE_NUMBER || '+919329017929'; 
 
 console.log('--- Debug Info ---');
 console.log('SID:', accountSid ? accountSid.substring(0,6) + '...' : 'MISSING');

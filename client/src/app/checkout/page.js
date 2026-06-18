@@ -158,7 +158,7 @@ function ProviderList({ serviceName, currentHospitalId, onSelect }) {
 }
 
 export default function Checkout() {
-  const { cart, clearCart, cartTotal, cartMrpTotal, cartDiscount, updateCartItem } = useCart();
+  const { cart, clearCart, cartTotal, cartMrpTotal, cartDiscount, updateCartItem, removeFromCart } = useCart();
   const { user } = useAuth();
   const { location } = useLocation();
   const router = useRouter();
@@ -202,6 +202,7 @@ export default function Checkout() {
   const [paymentMode, setPaymentMode] = useState('online');
   const [bookingIds, setBookingIds] = useState([]);
   const [ticketData, setTicketData] = useState(null);
+  const [checkoutItems, setCheckoutItems] = useState([]); // State to cache checkout items for Razorpay orders
 
   // Coupon State
   const [couponCode, setCouponCode] = useState('');
@@ -249,6 +250,7 @@ export default function Checkout() {
         return;
     }
 
+    setCheckoutItems([...cart]); // Cache current cart items for payment reference
     processRazorpayPayment();
   };
 
@@ -264,13 +266,15 @@ export default function Checkout() {
       }
 
       try {
-          const amountToPay = cartTotal + 50; // Total + Taxes
+          const itemsToProcess = checkoutItems.length > 0 ? checkoutItems : cart;
+          const itemsTotal = itemsToProcess.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
+          const amountToPay = itemsTotal + 50; // Total + Taxes
           
           // Get order from backend
           const orderRes = await apiFetch('/api/bookings/razorpay-order', {
               method: 'POST',
               body: JSON.stringify({
-                  items: cart.map(item => ({
+                  items: itemsToProcess.map(item => ({
                       serviceId: item.serviceId || item.id,
                       quantity: item.quantity || 1
                   }))
@@ -392,51 +396,69 @@ export default function Checkout() {
             // Simulate Payment Delay for new bookings
             await new Promise(resolve => setTimeout(resolve, 1500));
 
-            // Create an array of booking promises
-            const createdIds = [];
-            const bookingPromises = cart.flatMap(item => {
-                const quantity = item.quantity || 1;
-                const requests = [];
-                for (let i = 0; i < quantity; i++) {
-                    const bookingData = {
-                        name: user?.name || 'Unknown',
-                        userPhone: 'Unknown',
-                        userEmail: user?.email,
-                        age: 0, 
-                        gender: 'Not Specified',
-                        date: selectedDate instanceof Date ? selectedDate.toISOString().split('T')[0] : selectedDate,
-                        time: selectedTime,
-                        address: location || 'New Delhi, India',
-                        serviceId: item.serviceId || item.id,
-                        transactionId: currentTxnId,
-                        original_price: item.mrp || item.price,
-                        coupon_code: appliedCoupon ? appliedCoupon.code : null,
-                        coupon_discount: appliedCoupon ? (appliedCoupon.discount / cart.length) : 0,
-                        payment_mode: currentTxnId === 'PAY_AT_HOSPITAL' ? 'Pay at Hospital' : 'Online'
+            // Create bookings concurrently per cart item
+            const itemResults = await Promise.all(
+                cart.map(async (item) => {
+                    const quantity = item.quantity || 1;
+                    const bookingRequests = [];
+                    for (let i = 0; i < quantity; i++) {
+                        const bookingData = {
+                            name: user?.name || 'Unknown',
+                            userPhone: 'Unknown',
+                            userEmail: user?.email,
+                            age: 0, 
+                            gender: 'Not Specified',
+                            date: selectedDate instanceof Date ? selectedDate.toISOString().split('T')[0] : selectedDate,
+                            time: selectedTime,
+                            address: location || 'New Delhi, India',
+                            serviceId: item.serviceId || item.id,
+                            transactionId: currentTxnId,
+                            original_price: item.mrp || item.price,
+                            coupon_code: appliedCoupon ? appliedCoupon.code : null,
+                            coupon_discount: appliedCoupon ? (appliedCoupon.discount / cart.length) : 0,
+                            payment_mode: currentTxnId === 'PAY_AT_HOSPITAL' ? 'Pay at Hospital' : 'Online'
+                        };
+                        bookingRequests.push(
+                            apiFetch(`/api/bookings`, {
+                                method: 'POST',
+                                body: JSON.stringify(bookingData)
+                            }).then(async (res) => {
+                                if (res.ok) {
+                                    const data = await res.json();
+                                    return { success: true, bookingId: data.bookingId };
+                                } else {
+                                    const payload = await res.json().catch(() => null);
+                                    return { success: false, error: payload?.message || 'Slot unavailable' };
+                                }
+                            }).catch((err) => {
+                                return { success: false, error: err.message || 'Network error' };
+                            })
+                        );
+                    }
+                    
+                    const resps = await Promise.all(bookingRequests);
+                    const successCount = resps.filter(r => r.success).length;
+                    const bookingIds = resps.filter(r => r.success).map(r => r.bookingId).filter(Boolean);
+                    const firstError = resps.find(r => !r.success)?.error || null;
+                    
+                    return {
+                        item,
+                        success: successCount === quantity,
+                        bookingIds,
+                        error: firstError
                     };
+                })
+            );
 
-                    requests.push(
-                        apiFetch(`/api/bookings`, {
-                            method: 'POST',
-                            body: JSON.stringify(bookingData)
-                        }).then(async res => {
-                            if (res.ok) {
-                                const data = await res.json();
-                                if (data.bookingId) createdIds.push(data.bookingId);
-                            }
-                            return res;
-                        })
-                    );
-                }
-                return requests;
-            });
-
-            const bookingResponses = await Promise.all(bookingPromises);
+            const createdIds = itemResults.flatMap(r => r.bookingIds);
             setBookingIds(createdIds);
 
-            const failedBooking = bookingResponses.find(res => !res.ok);
-            if (failedBooking) {
+            const failedResults = itemResults.filter(r => !r.success);
+            const hasFailures = failedResults.length > 0;
+
+            if (hasFailures) {
                 if (!isHospitalPay && razorpayResponse) {
+                    // Let backend handle refunding because we didn't confirm all items paid for
                     await apiFetch(`/api/bookings/verify-payment`, {
                         method: 'POST',
                         body: JSON.stringify({
@@ -447,8 +469,38 @@ export default function Checkout() {
                         })
                     }).catch(() => null);
                 }
-                const payload = await failedBooking.json().catch(() => null);
-                setError(payload?.message || 'One or more selected slots are no longer available. Any captured payment will be refunded.');
+
+                const failedNames = failedResults.map(r => r.item.name).join(', ');
+
+                if (isHospitalPay) {
+                    // Remove successfully booked items from cart
+                    const successfulResults = itemResults.filter(r => r.success);
+                    successfulResults.forEach(r => {
+                        removeFromCart(r.item.id);
+                    });
+
+                    const successNames = successfulResults.map(r => r.item.name).join(', ');
+                    setError(
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
+                            <div style={{ fontWeight: 'bold', color: '#991b1b' }}>Partial Booking Success</div>
+                            {successNames && (
+                                <div style={{ fontSize: '0.85rem' }}>
+                                    <span style={{ color: '#16a34a', fontWeight: 'bold' }}>✓ Booked successfully:</span> {successNames} (Pay at Hospital)
+                                </div>
+                            )}
+                            <div style={{ fontSize: '0.85rem' }}>
+                                <span style={{ color: '#dc2626', fontWeight: 'bold' }}>✗ Failed to book:</span> {failedNames} ({failedResults[0].error || 'Slot no longer available'})
+                            </div>
+                            <div style={{ fontSize: '0.8rem', color: '#475569', marginTop: '4px' }}>
+                                We have kept the failed items in your cart. Please select another slot or provider for them and try booking again.
+                            </div>
+                        </div>
+                    );
+                } else {
+                    // Online payment mode
+                    const refundMsg = `Payment refunded because slot for ${failedNames} is no longer available. Please select another slot/provider and try again.`;
+                    setError(refundMsg);
+                }
                 return;
             }
             

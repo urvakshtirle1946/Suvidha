@@ -116,6 +116,13 @@ app.get('/', (req, res) => {
 });
 
 // Start Server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+const { initDbSchema } = require('./db');
+
+initDbSchema().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}).catch((err) => {
+  console.error('Failed to initialize database schema, server not started:', err.message);
+  process.exit(1);
 });

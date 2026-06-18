@@ -552,16 +552,6 @@ exports.adminLogin = async (req, res) => {
     );
 
     if (checkUser.rows.length === 0) {
-      if (email === 'urvaksh@tryzelp.app' && password === 'zelp@1946') {
-        const demoAdmin = { id: 0, email, name: 'Urvaksh Admin', role: 'admin' };
-        const token = signUserToken(demoAdmin, '1d');
-        return res
-          .cookie('admin_token', token, cookieOptions)
-          .cookie('zelp_access_token', token, cookieOptions)
-          .status(200)
-          .json({ success: true, user: demoAdmin, token, message: 'Admin login successful.' });
-      }
-
       return res.status(401).json({
         success: false,
         message: 'Invalid admin credentials.'

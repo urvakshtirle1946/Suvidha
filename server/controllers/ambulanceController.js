@@ -22,7 +22,7 @@ exports.requestAmbulance = async (req, res) => {
 
         // Send SMS/WhatsApp to Admin or Driver (Simulated)
         const request = result.rows[0];
-        const adminPhone = '+919329017929'; // Developer/Admin phone
+        const adminPhone = process.env.ADMIN_PHONE_NUMBER || '+919329017929'; // Developer/Admin phone
 
         const message = `🚨 EMERGENCY: New Ambulance Request!
 Type: ${type}

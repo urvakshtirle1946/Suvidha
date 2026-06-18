@@ -1,6 +1,9 @@
 const db = require('../db');
 const { mockHospitals } = require('../mockData');
 
+const normalizeDuplicateKeyPart = (value) =>
+  String(value || '').trim().replace(/\s+/g, ' ').toLowerCase();
+
 exports.getAllHospitals = async (req, res) => {
   try {
     const limit = req.query.limit ? parseInt(req.query.limit, 10) : null;
@@ -106,6 +109,34 @@ exports.createHospital = async (req, res) => {
 
   try {
     await client.query('BEGIN');
+
+    const duplicateKey = [
+      'hospital',
+      normalizeDuplicateKeyPart(name),
+      normalizeDuplicateKeyPart(location)
+    ].join(':');
+
+    await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [duplicateKey]);
+
+    const existingHospital = await client.query(
+      `
+        SELECT id
+        FROM hospitals
+        WHERE lower(trim(regexp_replace(name, '[[:space:]]+', ' ', 'g'))) = $1
+          AND lower(trim(regexp_replace(location, '[[:space:]]+', ' ', 'g'))) = $2
+          AND is_active = TRUE
+        LIMIT 1
+      `,
+      [normalizeDuplicateKeyPart(name), normalizeDuplicateKeyPart(location)]
+    );
+
+    if (existingHospital.rows.length > 0) {
+      await client.query('ROLLBACK');
+      return res.status(409).json({
+        success: false,
+        message: 'This hospital already exists. Please edit the existing entry instead.'
+      });
+    }
 
     // 1. Insert Hospital
     const hospitalQuery = `

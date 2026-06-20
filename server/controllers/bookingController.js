@@ -84,7 +84,11 @@ const lockSlotAndAssertCapacity = async (client, { service, date, time }) => {
     [`slot:${service.id}:${date}:${time}`]
   );
 
-  const capacity = Math.max(1, service.slot_capacity || DEFAULT_SLOT_CAPACITY);
+  const capacity = service.slot_capacity === -1 ? -1 : Math.max(1, service.slot_capacity || DEFAULT_SLOT_CAPACITY);
+  if (capacity === -1) {
+    return; // Unlimited capacity, bypass checks
+  }
+
   const countRes = await client.query(
     `SELECT COUNT(*)::int AS booked
      FROM bookings
@@ -681,7 +685,9 @@ exports.getAvailability = async (req, res) => {
         }
 
         const configuredSlots = getConfiguredSlots();
-        const capacity = Math.max(1, serviceResult.rows[0].slot_capacity || DEFAULT_SLOT_CAPACITY);
+        const rawCapacity = serviceResult.rows[0].slot_capacity;
+        const isUnlimited = rawCapacity === -1;
+        const capacity = isUnlimited ? -1 : Math.max(1, rawCapacity || DEFAULT_SLOT_CAPACITY);
         const counts = await db.query(
             `SELECT booking_time, COUNT(*)::int AS booked
              FROM bookings
@@ -694,12 +700,15 @@ exports.getAvailability = async (req, res) => {
         res.json({
             serviceId,
             date,
-            slots: configuredSlots.map(time => ({
-                time,
-                capacity,
-                remaining: Math.max(0, capacity - (bookedByTime.get(time) || 0)),
-                available: (bookedByTime.get(time) || 0) < capacity,
-            })),
+            slots: configuredSlots.map(time => {
+                const booked = bookedByTime.get(time) || 0;
+                return {
+                    time,
+                    capacity: isUnlimited ? 'unlimited' : capacity,
+                    remaining: isUnlimited ? 999 : Math.max(0, capacity - booked),
+                    available: isUnlimited ? true : booked < capacity,
+                };
+            }),
         });
     } catch (error) {
         console.error('Availability Error:', error);

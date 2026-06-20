@@ -63,6 +63,56 @@ const servicesData = {
     ]
 };
 
+const calculateSlotCapacity = (hospitalName, serviceName, category) => {
+    // 1. Determine base capacity
+    let baseCapacity = 1;
+    const nameLower = (serviceName || '').toLowerCase();
+
+    if (category === 'Lab') {
+        baseCapacity = 10;
+    } else if (category === 'OPD') {
+        if (nameLower.includes('general physician')) {
+            baseCapacity = 6;
+        } else if (nameLower.includes('physiotherapy') || nameLower.includes('psychotherapy') || nameLower.includes('counseling')) {
+            baseCapacity = 2;
+        } else {
+            baseCapacity = 3;
+        }
+    } else if (category === 'Scan') {
+        if (nameLower.includes('mri') || nameLower.includes('pet ct') || nameLower.includes('mammography') || nameLower.includes('dexa')) {
+            baseCapacity = 1;
+        } else if (nameLower.includes('ct scan') || nameLower.includes('hrct')) {
+            baseCapacity = 2;
+        } else if (nameLower.includes('ultrasound') || nameLower.includes('color doppler') || nameLower.includes('echo')) {
+            baseCapacity = 3;
+        } else if (nameLower.includes('x-ray') || nameLower.includes('ecg') || nameLower.includes('stress test') || nameLower.includes('tmt')) {
+            baseCapacity = 5;
+        } else {
+            baseCapacity = 2;
+        }
+    } else if (category === 'Surgery') {
+        baseCapacity = 1;
+    }
+
+    // 2. Determine hospital multiplier
+    let multiplier = 1.0;
+    const hospLower = (hospitalName || '').toLowerCase();
+    if (hospLower.includes('shalby')) {
+        multiplier = 1.5;
+    } else if (hospLower.includes('gokuldas')) {
+        multiplier = 1.2;
+    } else if (hospLower.includes('synergy')) {
+        multiplier = 1.0;
+    } else if (hospLower.includes('eureka')) {
+        multiplier = 0.8;
+    } else if (hospLower.includes('city home')) {
+        multiplier = 0.6;
+    }
+
+    // 3. Return rounded capacity (at least 1)
+    return Math.max(1, Math.round(baseCapacity * multiplier));
+};
+
 const seedServices = async () => {
     try {
         console.log('Connecting to database...');
@@ -76,15 +126,25 @@ const seedServices = async () => {
             process.exit(1);
         }
 
-        console.log(`Found ${hospitals.length} hospitals. Seeding services...`);
+        console.log(`Found ${hospitals.length} hospitals.`);
 
-        // 2. Clear existing services to avoid duplicates during testing
-        await db.query('DELETE FROM services');
-        console.log('Cleared existing services.');
+        // 2. Update all existing services in the database first to ensure correct capacities
+        const existingServices = await db.query(
+            'SELECT s.id, s.name, s.category, h.name as hospital_name FROM services s LEFT JOIN hospitals h ON s.hospital_id = h.id'
+        );
+        console.log(`Updating capacities for ${existingServices.rows.length} existing services...`);
+        for (const service of existingServices.rows) {
+            const capacity = calculateSlotCapacity(service.hospital_name, service.name, service.category);
+            await db.query(
+                'UPDATE services SET slot_capacity = $1 WHERE id = $2',
+                [capacity, service.id]
+            );
+        }
+        console.log('Existing service capacities updated.');
 
-        // 3. For each hospital, add a mix of services
+        // 3. For each hospital, ensure a mix of services
         for (const hospital of hospitals) {
-            console.log(`Adding services for ${hospital.name}...`);
+            console.log(`Seeding mixed services for ${hospital.name}...`);
             
             for (const category of Object.keys(servicesData)) {
                 // Select 3 random services from each category for each hospital
@@ -92,23 +152,41 @@ const seedServices = async () => {
                 const selected = shuffled.slice(0, 3);
                 
                 for (const service of selected) {
-                    const query = `
-                        INSERT INTO services (hospital_id, name, category, price, discount_price, description)
-                        VALUES ($1, $2, $3, $4, $5, $6)
-                    `;
-                    await db.query(query, [
-                        hospital.id,
-                        service.name,
-                        category,
-                        service.price,
-                        service.discount_price,
-                        service.description
-                    ]);
+                    const capacity = calculateSlotCapacity(hospital.name, service.name, category);
+                    // Check if service already exists
+                    const existingRes = await db.query(
+                        'SELECT id FROM services WHERE hospital_id = $1 AND name = $2 AND category = $3',
+                        [hospital.id, service.name, category]
+                    );
+
+                    if (existingRes.rows.length > 0) {
+                        const serviceId = existingRes.rows[0].id;
+                        await db.query(
+                            'UPDATE services SET price = $1, discount_price = $2, description = $3, slot_capacity = $4 WHERE id = $5',
+                            [service.price, service.discount_price, service.description, capacity, serviceId]
+                        );
+                        console.log(`  Updated existing service "${service.name}" (${category}) with capacity ${capacity}`);
+                    } else {
+                        const query = `
+                            INSERT INTO services (hospital_id, name, category, price, discount_price, description, slot_capacity)
+                            VALUES ($1, $2, $3, $4, $5, $6, $7)
+                        `;
+                        await db.query(query, [
+                            hospital.id,
+                            service.name,
+                            category,
+                            service.price,
+                            service.discount_price,
+                            service.description,
+                            capacity
+                        ]);
+                        console.log(`  Added new service "${service.name}" (${category}) with capacity ${capacity}`);
+                    }
                 }
             }
         }
 
-        console.log('Successfully seeded dummy services for all categories!');
+        console.log('Successfully seeded/updated dummy services for all categories!');
         process.exit(0);
     } catch (err) {
         console.error('Error seeding services:', err);

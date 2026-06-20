@@ -174,7 +174,9 @@ exports.createService = async (req, res) => {
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *
     `;
-    const values = [hospital_id || null, name, category, price, discount_price, description, is_active, Math.max(1, parseInt(slot_capacity, 10) || 1)];
+    const parsedCapacity = parseInt(slot_capacity, 10);
+    const capacityVal = parsedCapacity === -1 ? -1 : Math.max(1, parsedCapacity || 1);
+    const values = [hospital_id || null, name, category, price, discount_price, description, is_active, capacityVal];
     const result = await client.query(query, values);
 
     await client.query('COMMIT');
@@ -224,7 +226,10 @@ exports.updateService = async (req, res) => {
         discount_price,
         description,
         is_active,
-        Math.max(1, parseInt(slot_capacity, 10) || 1),
+        (() => {
+            const parsedCapacity = parseInt(slot_capacity, 10);
+            return parsedCapacity === -1 ? -1 : Math.max(1, parsedCapacity || 1);
+        })(),
         id,
         isAdmin,
         partnerHospitalId || null,

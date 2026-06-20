@@ -190,14 +190,32 @@ export default function ServiceManagement() {
                           />
                       </div>
 
-                      <div>
-                          <label style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Bookings Per Time Slot</label>
-                          <input
-                            type="number" min="1" required
-                            value={formData.slot_capacity}
-                            onChange={e => setFormData({...formData, slot_capacity: e.target.value})}
-                            style={inputStyle}
-                          />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                          <label style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '500' }}>Bookings Per Time Slot</label>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+                              <input
+                                type="number" 
+                                min="1" 
+                                required={formData.slot_capacity !== -1}
+                                disabled={formData.slot_capacity === -1}
+                                placeholder="e.g. 5"
+                                value={formData.slot_capacity === -1 ? '' : formData.slot_capacity}
+                                onChange={e => setFormData({...formData, slot_capacity: parseInt(e.target.value, 10) || 1})}
+                                style={{ ...inputStyle, width: '150px' }}
+                              />
+                              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', color: 'var(--text-primary)', userSelect: 'none' }}>
+                                  <input 
+                                    type="checkbox"
+                                    checked={formData.slot_capacity === -1}
+                                    onChange={e => setFormData({
+                                        ...formData, 
+                                        slot_capacity: e.target.checked ? -1 : 1
+                                    })}
+                                    style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+                                  />
+                                  <span>Unlimited Capacity</span>
+                              </label>
+                          </div>
                       </div>
 
                       <div className="admin-form-grid">
@@ -349,7 +367,9 @@ export default function ServiceManagement() {
                                     </div>
                                 </td>
                                 <td style={{ padding: '1.2rem 1.5rem' }}>
-                                    <div style={{ marginBottom: '6px', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{service.slot_capacity || 1} per slot</div>
+                                    <div style={{ marginBottom: '6px', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
+                                        {service.slot_capacity === -1 ? 'Unlimited' : `${service.slot_capacity || 1} per slot`}
+                                    </div>
                                     <button onClick={() => toggleService(service)} className="btn-link" style={{ color: service.is_active ? '#f87171' : '#22c55e', fontSize: '0.9rem', fontWeight: '500', background: 'transparent', border: 'none', cursor: 'pointer' }}>
                                       {service.is_active ? 'Pause' : 'Activate'}
                                     </button>

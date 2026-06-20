@@ -179,15 +179,36 @@ export default function Checkout() {
       if (!selectedDate || cart.length === 0) return;
       const date = selectedDate instanceof Date ? selectedDate.toISOString().split('T')[0] : selectedDate;
       const serviceIds = [...new Set(cart.map(item => item.serviceId || item.id).filter(Boolean))];
+      
+      const serviceQuantities = {};
+      cart.forEach(item => {
+        const sId = item.serviceId || item.id;
+        if (sId) {
+          serviceQuantities[sId] = (serviceQuantities[sId] || 0) + (item.quantity || 1);
+        }
+      });
+
       try {
         const responses = await Promise.all(serviceIds.map(id =>
           apiFetch(`/api/bookings/availability?serviceId=${id}&date=${date}`)
         ));
         const payloads = await Promise.all(responses.filter(res => res.ok).map(res => res.json()));
         if (payloads.length !== serviceIds.length) return;
+        
         const common = payloads[0]?.slots
-          ?.filter(slot => slot.available && payloads.every(payload => payload.slots.some(other => other.time === slot.time && other.available)))
+          ?.filter(slot => {
+            const firstServiceId = serviceIds[0];
+            const firstQty = serviceQuantities[firstServiceId] || 1;
+            if ((slot.remaining ?? 0) < firstQty) return false;
+            
+            return payloads.every((payload, idx) => {
+              const serviceId = serviceIds[idx];
+              const qty = serviceQuantities[serviceId] || 1;
+              return payload.slots.some(other => other.time === slot.time && (other.remaining ?? 0) >= qty);
+            });
+          })
           .map(slot => slot.time) || [];
+          
         setAvailableTimeSlots(common);
         setSelectedTime(current => {
           if (current && common.includes(current)) return current;

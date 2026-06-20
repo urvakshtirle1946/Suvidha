@@ -1,5 +1,6 @@
 const db = require('../db');
 const { mockServices } = require('../mockData');
+const pdfParse = require('pdf-parse');
 
 const normalizeDuplicateKeyPart = (value) =>
   String(value || '').trim().replace(/\s+/g, ' ').toLowerCase();
@@ -244,5 +245,300 @@ exports.updateService = async (req, res) => {
   } catch (error) {
     console.error('Database Error:', error);
     res.status(500).json({ success: false, message: 'Failed to update service' });
+  }
+};
+
+exports.importServicesFromDocument = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: 'Please upload a PDF or image file.' });
+  }
+
+  const nvidiaKey = process.env.NVIDIA_API_KEY;
+  if (!nvidiaKey) {
+    return res.status(500).json({ success: false, message: 'NVIDIA API Key is not configured.' });
+  }
+
+  const mimetype = req.file.mimetype;
+  const isPDF = mimetype === 'application/pdf';
+  const isImage = mimetype.startsWith('image/');
+
+  if (!isPDF && !isImage) {
+    return res.status(400).json({ success: false, message: 'Unsupported file type. Only PDF and images are allowed.' });
+  }
+
+  try {
+    let aiResponseText = '';
+
+    if (isPDF) {
+      console.log('[AI Import] Parsing PDF text...');
+      const parsedPdf = await pdfParse(req.file.buffer);
+      const textContent = parsedPdf.text || '';
+      
+      if (!textContent.trim()) {
+        return res.status(400).json({ success: false, message: 'Uploaded PDF has no extractable text.' });
+      }
+
+      console.log('[AI Import] Sending PDF text to NVIDIA NIM...');
+      const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${nvidiaKey}`,
+        },
+        body: JSON.stringify({
+          model: 'meta/llama-3.1-8b-instruct',
+          messages: [
+            {
+              role: 'system',
+              content: `You are an expert data parsing assistant. Your task is to analyze the raw text extracted from a medical/diagnostic document and extract a list of services, tests, prices, and optionally the hospital name.
+              
+              You MUST output ONLY a valid JSON array of objects representing the services. Do not include any extra text, code blocks, or explanations. 
+
+              For each service, extract or infer the following keys:
+              - "name": (string, e.g., "MRI Brain (Plain)", "Complete Blood Count (CBC)")
+              - "category": (string, MUST be exactly one of 'Lab', 'Scan', 'OPD', 'Surgery')
+              - "price": (number, the standard retail price of the test)
+              - "discount_price": (number or null, the discounted price of the test)
+              - "description": (string, a brief medical description of what the test does)
+              - "slot_capacity": (integer, typical number of bookings allowed per slot, use -1 for unlimited, or default to a reasonable value: e.g. 10 for Lab, 1 for MRI/Surgery, 2 for CT, 3 for Ultrasound, 5 for X-Ray, 3 for OPD)
+              - "hospital_name": (string or null, name of the hospital or diagnostic center providing it)
+              
+              Example JSON output structure:
+              [
+                {
+                  "name": "Complete Blood Count (CBC)",
+                  "category": "Lab",
+                  "price": 450,
+                  "discount_price": 299,
+                  "description": "Checks overall health and detects anemia/infection.",
+                  "slot_capacity": 10,
+                  "hospital_name": "Gokuldas Hospital"
+                }
+              ]`
+            },
+            {
+              role: 'user',
+              content: `Extract services from this text:\n\n${textContent}`
+            }
+          ],
+          temperature: 0.1,
+          max_tokens: 2048,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`NVIDIA NIM text API returned error ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      aiResponseText = responseData.choices[0].message.content.trim();
+    } else {
+      // It's an image
+      console.log('[AI Import] Processing image with NVIDIA NIM Vision...');
+      const base64Data = req.file.buffer.toString('base64');
+      const imageUrl = `data:${mimetype};base64,${base64Data}`;
+
+      const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${nvidiaKey}`,
+        },
+        body: JSON.stringify({
+          model: 'meta/llama-3.2-11b-vision-instruct',
+          messages: [
+            {
+              role: 'user',
+              content: [
+                {
+                  type: 'text',
+                  text: `Analyze this image (which is a list, brochure, or bill of medical diagnostic services) and extract a list of services, tests, prices, and optionally the hospital name.
+                  
+                  You MUST output ONLY a valid JSON array of objects representing the services. Do not include any extra text, code blocks, or explanations. 
+
+                  For each service, extract or infer the following keys:
+                  - "name": (string, e.g., "MRI Brain (Plain)", "Complete Blood Count (CBC)")
+                  - "category": (string, MUST be exactly one of 'Lab', 'Scan', 'OPD', 'Surgery')
+                  - "price": (number, the standard retail price of the test)
+                  - "discount_price": (number or null, the discounted price of the test)
+                  - "description": (string, a brief medical description of what the test does)
+                  - "slot_capacity": (integer, typical number of bookings allowed per slot, use -1 for unlimited, or default to a reasonable value: e.g. 10 for Lab, 1 for MRI/Surgery, 2 for CT, 3 for Ultrasound, 5 for X-Ray, 3 for OPD)
+                  - "hospital_name": (string or null, name of the hospital or diagnostic center providing it)
+                  
+                  Format strictly as a JSON array of objects.`
+                },
+                {
+                  type: 'image_url',
+                  image_url: {
+                    url: imageUrl
+                  }
+                }
+              ]
+            }
+          ],
+          temperature: 0.1,
+          max_tokens: 2048,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`NVIDIA NIM vision API returned error ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      aiResponseText = responseData.choices[0].message.content.trim();
+    }
+
+    console.log('[AI Import] Raw NVIDIA response:', aiResponseText);
+
+    // Clean up markdown code block wrapper if present
+    let cleanJSONText = aiResponseText.trim();
+    if (cleanJSONText.startsWith('```json')) {
+      cleanJSONText = cleanJSONText.substring(7);
+    } else if (cleanJSONText.startsWith('```')) {
+      cleanJSONText = cleanJSONText.substring(3);
+    }
+    if (cleanJSONText.endsWith('```')) {
+      cleanJSONText = cleanJSONText.substring(0, cleanJSONText.length - 3);
+    }
+    cleanJSONText = cleanJSONText.trim();
+
+    let extractedServices = [];
+    try {
+      extractedServices = JSON.parse(cleanJSONText);
+    } catch (parseError) {
+      console.error('[AI Import] JSON parse direct failure, trying regex extraction:', parseError);
+      const match = cleanJSONText.match(/\[\s*\{.*\}\s*\]/s);
+      if (match) {
+        extractedServices = JSON.parse(match[0]);
+      } else {
+        throw new Error('Failed to parse a valid JSON array from AI output.');
+      }
+    }
+
+    if (!Array.isArray(extractedServices)) {
+      throw new Error('AI output parsed, but was not a JSON array.');
+    }
+
+    console.log(`[AI Import] Extracted ${extractedServices.length} services. Synchronizing with DB...`);
+
+    // Fetch all hospitals to match
+    const hospitalsRes = await db.query('SELECT id, name FROM hospitals');
+    const dbHospitals = hospitalsRes.rows;
+
+    const isAdmin = ['admin', 'super_admin'].includes(req.user?.role);
+    const partnerHospitalId = req.user?.hospital_id || req.user?.hospitalId;
+
+    let addedCount = 0;
+    let updatedCount = 0;
+    const processedServices = [];
+
+    const client = await db.pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      for (const item of extractedServices) {
+        // 1. Determine hospital_id
+        let resolvedHospitalId = null;
+        if (!isAdmin) {
+          // Partners can ONLY import services for their own hospital
+          resolvedHospitalId = partnerHospitalId;
+        } else if (item.hospital_name) {
+          // Admins can import for any hospital mentioned in the document
+          const matchedHosp = dbHospitals.find(h => 
+            h.name.toLowerCase().trim() === item.hospital_name.toLowerCase().trim() ||
+            h.name.toLowerCase().replace(/\s+/g, '').includes(item.hospital_name.toLowerCase().replace(/\s+/g, '')) ||
+            item.hospital_name.toLowerCase().replace(/\s+/g, '').includes(h.name.toLowerCase().replace(/\s+/g, ''))
+          );
+          if (matchedHosp) {
+            resolvedHospitalId = matchedHosp.id;
+          }
+        }
+
+        // If still no hospital resolved, default to partner's hospital, or omit
+        if (!resolvedHospitalId && partnerHospitalId) {
+          resolvedHospitalId = partnerHospitalId;
+        }
+
+        const name = String(item.name || '').trim();
+        const category = String(item.category || 'Lab').trim();
+        const price = Number(item.price) || 0;
+        const discountPrice = item.discount_price !== undefined ? Number(item.discount_price) : null;
+        const description = String(item.description || '').trim();
+        const rawCapacity = item.slot_capacity !== undefined ? parseInt(item.slot_capacity, 10) : 1;
+        const slotCapacity = rawCapacity === -1 ? -1 : Math.max(1, rawCapacity || 1);
+
+        if (!name || price <= 0) {
+          console.log(`[AI Import] Skipping invalid service row: ${JSON.stringify(item)}`);
+          continue;
+        }
+
+        // Acquire lock for concurrency safety
+        const normalizedHospitalId = resolvedHospitalId || 'global';
+        const duplicateKey = [
+          'service',
+          normalizedHospitalId,
+          normalizeDuplicateKeyPart(name),
+          normalizeDuplicateKeyPart(category)
+        ].join(':');
+
+        await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [duplicateKey]);
+
+        // Check if exists
+        const existingRes = await client.query(
+          `
+            SELECT id
+            FROM services
+            WHERE COALESCE(hospital_id::text, 'global') = $1
+              AND lower(trim(regexp_replace(name, '[[:space:]]+', ' ', 'g'))) = $2
+              AND lower(trim(regexp_replace(category, '[[:space:]]+', ' ', 'g'))) = $3
+              AND is_active = TRUE
+            LIMIT 1
+          `,
+          [String(normalizedHospitalId), normalizeDuplicateKeyPart(name), normalizeDuplicateKeyPart(category)]
+        );
+
+        if (existingRes.rows.length > 0) {
+          // Update
+          const serviceId = existingRes.rows[0].id;
+          const updateQuery = `
+            UPDATE services 
+            SET price = $1, discount_price = $2, description = $3, slot_capacity = $4, updated_at = CURRENT_TIMESTAMP
+            WHERE id = $5
+            RETURNING *
+          `;
+          const updated = await client.query(updateQuery, [price, discountPrice, description, slotCapacity, serviceId]);
+          updatedCount++;
+          processedServices.push(updated.rows[0]);
+        } else {
+          // Insert
+          const insertQuery = `
+            INSERT INTO services (hospital_id, name, category, price, discount_price, description, slot_capacity)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            RETURNING *
+          `;
+          const inserted = await client.query(insertQuery, [resolvedHospitalId, name, category, price, discountPrice, description, slotCapacity]);
+          addedCount++;
+          processedServices.push(inserted.rows[0]);
+        }
+      }
+
+      await client.query('COMMIT');
+      res.status(200).json({
+        success: true,
+        message: `Successfully imported services: ${addedCount} added, ${updatedCount} updated.`,
+        addedCount,
+        updatedCount,
+        services: processedServices
+      });
+    } catch (dbErr) {
+      await client.query('ROLLBACK');
+      throw dbErr;
+    } finally {
+      client.release();
+    }
+  } catch (error) {
+    console.error('[AI Import] Error importing services:', error);
+    res.status(500).json({ success: false, message: error.message || 'Failed to import services from document.' });
   }
 };

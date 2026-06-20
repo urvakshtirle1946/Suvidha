@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Stethoscope, Plus, Tag, Search, Filter, Building2 } from 'lucide-react';
+import { Stethoscope, Plus, Tag, Search, Filter, Building2, Upload, FileText, Loader2 } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
 import { getApiUrl } from '@/utils/api';
 
@@ -10,6 +10,108 @@ export default function ServiceManagement() {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [showImport, setShowImport] = useState(false);
+  const [importFile, setImportFile] = useState(null);
+  const [importLoading, setImportLoading] = useState(false);
+  const [importProgress, setImportProgress] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const id = 'spin-animation-style';
+      if (!document.getElementById(id)) {
+        const style = document.createElement('style');
+        style.id = id;
+        style.innerHTML = `
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+          .animate-spin {
+            animation: spin 1.2s linear infinite;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
+  }, []);
+
+  const handleDragOver = (e) => {
+      e.preventDefault();
+      setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+      setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+      e.preventDefault();
+      setIsDragging(false);
+      const files = e.dataTransfer.files;
+      if (files && files.length > 0) {
+          const file = files[0];
+          const isValidType = file.type === 'application/pdf' || file.type.startsWith('image/');
+          if (!isValidType) {
+              addToast('Only PDF and image files are supported.', 'error');
+              return;
+          }
+          if (file.size > 10 * 1024 * 1024) {
+              addToast('File size must be less than 10MB.', 'error');
+              return;
+          }
+          setImportFile(file);
+      }
+  };
+
+  const handleFileChange = (e) => {
+      const files = e.target.files;
+      if (files && files.length > 0) {
+          const file = files[0];
+          if (file.size > 10 * 1024 * 1024) {
+              addToast('File size must be less than 10MB.', 'error');
+              return;
+          }
+          setImportFile(file);
+      }
+  };
+
+  const handleImportSubmit = async () => {
+      if (!importFile) return;
+      setImportLoading(true);
+      setImportProgress('NVIDIA Llama AI is parsing details and structuring services...');
+
+      try {
+          const apiUrl = getApiUrl();
+          const token = localStorage.getItem('admin_token');
+          const fd = new FormData();
+          fd.append('file', importFile);
+
+          const res = await fetch(`${apiUrl}/api/services/upload-import`, {
+              method: 'POST',
+              headers: {
+                  'Authorization': `Bearer ${token}`
+              },
+              body: fd
+          });
+
+          const data = await res.json();
+          if (res.ok && data.success) {
+              addToast(data.message || 'Import successful!', 'success');
+              setShowImport(false);
+              setImportFile(null);
+              fetchServices();
+          } else {
+              addToast(data.message || 'Import failed. Please verify document formatting.', 'error');
+          }
+      } catch (err) {
+          console.error(err);
+          addToast('Network error during service import.', 'error');
+      } finally {
+          setImportLoading(false);
+          setImportProgress('');
+      }
+  };
 
   const { addToast } = useToast();
   const isPartner = currentUser?.role === 'hospital_partner';
@@ -290,6 +392,95 @@ export default function ServiceManagement() {
       );
   }
 
+  if (showImport) {
+      return (
+          <div className="animate-fade-in">
+              <div className="admin-header-row">
+                  <div>
+                      <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--text-primary)' }}>AI Service Importer</h1>
+                      <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Upload service lists in PDF or Image format, parsed by NVIDIA Integrated AI.</p>
+                  </div>
+                  <button className="btn" onClick={() => {
+                      setShowImport(false);
+                      setImportFile(null);
+                      setImportProgress('');
+                  }} style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>Cancel</button>
+              </div>
+              
+              <div className="admin-card-padding" style={{ ...cardStyle, maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
+                  {!importLoading ? (
+                      <div 
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        style={{
+                          border: isDragging ? '2px dashed var(--accent)' : '2px dashed var(--border)',
+                          borderRadius: '16px',
+                          padding: '3rem 2rem',
+                          background: isDragging ? 'var(--bg-primary)' : 'transparent',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: '1rem'
+                        }}
+                        onClick={() => document.getElementById('file-upload-input').click()}
+                      >
+                          <input 
+                            id="file-upload-input"
+                            type="file" 
+                            accept=".pdf,image/*"
+                            style={{ display: 'none' }}
+                            onChange={handleFileChange}
+                          />
+                          <Upload size={48} style={{ color: 'var(--accent)', opacity: 0.8 }} />
+                          <div>
+                              <h3 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '0.5rem' }}>
+                                  {importFile ? importFile.name : 'Drag & Drop your document here'}
+                              </h3>
+                              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                  Supports PDF, PNG, JPG, or WEBP up to 10MB
+                              </p>
+                          </div>
+                          {importFile && (
+                              <button 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleImportSubmit();
+                                }} 
+                                className="btn" 
+                                style={{
+                                    background: 'var(--accent)',
+                                    color: 'var(--accent-text)',
+                                    padding: '0.8rem 2rem',
+                                    borderRadius: '10px',
+                                    fontWeight: '600',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    marginTop: '1rem'
+                                }}
+                              >
+                                  Process & Import with NVIDIA AI
+                              </button>
+                          )}
+                      </div>
+                  ) : (
+                      <div style={{ padding: '3rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
+                          <Loader2 size={48} className="animate-spin" style={{ color: 'var(--accent)' }} />
+                          <div>
+                              <h3 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '0.5rem' }}>Processing Document</h3>
+                              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+                                  {importProgress || 'NVIDIA Llama AI is parsing details and structuring services...'}
+                              </p>
+                          </div>
+                      </div>
+                  )}
+              </div>
+          </div>
+      );
+  }
+
   return (
     <div>
         <div className="admin-header-row">
@@ -297,14 +488,25 @@ export default function ServiceManagement() {
                 <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--text-primary)' }}>Service Management</h1>
                 <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Configure medical services and pricing.</p>
             </div>
-            <button className="btn" onClick={() => setShowForm(true)} style={{ 
-                background: 'var(--accent)', 
-                color: 'var(--accent-text)', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                padding: '0.8rem 1.5rem', cursor: 'pointer', borderRadius: '12px',
-                display: 'flex', alignItems: 'center', fontWeight: '600'
-            }}>
-                <Plus size={20} style={{ marginRight: '8px' }} /> Add Service
-            </button>
+            <div style={{ display: 'flex', gap: '10px' }}>
+                <button className="btn" onClick={() => setShowImport(true)} style={{ 
+                    background: 'var(--bg-card)', 
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-primary)', boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                    padding: '0.8rem 1.5rem', cursor: 'pointer', borderRadius: '12px',
+                    display: 'flex', alignItems: 'center', fontWeight: '600'
+                }}>
+                    <Upload size={20} style={{ marginRight: '8px', color: 'var(--accent)' }} /> AI Import
+                </button>
+                <button className="btn" onClick={() => setShowForm(true)} style={{ 
+                    background: 'var(--accent)', 
+                    color: 'var(--accent-text)', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    padding: '0.8rem 1.5rem', cursor: 'pointer', borderRadius: '12px',
+                    display: 'flex', alignItems: 'center', fontWeight: '600'
+                }}>
+                    <Plus size={20} style={{ marginRight: '8px' }} /> Add Service
+                </button>
+            </div>
         </div>
 
         {/* Filters */}

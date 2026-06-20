@@ -1,13 +1,14 @@
 const nodemailer = require('nodemailer');
 
 const isResendConfigured = Boolean(process.env.RESEND_API_KEY);
+const useResend = isResendConfigured && (!process.env.SMTP_HOST || process.env.SMTP_HOST === 'smtp.gmail.com');
 
-const SMTP_HOST = process.env.SMTP_HOST || (isResendConfigured ? 'smtp.resend.com' : 'smtp.gmail.com');
-const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
-const SMTP_SECURE = String(process.env.SMTP_SECURE || 'true').toLowerCase() !== 'false';
-const SMTP_USER = process.env.SMTP_USER || process.env.GMAIL_USER || (isResendConfigured ? 'resend' : undefined);
-const SMTP_PASS = (process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || process.env.RESEND_API_KEY || '').replace(/\s+/g, '');
-const FROM_EMAIL = process.env.SMTP_FROM || (isResendConfigured ? 'onboarding@resend.dev' : SMTP_USER);
+const SMTP_HOST = useResend ? 'smtp.resend.com' : (process.env.SMTP_HOST || 'smtp.gmail.com');
+const SMTP_PORT = useResend ? 465 : Number(process.env.SMTP_PORT || 465);
+const SMTP_SECURE = useResend ? true : (String(process.env.SMTP_SECURE || 'true').toLowerCase() !== 'false');
+const SMTP_USER = useResend ? 'resend' : (process.env.SMTP_USER || process.env.GMAIL_USER);
+const SMTP_PASS = (useResend ? process.env.RESEND_API_KEY : (process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || '')).replace(/\s+/g, '');
+const FROM_EMAIL = process.env.SMTP_FROM || (useResend ? 'onboarding@resend.dev' : SMTP_USER);
 const FROM_NAME = process.env.SMTP_FROM_NAME || 'Zelp';
 const SMTP_CONNECTION_TIMEOUT = Number(process.env.SMTP_CONNECTION_TIMEOUT || 10000);
 const SMTP_GREETING_TIMEOUT = Number(process.env.SMTP_GREETING_TIMEOUT || 10000);

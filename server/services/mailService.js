@@ -1,11 +1,13 @@
 const nodemailer = require('nodemailer');
 
-const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
+const isResendConfigured = Boolean(process.env.RESEND_API_KEY);
+
+const SMTP_HOST = process.env.SMTP_HOST || (isResendConfigured ? 'smtp.resend.com' : 'smtp.gmail.com');
 const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
 const SMTP_SECURE = String(process.env.SMTP_SECURE || 'true').toLowerCase() !== 'false';
-const SMTP_USER = process.env.SMTP_USER || process.env.GMAIL_USER;
-const SMTP_PASS = (process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || '').replace(/\s+/g, '');
-const FROM_EMAIL = process.env.SMTP_FROM || SMTP_USER;
+const SMTP_USER = process.env.SMTP_USER || process.env.GMAIL_USER || (isResendConfigured ? 'resend' : undefined);
+const SMTP_PASS = (process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || process.env.RESEND_API_KEY || '').replace(/\s+/g, '');
+const FROM_EMAIL = process.env.SMTP_FROM || (isResendConfigured ? 'onboarding@resend.dev' : SMTP_USER);
 const FROM_NAME = process.env.SMTP_FROM_NAME || 'Zelp';
 const SMTP_CONNECTION_TIMEOUT = Number(process.env.SMTP_CONNECTION_TIMEOUT || 10000);
 const SMTP_GREETING_TIMEOUT = Number(process.env.SMTP_GREETING_TIMEOUT || 10000);
@@ -195,9 +197,10 @@ exports.verifyMailTransport = async () => {
 
 exports.sendSmtpTestEmail = async () => {
   const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+  const to = SMTP_USER && SMTP_USER.includes('@') ? SMTP_USER : FROM_EMAIL;
 
   return sendMail({
-    to: SMTP_USER,
+    to,
     subject: 'Zelp SMTP test email',
     text: `Zelp SMTP is working from Render/local server.\n\nTime: ${timestamp} IST`,
     html: `

@@ -43,7 +43,7 @@ const validateProfilePayload = ({ name, email, password, phone }, { requirePassw
 
   const cleanName = normalizeName(name);
   const cleanEmail = normalizeEmail(email);
-  const cleanPhone = String(phone || '').trim();
+  const cleanPhone = String(phone || '').replace(/[\s-()]/g, '');
 
   if (!cleanName) errors.push('Username is required.');
   if (cleanName.length < 2) errors.push('Username must be at least 2 characters.');
@@ -57,10 +57,11 @@ const validateProfilePayload = ({ name, email, password, phone }, { requirePassw
     errors.push('Password must be between 8 and 72 characters.');
   }
 
+  const digitsOnly = cleanPhone.replace(/\D/g, '');
   if (requirePhone && !cleanPhone) {
     errors.push('Mobile Number is required.');
-  } else if (cleanPhone && cleanPhone.length < 7) {
-    errors.push('Please enter a valid Mobile Number.');
+  } else if (cleanPhone && (digitsOnly.length < 10 || digitsOnly.length > 15)) {
+    errors.push('Please enter a valid 10-digit Mobile Number.');
   }
 
   return {
@@ -332,11 +333,22 @@ exports.googleLogin = async (req, res) => {
          tempUser: { name: cleanName, email: cleanEmail }
       });
     } else {
+      const user = result.rows[0];
+      if (!user.phone) {
+         // User exists but has no phone number. Force profile completion with phone number.
+         return res.status(200).json({
+            success: true,
+            requires_phone: true,
+            message: 'Please provide your mobile number to complete registration.',
+            tempUser: { name: user.name, email: user.email }
+         });
+      }
+      
       // User exists, login normally
-      sendSignInEmail(result.rows[0].email, result.rows[0].name).catch((err) =>
+      sendSignInEmail(user.email, user.name).catch((err) =>
         console.error('[Sign-in Email] Failed to send (Google login):', err.message)
       );
-      return issueUserSession(req, res, result.rows[0], 200, 'Google login successful.');
+      return issueUserSession(req, res, user, 200, 'Google login successful.');
     }
   } catch (error) {
     console.error('Google Login Error:', error);
@@ -365,41 +377,66 @@ exports.completeGoogleRegistration = async (req, res) => {
   }
 
   try {
-    // Double check they don't already exist to prevent race conditions
-    const existingUser = await db.query('SELECT id FROM users WHERE email = $1', [cleanEmail]);
-    if (existingUser.rows.length > 0) {
-      return res.status(409).json({
-        success: false,
-        message: 'An account with this email already exists.'
-      });
-    }
+    // Check if user already exists
+    const existingUserResult = await db.query(
+      'SELECT id, name, email, phone, role, hospital_id, created_at FROM users WHERE email = $1 LIMIT 1',
+      [cleanEmail]
+    );
 
+    // Validate phone uniqueness
     if (cleanPhone) {
       let existingPhone;
       try {
-        existingPhone = await db.query('SELECT id FROM users WHERE phone = $1', [cleanPhone]);
+        existingPhone = await db.query('SELECT id FROM users WHERE phone = $1 LIMIT 1', [cleanPhone]);
       } catch (err) {
         if (err.code !== '42703') throw err; // Ignore if column doesn't exist yet
       }
 
       if (existingPhone && existingPhone.rows.length > 0) {
-        return res.status(409).json({
-          success: false,
-          message: 'This mobile number is already in use by another account. Please use a different one.'
-        });
+        const phoneOwnerId = existingPhone.rows[0].id;
+        // If it's a different user ID, it's a conflict.
+        if (existingUserResult.rows.length === 0 || existingUserResult.rows[0].id !== phoneOwnerId) {
+          return res.status(409).json({
+            success: false,
+            message: 'This mobile number is already in use by another account. Please use a different one.'
+          });
+        }
       }
     }
 
-    // Insert user with phone
+    if (existingUserResult.rows.length > 0) {
+      const user = existingUserResult.rows[0];
+      if (user.phone) {
+        // If they already have a phone, they shouldn't call this endpoint to sign up
+        return res.status(409).json({
+          success: false,
+          message: 'An account with this email already exists.'
+        });
+      }
+
+      // Update existing user's phone number
+      const updateResult = await db.query(
+        `UPDATE users SET phone = $1 WHERE id = $2 RETURNING id, name, email, phone, role, created_at`,
+        [cleanPhone, user.id]
+      );
+      const updatedUser = updateResult.rows[0];
+
+      sendWelcomeEmail(updatedUser.email, updatedUser.name).catch((err) =>
+        console.error('[Welcome Email] Failed to send (Google registration update):', err.message)
+      );
+
+      return issueUserSession(req, res, updatedUser, 200, 'Google registration successful.');
+    }
+
+    // Insert new user with phone
     const insertResult = await db.query(
       `INSERT INTO users (name, email, phone, role)
        VALUES ($1, $2, $3, $4)
-       RETURNING id, name, email, role, created_at`,
+       RETURNING id, name, email, phone, role, created_at`,
       [cleanName, cleanEmail, cleanPhone, 'user']
     );
 
     const googleUser = insertResult.rows[0];
-    // Fire-and-forget: send welcome email without blocking the response
     sendWelcomeEmail(googleUser.email, googleUser.name).catch((err) =>
       console.error('[Welcome Email] Failed to send (Google signup):', err.message)
     );

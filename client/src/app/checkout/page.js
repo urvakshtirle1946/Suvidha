@@ -167,6 +167,7 @@ export default function Checkout() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState('login');
   
   // Schedule State
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -255,6 +256,14 @@ export default function Checkout() {
   const handleCheckoutCallback = async () => {
     if (!user) {
         setError('Please login to continue with your order.');
+        setAuthModalMode('login');
+        setAuthModalOpen(true);
+        return;
+    }
+
+    if (!user.phone) {
+        setError('A mobile number is required in your profile to book services. Please complete your profile.');
+        setAuthModalMode('complete-profile');
         setAuthModalOpen(true);
         return;
     }
@@ -843,7 +852,7 @@ export default function Checkout() {
           </div>
       )}
 
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} mode={authModalMode} />
 
       {/* Calendar Modal */}
       {isCalendarModalOpen && (

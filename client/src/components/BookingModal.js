@@ -16,6 +16,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
   const [selectedTime, setSelectedTime] = useState(null);
   const [transactionId, setTransactionId] = useState('');
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState('login');
   const [loading, setLoading] = useState(false);
   const [paymentMode, setPaymentMode] = useState(null); // 'online' or 'hospital'
   const [labs, setLabs] = useState([]);
@@ -201,8 +202,15 @@ export default function BookingModal({ isOpen, onClose, service }) {
         setError(null);
         if (!user) { 
             setError('Please login to continue with your booking.'); 
+            setAuthModalMode('login');
             setAuthModalOpen(true);
             return; 
+        }
+        if (!user.phone) {
+            setError('A mobile number is required in your profile to book services. Please complete your profile.');
+            setAuthModalMode('complete-profile');
+            setAuthModalOpen(true);
+            return;
         }
         if (!selectedLab || !selectedTime) return;
         if (!validatePatientDetails()) return;
@@ -214,8 +222,15 @@ export default function BookingModal({ isOpen, onClose, service }) {
         setError(null);
         if (!user) { 
              setError('Please login to continue with your booking.'); 
+             setAuthModalMode('login');
              setAuthModalOpen(true);
              return; 
+        }
+        if (!user.phone) {
+            setError('A mobile number is required in your profile to book services. Please complete your profile.');
+            setAuthModalMode('complete-profile');
+            setAuthModalOpen(true);
+            return;
         }
         if (!selectedLab || !selectedTime) return;
         if (!validatePatientDetails()) return;
@@ -579,7 +594,7 @@ export default function BookingModal({ isOpen, onClose, service }) {
         )}
       </div>
     </div>
-    <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+    <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} mode={authModalMode} />
     </>
   );
 }

@@ -144,6 +144,13 @@ const sendPaymentBookingEmail = async (booking) => {
 };
 
 exports.createBooking = async (req, res) => {
+  if (!req.user?.phone) {
+    return res.status(400).json({
+      success: false,
+      message: 'A mobile number is required in your profile to book services. Please complete your profile.'
+    });
+  }
+
   const { name, age, gender, date, time, address, serviceId, userPhone, transactionId } = req.body;
   
   const finalEmail = req.user?.email || null;
@@ -426,6 +433,13 @@ exports.payBooking = async (req, res) => {
     }
 };
 exports.createRazorpayOrder = async (req, res) => {
+    if (!req.user?.phone) {
+        return res.status(400).json({
+          success: false,
+          message: 'A mobile number is required in your profile to book services. Please complete your profile.'
+        });
+    }
+
     try {
         const items = Array.isArray(req.body.items) ? req.body.items : [];
         if (items.length === 0) {

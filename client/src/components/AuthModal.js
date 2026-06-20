@@ -10,7 +10,8 @@ export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
   const { user, login, register, googleLogin, completeGoogleRegistration } = useAuth();
   
   // Tabs: 'login', 'register', 'complete-profile'
-  const [tab, setTab] = useState(mode === 'register' ? 'register' : 'login');
+  const [tab, setTab] = useState(mode === 'complete-profile' ? 'complete-profile' : (mode === 'register' ? 'register' : 'login'));
+  const [prevTab, setPrevTab] = useState('login');
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -25,18 +26,24 @@ export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
 
   useEffect(() => {
     if (isOpen) {
-      setTab(mode === 'register' ? 'register' : 'login');
+      setTab(mode === 'complete-profile' ? 'complete-profile' : (mode === 'register' ? 'register' : 'login'));
       setError('');
       setSuccess('');
-      setForm({ name: '', email: '', phone: '', password: '', confirmPassword: '' });
+      setForm({
+        name: user?.name || '',
+        email: user?.email || '',
+        phone: user?.phone || '',
+        password: '',
+        confirmPassword: ''
+      });
     }
-  }, [isOpen, mode]);
+  }, [isOpen, mode, user]);
 
   useEffect(() => {
-    if (isOpen && user) {
+    if (isOpen && user && tab !== 'complete-profile') {
       onClose();
     }
-  }, [isOpen, user, onClose]);
+  }, [isOpen, user, tab, onClose]);
 
   const title = useMemo(() => {
     if (tab === 'complete-profile') return 'Complete Your Profile';
@@ -59,13 +66,14 @@ export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
     const name = form.name.trim();
     const email = form.email.trim().toLowerCase();
     const phone = form.phone.trim();
+    const phoneDigits = phone.replace(/\D/g, '');
     
     if (!name) return 'Username is required.';
     if (name.length < 2) return 'Username must be at least 2 characters.';
     if (!email) return 'Email is required.';
     if (!EMAIL_REGEX.test(email)) return 'Please enter a valid email address.';
     if (!phone) return 'Mobile Number is required.';
-    if (phone.length < 7) return 'Please enter a valid Mobile Number.';
+    if (phoneDigits.length < 10 || phoneDigits.length > 15) return 'Please enter a valid 10-digit Mobile Number.';
     if (!form.password) return 'Password is required.';
     if (form.password.length < 8) return 'Password must be at least 8 characters.';
     if (form.password !== form.confirmPassword) return 'Passwords do not match.';
@@ -74,8 +82,9 @@ export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
 
   const validateCompleteProfile = () => {
     const phone = form.phone.trim();
+    const phoneDigits = phone.replace(/\D/g, '');
     if (!phone) return 'Mobile Number is required.';
-    if (phone.length < 7) return 'Please enter a valid Mobile Number.';
+    if (phoneDigits.length < 10 || phoneDigits.length > 15) return 'Please enter a valid 10-digit Mobile Number.';
     return '';
   };
 
@@ -188,7 +197,7 @@ export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
         <h2 className="auth-title">
           {tab === 'complete-profile' && (
               <button 
-                  onClick={() => { setTab('register'); setError(''); setSuccess(''); }}
+                  onClick={() => { setTab(prevTab); setError(''); setSuccess(''); }}
                   style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: 0 }}
               >
                  <ArrowLeft size={20} color="#111827" style={{ marginRight: '8px' }} />
@@ -255,13 +264,13 @@ export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
           )}
 
           {tab === 'complete-profile' && (
-              <div style={{ fontSize: '0.85rem', color: '#4b5563', marginBottom: '4px', lineHeight: '1.5' }}>
-                  Please enter your mobile number to finalize your account creation for <strong>{form.email}</strong>.
+              <div style={{ fontSize: '0.9rem', color: '#4b5563', marginBottom: '8px', lineHeight: '1.6', background: '#f9fafb', padding: '12px 16px', borderRadius: '12px', border: '1px solid #f3f4f6' }}>
+                  To secure your account, please enter your mobile number to finalize registration for <strong style={{ color: '#111827' }}>{form.email}</strong>.
               </div>
           )}
 
           {(tab === 'register' || tab === 'complete-profile') && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <input
                 type="tel"
                 placeholder="Mobile Number (e.g. +91 9876543210)"
@@ -270,8 +279,8 @@ export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
                 autoComplete="tel"
                 className="auth-input"
               />
-              <span style={{ fontSize: '0.7rem', color: '#9ca3af', marginLeft: '4px' }}>
-                Note: You will not be able to edit this mobile number in the future.
+              <span style={{ fontSize: '0.75rem', color: '#9ca3af', marginLeft: '4px' }}>
+                Note: You will not be able to edit this mobile number later.
               </span>
             </div>
           )}
@@ -333,7 +342,10 @@ export default function AuthModal({ isOpen, onClose, mode = 'login' }) {
                 </div>
 
                 <button
-                  onClick={() => loginWithGoogle()}
+                  onClick={() => {
+                    setPrevTab(tab);
+                    loginWithGoogle();
+                  }}
                   disabled={loading}
                   className="auth-google-btn"
                 >

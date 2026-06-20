@@ -334,8 +334,9 @@ exports.googleLogin = async (req, res) => {
       });
     } else {
       const user = result.rows[0];
-      if (!user.phone) {
-         // User exists but has no phone number. Force profile completion with phone number.
+      const phoneDigits = String(user.phone || '').replace(/\D/g, '');
+      if (!user.phone || phoneDigits.length < 10 || phoneDigits.length > 15) {
+         // User exists but has no valid phone number. Force profile completion with phone number.
          return res.status(200).json({
             success: true,
             requires_phone: true,

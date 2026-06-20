@@ -144,10 +144,11 @@ const sendPaymentBookingEmail = async (booking) => {
 };
 
 exports.createBooking = async (req, res) => {
-  if (!req.user?.phone) {
+  const userPhoneDigits = String(req.user?.phone || '').replace(/\D/g, '');
+  if (!req.user?.phone || userPhoneDigits.length < 10 || userPhoneDigits.length > 15) {
     return res.status(400).json({
       success: false,
-      message: 'A mobile number is required in your profile to book services. Please complete your profile.'
+      message: 'A valid mobile number is required in your profile to book services. Please complete your profile.'
     });
   }
 
@@ -433,10 +434,11 @@ exports.payBooking = async (req, res) => {
     }
 };
 exports.createRazorpayOrder = async (req, res) => {
-    if (!req.user?.phone) {
+    const userPhoneDigits = String(req.user?.phone || '').replace(/\D/g, '');
+    if (!req.user?.phone || userPhoneDigits.length < 10 || userPhoneDigits.length > 15) {
         return res.status(400).json({
           success: false,
-          message: 'A mobile number is required in your profile to book services. Please complete your profile.'
+          message: 'A valid mobile number is required in your profile to book services. Please complete your profile.'
         });
     }
 

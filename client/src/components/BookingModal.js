@@ -206,8 +206,9 @@ export default function BookingModal({ isOpen, onClose, service }) {
             setAuthModalOpen(true);
             return; 
         }
-        if (!user.phone) {
-            setError('A mobile number is required in your profile to book services. Please complete your profile.');
+        const userPhoneDigits = String(user?.phone || '').replace(/\D/g, '');
+        if (!user?.phone || userPhoneDigits.length < 10 || userPhoneDigits.length > 15) {
+            setError('A valid mobile number is required in your profile to book services. Please complete your profile.');
             setAuthModalMode('complete-profile');
             setAuthModalOpen(true);
             return;
@@ -226,8 +227,9 @@ export default function BookingModal({ isOpen, onClose, service }) {
              setAuthModalOpen(true);
              return; 
         }
-        if (!user.phone) {
-            setError('A mobile number is required in your profile to book services. Please complete your profile.');
+        const userPhoneDigits = String(user?.phone || '').replace(/\D/g, '');
+        if (!user?.phone || userPhoneDigits.length < 10 || userPhoneDigits.length > 15) {
+            setError('A valid mobile number is required in your profile to book services. Please complete your profile.');
             setAuthModalMode('complete-profile');
             setAuthModalOpen(true);
             return;

@@ -103,6 +103,17 @@ const lockSlotAndAssertCapacity = async (client, { service, date, time }) => {
   }
 };
 
+const formatBookingDate = (dateVal) => {
+  if (!dateVal) return '-';
+  if (dateVal instanceof Date) {
+    const y = dateVal.getFullYear();
+    const m = String(dateVal.getMonth() + 1).padStart(2, '0');
+    const d = String(dateVal.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+  return String(dateVal).split('T')[0];
+};
+
 const sendPaymentBookingEmail = async (booking) => {
   if (!booking?.user_email) {
     return { success: false, skipped: true, reason: 'missing_recipient' };
@@ -119,7 +130,7 @@ const sendPaymentBookingEmail = async (booking) => {
       patientName: booking.patient_name,
       serviceName: booking.service_name,
       hospitalName,
-      date: booking.booking_date,
+      date: formatBookingDate(booking.booking_date),
       time: booking.booking_time,
       address: booking.address,
       price: booking.price,

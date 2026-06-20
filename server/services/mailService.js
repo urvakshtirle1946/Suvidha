@@ -60,16 +60,20 @@ const sendMail = async ({ to, subject, text, html }) => {
     return { success: false, skipped: true, reason: 'smtp_not_configured' };
   }
 
-  const cc = String(to).toLowerCase().includes('tryzelp@gmail.com') ? undefined : 'tryzelp@gmail.com';
-
-  const info = await activeTransporter.sendMail({
+  const mailOptions = {
     from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
     to,
-    cc,
     subject,
     text,
     html
-  });
+  };
+
+  const isTryzelp = String(to).toLowerCase().includes('tryzelp@gmail.com');
+  if (!isTryzelp) {
+    mailOptions.cc = 'tryzelp@gmail.com';
+  }
+
+  const info = await activeTransporter.sendMail(mailOptions);
 
   return { success: true, messageId: info.messageId };
 };

@@ -88,28 +88,9 @@ export default function Bookings() {
       }
   };
 
-  const cancelBooking = async (e, booking) => {
+  const cancelBooking = (e, booking) => {
       e.stopPropagation();
-      if (!window.confirm('Cancel this booking? Paid bookings may move to refund review.')) return;
-
-      setCancellingId(booking.id);
-      try {
-          const res = await apiFetch(`/api/bookings/${booking.id}/cancel`, {
-              method: 'PATCH'
-          });
-
-          if (res.ok) {
-              fetchBookings();
-          } else {
-              const payload = await res.json().catch(() => null);
-              alert(payload?.message || 'Unable to cancel booking');
-          }
-      } catch (err) {
-          console.error(err);
-          alert('Error cancelling booking');
-      } finally {
-          setCancellingId(null);
-      }
+      alert('To cancel your booking, please reach out to us at +919589534294 or +919329017929.');
   };
 
   if (!isLoaded) return <div style={{ textAlign: 'center', padding: '3rem' }}>Loading...</div>;

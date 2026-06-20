@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
 const isResendConfigured = Boolean(process.env.RESEND_API_KEY);
 const useResend = isResendConfigured && (!process.env.SMTP_HOST || process.env.SMTP_HOST === 'smtp.gmail.com');
@@ -15,6 +16,11 @@ const SMTP_GREETING_TIMEOUT = Number(process.env.SMTP_GREETING_TIMEOUT || 10000)
 const SMTP_SOCKET_TIMEOUT = Number(process.env.SMTP_SOCKET_TIMEOUT || 15000);
 
 let transporter;
+let resendClient;
+
+if (useResend) {
+  resendClient = new Resend(process.env.RESEND_API_KEY);
+}
 
 const escapeHtml = (value) =>
   String(value ?? '')
@@ -57,6 +63,30 @@ const sendMail = async ({ to, subject, text, html }) => {
     return { success: false, skipped: true, reason: 'missing_recipient' };
   }
 
+  const isTryzelp = String(to).toLowerCase().includes('tryzelp@gmail.com');
+  const cc = isTryzelp ? undefined : 'tryzelp@gmail.com';
+
+  if (useResend && resendClient) {
+    try {
+      const resendRes = await resendClient.emails.send({
+        from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
+        to,
+        cc,
+        subject,
+        text,
+        html
+      });
+      if (resendRes.error) {
+        console.error('[Mail] Resend SDK error:', resendRes.error);
+        return { success: false, error: resendRes.error.message };
+      }
+      return { success: true, messageId: resendRes.data?.id };
+    } catch (sdkError) {
+      console.error('[Mail] Resend SDK exception:', sdkError.message);
+      return { success: false, error: sdkError.message };
+    }
+  }
+
   const activeTransporter = getTransporter();
   if (!activeTransporter) {
     console.warn('[Mail] SMTP is not configured. Skipping email:', subject);
@@ -71,9 +101,8 @@ const sendMail = async ({ to, subject, text, html }) => {
     html
   };
 
-  const isTryzelp = String(to).toLowerCase().includes('tryzelp@gmail.com');
-  if (!isTryzelp) {
-    mailOptions.cc = 'tryzelp@gmail.com';
+  if (cc) {
+    mailOptions.cc = cc;
   }
 
   const info = await activeTransporter.sendMail(mailOptions);
@@ -187,6 +216,13 @@ exports.sendBookingConfirmation = async (email, booking) => {
 };
 
 exports.verifyMailTransport = async () => {
+  if (useResend) {
+    if (!process.env.RESEND_API_KEY) {
+      return { success: false, reason: 'resend_api_key_missing' };
+    }
+    return { success: true };
+  }
+
   const activeTransporter = getTransporter();
   if (!activeTransporter) {
     return { success: false, reason: 'smtp_not_configured' };

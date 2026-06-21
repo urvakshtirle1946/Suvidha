@@ -35,6 +35,14 @@ const initDbSchema = async () => {
         }
       }
 
+      // Ensure is_deleted column exists on services
+      try {
+        await pool.query('ALTER TABLE services ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN DEFAULT FALSE');
+        console.log('[Database] Ensured column is_deleted on services.');
+      } catch (err) {
+        console.error('[Database] Warning trying to add is_deleted to services:', err.message);
+      }
+
       console.log('[Database] Schema sync complete.');
     } else {
       console.warn('[Database] schema.sql not found, skipping schema check.');

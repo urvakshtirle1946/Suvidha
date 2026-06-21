@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS services (
   discount_price DECIMAL(10, 2),
   description TEXT,
   is_active BOOLEAN DEFAULT TRUE,
+  is_deleted BOOLEAN DEFAULT FALSE,
   slot_capacity INT DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

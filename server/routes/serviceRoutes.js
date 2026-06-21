@@ -15,6 +15,9 @@ router.get('/manage', verifyJWT, requireRole(['admin', 'super_admin', 'hospital_
 router.post('/', verifyJWT, requireRole(['admin', 'super_admin', 'hospital_partner']), auditLog('CREATE_SERVICE'), serviceController.createService);
 router.put('/:id', verifyJWT, requireRole(['admin', 'super_admin', 'hospital_partner']), auditLog(req => `UPDATE_SERVICE_${req.params.id}`), serviceController.updateService);
 router.patch('/:id', verifyJWT, requireRole(['admin', 'super_admin', 'hospital_partner']), auditLog(req => `UPDATE_SERVICE_${req.params.id}`), serviceController.updateService);
+router.delete('/:id', verifyJWT, requireRole(['admin', 'super_admin', 'hospital_partner']), auditLog(req => `DELETE_SERVICE_${req.params.id}`), serviceController.deleteService);
+
+router.post('/upload-import', verifyJWT, requireRole(['admin', 'super_admin', 'hospital_partner']), upload.single('file'), auditLog('IMPORT_SERVICES_DOCUMENT'), serviceController.importServicesFromDocument);
 
 router.post('/upload-import', verifyJWT, requireRole(['admin', 'super_admin', 'hospital_partner']), upload.single('file'), auditLog('IMPORT_SERVICES_DOCUMENT'), serviceController.importServicesFromDocument);
 

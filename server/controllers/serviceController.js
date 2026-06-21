@@ -24,7 +24,7 @@ exports.getAllServices = async (req, res) => {
       SELECT s.*, h.name as hospital_name, h.location as hospital_location, h.image_url as hospital_image, h.rating as hospital_rating
       FROM services s 
       LEFT JOIN hospitals h ON s.hospital_id = h.id 
-      WHERE s.is_active = TRUE
+      WHERE s.is_active = TRUE AND s.is_deleted = FALSE
     `;
     const values = [];
     let placeholderIndex = 1;
@@ -49,7 +49,7 @@ exports.getAllServices = async (req, res) => {
       const offset = (page - 1) * limit;
 
       // Get Total Count
-      const countRes = await db.query(`SELECT COUNT(*) FROM services s WHERE s.is_active = TRUE ${category ? 'AND category = $1' : ''} ${hospital_id ? (category ? 'AND hospital_id = $2' : 'AND hospital_id = $1') : ''}`, values);
+      const countRes = await db.query(`SELECT COUNT(*) FROM services s WHERE s.is_active = TRUE AND s.is_deleted = FALSE ${category ? 'AND category = $1' : ''} ${hospital_id ? (category ? 'AND hospital_id = $2' : 'AND hospital_id = $1') : ''}`, values);
       const total = parseInt(countRes.rows[0].count);
 
       // Get Paginated Data
@@ -111,7 +111,7 @@ exports.getManagedServices = async (req, res) => {
       `SELECT s.*, h.name AS hospital_name, h.location AS hospital_location
        FROM services s
        LEFT JOIN hospitals h ON h.id = s.hospital_id
-       WHERE ($1::boolean = TRUE OR s.hospital_id = $2)
+       WHERE ($1::boolean = TRUE OR s.hospital_id = $2) AND s.is_deleted = FALSE
        ORDER BY s.created_at DESC`,
       [isAdmin, partnerHospitalId || null]
     );
@@ -151,7 +151,7 @@ exports.createService = async (req, res) => {
 
     const existingService = await client.query(
       `
-        SELECT id
+        SELECT id, is_deleted
         FROM services
         WHERE COALESCE(hospital_id::text, 'global') = $1
           AND regexp_replace(lower(name), '[^a-z0-9]', '', 'g') = $2
@@ -162,11 +162,31 @@ exports.createService = async (req, res) => {
     );
 
     if (existingService.rows.length > 0) {
-      await client.query('ROLLBACK');
-      return res.status(409).json({
-        success: false,
-        message: 'This service already exists. Please edit the existing entry instead.'
-      });
+      const isDeleted = existingService.rows[0].is_deleted;
+      if (isDeleted) {
+        const parsedCapacity = parseInt(slot_capacity, 10);
+        const capacityVal = (parsedCapacity === -1 || Number.isNaN(parsedCapacity)) ? -1 : Math.max(1, parsedCapacity);
+        const updateQuery = `
+          UPDATE services
+          SET price = $1,
+              discount_price = $2,
+              description = $3,
+              is_active = $4,
+              slot_capacity = $5,
+              is_deleted = FALSE
+          WHERE id = $6
+          RETURNING *
+        `;
+        const updateResult = await client.query(updateQuery, [price, discount_price, description, is_active, capacityVal, existingService.rows[0].id]);
+        await client.query('COMMIT');
+        return res.status(201).json({ success: true, service: updateResult.rows[0], message: 'Service reactivated successfully.' });
+      } else {
+        await client.query('ROLLBACK');
+        return res.status(409).json({
+          success: false,
+          message: 'This service already exists. Please edit the existing entry instead.'
+        });
+      }
     }
 
     const query = `
@@ -527,7 +547,7 @@ exports.importServicesFromDocument = async (req, res) => {
           const serviceId = existingRes.rows[0].id;
           const updateQuery = `
             UPDATE services 
-            SET price = $1, discount_price = $2, description = $3, slot_capacity = $4, is_active = TRUE
+            SET price = $1, discount_price = $2, description = $3, slot_capacity = $4, is_active = TRUE, is_deleted = FALSE
             WHERE id = $5
             RETURNING *
           `;
@@ -564,5 +584,30 @@ exports.importServicesFromDocument = async (req, res) => {
   } catch (error) {
     console.error('[AI Import] Error importing services:', error);
     res.status(500).json({ success: false, message: error.message || 'Failed to import services from document.' });
+  }
+};
+exports.deleteService = async (req, res) => {
+  const { id } = req.params;
+  const isAdmin = ['admin', 'super_admin'].includes(req.user?.role);
+  const partnerHospitalId = req.user?.hospital_id || req.user?.hospitalId;
+
+  try {
+    const result = await db.query(
+      `UPDATE services
+       SET is_deleted = TRUE
+       WHERE id = $1
+         AND ($2::boolean = TRUE OR hospital_id = $3)
+       RETURNING *`,
+      [id, isAdmin, partnerHospitalId || null]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Service not found or unauthorized.' });
+    }
+
+    res.json({ success: true, message: 'Service deleted successfully.' });
+  } catch (error) {
+    console.error('Database Error:', error);
+    res.status(500).json({ success: false, message: 'Failed to delete service.' });
   }
 };

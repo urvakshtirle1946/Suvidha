@@ -4,13 +4,21 @@ export function proxy(req) {
   const url = req.nextUrl.clone();
   const hostname = req.headers.get('host') || '';
   
+  // Extract hostname without port for comparison
+  const host = hostname.split(':')[0];
+  
   // Determine if it's the admin subdomain
-  const isAdminSubdomain = hostname.startsWith('admin.');
+  const isAdminSubdomain = host.startsWith('admin.');
   const adminPath = process.env.NEXT_PUBLIC_ADMIN_ROUTE || 'admin';
   
+  // Determine if it's a waitlist domain
+  const isWaitlistDomain = 
+    host === 'tryzelp.app' || 
+    host === 'waiting.tryzelp.app' || 
+    host === 'waitlist.tryzelp.app';
+
   // 1. Block direct access to the hidden folder from the public domain
   if (!isAdminSubdomain && url.pathname.startsWith(`/${adminPath}`)) {
-    // Redirect to home or throw 404
     return NextResponse.redirect(new URL('/', req.url));
   }
 
@@ -25,6 +33,12 @@ export function proxy(req) {
       url.pathname = `/${adminPath}${url.pathname === '/' ? '' : url.pathname}`;
       return NextResponse.rewrite(url);
     }
+  }
+
+  // 3. Rewrite root request on waitlist domains to the waitlist page
+  if (isWaitlistDomain && url.pathname === '/') {
+    url.pathname = '/waitlist';
+    return NextResponse.rewrite(url);
   }
 
   return NextResponse.next();
@@ -42,4 +56,3 @@ export const config = {
     '/((?!api|_next/static|_next/image|favicon.ico|zelp-favicon.png).*)',
   ],
 };
-

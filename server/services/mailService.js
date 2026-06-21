@@ -174,10 +174,13 @@ exports.sendBookingConfirmation = async (email, booking) => {
     address,
     transactionId,
     bookingId,
-    price
+    price,
+    userPhone,
+    userEmail
   } = booking;
 
   const location = hospitalName || address || 'Zelp partner location';
+  const displayEmail = userEmail || email;
 
   return sendMail({
     to: email,
@@ -186,6 +189,9 @@ exports.sendBookingConfirmation = async (email, booking) => {
       `Hi ${patientName || 'there'},`,
       '',
       'Your booking has been confirmed.',
+      `Patient Name: ${patientName || '-'}`,
+      `Mobile Number: ${userPhone || '-'}`,
+      `Email Address: ${displayEmail || '-'}`,
       `Service: ${serviceName || '-'}`,
       `Provider: ${location}`,
       `Date: ${date || '-'}`,
@@ -201,6 +207,9 @@ exports.sendBookingConfirmation = async (email, booking) => {
         <h2>Booking confirmed</h2>
         <p>Hi ${escapeHtml(patientName || 'there')}, your booking has been confirmed.</p>
         <table style="border-collapse:collapse;width:100%;max-width:520px">
+          <tr><td style="padding:8px;border:1px solid #e5e7eb">Patient Name</td><td style="padding:8px;border:1px solid #e5e7eb">${escapeHtml(patientName || '-')}</td></tr>
+          <tr><td style="padding:8px;border:1px solid #e5e7eb">Mobile Number</td><td style="padding:8px;border:1px solid #e5e7eb">${escapeHtml(userPhone || '-')}</td></tr>
+          <tr><td style="padding:8px;border:1px solid #e5e7eb">Email Address</td><td style="padding:8px;border:1px solid #e5e7eb">${escapeHtml(displayEmail || '-')}</td></tr>
           <tr><td style="padding:8px;border:1px solid #e5e7eb">Service</td><td style="padding:8px;border:1px solid #e5e7eb">${escapeHtml(serviceName || '-')}</td></tr>
           <tr><td style="padding:8px;border:1px solid #e5e7eb">Provider</td><td style="padding:8px;border:1px solid #e5e7eb">${escapeHtml(location)}</td></tr>
           <tr><td style="padding:8px;border:1px solid #e5e7eb">Date</td><td style="padding:8px;border:1px solid #e5e7eb">${escapeHtml(date || '-')}</td></tr>

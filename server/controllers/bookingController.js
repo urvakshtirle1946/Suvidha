@@ -142,6 +142,8 @@ const sendPaymentBookingEmail = async (booking) => {
       price: booking.price,
       transactionId: booking.transaction_id,
       bookingId: booking.id,
+      userPhone: booking.user_phone,
+      userEmail: booking.user_email,
     });
   } catch (error) {
     console.error('[Booking Email] Failed to send payment confirmation:', error.message);
@@ -308,6 +310,8 @@ Thank you for choosing Suvidha!`;
         price,
         transactionId: transactionId || null,
         bookingId: result.rows[0].id,
+        userPhone: finalPhone,
+        userEmail: finalEmail,
       }).catch((err) => console.error('[Booking Email] Failed to send:', err.message));
     }
 

@@ -1,6 +1,6 @@
 const db = require('../db');
 const { mockServices } = require('../mockData');
-const pdfParse = require('pdf-parse');
+const { PDFParse } = require('pdf-parse');
 
 const normalizeDuplicateKeyPart = (value) =>
   String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -270,8 +270,10 @@ exports.importServicesFromDocument = async (req, res) => {
 
     if (isPDF) {
       console.log('[AI Import] Parsing PDF text...');
-      const parsedPdf = await pdfParse(req.file.buffer);
+      const parser = new PDFParse({ data: req.file.buffer });
+      const parsedPdf = await parser.getText();
       const textContent = parsedPdf.text || '';
+      await parser.destroy();
       
       if (!textContent.trim()) {
         return res.status(400).json({ success: false, message: 'Uploaded PDF has no extractable text.' });

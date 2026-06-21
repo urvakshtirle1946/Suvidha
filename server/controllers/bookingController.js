@@ -7,7 +7,7 @@ const smsService = require('../services/smsService');
 const { sendBookingConfirmation } = require('../services/mailService');
 
 const ACTIVE_BOOKING_STATUSES = ['PendingPayment', 'PendingVerification', 'Confirmed'];
-const DEFAULT_SLOT_CAPACITY = parseInt(process.env.DEFAULT_SLOT_CAPACITY || '1', 10);
+const DEFAULT_SLOT_CAPACITY = parseInt(process.env.DEFAULT_SLOT_CAPACITY || '-1', 10);
 const OFFLINE_PAYMENT_ENABLED = process.env.ALLOW_PAY_AT_HOSPITAL === 'true';
 const CANCELLABLE_STATUSES = ['PendingPayment', 'PendingVerification', 'Confirmed'];
 const getConfiguredSlots = () => (process.env.BOOKING_TIME_SLOTS || '09:00 AM,09:30 AM,10:00 AM,10:30 AM,11:00 AM,11:30 AM,12:00 PM,04:00 PM,04:30 PM,05:00 PM')
@@ -84,7 +84,9 @@ const lockSlotAndAssertCapacity = async (client, { service, date, time }) => {
     [`slot:${service.id}:${date}:${time}`]
   );
 
-  const capacity = service.slot_capacity === -1 ? -1 : Math.max(1, service.slot_capacity || DEFAULT_SLOT_CAPACITY);
+  const dbCapacity = service.slot_capacity;
+  const rawCapacity = dbCapacity !== null ? dbCapacity : DEFAULT_SLOT_CAPACITY;
+  const capacity = rawCapacity === -1 ? -1 : Math.max(1, rawCapacity);
   if (capacity === -1) {
     return; // Unlimited capacity, bypass checks
   }
@@ -685,9 +687,10 @@ exports.getAvailability = async (req, res) => {
         }
 
         const configuredSlots = getConfiguredSlots();
-        const rawCapacity = serviceResult.rows[0].slot_capacity;
+        const dbCapacity = serviceResult.rows[0].slot_capacity;
+        const rawCapacity = dbCapacity !== null ? dbCapacity : DEFAULT_SLOT_CAPACITY;
         const isUnlimited = rawCapacity === -1;
-        const capacity = isUnlimited ? -1 : Math.max(1, rawCapacity || DEFAULT_SLOT_CAPACITY);
+        const capacity = isUnlimited ? -1 : Math.max(1, rawCapacity);
         const counts = await db.query(
             `SELECT booking_time, COUNT(*)::int AS booked
              FROM bookings

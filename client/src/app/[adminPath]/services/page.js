@@ -15,6 +15,7 @@ export default function ServiceManagement() {
   const [importLoading, setImportLoading] = useState(false);
   const [importProgress, setImportProgress] = useState('');
   const [isDragging, setIsDragging] = useState(false);
+  const [selectedServiceIds, setSelectedServiceIds] = useState([]);
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
@@ -161,6 +162,7 @@ export default function ServiceManagement() {
 
   const fetchServices = async (currentPage = 1) => {
     setLoading(true);
+    setSelectedServiceIds([]);
     try {
       const apiUrl = getApiUrl();
       const token = localStorage.getItem('admin_token');
@@ -272,6 +274,47 @@ export default function ServiceManagement() {
     } catch (err) {
       console.error(err);
       addToast('Failed to delete service', 'error');
+    }
+  };
+
+  const handleSelectRow = (id) => {
+    setSelectedServiceIds(prev => 
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedServiceIds(services.map(s => s.id));
+    } else {
+      setSelectedServiceIds([]);
+    }
+  };
+
+  const handleBatchDelete = async () => {
+    if (selectedServiceIds.length === 0) return;
+    if (!window.confirm(`Are you sure you want to permanently remove the ${selectedServiceIds.length} selected services?`)) {
+      return;
+    }
+    try {
+      const apiUrl = getApiUrl();
+      const token = localStorage.getItem('admin_token');
+      const res = await fetch(`${apiUrl}/api/services/batch-delete`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ ids: selectedServiceIds })
+      });
+      if (!res.ok) throw new Error('Batch delete failed');
+      const data = await res.json();
+      addToast(data.message || 'Services removed successfully', 'success');
+      setSelectedServiceIds([]);
+      fetchServices(page);
+    } catch (err) {
+      console.error(err);
+      addToast('Failed to delete selected services', 'error');
     }
   };
 
@@ -508,7 +551,17 @@ export default function ServiceManagement() {
                 <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--text-primary)' }}>Service Management</h1>
                 <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Configure medical services and pricing.</p>
             </div>
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                {selectedServiceIds.length > 0 && (
+                    <button className="btn" onClick={handleBatchDelete} style={{ 
+                        background: '#ef4444', 
+                        color: '#fff', border: 'none', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)',
+                        padding: '0.8rem 1.5rem', cursor: 'pointer', borderRadius: '12px',
+                        display: 'flex', alignItems: 'center', fontWeight: '600'
+                    }}>
+                        Remove Selected ({selectedServiceIds.length})
+                    </button>
+                )}
                 <button className="btn" onClick={() => setShowImport(true)} style={{ 
                     background: 'var(--bg-card)', 
                     border: '1px solid var(--border)',
@@ -548,6 +601,14 @@ export default function ServiceManagement() {
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                     <thead>
                         <tr style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
+                            <th style={{ padding: '1.2rem 1.5rem', width: '50px' }}>
+                                <input 
+                                  type="checkbox" 
+                                  checked={services.length > 0 && selectedServiceIds.length === services.length}
+                                  onChange={handleSelectAll}
+                                  style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+                                />
+                            </th>
                             <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Service Name</th>
                             <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Category</th>
                             <th style={{ padding: '1.2rem 1.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem', textTransform: 'uppercase' }}>Hospital</th>
@@ -558,6 +619,14 @@ export default function ServiceManagement() {
                     <tbody>
                         {services.map((service) => (
                             <tr key={service.id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }} className="service-row-hover">
+                                <td style={{ padding: '1.2rem 1.5rem', width: '50px' }}>
+                                    <input 
+                                      type="checkbox" 
+                                      checked={selectedServiceIds.includes(service.id)}
+                                      onChange={() => handleSelectRow(service.id)}
+                                      style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+                                    />
+                                </td>
                                 <td style={{ padding: '1.2rem 1.5rem' }}>
                                     <div style={{ fontWeight: '600', fontSize: '1rem', marginBottom: '4px', color: 'var(--text-primary)' }}>{service.name}</div>
                                     <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{service.description}</div>

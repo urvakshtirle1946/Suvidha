@@ -16,6 +16,7 @@ router.post('/', verifyJWT, requireRole(['admin', 'super_admin', 'hospital_partn
 router.put('/:id', verifyJWT, requireRole(['admin', 'super_admin', 'hospital_partner']), auditLog(req => `UPDATE_SERVICE_${req.params.id}`), serviceController.updateService);
 router.patch('/:id', verifyJWT, requireRole(['admin', 'super_admin', 'hospital_partner']), auditLog(req => `UPDATE_SERVICE_${req.params.id}`), serviceController.updateService);
 router.delete('/:id', verifyJWT, requireRole(['admin', 'super_admin', 'hospital_partner']), auditLog(req => `DELETE_SERVICE_${req.params.id}`), serviceController.deleteService);
+router.post('/batch-delete', verifyJWT, requireRole(['admin', 'super_admin', 'hospital_partner']), auditLog('BATCH_DELETE_SERVICES'), serviceController.batchDeleteServices);
 
 router.post('/upload-import', verifyJWT, requireRole(['admin', 'super_admin', 'hospital_partner']), upload.single('file'), auditLog('IMPORT_SERVICES_DOCUMENT'), serviceController.importServicesFromDocument);
 

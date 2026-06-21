@@ -611,3 +611,32 @@ exports.deleteService = async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to delete service.' });
   }
 };
+exports.batchDeleteServices = async (req, res) => {
+  const { ids } = req.body;
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ success: false, message: 'Provide a valid non-empty array of service IDs.' });
+  }
+
+  const isAdmin = ['admin', 'super_admin'].includes(req.user?.role);
+  const partnerHospitalId = req.user?.hospital_id || req.user?.hospitalId;
+
+  try {
+    const result = await db.query(
+      `UPDATE services
+       SET is_deleted = TRUE
+       WHERE id = ANY($1::int[])
+         AND ($2::boolean = TRUE OR hospital_id = $3)
+       RETURNING id`,
+      [ids, isAdmin, partnerHospitalId || null]
+    );
+
+    res.json({ 
+      success: true, 
+      message: `Successfully removed ${result.rows.length} services.`,
+      removedCount: result.rows.length
+    });
+  } catch (error) {
+    console.error('Database Error:', error);
+    res.status(500).json({ success: false, message: 'Failed to delete selected services.' });
+  }
+};

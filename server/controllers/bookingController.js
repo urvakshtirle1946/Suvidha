@@ -482,7 +482,7 @@ exports.createRazorpayOrder = async (req, res) => {
         }
         const prices = new Map(servicesResult.rows.map(service => [service.id, getEffectivePrice(service)]));
         const serviceTotal = normalizedItems.reduce((sum, item) => sum + prices.get(item.serviceId) * item.quantity, 0);
-        const platformFee = Number(process.env.PLATFORM_FEE_INR || 50);
+        const platformFee = Number(process.env.PLATFORM_FEE_INR || 0);
         const amount = serviceTotal + platformFee;
         const instance = getRazorpayInstance();
 

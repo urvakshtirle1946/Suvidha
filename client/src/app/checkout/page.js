@@ -169,60 +169,10 @@ export default function Checkout() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState('login');
   
-  // Schedule State
+  // Schedule State (defaulting to today and walk-in since date/time selection is removed)
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedTime, setSelectedTime] = useState('');
-  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+  const [selectedTime, setSelectedTime] = useState('Flexible (Walk-in)');
   const [isCalendarModalOpen, setCalendarModalOpen] = useState(false);
-
-  useEffect(() => {
-    const loadAvailability = async () => {
-      if (!selectedDate || cart.length === 0) return;
-      const date = selectedDate instanceof Date 
-        ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`
-        : selectedDate;
-      const serviceIds = [...new Set(cart.map(item => item.serviceId || item.id).filter(Boolean))];
-      
-      const serviceQuantities = {};
-      cart.forEach(item => {
-        const sId = item.serviceId || item.id;
-        if (sId) {
-          serviceQuantities[sId] = (serviceQuantities[sId] || 0) + (item.quantity || 1);
-        }
-      });
-
-      try {
-        const responses = await Promise.all(serviceIds.map(id =>
-          apiFetch(`/api/bookings/availability?serviceId=${id}&date=${date}`)
-        ));
-        const payloads = await Promise.all(responses.filter(res => res.ok).map(res => res.json()));
-        if (payloads.length !== serviceIds.length) return;
-        
-        const common = payloads[0]?.slots
-          ?.filter(slot => {
-            const firstServiceId = serviceIds[0];
-            const firstQty = serviceQuantities[firstServiceId] || 1;
-            if ((slot.remaining ?? 0) < firstQty) return false;
-            
-            return payloads.every((payload, idx) => {
-              const serviceId = serviceIds[idx];
-              const qty = serviceQuantities[serviceId] || 1;
-              return payload.slots.some(other => other.time === slot.time && (other.remaining ?? 0) >= qty);
-            });
-          })
-          .map(slot => slot.time) || [];
-          
-        setAvailableTimeSlots(common);
-        setSelectedTime(current => {
-          if (current && common.includes(current)) return current;
-          return '';
-        });
-      } catch (err) {
-        console.error('Failed to load checkout availability', err);
-      }
-    };
-    loadAvailability();
-  }, [cart, selectedDate]);
   const [paymentMode, setPaymentMode] = useState('online');
   const [bookingIds, setBookingIds] = useState([]);
   const [ticketData, setTicketData] = useState(null);
@@ -271,10 +221,7 @@ export default function Checkout() {
         return;
     }
 
-    if (!selectedDate || !selectedTime) {
-        setError("Please select a date and time slot for your appointment.");
-        return;
-    }
+    // Date and time selection removed from UI, defaulted in state.
 
     // Check if every item has a provider
     const missingProvider = cart.find(item => !item.hospitalId);
@@ -604,7 +551,7 @@ export default function Checkout() {
                 
                 <div style={{ background: '#fff', padding: '2rem', borderRadius: '24px', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', marginBottom: '2rem' }}>
                     <p style={{ color: '#4b5563', fontSize: '1.1rem', marginBottom: '1.5rem' }}>
-                        Your services have been scheduled for <b>{selectedDate instanceof Date ? selectedDate.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : selectedDate}</b> at <b>{selectedTime}</b>.
+                        Your booking has been created successfully. You can visit the provider at your convenience.
                     </p>
 
                     {isHospitalUpdate ? (
@@ -709,27 +656,7 @@ export default function Checkout() {
                         ))}
                     </div>
 
-                    {/* Schedule Section Button */}
-                    <div className="card" style={{ background: '#fff', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', marginTop: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #e5e7eb' }}>
-                        <div>
-                            <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <CalendarIcon size={18} color="#000" /> Appointment Schedule
-                            </h3>
-                            <p style={{ color: '#6b7280', fontSize: '0.9rem', margin: 0, marginLeft: '26px' }}>
-                                {selectedDate && selectedTime ? 
-                                    `${selectedDate instanceof Date ? selectedDate.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) : selectedDate} at ${selectedTime}`
-                                    : 'Please select a date and time'}
-                            </p>
-                        </div>
-                        <button 
-                            onClick={() => setCalendarModalOpen(true)}
-                            style={{ background: '#f9fafb', color: '#000', border: '1px solid #000', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' }}
-                            onMouseEnter={e => { e.currentTarget.style.background = '#000'; e.currentTarget.style.color = '#fff'; }}
-                            onMouseLeave={e => { e.currentTarget.style.background = '#f9fafb'; e.currentTarget.style.color = '#000'; }}
-                        >
-                            {selectedDate && selectedTime ? 'Change' : 'Select'}
-                        </button>
-                    </div>
+                    {/* Date and time selection removed */}
                 </div>
 
                 {/* Right: Bill Summary */}
@@ -859,24 +786,7 @@ export default function Checkout() {
 
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} mode={authModalMode} />
 
-      {/* Calendar Modal */}
-      {isCalendarModalOpen && (
-          <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-              <div style={{ position: 'relative' }}>
-                  <DeliveryScheduler 
-                      initialDate={selectedDate}
-                      timeSlots={availableTimeSlots}
-                      timeZone="IST (GMT +5:30)"
-                      onSchedule={(dateTime) => {
-                          setSelectedDate(dateTime.date);
-                          setSelectedTime(dateTime.time);
-                          setCalendarModalOpen(false);
-                      }}
-                      onCancel={() => setCalendarModalOpen(false)}
-                  />
-              </div>
-          </div>
-      )}
+      {/* Calendar Modal Removed */}
 
       <style jsx>{`
         .checkout-grid {

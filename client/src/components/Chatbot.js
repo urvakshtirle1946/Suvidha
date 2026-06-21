@@ -2,8 +2,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send, User, Bot, Loader2 } from 'lucide-react';
 import { apiFetch } from '@/utils/api';
+import { usePathname } from 'next/navigation';
 
 export default function Chatbot() {
+  const pathname = usePathname();
+  if (pathname === '/checkout') return null;
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     { id: 1, text: "Hi there! 👋 I'm your Zelp assistant. Ask me about hospitals, lab tests, or pricing!", sender: 'bot' }

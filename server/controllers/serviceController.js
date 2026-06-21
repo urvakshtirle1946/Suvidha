@@ -176,7 +176,7 @@ exports.createService = async (req, res) => {
       RETURNING *
     `;
     const parsedCapacity = parseInt(slot_capacity, 10);
-    const capacityVal = parsedCapacity === -1 ? -1 : Math.max(1, parsedCapacity || 1);
+    const capacityVal = (parsedCapacity === -1 || Number.isNaN(parsedCapacity)) ? -1 : Math.max(1, parsedCapacity);
     const values = [hospital_id || null, name, category, price, discount_price, description, is_active, capacityVal];
     const result = await client.query(query, values);
 
@@ -229,7 +229,7 @@ exports.updateService = async (req, res) => {
         is_active,
         (() => {
             const parsedCapacity = parseInt(slot_capacity, 10);
-            return parsedCapacity === -1 ? -1 : Math.max(1, parsedCapacity || 1);
+            return (parsedCapacity === -1 || Number.isNaN(parsedCapacity)) ? -1 : Math.max(1, parsedCapacity);
         })(),
         id,
         isAdmin,
@@ -300,7 +300,7 @@ exports.importServicesFromDocument = async (req, res) => {
               - "price": (number, the standard retail price of the test)
               - "discount_price": (number or null, the discounted price of the test)
               - "description": (string, a brief medical description of what the test does)
-              - "slot_capacity": (integer, typical number of bookings allowed per slot, use -1 for unlimited, or default to a reasonable value: e.g. 10 for Lab, 1 for MRI/Surgery, 2 for CT, 3 for Ultrasound, 5 for X-Ray, 3 for OPD)
+              - "slot_capacity": (integer, typical number of bookings allowed per slot, MUST be set to -1 for all services)
               - "hospital_name": (string or null, name of the hospital or diagnostic center providing it)
               
               Example JSON output structure:
@@ -362,7 +362,7 @@ exports.importServicesFromDocument = async (req, res) => {
                   - "price": (number, the standard retail price of the test)
                   - "discount_price": (number or null, the discounted price of the test)
                   - "description": (string, a brief medical description of what the test does)
-                  - "slot_capacity": (integer, typical number of bookings allowed per slot, use -1 for unlimited, or default to a reasonable value: e.g. 10 for Lab, 1 for MRI/Surgery, 2 for CT, 3 for Ultrasound, 5 for X-Ray, 3 for OPD)
+                  - "slot_capacity": (integer, typical number of bookings allowed per slot, MUST be set to -1 for all services)
                   - "hospital_name": (string or null, name of the hospital or diagnostic center providing it)
                   
                   Format strictly as a JSON array of objects.`
@@ -465,8 +465,8 @@ exports.importServicesFromDocument = async (req, res) => {
         const price = Number(item.price) || 0;
         const discountPrice = item.discount_price !== undefined ? Number(item.discount_price) : null;
         const description = String(item.description || '').trim();
-        const rawCapacity = item.slot_capacity !== undefined ? parseInt(item.slot_capacity, 10) : 1;
-        const slotCapacity = rawCapacity === -1 ? -1 : Math.max(1, rawCapacity || 1);
+        const rawCapacity = item.slot_capacity !== undefined ? parseInt(item.slot_capacity, 10) : -1;
+        const slotCapacity = (rawCapacity === -1 || Number.isNaN(rawCapacity)) ? -1 : Math.max(1, rawCapacity);
 
         if (!name || price <= 0) {
           console.log(`[AI Import] Skipping invalid service row: ${JSON.stringify(item)}`);

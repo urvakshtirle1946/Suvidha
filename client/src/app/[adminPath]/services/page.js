@@ -255,6 +255,26 @@ export default function ServiceManagement() {
     }
   };
 
+  const deleteService = async (service) => {
+    if (!window.confirm(`Are you sure you want to permanently remove the service "${service.name}"?`)) {
+      return;
+    }
+    try {
+      const apiUrl = getApiUrl();
+      const token = localStorage.getItem('admin_token');
+      const res = await fetch(`${apiUrl}/api/services/${service.id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Delete failed');
+      addToast('Service removed successfully', 'success');
+      fetchServices(page);
+    } catch (err) {
+      console.error(err);
+      addToast('Failed to delete service', 'error');
+    }
+  };
+
   // Light & Clean Styles matching Dashboard
   const cardStyle = {
     background: 'var(--bg-card)',
@@ -572,9 +592,15 @@ export default function ServiceManagement() {
                                     <div style={{ marginBottom: '6px', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
                                         {service.slot_capacity === -1 ? 'Unlimited' : `${service.slot_capacity || 1} per slot`}
                                     </div>
-                                    <button onClick={() => toggleService(service)} className="btn-link" style={{ color: service.is_active ? '#f87171' : '#22c55e', fontSize: '0.9rem', fontWeight: '500', background: 'transparent', border: 'none', cursor: 'pointer' }}>
-                                      {service.is_active ? 'Pause' : 'Activate'}
-                                    </button>
+                                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                        <button onClick={() => toggleService(service)} className="btn-link" style={{ color: service.is_active ? '#f87171' : '#22c55e', fontSize: '0.9rem', fontWeight: '500', background: 'transparent', border: 'none', cursor: 'pointer' }}>
+                                          {service.is_active ? 'Pause' : 'Activate'}
+                                        </button>
+                                        <span style={{ color: 'var(--border)' }}>|</span>
+                                        <button onClick={() => deleteService(service)} className="btn-link" style={{ color: '#ef4444', fontSize: '0.9rem', fontWeight: '500', background: 'transparent', border: 'none', cursor: 'pointer' }}>
+                                          Remove
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}

@@ -97,7 +97,7 @@ export default function WaitlistManagement() {
             </thead>
             <tbody>
               {filteredEntries.map((entry) => (
-                <tr key={entry.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                <tr key={entry.id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }} className="waitlist-row-hover">
                   <td style={{ padding: '1.2rem 1.5rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <div style={{

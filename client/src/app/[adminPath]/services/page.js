@@ -537,7 +537,7 @@ export default function ServiceManagement() {
                     </thead>
                     <tbody>
                         {services.map((service) => (
-                            <tr key={service.id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }} className="hover:bg-gray-50 dark:hover:bg-gray-900">
+                            <tr key={service.id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }} className="service-row-hover">
                                 <td style={{ padding: '1.2rem 1.5rem' }}>
                                     <div style={{ fontWeight: '600', fontSize: '1rem', marginBottom: '4px', color: 'var(--text-primary)' }}>{service.name}</div>
                                     <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{service.description}</div>

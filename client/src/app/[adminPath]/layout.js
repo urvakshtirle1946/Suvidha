@@ -203,7 +203,7 @@ function AdminLayoutContent({ children }) {
   };
 
   return (
-    <div className={`admin-root ${outfit.className}`} style={{ 
+    <div className={`admin-root ${outfit.className} ${darkMode ? 'dark' : ''}`} style={{ 
         ...themeStyles,
         minHeight: '100vh', 
         background: 'var(--bg-primary)', 
@@ -422,6 +422,28 @@ function AdminLayoutContent({ children }) {
               transform: translateY(-50%);
             }
           }
+
+          .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: 14px;
+            color: #888;
+            background: transparent;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            cursor: pointer;
+          }
+          .admin-nav-item:hover {
+            background: var(--hover);
+            color: var(--text-primary);
+          }
+          
+          .calendar-day-hover:hover {
+            background: var(--hover);
+            border-radius: 50%;
+          }
         `}</style>
         
         {/* Sidebar Backdrop Overlay on Mobile */}
@@ -632,14 +654,14 @@ export default function AdminLayout({ children }) {
 function NavItem({ icon, label, href, active, darkMode }) {
   return (
     <Link href={href} style={{ textDecoration: 'none' }}>
-      <div style={{ 
-         display: 'flex', alignItems: 'center', gap: '1rem', 
-         padding: '0.8rem 1rem', borderRadius: '14px', 
-         color: active ? (darkMode ? '#000' : '#fff') : '#888',
-         background: active ? 'var(--accent)' : 'transparent', 
-         transition: 'all 0.2s ease',
-         fontWeight: active ? '700' : '500'
-      }}>
+      <div 
+        className="admin-nav-item"
+        style={{ 
+           color: active ? (darkMode ? '#000' : '#fff') : undefined,
+           background: active ? 'var(--accent)' : undefined, 
+           fontWeight: active ? '700' : undefined
+        }}
+      >
          {icon}
          <span>{label}</span>
       </div>

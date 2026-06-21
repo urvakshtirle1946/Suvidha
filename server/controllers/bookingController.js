@@ -513,6 +513,8 @@ exports.createRazorpayOrder = async (req, res) => {
 };
 
 exports.verifyRazorpayPayment = async (req, res) => {
+    const client = await db.pool.connect();
+
     try {
         const {
             razorpay_order_id,
@@ -521,95 +523,156 @@ exports.verifyRazorpayPayment = async (req, res) => {
             bookingIds
         } = req.body;
 
+        const userEmailHash = hashValue(req.user?.email || '');
+
         const sign = razorpay_order_id + "|" + razorpay_payment_id;
         const expectedSign = crypto
             .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
             .update(sign.toString())
             .digest("hex");
 
-        if (razorpay_signature === expectedSign) {
-            const orderResult = await db.query(
-                `SELECT * FROM payment_orders
-                 WHERE razorpay_order_id = $1 AND user_email_hash = $2 AND status = 'Created'
-                 FOR UPDATE`,
-                [razorpay_order_id, hashValue(req.user?.email || '')]
+        if (razorpay_signature !== expectedSign) {
+            return res.status(400).json({ success: false, message: "Invalid signature sent!" });
+        }
+
+        await client.query('BEGIN');
+
+        const orderResult = await client.query(
+            `SELECT * FROM payment_orders
+             WHERE razorpay_order_id = $1
+               AND user_email_hash IS NOT DISTINCT FROM $2
+               AND status IN ('Created', 'Paid')
+             FOR UPDATE`,
+            [razorpay_order_id, userEmailHash]
+        );
+
+        if (orderResult.rows.length === 0) {
+            const existingOrder = await client.query(
+                `SELECT status, user_email_hash FROM payment_orders WHERE razorpay_order_id = $1`,
+                [razorpay_order_id]
             );
-            if (orderResult.rows.length === 0) {
+            await client.query('ROLLBACK');
+
+            if (existingOrder.rows.length === 0) {
+                return res.status(404).json({ success: false, message: 'Payment order not found.' });
+            }
+
+            const [{ status, user_email_hash: orderEmailHash }] = existingOrder.rows;
+            const sameAccount = orderEmailHash === userEmailHash
+                || (orderEmailHash == null && userEmailHash == null);
+
+            if (!sameAccount) {
                 return res.status(403).json({ success: false, message: 'Payment order does not belong to this account.' });
             }
 
-            // Payment is verified
-            // Update booking(s) in db
-            if (bookingIds && bookingIds.length > 0) {
-                 const requestedIds = [...new Set(bookingIds.map(normalizePositiveInt))];
-                 if (requestedIds.some(id => !id) || requestedIds.length !== bookingIds.length) {
-                    return res.status(400).json({ success: false, message: 'Invalid or duplicate booking IDs.' });
-                 }
-                 const pendingResult = await db.query(
-                    `SELECT id, service_id, price
-                     FROM bookings
-                     WHERE id = ANY($1::int[])
-                       AND user_email_hash = $2
-                       AND status = 'PendingVerification'
-                       AND transaction_id = $3`,
-                    [requestedIds, hashValue(req.user?.email || ''), razorpay_payment_id]
-                 );
-                 if (pendingResult.rows.length !== requestedIds.length) {
-                    await refundUnmatchedPayment(razorpay_payment_id, orderResult.rows[0]);
-                    return res.status(409).json({ success: false, message: 'Bookings do not match this payment. A refund has been initiated.' });
-                 }
-
-                 const expectedItems = orderResult.rows[0].items
-                    .map(item => `${item.serviceId}:${item.quantity}`)
-                    .sort();
-                 const actualQuantities = new Map();
-                 pendingResult.rows.forEach(booking => {
-                    actualQuantities.set(booking.service_id, (actualQuantities.get(booking.service_id) || 0) + 1);
-                 });
-                 const actualItems = [...actualQuantities.entries()].map(([serviceId, quantity]) => `${serviceId}:${quantity}`).sort();
-                 if (JSON.stringify(expectedItems) !== JSON.stringify(actualItems)) {
-                    await refundUnmatchedPayment(razorpay_payment_id, orderResult.rows[0]);
-                    return res.status(409).json({ success: false, message: 'Paid items do not match the bookings being confirmed. A refund has been initiated.' });
-                 }
-
-                 const updatePromises = bookingIds.map(id =>
-                    db.query(
-                        `UPDATE bookings
-                         SET transaction_id = $1, status = 'Confirmed', updated_at = CURRENT_TIMESTAMP
-                         WHERE id = $2 AND user_email_hash = $3 AND status = 'PendingVerification'
-                         RETURNING *`,
-                        [razorpay_payment_id, id, hashValue(req.user?.email || '')]
-                    )
-                 );
-                 const updateResults = await Promise.all(updatePromises);
-                 const updatedBookings = updateResults.flatMap(result => decryptBookingRows(result.rows));
-                 if (updatedBookings.length !== bookingIds.length) {
-                    return res.status(409).json({ success: false, message: 'One or more bookings could not be verified.' });
-                 }
-                 await db.query(
-                    `UPDATE payment_orders SET status = 'Paid', razorpay_payment_id = $1, updated_at = CURRENT_TIMESTAMP
-                     WHERE razorpay_order_id = $2`,
-                    [razorpay_payment_id, razorpay_order_id]
-                 );
-                 const emailResults = await Promise.all(
-                    updatedBookings.map(booking => sendPaymentBookingEmail(booking))
-                 );
-
-                 return res.status(200).json({
-                    success: true,
-                    message: "Payment verified successfully",
-                    email: emailResults
-                 });
+            if (['Refunded', 'RefundPending'].includes(status)) {
+                return res.status(409).json({ success: false, message: 'This payment order has already been refunded.' });
             }
 
-            await refundUnmatchedPayment(razorpay_payment_id, orderResult.rows[0]);
-            return res.status(400).json({ success: false, message: 'No bookings were supplied. A refund has been initiated.' });
-        } else {
-            return res.status(400).json({ success: false, message: "Invalid signature sent!" });
+            return res.status(409).json({ success: false, message: 'This payment order has already been processed.' });
         }
+
+        const paymentOrder = orderResult.rows[0];
+
+        if (!bookingIds || bookingIds.length === 0) {
+            await client.query('ROLLBACK');
+            await refundUnmatchedPayment(razorpay_payment_id, paymentOrder);
+            return res.status(400).json({ success: false, message: 'No bookings were supplied. A refund has been initiated.' });
+        }
+
+        const requestedIds = [...new Set(bookingIds.map(normalizePositiveInt))];
+        if (requestedIds.some(id => !id) || requestedIds.length !== bookingIds.length) {
+            await client.query('ROLLBACK');
+            return res.status(400).json({ success: false, message: 'Invalid or duplicate booking IDs.' });
+        }
+
+        const bookingResult = await client.query(
+            `SELECT id, service_id, price, status
+             FROM bookings
+             WHERE id = ANY($1::int[])
+               AND user_email_hash IS NOT DISTINCT FROM $2
+               AND transaction_id = $3
+               AND status IN ('PendingVerification', 'Confirmed')`,
+            [requestedIds, userEmailHash, razorpay_payment_id]
+        );
+
+        if (bookingResult.rows.length !== requestedIds.length) {
+            await client.query('ROLLBACK');
+            await refundUnmatchedPayment(razorpay_payment_id, paymentOrder);
+            return res.status(409).json({ success: false, message: 'Bookings do not match this payment. A refund has been initiated.' });
+        }
+
+        const expectedItems = paymentOrder.items
+            .map(item => `${item.serviceId}:${item.quantity}`)
+            .sort();
+        const actualQuantities = new Map();
+        bookingResult.rows.forEach(booking => {
+            actualQuantities.set(booking.service_id, (actualQuantities.get(booking.service_id) || 0) + 1);
+        });
+        const actualItems = [...actualQuantities.entries()].map(([serviceId, quantity]) => `${serviceId}:${quantity}`).sort();
+
+        if (JSON.stringify(expectedItems) !== JSON.stringify(actualItems)) {
+            await client.query('ROLLBACK');
+            await refundUnmatchedPayment(razorpay_payment_id, paymentOrder);
+            return res.status(409).json({ success: false, message: 'Paid items do not match the bookings being confirmed. A refund has been initiated.' });
+        }
+
+        const alreadyConfirmed = bookingResult.rows.every(booking => booking.status === 'Confirmed');
+        let updatedBookings = [];
+
+        if (alreadyConfirmed) {
+            const confirmedResult = await client.query(
+                `SELECT * FROM bookings WHERE id = ANY($1::int[])`,
+                [requestedIds]
+            );
+            updatedBookings = decryptBookingRows(confirmedResult.rows);
+        } else {
+            const updateResults = await Promise.all(
+                requestedIds.map(id =>
+                    client.query(
+                        `UPDATE bookings
+                         SET transaction_id = $1, status = 'Confirmed', updated_at = CURRENT_TIMESTAMP
+                         WHERE id = $2
+                           AND user_email_hash IS NOT DISTINCT FROM $3
+                           AND status = 'PendingVerification'
+                         RETURNING *`,
+                        [razorpay_payment_id, id, userEmailHash]
+                    )
+                )
+            );
+            updatedBookings = updateResults.flatMap(result => decryptBookingRows(result.rows));
+
+            if (updatedBookings.length !== requestedIds.length) {
+                await client.query('ROLLBACK');
+                return res.status(409).json({ success: false, message: 'One or more bookings could not be verified.' });
+            }
+        }
+
+        await client.query(
+            `UPDATE payment_orders
+             SET status = 'Paid', razorpay_payment_id = $1, updated_at = CURRENT_TIMESTAMP
+             WHERE razorpay_order_id = $2`,
+            [razorpay_payment_id, razorpay_order_id]
+        );
+
+        await client.query('COMMIT');
+
+        const emailResults = alreadyConfirmed
+            ? []
+            : await Promise.all(updatedBookings.map(booking => sendPaymentBookingEmail(booking)));
+
+        return res.status(200).json({
+            success: true,
+            message: alreadyConfirmed ? 'Payment already verified.' : 'Payment verified successfully',
+            alreadyVerified: alreadyConfirmed,
+            email: emailResults
+        });
     } catch (error) {
+        await client.query('ROLLBACK').catch(() => {});
         console.error('Error verifying Razorpay payment:', error);
         res.status(500).json({ success: false, message: 'Failed to verify payment' });
+    } finally {
+        client.release();
     }
 };
 
@@ -790,35 +853,26 @@ exports.handleRazorpayWebhook = async (req, res) => {
 
             const paymentOrder = orderResult.rows[0];
 
-            // If already processed via frontend/verify-payment, exit early
-            if (paymentOrder.status === 'Paid') {
+            if (['Paid', 'Refunded', 'RefundPending'].includes(paymentOrder.status)) {
                 await client.query('COMMIT');
-                console.log(`[Webhook] Order ${razorpayOrderId} already marked as paid.`);
+                console.log(`[Webhook] Order ${razorpayOrderId} already finalized with status ${paymentOrder.status}.`);
                 return res.status(200).json({ status: 'ok', message: 'Already processed.' });
             }
 
-            // 3. Mark the payment order as Paid (if we have a payment ID)
             const paymentIdToStore = razorpayPaymentId || paymentOrder.razorpay_payment_id;
-            await client.query(
-                `UPDATE payment_orders 
-                 SET status = 'Paid', razorpay_payment_id = $1, updated_at = CURRENT_TIMESTAMP
-                 WHERE id = $2`,
-                [paymentIdToStore, paymentOrder.id]
-            );
 
-            // 4. Find bookings waiting for verification with this transaction ID or order ID
+            // Find bookings waiting for verification with this payment ID
             let pendingBookings = { rows: [] };
             if (paymentIdToStore) {
                 pendingBookings = await client.query(
-                    `SELECT * FROM bookings 
-                     WHERE transaction_id = $1 AND status = 'PendingVerification' 
+                    `SELECT * FROM bookings
+                     WHERE transaction_id = $1 AND status = 'PendingVerification'
                      FOR UPDATE`,
                     [paymentIdToStore]
                 );
             }
 
             if (pendingBookings.rows.length > 0) {
-                // Update bookings to Confirmed
                 await client.query(
                     `UPDATE bookings
                      SET status = 'Confirmed', updated_at = CURRENT_TIMESTAMP
@@ -826,15 +880,21 @@ exports.handleRazorpayWebhook = async (req, res) => {
                     [paymentIdToStore]
                 );
 
+                await client.query(
+                    `UPDATE payment_orders
+                     SET status = 'Paid', razorpay_payment_id = $1, updated_at = CURRENT_TIMESTAMP
+                     WHERE id = $2`,
+                    [paymentIdToStore, paymentOrder.id]
+                );
+
                 await client.query('COMMIT');
                 console.log(`[Webhook] Confirmed ${pendingBookings.rows.length} bookings for txn: ${paymentIdToStore}`);
 
-                // 5. Send confirmation emails
                 const decryptedBookings = decryptBookingRows(pendingBookings.rows);
                 await Promise.all(decryptedBookings.map(booking => sendPaymentBookingEmail(booking)));
             } else {
                 await client.query('COMMIT');
-                console.log(`[Webhook] No bookings found in PendingVerification for txn: ${paymentIdToStore} (yet).`);
+                console.log(`[Webhook] Payment captured for order ${razorpayOrderId}; waiting for checkout verification to create bookings.`);
             }
 
             return res.status(200).json({ status: 'ok' });

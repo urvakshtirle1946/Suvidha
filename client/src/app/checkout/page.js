@@ -345,7 +345,8 @@ export default function Checkout() {
                 });
 
                 if (!verifyRes.ok) {
-                     setError("Payment verification failed.");
+                     const payload = await verifyRes.json().catch(() => null);
+                     setError(payload?.message || "Payment verification failed.");
                      setLoading(false);
                      return;
                 }

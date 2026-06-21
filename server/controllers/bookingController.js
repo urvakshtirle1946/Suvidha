@@ -77,7 +77,7 @@ const getServiceForBooking = async (client, serviceId) => {
 };
 
 const lockSlotAndAssertCapacity = async (client, { service, date, time }) => {
-  if (!service?.id || !date || !time) return;
+  if (!service?.id || !date || !time || time === 'Flexible (Walk-in)') return;
 
   await client.query(
     'SELECT pg_advisory_xact_lock(hashtext($1))',
@@ -162,18 +162,24 @@ exports.createBooking = async (req, res) => {
 
   const { name, age, gender, date, time, address, serviceId, userPhone, transactionId } = req.body;
   
+  const dateStr = date || new Date().toISOString().split('T')[0];
+  const timeStr = time || 'Flexible (Walk-in)';
+  
   const finalEmail = req.user?.email || null;
   const finalPhone = userPhone || req.user?.phone || 'Unknown';
   const paymentStatus = getInitialStatus(transactionId);
-  const bookingDate = new Date(`${date}T00:00:00`);
+  const bookingDate = new Date(`${dateStr}T00:00:00`);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   if (!name?.trim() || !Number.isInteger(Number(age)) || Number(age) < 0 || Number(age) > 130) {
     return res.status(400).json({ success: false, message: 'Valid patient name and age are required.' });
   }
-  if (Number.isNaN(bookingDate.getTime()) || bookingDate < today || !getConfiguredSlots().includes(time)) {
-    return res.status(400).json({ success: false, message: 'Choose a valid future date and available time slot.' });
+  if (Number.isNaN(bookingDate.getTime()) || bookingDate < today) {
+    return res.status(400).json({ success: false, message: 'Choose a valid future date.' });
+  }
+  if (timeStr !== 'Flexible (Walk-in)' && !getConfiguredSlots().includes(timeStr)) {
+    return res.status(400).json({ success: false, message: 'Choose a valid available time slot.' });
   }
 
   if (transactionId === 'PAY_AT_HOSPITAL' && !OFFLINE_PAYMENT_ENABLED) {
@@ -188,7 +194,7 @@ exports.createBooking = async (req, res) => {
   try {
     await client.query('BEGIN');
     const service = await getServiceForBooking(client, serviceId);
-    await lockSlotAndAssertCapacity(client, { service, date, time });
+    await lockSlotAndAssertCapacity(client, { service, date: dateStr, time: timeStr });
     const serviceName = service.name;
     const price = getEffectivePrice(service);
     const hospitalId = service.hospital_id;
@@ -216,8 +222,8 @@ exports.createBooking = async (req, res) => {
       secureBooking.patient_name,
       secureBooking.patient_age,
       secureBooking.patient_gender,
-      date,
-      time,
+      dateStr,
+      timeStr,
       secureBooking.address,
       secureBooking.service_name,
       service.id,

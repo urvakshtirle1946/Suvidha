@@ -13,7 +13,7 @@ router.patch('/:id/cancel', verifyJWT, auditLog(req => `CANCEL_BOOKING_${req.par
 
 // Razorpay endpoints
 router.post('/razorpay-order', verifyJWT, bookingController.createRazorpayOrder);
-// We will add the verification endpoint next
 router.post('/verify-payment', verifyJWT, bookingController.verifyRazorpayPayment);
+router.post('/razorpay-webhook', bookingController.handleRazorpayWebhook);
 
 module.exports = router;

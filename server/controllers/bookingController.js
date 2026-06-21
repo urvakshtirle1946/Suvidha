@@ -729,4 +729,126 @@ exports.getAvailability = async (req, res) => {
     }
 };
 
+exports.handleRazorpayWebhook = async (req, res) => {
+    const signature = req.headers['x-razorpay-signature'];
+    const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
+
+    if (!signature || !webhookSecret) {
+        return res.status(400).json({ success: false, message: 'Missing signature or webhook secret.' });
+    }
+
+    // 1. Verify Webhook Signature
+    const shasum = crypto.createHmac('sha256', webhookSecret);
+    shasum.update(JSON.stringify(req.body));
+    const digest = shasum.digest('hex');
+
+    if (digest !== signature) {
+        console.warn('[Webhook] Invalid webhook signature received.');
+        return res.status(400).json({ success: false, message: 'Invalid signature.' });
+    }
+
+    const event = req.body.event;
+    console.log(`[Webhook] Processing event: ${event}`);
+
+    if (event === 'payment.captured' || event === 'order.paid') {
+        let razorpayOrderId = null;
+        let razorpayPaymentId = null;
+
+        if (event === 'payment.captured') {
+            const paymentEntity = req.body.payload.payment.entity;
+            razorpayOrderId = paymentEntity.order_id;
+            razorpayPaymentId = paymentEntity.id;
+        } else if (event === 'order.paid') {
+            const orderEntity = req.body.payload.order.entity;
+            razorpayOrderId = orderEntity.id;
+            const payments = req.body.payload.payments;
+            if (payments && Array.isArray(payments) && payments.length > 0) {
+                razorpayPaymentId = payments[0].entity.id;
+            }
+        }
+
+        if (!razorpayOrderId) {
+            console.log('[Webhook] No order ID found in webhook payload.');
+            return res.status(200).json({ status: 'ok', message: 'No order ID in payload.' });
+        }
+
+        const client = await db.pool.connect();
+        try {
+            await client.query('BEGIN');
+
+            // 2. Fetch the corresponding payment order and lock it
+            const orderResult = await client.query(
+                `SELECT * FROM payment_orders WHERE razorpay_order_id = $1 FOR UPDATE`,
+                [razorpayOrderId]
+            );
+
+            if (orderResult.rows.length === 0) {
+                await client.query('ROLLBACK');
+                console.warn(`[Webhook] Payment order not found for order: ${razorpayOrderId}`);
+                return res.status(200).json({ status: 'ok', message: 'Order not found in DB.' });
+            }
+
+            const paymentOrder = orderResult.rows[0];
+
+            // If already processed via frontend/verify-payment, exit early
+            if (paymentOrder.status === 'Paid') {
+                await client.query('COMMIT');
+                console.log(`[Webhook] Order ${razorpayOrderId} already marked as paid.`);
+                return res.status(200).json({ status: 'ok', message: 'Already processed.' });
+            }
+
+            // 3. Mark the payment order as Paid (if we have a payment ID)
+            const paymentIdToStore = razorpayPaymentId || paymentOrder.razorpay_payment_id;
+            await client.query(
+                `UPDATE payment_orders 
+                 SET status = 'Paid', razorpay_payment_id = $1, updated_at = CURRENT_TIMESTAMP
+                 WHERE id = $2`,
+                [paymentIdToStore, paymentOrder.id]
+            );
+
+            // 4. Find bookings waiting for verification with this transaction ID or order ID
+            let pendingBookings = { rows: [] };
+            if (paymentIdToStore) {
+                pendingBookings = await client.query(
+                    `SELECT * FROM bookings 
+                     WHERE transaction_id = $1 AND status = 'PendingVerification' 
+                     FOR UPDATE`,
+                    [paymentIdToStore]
+                );
+            }
+
+            if (pendingBookings.rows.length > 0) {
+                // Update bookings to Confirmed
+                await client.query(
+                    `UPDATE bookings
+                     SET status = 'Confirmed', updated_at = CURRENT_TIMESTAMP
+                     WHERE transaction_id = $1 AND status = 'PendingVerification'`,
+                    [paymentIdToStore]
+                );
+
+                await client.query('COMMIT');
+                console.log(`[Webhook] Confirmed ${pendingBookings.rows.length} bookings for txn: ${paymentIdToStore}`);
+
+                // 5. Send confirmation emails
+                const decryptedBookings = decryptBookingRows(pendingBookings.rows);
+                await Promise.all(decryptedBookings.map(booking => sendPaymentBookingEmail(booking)));
+            } else {
+                await client.query('COMMIT');
+                console.log(`[Webhook] No bookings found in PendingVerification for txn: ${paymentIdToStore} (yet).`);
+            }
+
+            return res.status(200).json({ status: 'ok' });
+        } catch (err) {
+            await client.query('ROLLBACK');
+            console.error('[Webhook] Transaction failed:', err);
+            return res.status(500).json({ success: false, message: 'Internal error processing webhook.' });
+        } finally {
+            client.release();
+        }
+    }
+
+    return res.status(200).json({ status: 'ok', message: 'Event ignored.' });
+};
+
+
 

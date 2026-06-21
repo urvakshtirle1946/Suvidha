@@ -404,19 +404,38 @@ exports.importServicesFromDocument = async (req, res) => {
 
     let extractedServices = [];
     try {
-      extractedServices = JSON.parse(cleanJSONText);
-    } catch (parseError) {
-      console.error('[AI Import] JSON parse direct failure, trying regex extraction:', parseError);
-      const match = cleanJSONText.match(/\[\s*\{.*\}\s*\]/s);
-      if (match) {
-        extractedServices = JSON.parse(match[0]);
+      let jsonText = cleanJSONText;
+      const firstBracket = cleanJSONText.indexOf('[');
+      const lastBracket = cleanJSONText.lastIndexOf(']');
+      
+      if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {
+        jsonText = cleanJSONText.substring(firstBracket, lastBracket + 1);
       } else {
-        throw new Error('Failed to parse a valid JSON array from AI output.');
+        const firstBrace = cleanJSONText.indexOf('{');
+        const lastBrace = cleanJSONText.lastIndexOf('}');
+        if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+          jsonText = cleanJSONText.substring(firstBrace, lastBrace + 1);
+        }
       }
+      
+      const parsedData = JSON.parse(jsonText);
+      if (Array.isArray(parsedData)) {
+        extractedServices = parsedData;
+      } else if (parsedData && typeof parsedData === 'object') {
+        const arrayKey = Object.keys(parsedData).find(key => Array.isArray(parsedData[key]));
+        if (arrayKey) {
+          extractedServices = parsedData[arrayKey];
+        } else {
+          extractedServices = [parsedData];
+        }
+      }
+    } catch (parseError) {
+      console.error('[AI Import] JSON parsing failed:', parseError);
+      throw new Error('Failed to parse a valid JSON array from AI output.');
     }
 
-    if (!Array.isArray(extractedServices)) {
-      throw new Error('AI output parsed, but was not a JSON array.');
+    if (!Array.isArray(extractedServices) || extractedServices.length === 0) {
+      throw new Error('AI output parsed, but was not a valid non-empty JSON array.');
     }
 
     console.log(`[AI Import] Extracted ${extractedServices.length} services. Synchronizing with DB...`);

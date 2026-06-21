@@ -248,7 +248,7 @@ export default function Checkout() {
       try {
           const itemsToProcess = checkoutItems.length > 0 ? checkoutItems : cart;
           const itemsTotal = itemsToProcess.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
-          const amountToPay = itemsTotal + 50; // Total + Taxes
+          const amountToPay = itemsTotal; // Total (No taxes)
           
           // Get order from backend
           const orderRes = await apiFetch('/api/bookings/razorpay-order', {
@@ -363,7 +363,7 @@ export default function Checkout() {
             setSuccess(true);
             setTicketData({
                 ticketId: razorpayResponse?.razorpay_payment_id || ('TXN-' + Math.floor(Math.random()*1000000)),
-                amount: finalCartTotal + 50,
+                amount: finalCartTotal,
                 date: new Date(),
                 cardHolder: user?.name || 'Customer',
                 last4Digits: 'XX01',
@@ -512,7 +512,7 @@ export default function Checkout() {
             if (!isHospitalPay) {
                 setTicketData({
                     ticketId: razorpayResponse?.razorpay_payment_id || ('TXN-' + Math.floor(Math.random()*1000000)),
-                    amount: finalCartTotal + 50,
+                    amount: finalCartTotal,
                     date: new Date(),
                     cardHolder: user?.name || 'Customer',
                     last4Digits: 'XX01',
@@ -670,10 +670,6 @@ export default function Checkout() {
                                 <span>Item Total (MRP)</span>
                                 <span>₹{cartMrpTotal}</span>
                             </div>
-                            <div className="bill-row">
-                                <span>Taxes & Fees</span>
-                                <span>₹50</span>
-                            </div>
                             <div className="bill-row discount">
                                 <span>Your Savings {cartMrpTotal > 0 && totalSavings > 0 ? `(${Math.round((totalSavings / cartMrpTotal) * 100)}%)` : ''}</span>
                                 <span>-₹{totalSavings}</span>
@@ -681,7 +677,7 @@ export default function Checkout() {
                             
                             <div className="total-row">
                                 <span>To Pay</span>
-                                <span>₹{finalCartTotal + 50}</span>
+                                <span>₹{finalCartTotal}</span>
                             </div>
                         </div>
 
@@ -753,7 +749,7 @@ export default function Checkout() {
                                 }}
                             >
                                 <span>{loading ? 'Processing...' : user ? `Place Order` : 'Login required'}</span>
-                                {!loading && user && <span>₹{cartTotal + 50} &gt;</span>}
+                                {!loading && user && <span>₹{finalCartTotal} &gt;</span>}
                             </button>
                         </div>
                     </div>
@@ -767,7 +763,7 @@ export default function Checkout() {
           <div className="mobile-cta show-on-mobile">
               <div className="mobile-cta-content container">
                   <div className="cta-price">
-                      <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#111827' }}>₹{cartTotal + 50}</div>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#111827' }}>₹{finalCartTotal}</div>
                       <div className="view-summary" onClick={() => {
                           const el = document.querySelector('.bill-card');
                           el?.scrollIntoView({ behavior: 'smooth' });

@@ -127,36 +127,40 @@ exports.sendWaitlistConfirmation = async (email, name) => {
   });
 };
 
-exports.sendWelcomeEmail = async (email, name) => {
+exports.sendWelcomeEmail = async (email, name, phone) => {
   const firstName = String(name || 'there').split(' ')[0];
+  const phoneDisplay = phone ? escapeHtml(String(phone)) : null;
 
   return sendMail({
     to: email,
     subject: `Welcome to Zelp, ${firstName}`,
-    text: `Hi ${firstName},\n\nYour Zelp account is ready. You can now book verified healthcare services and manage your bookings from your account.\n\nTeam Zelp`,
+    text: `Hi ${firstName},\n\nYour Zelp account is ready. You can now book verified healthcare services and manage your bookings from your account.${phone ? `\n\nMobile Number: ${phone}` : ''}\n\nTeam Zelp`,
     html: `
       <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
         <h2>Welcome to Zelp, ${escapeHtml(firstName)}</h2>
         <p>Your account is ready. You can now book verified healthcare services and manage your bookings from your account.</p>
+        ${phoneDisplay ? `<p><strong>Mobile Number:</strong> ${phoneDisplay}</p>` : ''}
         <p>Team Zelp</p>
       </div>
     `
   });
 };
 
-exports.sendSignInEmail = async (email, name) => {
+exports.sendSignInEmail = async (email, name, phone) => {
   const firstName = String(name || 'there').split(' ')[0];
   const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+  const phoneDisplay = phone ? escapeHtml(String(phone)) : null;
 
   return sendMail({
     to: email,
     subject: 'New sign-in to your Zelp account',
-    text: `Hi ${firstName},\n\nYour Zelp account was just signed in on ${timestamp} IST. If this was you, no action is needed. If this was not you, please change your password.\n\nTeam Zelp`,
+    text: `Hi ${firstName},\n\nYour Zelp account was just signed in on ${timestamp} IST.${phone ? `\nMobile Number: ${phone}` : ''} If this was you, no action is needed. If this was not you, please change your password.\n\nTeam Zelp`,
     html: `
       <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
         <h2>New sign-in detected</h2>
         <p>Hi ${escapeHtml(firstName)}, your Zelp account was just signed in.</p>
         <p><strong>Time:</strong> ${escapeHtml(timestamp)} IST</p>
+        ${phoneDisplay ? `<p><strong>Mobile Number:</strong> ${phoneDisplay}</p>` : ''}
         <p>If this was you, no action is needed. If this was not you, please change your password.</p>
         <p>Team Zelp</p>
       </div>

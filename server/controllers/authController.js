@@ -185,7 +185,7 @@ exports.register = async (req, res) => {
       );
       const newUser = insertResult.rows[0];
       // Fire-and-forget: send welcome email without blocking the response
-      sendWelcomeEmail(newUser.email, newUser.name).catch((err) =>
+      sendWelcomeEmail(newUser.email, newUser.name, cleanPhone).catch((err) =>
         console.error('[Welcome Email] Failed to send:', err.message)
       );
       return issueUserSession(req, res, newUser, 201, 'Registration successful.');
@@ -203,7 +203,7 @@ exports.register = async (req, res) => {
              [cleanName, cleanEmail, hashedPassword, cleanPhone, 'user']
            );
            const retryUser = retryInsertResult.rows[0];
-           sendWelcomeEmail(retryUser.email, retryUser.name).catch((err) =>
+           sendWelcomeEmail(retryUser.email, retryUser.name, cleanPhone).catch((err) =>
              console.error('[Welcome Email] Failed to send (retry path):', err.message)
            );
            return issueUserSession(req, res, retryUser, 201, 'Registration successful.');
@@ -269,7 +269,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    sendSignInEmail(user.email, user.name).catch((err) =>
+    sendSignInEmail(user.email, user.name, user.phone).catch((err) =>
       console.error('[Sign-in Email] Failed to send:', err.message)
     );
 
@@ -346,7 +346,7 @@ exports.googleLogin = async (req, res) => {
       }
       
       // User exists, login normally
-      sendSignInEmail(user.email, user.name).catch((err) =>
+      sendSignInEmail(user.email, user.name, user.phone).catch((err) =>
         console.error('[Sign-in Email] Failed to send (Google login):', err.message)
       );
       return issueUserSession(req, res, user, 200, 'Google login successful.');
@@ -422,7 +422,7 @@ exports.completeGoogleRegistration = async (req, res) => {
       );
       const updatedUser = updateResult.rows[0];
 
-      sendWelcomeEmail(updatedUser.email, updatedUser.name).catch((err) =>
+      sendWelcomeEmail(updatedUser.email, updatedUser.name, updatedUser.phone).catch((err) =>
         console.error('[Welcome Email] Failed to send (Google registration update):', err.message)
       );
 
@@ -438,7 +438,7 @@ exports.completeGoogleRegistration = async (req, res) => {
     );
 
     const googleUser = insertResult.rows[0];
-    sendWelcomeEmail(googleUser.email, googleUser.name).catch((err) =>
+    sendWelcomeEmail(googleUser.email, googleUser.name, googleUser.phone).catch((err) =>
       console.error('[Welcome Email] Failed to send (Google signup):', err.message)
     );
     return issueUserSession(req, res, googleUser, 201, 'Google registration successful.');

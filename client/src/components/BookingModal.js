@@ -57,7 +57,9 @@ export default function BookingModal({ isOpen, onClose, service }) {
   useEffect(() => {
       const loadAvailability = async () => {
           if (!selectedLab?.id) return;
-          const date = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          const date = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
           try {
               const res = await apiFetch(`/api/bookings/availability?serviceId=${selectedLab.id}&date=${date}`);
               if (!res.ok) return;
@@ -159,7 +161,11 @@ export default function BookingModal({ isOpen, onClose, service }) {
                     userEmail: user?.email,
                     age: parseInt(patientAge) || 0,
                     gender: patientGender || 'Not Specified',
-                    date: (new Date(Date.now() + 86400000).toISOString() || '').split('T')[0],
+                    date: (() => {
+                        const tomorrow = new Date();
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        return `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
+                    })(),
                     time: selectedTime,
                     address: location || 'India',
                     serviceId: currentService.id,

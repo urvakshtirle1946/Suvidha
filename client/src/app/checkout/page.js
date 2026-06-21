@@ -178,7 +178,9 @@ export default function Checkout() {
   useEffect(() => {
     const loadAvailability = async () => {
       if (!selectedDate || cart.length === 0) return;
-      const date = selectedDate instanceof Date ? selectedDate.toISOString().split('T')[0] : selectedDate;
+      const date = selectedDate instanceof Date 
+        ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`
+        : selectedDate;
       const serviceIds = [...new Set(cart.map(item => item.serviceId || item.id).filter(Boolean))];
       
       const serviceQuantities = {};
@@ -439,7 +441,9 @@ export default function Checkout() {
                             userEmail: user?.email,
                             age: 0, 
                             gender: 'Not Specified',
-                            date: selectedDate instanceof Date ? selectedDate.toISOString().split('T')[0] : selectedDate,
+                            date: selectedDate instanceof Date 
+                                ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`
+                                : selectedDate,
                             time: selectedTime,
                             address: location || 'New Delhi, India',
                             serviceId: item.serviceId || item.id,

@@ -3,7 +3,7 @@ const { mockServices } = require('../mockData');
 const pdfParse = require('pdf-parse');
 
 const normalizeDuplicateKeyPart = (value) =>
-  String(value || '').trim().replace(/\s+/g, ' ').toLowerCase();
+  String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
 exports.getAllServices = async (req, res) => {
   try {
@@ -154,9 +154,8 @@ exports.createService = async (req, res) => {
         SELECT id
         FROM services
         WHERE COALESCE(hospital_id::text, 'global') = $1
-          AND lower(trim(regexp_replace(name, '[[:space:]]+', ' ', 'g'))) = $2
-          AND lower(trim(regexp_replace(category, '[[:space:]]+', ' ', 'g'))) = $3
-          AND is_active = TRUE
+          AND regexp_replace(lower(name), '[^a-z0-9]', '', 'g') = $2
+          AND regexp_replace(lower(category), '[^a-z0-9]', '', 'g') = $3
         LIMIT 1
       `,
       [String(normalizedHospitalId), normalizeDuplicateKeyPart(name), normalizeDuplicateKeyPart(category)]
@@ -490,9 +489,8 @@ exports.importServicesFromDocument = async (req, res) => {
             SELECT id
             FROM services
             WHERE COALESCE(hospital_id::text, 'global') = $1
-              AND lower(trim(regexp_replace(name, '[[:space:]]+', ' ', 'g'))) = $2
-              AND lower(trim(regexp_replace(category, '[[:space:]]+', ' ', 'g'))) = $3
-              AND is_active = TRUE
+              AND regexp_replace(lower(name), '[^a-z0-9]', '', 'g') = $2
+              AND regexp_replace(lower(category), '[^a-z0-9]', '', 'g') = $3
             LIMIT 1
           `,
           [String(normalizedHospitalId), normalizeDuplicateKeyPart(name), normalizeDuplicateKeyPart(category)]
@@ -503,7 +501,7 @@ exports.importServicesFromDocument = async (req, res) => {
           const serviceId = existingRes.rows[0].id;
           const updateQuery = `
             UPDATE services 
-            SET price = $1, discount_price = $2, description = $3, slot_capacity = $4, updated_at = CURRENT_TIMESTAMP
+            SET price = $1, discount_price = $2, description = $3, slot_capacity = $4, is_active = TRUE
             WHERE id = $5
             RETURNING *
           `;

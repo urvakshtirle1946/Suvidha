@@ -1650,5 +1650,28 @@ a[href*="#"] {
   }
 }
 
+.admin-root .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  font-family: inherit;
+}
+.admin-root .btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+.admin-root .btn:active {
+  transform: translateY(0);
+}
+
+
 
 

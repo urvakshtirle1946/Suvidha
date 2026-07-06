@@ -1354,14 +1354,6 @@ a[href*="#"] {
   pointer-events: none;
 }
 
-.search-bar-pill.ai-mode-active .search-bar-button-wrap {
-  width: 0px;
-  opacity: 0;
-  padding: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
 @media (max-width: 768px) {
   .search-bar-pill.ai-mode-active .search-bar-location {
     flex: none;
@@ -1371,10 +1363,6 @@ a[href*="#"] {
     border-bottom: none;
     overflow: hidden;
     pointer-events: none;
-  }
-
-  .search-bar-pill.ai-mode-active .search-bar-button-wrap {
-    display: none;
   }
 }
 
@@ -1408,6 +1396,7 @@ a[href*="#"] {
 .search-bar-button-wrap button:hover {
   background-color: #222222;
 }
+
 
 .ai-badge {
   position: absolute;

@@ -166,7 +166,7 @@ export default function CartDrawer() {
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.95rem'
                          }}
                       >
-                         <Plus size={16} strokeWidth={3} /> Add More Items
+                         <Plus size={16} strokeWidth={3} /> Add More Services
                       </button>
                   </div>
                 </div>

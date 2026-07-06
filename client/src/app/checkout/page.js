@@ -593,7 +593,7 @@ export default function Checkout() {
       
       <div className="container" style={{ paddingTop: 'calc(var(--header-height) + 2rem)' }}>
         <Link href="/" className="back-link" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2rem', color: '#6b7280', textDecoration: 'none' }}>
-            <ArrowLeft size={18} /> Continue Shopping
+            <ArrowLeft size={18} /> Back to Home
         </Link>
         
         <h1 className="page-title" style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '2rem', color: '#111827' }}>Checkout</h1>

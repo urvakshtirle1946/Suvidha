@@ -7,6 +7,7 @@ import AdminSessionManager from "@/components/AdminSessionManager";
 import CartDrawer from "@/components/CartDrawer";
 import Chatbot from "@/components/Chatbot";
 import GoogleAuthProviderWrapper from "@/components/GoogleAuthProviderWrapper";
+import { Analytics } from "@vercel/analytics/next";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -52,6 +53,7 @@ export default function RootLayout({ children }) {
             </LocationProvider>
           </AuthProvider>
         </GoogleAuthProviderWrapper>
+        <Analytics />
       </body>
     </html>
   );

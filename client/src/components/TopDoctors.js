@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import Link from 'next/link';
-import { X, MapPin, Star, Clock, Award, Calendar } from 'lucide-react';
+import { X, MapPin, Star, Clock, Award, Calendar, ExternalLink } from 'lucide-react';
+import { getPractoUrl, redirectToPracto } from '@/utils/practo';
 
 const DOCTORS = [
   {
@@ -14,7 +14,6 @@ const DOCTORS = [
     img: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=400&q=80',
     tag: 'Top Rated',
     tagColor: '#000',
-    href: '/hospitals?specialty=Cardiologist',
     about: 'Dr. Anjali Sharma is a senior cardiologist with expertise in interventional cardiology, heart failure management, and preventive cardiac care. She has performed over 2,000 cardiac procedures.',
     qualifications: ['MBBS – AIIMS Delhi', 'MD Cardiology – PGI Chandigarh', 'Fellowship – Royal College of Physicians'],
     availability: 'Mon – Sat, 10:00 AM – 2:00 PM',
@@ -31,7 +30,6 @@ const DOCTORS = [
     img: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80',
     tag: 'Most Booked',
     tagColor: '#333',
-    href: '/hospitals?specialty=Orthopedic',
     about: 'Dr. Rohan Mehta specializes in joint replacement surgery, sports injuries, and spine care. He has successfully performed over 1,500 knee and hip replacement surgeries.',
     qualifications: ['MBBS – Grant Medical College', 'MS Orthopedics – KEM Hospital', 'AO Fellowship – Switzerland'],
     availability: 'Tue – Sun, 9:00 AM – 1:00 PM',
@@ -48,7 +46,6 @@ const DOCTORS = [
     img: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80',
     tag: 'Highly Reviewed',
     tagColor: '#666',
-    href: '/hospitals?specialty=Neurologist',
     about: 'Dr. Priya Nair is a neurologist specializing in epilepsy, migraines, and neurodegenerative disorders. She is known for her patient-centric approach and precision diagnosis.',
     qualifications: ['MBBS – Trivandrum Medical College', 'MD Neurology – NIMHANS Bangalore', 'DM Neurology – SGPGI'],
     availability: 'Mon, Wed, Fri – 11:00 AM – 3:00 PM',
@@ -65,7 +62,6 @@ const DOCTORS = [
     img: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=400&q=80',
     tag: 'Top Rated',
     tagColor: '#000',
-    href: '/hospitals?specialty=Dermatologist',
     about: 'Dr. Sameer Joshi is an expert dermatologist treating acne, psoriasis, hair loss, and skin allergies. He also specializes in cosmetic procedures including laser therapy.',
     qualifications: ['MBBS – MGM Medical College, Indore', 'DVD Dermatology – Bombay Hospital', 'Fellowship – IADVL'],
     availability: 'Mon – Sat, 5:00 PM – 8:00 PM',
@@ -82,7 +78,6 @@ const DOCTORS = [
     img: 'https://images.unsplash.com/photo-1651008376811-b90baee60c1f?auto=format&fit=crop&w=400&q=80',
     tag: 'Most Booked',
     tagColor: '#333',
-    href: '/hospitals?specialty=Pediatrician',
     about: 'Dr. Meena Gupta is a highly experienced pediatrician with over 16 years of practice. She specializes in newborn care, child development, vaccinations, and pediatric nutrition.',
     qualifications: ['MBBS – Indore Medical College', 'MD Pediatrics – SMS Hospital, Jaipur', 'Fellowship – IAP'],
     availability: 'Mon – Fri, 10:00 AM – 1:00 PM & 4:00 PM – 7:00 PM',
@@ -99,7 +94,6 @@ const DOCTORS = [
     img: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=400&q=80',
     tag: 'Highly Reviewed',
     tagColor: '#666',
-    href: '/hospitals?specialty=Diabetes',
     about: 'Dr. Vikram Patel is a diabetes and endocrinology specialist. He provides holistic diabetes management including diet counseling, insulin therapy, and prevention of complications.',
     qualifications: ['MBBS – RD Gardi Medical College', 'MD Medicine – BHOPAL', 'RSSDI Certified Diabetologist'],
     availability: 'Tue – Sun, 12:00 PM – 4:00 PM',
@@ -110,6 +104,8 @@ const DOCTORS = [
 
 function DoctorModal({ doctor, onClose }) {
   if (!doctor) return null;
+
+  const practoUrl = getPractoUrl(doctor.specialty);
 
   return (
     <div
@@ -138,7 +134,7 @@ function DoctorModal({ doctor, onClose }) {
         {/* Header banner */}
         <div style={{
           height: '200px',
-          background: 'linear-gradient(135deg, #000 0%, #333 100%)',
+          background: 'linear-gradient(135deg, #000 0%, #1e293b 100%)',
           borderRadius: '20px 20px 0 0',
           position: 'relative',
           overflow: 'hidden',
@@ -241,6 +237,7 @@ function DoctorModal({ doctor, onClose }) {
           </div>
 
           {/* Availability */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.2rem' }}>
             <Calendar size={15} color="#000" />
             <div>
               <div style={{ fontSize: '0.7rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: '600' }}>Availability</div>
@@ -260,18 +257,22 @@ function DoctorModal({ doctor, onClose }) {
             </div>
           </div>
 
-          {/* CTA */}
-          <Link
-            href={doctor.href}
+          {/* CTA Redirect to Practo */}
+          <a
+            href={practoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
-              display: 'block', textDecoration: 'none',
-            background: '#000', color: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              textDecoration: 'none',
+              background: '#2563eb', color: '#fff',
               textAlign: 'center', padding: '0.85rem',
               borderRadius: '12px', fontWeight: '700', fontSize: '0.95rem',
             }}
           >
-            Book Appointment →
-          </Link>
+            Consult {doctor.specialty} on Practo
+            <ExternalLink size={16} />
+          </a>
         </div>
       </div>
     </div>
@@ -281,24 +282,23 @@ function DoctorModal({ doctor, onClose }) {
 export default function TopDoctors() {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
 
+  const handleDoctorCardClick = (doc) => {
+    // Redirect directly to Practo for that doctor's specialty
+    redirectToPracto(doc.specialty);
+  };
+
   return (
     <section style={{ marginBottom: '4rem' }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.4rem' }}>
         <div>
           <h2 style={{ fontSize: 'clamp(1.15rem, 3.5vw, 1.5rem)', fontWeight: '800', margin: '0 0 4px 0', color: '#111827' }}>
-            Top Doctors
+            Top Specialist Doctors
           </h2>
           <p style={{ margin: 0, fontSize: '0.82rem', color: '#6b7280' }}>
-            Trusted specialists across Indore — book an OPD instantly
+            Select a specialist card to connect & book instantly on Practo
           </p>
         </div>
-        <Link
-          href="/hospitals"
-          style={{ color: '#000', textDecoration: 'none', fontWeight: '600', fontSize: '0.85rem', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '3px' }}
-        >
-          See All <span style={{ fontSize: '1.1rem' }}>›</span>
-        </Link>
       </div>
 
       {/* Cards grid */}
@@ -311,7 +311,7 @@ export default function TopDoctors() {
           <div
             key={i}
             className="smooth-lift"
-            onClick={() => setSelectedDoctor(doc)}
+            onClick={() => handleDoctorCardClick(doc)}
             style={{
               '--lift-distance': '-4px',
               '--lift-shadow-hover': '0 14px 28px rgba(15,23,42,0.12)',
@@ -321,55 +321,85 @@ export default function TopDoctors() {
               border: '1px solid #e5e7eb',
               boxShadow: '0 2px 10px rgba(15,23,42,0.05)',
               cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              justify: 'space-between',
             }}
           >
-            {/* Doctor image */}
-            <div style={{ position: 'relative', height: '180px', background: '#f3f4f6', overflow: 'hidden' }}>
-              <img
-                src={doc.img}
-                alt={doc.name}
-                loading="lazy"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
-                onError={e => { e.target.style.display = 'none'; }}
-              />
-              <div style={{
-                position: 'absolute', top: '10px', left: '10px',
-                background: doc.tagColor, color: '#fff',
-                fontSize: '0.68rem', fontWeight: '700',
-                padding: '3px 8px', borderRadius: '20px', letterSpacing: '0.03em',
-              }}>
-                {doc.tag}
+            <div>
+              {/* Doctor image */}
+              <div style={{ position: 'relative', height: '180px', background: '#f3f4f6', overflow: 'hidden' }}>
+                <img
+                  src={doc.img}
+                  alt={doc.name}
+                  loading="lazy"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
+                  onError={e => { e.target.style.display = 'none'; }}
+                />
+                <div style={{
+                  position: 'absolute', top: '10px', left: '10px',
+                  background: doc.tagColor, color: '#fff',
+                  fontSize: '0.68rem', fontWeight: '700',
+                  padding: '3px 8px', borderRadius: '20px', letterSpacing: '0.03em',
+                }}>
+                  {doc.tag}
+                </div>
+                <div style={{
+                  position: 'absolute', top: '10px', right: '10px',
+                  background: 'rgba(37, 99, 235, 0.9)', color: '#fff',
+                  fontSize: '0.65rem', fontWeight: '700',
+                  padding: '3px 8px', borderRadius: '20px',
+                  display: 'flex', alignItems: 'center', gap: '3px',
+                }}>
+                  Practo <ExternalLink size={10} />
+                </div>
+              </div>
+
+              {/* Info */}
+              <div style={{ padding: '1rem' }}>
+                <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#111827', margin: '0 0 2px 0' }}>
+                  {doc.name}
+                </h3>
+                <p style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: '700', margin: '0 0 4px 0' }}>
+                  {doc.specialty}
+                </p>
+                <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0 0 10px 0', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                  <MapPin size={11} color="#9ca3af" />
+                  {doc.hospital}
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f3f4f6', paddingTop: '0.7rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Star size={13} fill="#f59e0b" color="#f59e0b" />
+                    <span style={{ fontWeight: '700', fontSize: '0.82rem', color: '#111827' }}>{doc.rating}</span>
+                    <span style={{ fontSize: '0.72rem', color: '#9ca3af' }}>({doc.reviews})</span>
+                  </div>
+                  <span style={{ fontSize: '0.72rem', color: '#374151', fontWeight: '600', background: '#f3f4f6', padding: '2px 8px', borderRadius: '10px' }}>
+                    {doc.experience}
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Info */}
-            <div style={{ padding: '1rem' }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#111827', margin: '0 0 2px 0' }}>
-                {doc.name}
-              </h3>
-              <p style={{ fontSize: '0.8rem', color: '#000', fontWeight: '600', margin: '0 0 4px 0' }}>
-                {doc.specialty}
-              </p>
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0 0 10px 0', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                <MapPin size={11} color="#9ca3af" />
-                {doc.hospital}
-              </p>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f3f4f6', paddingTop: '0.7rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Star size={13} fill="#f59e0b" color="#f59e0b" />
-                  <span style={{ fontWeight: '700', fontSize: '0.82rem', color: '#111827' }}>{doc.rating}</span>
-                  <span style={{ fontSize: '0.72rem', color: '#9ca3af' }}>({doc.reviews})</span>
-                </div>
-                <span style={{ fontSize: '0.72rem', color: '#374151', fontWeight: '600', background: '#f3f4f6', padding: '2px 8px', borderRadius: '10px' }}>
-                  {doc.experience}
-                </span>
-              </div>
+            {/* Bottom Practo Action Banner */}
+            <div style={{
+              background: '#f8fafc',
+              borderTop: '1px solid #f1f5f9',
+              padding: '0.65rem 1rem',
+              display: 'flex',
+              alignItems: 'center',
+              justify: 'space-between',
+              fontSize: '0.78rem',
+              color: '#2563eb',
+              fontWeight: '700'
+            }}>
+              <span>Consult on Practo</span>
+              <ExternalLink size={14} />
             </div>
           </div>
         ))}
       </div>
 
-      {/* Doctor Detail Modal */}
+      {/* Doctor Detail Modal (Optional detail view) */}
       {selectedDoctor && (
         <DoctorModal doctor={selectedDoctor} onClose={() => setSelectedDoctor(null)} />
       )}

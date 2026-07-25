@@ -2,9 +2,79 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
-import { Stethoscope, Sparkles, AlertCircle, ArrowRight } from 'lucide-react';
+import { Stethoscope, Sparkles, AlertCircle, ArrowRight, ExternalLink, Star, MapPin, Award } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { apiFetch } from '@/utils/api';
+import { redirectToPracto, getPractoUrl } from '@/utils/practo';
+
+const RECOMMENDED_DOCTORS = [
+  {
+    name: 'Dr. Anjali Sharma',
+    specialty: 'Cardiologist',
+    hospital: 'CHL Hospital, Indore',
+    experience: '14 yrs exp',
+    rating: 4.9,
+    reviews: 312,
+    img: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=400&q=80',
+    tag: 'Heart Specialist',
+    fee: '₹800',
+  },
+  {
+    name: 'Dr. Rohan Mehta',
+    specialty: 'Orthopedic Surgeon',
+    hospital: 'Bombay Hospital, Indore',
+    experience: '11 yrs exp',
+    rating: 4.8,
+    reviews: 278,
+    img: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80',
+    tag: 'Bone & Joint Specialist',
+    fee: '₹700',
+  },
+  {
+    name: 'Dr. Priya Nair',
+    specialty: 'Neurologist',
+    hospital: 'Shalby Hospital, Indore',
+    experience: '9 yrs exp',
+    rating: 4.7,
+    reviews: 194,
+    img: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80',
+    tag: 'Brain & Spine Specialist',
+    fee: '₹900',
+  },
+  {
+    name: 'Dr. Sameer Joshi',
+    specialty: 'Dermatologist',
+    hospital: 'Eureka Hospital, Indore',
+    experience: '7 yrs exp',
+    rating: 4.8,
+    reviews: 241,
+    img: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=400&q=80',
+    tag: 'Skin & Hair Specialist',
+    fee: '₹600',
+  },
+  {
+    name: 'Dr. Meena Gupta',
+    specialty: 'Pediatrician',
+    hospital: 'Gokuldas Hospital, Indore',
+    experience: '16 yrs exp',
+    rating: 4.9,
+    reviews: 389,
+    img: 'https://images.unsplash.com/photo-1651008376811-b90baee60c1f?auto=format&fit=crop&w=400&q=80',
+    tag: 'Child Specialist',
+    fee: '₹500',
+  },
+  {
+    name: 'Dr. Vikram Patel',
+    specialty: 'Diabetologist',
+    hospital: 'City Home Pvt. Ltd., Indore',
+    experience: '12 yrs exp',
+    rating: 4.6,
+    reviews: 167,
+    img: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=400&q=80',
+    tag: 'Diabetes Specialist',
+    fee: '₹650',
+  },
+];
 
 function SearchResultsContent() {
   const router = useRouter();
@@ -42,7 +112,6 @@ function SearchResultsContent() {
     setBookingIndex(cardIndex);
 
     try {
-      // Find the first matching clinic offering this test (cheapest/first match)
       const res = await apiFetch(`/api/services?search=${encodeURIComponent(testName)}&limit=1`);
       if (!res.ok) throw new Error('Failed to fetch clinics');
       const data = await res.json();
@@ -56,7 +125,6 @@ function SearchResultsContent() {
         const price = parseFloat(service.discount_price || service.price);
         const mrp = parseFloat(service.price);
         
-        // Add to cart
         addToCart({
           ...service,
           quantity: 1,
@@ -68,7 +136,6 @@ function SearchResultsContent() {
         console.warn(`No clinics found for ${testName}. Redirecting to checkout.`);
       }
       
-      // Redirect directly to checkout
       router.push('/checkout');
     } catch (err) {
       console.error('Error during direct checkout booking redirect:', err);
@@ -76,6 +143,10 @@ function SearchResultsContent() {
     } finally {
       setBookingIndex(null);
     }
+  };
+
+  const handleDoctorClick = (specialty) => {
+    redirectToPracto(specialty);
   };
 
   return (
@@ -128,7 +199,7 @@ function SearchResultsContent() {
               transition: 'all 0.2s',
             }}
           >
-            Tests
+            Recommended Tests
           </button>
           <button
             onClick={() => setActiveTab('doctors')}
@@ -142,9 +213,15 @@ function SearchResultsContent() {
               background: activeTab === 'doctors' ? '#000' : 'transparent',
               color: activeTab === 'doctors' ? '#fff' : '#6b7280',
               transition: 'all 0.2s',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
             }}
           >
-            Doctors
+            Specialist Doctors
+            <span style={{ background: '#2563eb', color: '#fff', fontSize: '0.65rem', padding: '2px 6px', borderRadius: '10px' }}>
+              Practo
+            </span>
           </button>
         </div>
 
@@ -177,7 +254,7 @@ function SearchResultsContent() {
                           boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
                           display: 'flex',
                           flexDirection: 'column',
-                          justifyContent: 'space-between',
+                          justify: 'space-between',
                           transition: 'transform 0.2s, box-shadow 0.2s',
                         }}
                         onMouseEnter={e => {
@@ -236,7 +313,7 @@ function SearchResultsContent() {
                             cursor: bookingIndex !== null ? 'not-allowed' : 'pointer',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center',
+                            justify: 'center',
                             gap: '6px',
                             transition: 'background-color 0.2s',
                             width: '100%',
@@ -319,38 +396,144 @@ function SearchResultsContent() {
             )}
           </div>
         ) : (
-          /* Doctors Tab Empty State */
-          <div style={{
-            background: '#ffffff',
-            border: '1px solid #e5e7eb',
-            borderRadius: '24px',
-            padding: '4rem 2rem',
-            textAlign: 'center',
-            maxWidth: '600px',
-            margin: '2rem auto',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.02)',
-          }}>
+          /* Doctors Tab with Practo Specialist Cards */
+          <div>
             <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '60px',
-              height: '60px',
-              borderRadius: '50%',
-              background: '#f3f4f6',
-              color: '#000000',
+              background: '#eff6ff',
+              border: '1px solid #bfdbfe',
+              borderRadius: '16px',
+              padding: '1.2rem 1.5rem',
               marginBottom: '1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justify: 'space-between',
+              flexWrap: 'wrap',
+              gap: '1rem'
             }}>
-              <Stethoscope size={28} />
+              <div>
+                <h3 style={{ fontSize: '1.05rem', fontWeight: '800', color: '#1e3a8a', margin: '0 0 4px 0' }}>
+                  Consult Recommended Specialists on Practo
+                </h3>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: '#1e40af' }}>
+                  Click any doctor card to open verified specialist consultations directly on Practo.
+                </p>
+              </div>
+              <span style={{
+                background: '#2563eb',
+                color: '#fff',
+                fontWeight: '700',
+                fontSize: '0.8rem',
+                padding: '6px 14px',
+                borderRadius: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}>
+                Practo Direct Connect <ExternalLink size={14} />
+              </span>
             </div>
 
-            <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#111827', marginBottom: '0.5rem' }}>
-              Doctors Coming Soon
-            </h3>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+              gap: '1.5rem',
+            }}>
+              {RECOMMENDED_DOCTORS.map((doc, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => handleDoctorClick(doc.specialty)}
+                  style={{
+                    background: '#ffffff',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '20px',
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justify: 'space-between'
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 12px 30px rgba(37, 99, 235, 0.15)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.03)';
+                  }}
+                >
+                  <div>
+                    {/* Doctor Image & Badge */}
+                    <div style={{ position: 'relative', height: '170px', background: '#f8fafc' }}>
+                      <img
+                        src={doc.img}
+                        alt={doc.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
+                      />
+                      <div style={{
+                        position: 'absolute', top: '12px', left: '12px',
+                        background: '#000', color: '#fff',
+                        fontSize: '0.68rem', fontWeight: '700',
+                        padding: '4px 10px', borderRadius: '12px',
+                      }}>
+                        {doc.tag}
+                      </div>
+                      <div style={{
+                        position: 'absolute', top: '12px', right: '12px',
+                        background: '#2563eb', color: '#fff',
+                        fontSize: '0.65rem', fontWeight: '700',
+                        padding: '3px 8px', borderRadius: '12px',
+                        display: 'flex', alignItems: 'center', gap: '3px',
+                      }}>
+                        Practo <ExternalLink size={10} />
+                      </div>
+                    </div>
 
-            <p style={{ fontSize: '0.925rem', color: '#6b7280', lineHeight: '1.6', margin: 0 }}>
-              We&apos;re onboarding top medical doctors in Indore. Stay tuned.
-            </p>
+                    {/* Card Content */}
+                    <div style={{ padding: '1.2rem' }}>
+                      <h4 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#111827', margin: '0 0 2px 0' }}>
+                        {doc.name}
+                      </h4>
+                      <p style={{ fontSize: '0.85rem', color: '#2563eb', fontWeight: '700', margin: '0 0 6px 0' }}>
+                        {doc.specialty}
+                      </p>
+                      <p style={{ fontSize: '0.78rem', color: '#6b7280', margin: '0 0 12px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <MapPin size={12} color="#9ca3af" />
+                        {doc.hospital}
+                      </p>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '0.8rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Star size={14} fill="#f59e0b" color="#f59e0b" />
+                          <span style={{ fontWeight: '700', fontSize: '0.85rem', color: '#111827' }}>{doc.rating}</span>
+                          <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>({doc.reviews})</span>
+                        </div>
+                        <span style={{ fontSize: '0.75rem', color: '#475569', fontWeight: '600', background: '#f1f5f9', padding: '3px 8px', borderRadius: '8px' }}>
+                          {doc.experience}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Practo CTA footer */}
+                  <div style={{
+                    background: '#f8fafc',
+                    borderTop: '1px solid #e2e8f0',
+                    padding: '0.8rem 1.2rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justify: 'space-between',
+                    fontSize: '0.85rem',
+                    color: '#2563eb',
+                    fontWeight: '700',
+                  }}>
+                    <span>Consult on Practo</span>
+                    <ExternalLink size={15} />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

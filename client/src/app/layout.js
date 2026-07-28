@@ -54,6 +54,7 @@ export default function RootLayout({ children }) {
             </LocationProvider>
           </AuthProvider>
         </GoogleAuthProviderWrapper>
+        <Analytics />
       </body>
     </html>
   );
